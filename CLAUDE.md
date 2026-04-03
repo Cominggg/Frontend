@@ -23,6 +23,7 @@ Jpop 아티스트 내한 공연 정보 통합 웹 플랫폼 (KOPIS + MusicBrainz
 - 401 응답 → Axios interceptor에서 자동 refresh, 실패 시 로그인 이동
 
 ## 참조 문서
+- [`docs/code-conventions.md`](docs/code-conventions.md) — 파일 구조, 네이밍, 컴포넌트·훅·API·CSS 작성 규칙
+- [`docs/ux-conventions.md`](docs/ux-conventions.md) — 반응형, 로딩, 배지 색상, 에러 처리 등
 - [`docs/features.md`](docs/features.md) — 기능 ID별 명세, 우선순위(P0/P1/P2), 라우트 구조
 - [`docs/api-endpoints.md`](docs/api-endpoints.md) — 전체 API 엔드포인트 목록
-- [`docs/ux-conventions.md`](docs/ux-conventions.md) — 반응형, 로딩, 배지 색상, 에러 처리 등
