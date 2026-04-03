@@ -111,20 +111,19 @@ export function fetchArtistDetail(id) {
 
 ```js
 // hooks/useArtistList.js
-import { useInfiniteQuery } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import { fetchArtists } from '@/services/artist'
 
 export function useArtistList(filters) {
-  return useInfiniteQuery({
+  return useQuery({
     queryKey: ['artists', filters],
-    queryFn: ({ pageParam = 0 }) => fetchArtists({ ...filters, page: pageParam }),
-    getNextPageParam: (lastPage) => lastPage.hasNext ? lastPage.page + 1 : undefined,
+    queryFn: () => fetchArtists(filters),
   })
 }
 ```
 
 - **queryKey**: `[도메인, 파라미터]` 형태 (`['artists', filters]`, `['concerts', id]`)
-- 목록 조회: `useInfiniteQuery` (무한 스크롤)
+- 목록 조회: `useQuery` (전체 표시)
 - 단건 조회: `useQuery`
 - 변이: `useMutation` + `onSuccess`에서 관련 쿼리 invalidate
 
