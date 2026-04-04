@@ -7,7 +7,7 @@ Jpop 아티스트 내한 공연 정보 통합 웹 플랫폼 (KOPIS + MusicBrainz
 - ESLint with react-hooks and react-refresh plugins
 - Axios (인증·에러 interceptor 중앙 처리)
 - React Router v6 (PrivateRoute로 인증 필요 페이지 보호)
-- React Query (서버 상태), Zustand 또는 Redux Toolkit (전역 상태 — 미확정)
+- React Query (서버 상태), Zustand (전역 상태)
 
 ## Commands
 - `npm run dev` - start dev server
