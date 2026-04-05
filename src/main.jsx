@@ -8,7 +8,11 @@ import './index.css'
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      retry: 1,
+      retry: (failureCount, error) => {
+        const status = error?.response?.status
+        if (status && status < 500) return false
+        return failureCount < 1
+      },
       staleTime: 1000 * 60 * 5, // 5분
     },
   },
