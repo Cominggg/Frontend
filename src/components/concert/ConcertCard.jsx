@@ -1,11 +1,32 @@
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
 
 import Badge from '@/components/ui/Badge'
 import { ROUTES } from '@/constants/routes'
 import styles from './ConcertCard.module.css'
 
+const PLACEHOLDER_PALETTE = [
+  ['#7c3aed', '#c4b5fd'], // violet
+  ['#0369a1', '#7dd3fc'], // blue
+  ['#be123c', '#fda4af'], // rose
+  ['#15803d', '#86efac'], // green
+  ['#b45309', '#fcd34d'], // amber
+  ['#0f766e', '#5eead4'], // teal
+]
+
+function getArtistColor(name) {
+  let hash = 0
+  for (let i = 0; i < name.length; i++) {
+    hash = (hash * 31 + name.charCodeAt(i)) | 0
+  }
+  return PLACEHOLDER_PALETTE[Math.abs(hash) % PLACEHOLDER_PALETTE.length]
+}
+
 function ConcertCard({ concert }) {
   const { id, posterUrl, artistName, title, startDate, endDate, venue, status } = concert
+  const [imgFailed, setImgFailed] = useState(false)
+  const showPlaceholder = !posterUrl || imgFailed
+  const [colorFrom, colorTo] = getArtistColor(artistName)
 
   const dateRange = endDate && endDate !== startDate
     ? `${startDate} ~ ${endDate}`
@@ -14,12 +35,21 @@ function ConcertCard({ concert }) {
   return (
     <Link to={ROUTES.CONCERT_DETAIL(id)} className={styles.card}>
       <div className={styles.posterWrap}>
-        <img
-          src={posterUrl}
-          alt={title}
-          className={styles.poster}
-          onError={(e) => { e.target.src = '/assets/poster-placeholder.png' }}
-        />
+        {showPlaceholder ? (
+          <div
+            className={styles.posterPlaceholder}
+            style={{ '--p-from': colorFrom, '--p-to': colorTo }}
+          >
+            <span className={styles.posterArtistName}>{artistName}</span>
+          </div>
+        ) : (
+          <img
+            src={posterUrl}
+            alt={title}
+            className={styles.poster}
+            onError={() => setImgFailed(true)}
+          />
+        )}
         <div className={styles.badgeWrap}>
           <Badge status={status} />
         </div>

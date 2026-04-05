@@ -36,6 +36,55 @@
   transform: scale(1.04);
 }
 
+/* 포스터 플레이스홀더 */
+.posterPlaceholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.625rem;
+  background: linear-gradient(145deg, var(--p-from) 0%, var(--p-to) 100%);
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s;
+}
+
+.posterPlaceholder::before {
+  content: '';
+  position: absolute;
+  width: 140%;
+  height: 140%;
+  top: -20%;
+  left: -20%;
+  background: radial-gradient(circle at 60% 25%, rgba(255, 255, 255, 0.18) 0%, transparent 55%);
+  pointer-events: none;
+}
+
+.card:hover .posterPlaceholder {
+  transform: scale(1.04);
+}
+
+.posterArtistName {
+  position: relative;
+  z-index: 1;
+  font-size: 1.0625rem;
+  font-weight: 800;
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+  color: rgba(255, 255, 255, 0.95);
+  text-align: center;
+  text-shadow: 0 2px 16px rgba(0, 0, 0, 0.18);
+  padding: 0 0.875rem;
+  max-width: 90%;
+  overflow-wrap: break-word;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
 .badgeWrap {
   position: absolute;
   top: 10px;
