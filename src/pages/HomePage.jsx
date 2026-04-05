@@ -14,6 +14,7 @@ const MOCK_CAROUSEL_ITEMS = [
     title: 'ARENA TOUR 2025 "THE MONSTER"',
     date: '2025.08.15 – 08.16',
     venue: 'KSPO DOME, 서울',
+    accentColor: '#7c3aed',
   },
   {
     id: 2,
@@ -22,6 +23,7 @@ const MOCK_CAROUSEL_ITEMS = [
     title: '새 앨범 "LOST CORNER" 발매',
     date: '2025.04.05',
     venue: null,
+    accentColor: '#0369a1',
   },
   {
     id: 3,
@@ -30,6 +32,7 @@ const MOCK_CAROUSEL_ITEMS = [
     title: 'WORLD TOUR "Hibana" in Seoul',
     date: '2025.06.21',
     venue: '고척스카이돔, 서울',
+    accentColor: '#be123c',
   },
   {
     id: 4,
@@ -38,6 +41,7 @@ const MOCK_CAROUSEL_ITEMS = [
     title: '새 싱글 "Soranji" 발매',
     date: '2025.03.20',
     venue: null,
+    accentColor: '#15803d',
   },
   {
     id: 5,
@@ -46,6 +50,7 @@ const MOCK_CAROUSEL_ITEMS = [
     title: 'Live Tour 2025',
     date: '2025.07.05 – 07.06',
     venue: '올림픽공원 체조경기장, 서울',
+    accentColor: '#b45309',
   },
 ]
 
@@ -190,8 +195,15 @@ function HomePage() {
               style={{ transform: `translateX(-${currentSlide * 100}%)` }}
             >
               {MOCK_CAROUSEL_ITEMS.map((item) => (
-                <article key={item.id} className={styles.carouselSlide} data-type={item.type}>
+                <article
+                  key={item.id}
+                  className={styles.carouselSlide}
+                  style={{ '--slide-accent': item.accentColor }}
+                >
                   <div className={styles.slideContent}>
+                    <span className={styles.slideBadge}>
+                      {item.type === 'concert' ? 'CONCERT' : 'NEW RELEASE'}
+                    </span>
                     <p className={styles.slideArtist}>{item.artistName}</p>
                     <h2 className={styles.slideTitle}>{item.title}</h2>
                     <div className={styles.slideMeta}>
@@ -210,9 +222,16 @@ function HomePage() {
                         </span>
                       )}
                     </div>
+                    <div className={styles.slideActions}>
+                      <button className={styles.slideBtnPrimary}>자세히 보기</button>
+                      {item.type === 'concert' && (
+                        <button className={styles.slideBtnSecondary}>티켓 구매</button>
+                      )}
+                    </div>
                   </div>
-                  <div className={styles.slideDecor} aria-hidden="true">
-                    {item.artistName.charAt(0)}
+                  <div className={styles.slideVisual} aria-hidden="true">
+                    <div className={styles.slideOrb} />
+                    <span className={styles.slideInitial}>{item.artistName.charAt(0)}</span>
                   </div>
                 </article>
               ))}
