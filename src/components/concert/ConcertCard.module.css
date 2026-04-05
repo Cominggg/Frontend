@@ -12,8 +12,8 @@
 
 .card:hover {
   transform: translateY(-4px);
-  border-color: rgba(232, 121, 249, 0.3);
-  box-shadow: 0 8px 32px rgba(192, 38, 211, 0.15);
+  border-color: var(--color-accent-border);
+  box-shadow: 0 8px 32px var(--color-accent-shadow);
 }
 
 /* 포스터 */
