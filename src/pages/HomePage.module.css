@@ -1,0 +1,229 @@
+.page {
+  min-height: calc(100svh - var(--header-height));
+}
+
+/* ===========================
+   히어로
+   =========================== */
+.hero {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 52vh;
+  padding: 5rem 2rem 4rem;
+  overflow: hidden;
+  text-align: center;
+}
+
+/* 배경 글로우 오브 */
+.heroGlow1,
+.heroGlow2 {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  pointer-events: none;
+}
+
+.heroGlow1 {
+  width: 520px;
+  height: 520px;
+  top: -120px;
+  left: -80px;
+  background: radial-gradient(circle, rgba(192, 38, 211, 0.18) 0%, transparent 70%);
+}
+
+.heroGlow2 {
+  width: 420px;
+  height: 420px;
+  bottom: -80px;
+  right: -60px;
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, transparent 70%);
+}
+
+.heroContent {
+  position: relative;
+  z-index: 1;
+  max-width: 680px;
+  width: 100%;
+}
+
+.heroEyebrow {
+  margin: 0 0 1rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-accent-light);
+}
+
+.heroTitle {
+  margin: 0 0 1rem;
+  font-size: clamp(1.75rem, 4vw, 2.75rem);
+  font-weight: 800;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+  color: var(--color-text);
+}
+
+.heroAccent {
+  background: linear-gradient(135deg, var(--color-accent-light) 0%, #818cf8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.heroSub {
+  margin: 0 0 2.5rem;
+  font-size: 0.9375rem;
+  color: var(--color-text-muted);
+  line-height: 1.6;
+}
+
+/* 검색 폼 */
+.searchForm {
+  width: 100%;
+}
+
+.searchWrap {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  max-width: 520px;
+  margin: 0 auto;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 0 0 0 1rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.searchWrap:focus-within {
+  border-color: rgba(232, 121, 249, 0.4);
+  box-shadow: 0 0 0 3px var(--color-accent-dim);
+}
+
+.searchIcon {
+  flex-shrink: 0;
+  color: var(--color-text-muted);
+}
+
+.searchInput {
+  flex: 1;
+  padding: 0.875rem 0.75rem;
+  font-size: 0.9375rem;
+  color: var(--color-text);
+  background: transparent;
+  border: none;
+  outline: none;
+}
+
+.searchInput::placeholder {
+  color: var(--color-text-muted);
+}
+
+.searchBtn {
+  flex-shrink: 0;
+  padding: 0.75rem 1.25rem;
+  margin: 4px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #fff;
+  background: linear-gradient(135deg, var(--color-accent) 0%, #7c3aed 100%);
+  border: none;
+  border-radius: 9px;
+  transition: opacity 0.15s;
+}
+
+.searchBtn:hover {
+  opacity: 0.9;
+}
+
+/* ===========================
+   섹션
+   =========================== */
+.section {
+  padding: 4rem 0 5rem;
+}
+
+.sectionInner {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 1.75rem;
+}
+
+.sectionTitle {
+  margin: 0;
+  font-size: 1.375rem;
+  font-weight: 700;
+  color: var(--color-text);
+  letter-spacing: -0.01em;
+}
+
+.sectionMore {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  text-decoration: none;
+  transition: color 0.15s;
+}
+
+.sectionMore:hover {
+  color: var(--color-accent-light);
+}
+
+/* 그리드 */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1.25rem;
+}
+
+/* 반응형 */
+@media (max-width: 1279px) {
+  .grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (max-width: 900px) {
+  .grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 767px) {
+  .hero {
+    padding: 3.5rem 1.25rem 3rem;
+    min-height: 48vh;
+  }
+
+  .section {
+    padding: 2.5rem 0 3.5rem;
+  }
+
+  .sectionInner {
+    padding: 0 1.25rem;
+  }
+
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.875rem;
+  }
+}
+
+@media (max-width: 420px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
