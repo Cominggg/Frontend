@@ -1,10 +1,53 @@
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useState, useEffect } from 'react'
 
 import ConcertCard from '@/components/concert/ConcertCard'
 import ConcertCardSkeleton from '@/components/concert/ConcertCardSkeleton'
 import { ROUTES } from '@/constants/routes'
 import styles from './HomePage.module.css'
+
+// TODO: API 연동 후 제거
+const MOCK_CAROUSEL_ITEMS = [
+  {
+    id: 1,
+    type: 'concert',
+    artistName: 'YOASOBI',
+    title: 'ARENA TOUR 2025 "THE MONSTER"',
+    date: '2025.08.15 – 08.16',
+    venue: 'KSPO DOME, 서울',
+  },
+  {
+    id: 2,
+    type: 'album',
+    artistName: 'Kenshi Yonezu',
+    title: '새 앨범 "LOST CORNER" 발매',
+    date: '2025.04.05',
+    venue: null,
+  },
+  {
+    id: 3,
+    type: 'concert',
+    artistName: 'Ado',
+    title: 'WORLD TOUR "Hibana" in Seoul',
+    date: '2025.06.21',
+    venue: '고척스카이돔, 서울',
+  },
+  {
+    id: 4,
+    type: 'album',
+    artistName: 'Mrs. GREEN APPLE',
+    title: '새 싱글 "Soranji" 발매',
+    date: '2025.03.20',
+    venue: null,
+  },
+  {
+    id: 5,
+    type: 'concert',
+    artistName: 'King Gnu',
+    title: 'Live Tour 2025',
+    date: '2025.07.05 – 07.06',
+    venue: '올림픽공원 체조경기장, 서울',
+  },
+]
 
 // TODO: API 연동 후 제거 (CON-03)
 const MOCK_POPULAR_CONCERTS = [
@@ -111,51 +154,92 @@ const MOCK_POPULAR_CONCERTS = [
 ]
 
 function HomePage() {
-  const navigate = useNavigate()
-  const [query, setQuery] = useState('')
+  const [currentSlide, setCurrentSlide] = useState(0)
+  const [isPaused, setIsPaused] = useState(false)
   const isLoading = false // TODO: React Query 연동 후 교체
+  const total = MOCK_CAROUSEL_ITEMS.length
 
-  function handleSearchSubmit(e) {
-    e.preventDefault()
-    if (!query.trim()) return
-    navigate(`${ROUTES.SEARCH}?q=${encodeURIComponent(query.trim())}`)
+  useEffect(() => {
+    if (isPaused) return
+    const id = setInterval(() => {
+      setCurrentSlide((i) => (i + 1) % total)
+    }, 5000)
+    return () => clearInterval(id)
+  }, [isPaused, total])
+
+  function goPrev() {
+    setCurrentSlide((i) => (i - 1 + total) % total)
+  }
+
+  function goNext() {
+    setCurrentSlide((i) => (i + 1) % total)
   }
 
   return (
     <div className={styles.page}>
-      {/* 히어로 */}
-      <section className={styles.hero}>
-        <div className={styles.heroGlow1} />
-        <div className={styles.heroGlow2} />
-
-        <div className={styles.heroContent}>
-          <p className={styles.heroEyebrow}>Japan × Korea</p>
-          <h1 className={styles.heroTitle}>
-            일본 아티스트 내한 공연,<br />
-            <span className={styles.heroAccent}>한눈에 확인하세요</span>
-          </h1>
-          <p className={styles.heroSub}>
-            KOPIS · MusicBrainz · setlist.fm 데이터를 통합한 공연 정보 플랫폼
-          </p>
-
-          <form className={styles.searchForm} onSubmit={handleSearchSubmit}>
-            <div className={styles.searchWrap}>
-              <svg className={styles.searchIcon} width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="11" cy="11" r="8" />
-                <path d="m21 21-4.35-4.35" />
-              </svg>
-              <input
-                className={styles.searchInput}
-                type="text"
-                placeholder="아티스트, 공연명으로 검색"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-              />
-              <button className={styles.searchBtn} type="submit">
-                검색
-              </button>
+      {/* 캐러셀 */}
+      <section className={styles.carouselSection}>
+        <div className={styles.carouselInner}>
+          <div
+            className={styles.carouselViewport}
+            onMouseEnter={() => setIsPaused(true)}
+            onMouseLeave={() => setIsPaused(false)}
+          >
+            <div
+              className={styles.carouselTrack}
+              style={{ transform: `translateX(-${currentSlide * 100}%)` }}
+            >
+              {MOCK_CAROUSEL_ITEMS.map((item) => (
+                <article key={item.id} className={styles.carouselSlide} data-type={item.type}>
+                  <div className={styles.slideContent}>
+                    <p className={styles.slideArtist}>{item.artistName}</p>
+                    <h2 className={styles.slideTitle}>{item.title}</h2>
+                    <div className={styles.slideMeta}>
+                      <span className={styles.slideMetaItem}>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <rect x="3" y="4" width="18" height="18" rx="2" ry="2" /><line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" />
+                        </svg>
+                        {item.date}
+                      </span>
+                      {item.venue && (
+                        <span className={styles.slideMetaItem}>
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" /><circle cx="12" cy="10" r="3" />
+                          </svg>
+                          {item.venue}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  <div className={styles.slideDecor} aria-hidden="true">
+                    {item.artistName.charAt(0)}
+                  </div>
+                </article>
+              ))}
             </div>
-          </form>
+
+            <button className={`${styles.navBtn} ${styles.navPrev}`} onClick={goPrev} aria-label="이전 슬라이드">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="m15 18-6-6 6-6" />
+              </svg>
+            </button>
+            <button className={`${styles.navBtn} ${styles.navNext}`} onClick={goNext} aria-label="다음 슬라이드">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="m9 18 6-6-6-6" />
+              </svg>
+            </button>
+          </div>
+
+          <div className={styles.carouselDots}>
+            {MOCK_CAROUSEL_ITEMS.map((_, i) => (
+              <button
+                key={i}
+                className={`${styles.dot} ${i === currentSlide ? styles.dotActive : ''}`}
+                onClick={() => setCurrentSlide(i)}
+                aria-label={`${i + 1}번째 슬라이드로 이동`}
+              />
+            ))}
+          </div>
         </div>
       </section>
 
