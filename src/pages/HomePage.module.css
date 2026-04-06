@@ -301,6 +301,241 @@
   gap: 1.25rem;
 }
 
+/* 마지막 섹션 하단 여백 */
+.sectionLast {
+  padding-bottom: 6rem;
+}
+
+/* ===========================
+   수평 스크롤 스트립
+   =========================== */
+.scrollStrip {
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  padding-bottom: 6px;
+}
+
+.scrollStrip::-webkit-scrollbar {
+  display: none;
+}
+
+/* ===========================
+   티켓팅 임박 카드
+   =========================== */
+.ticketCard {
+  flex: 0 0 230px;
+  scroll-snap-align: start;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.2s;
+  cursor: pointer;
+}
+
+.ticketCard:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.08);
+}
+
+.ticketAccentBar {
+  height: 4px;
+  background: var(--t-color);
+}
+
+.ticketBody {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.ddayBadge {
+  align-self: flex-start;
+  padding: 0.2rem 0.625rem;
+  border-radius: 100px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--t-color);
+  background: color-mix(in srgb, var(--t-color) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--t-color) 25%, transparent);
+  margin-bottom: 0.25rem;
+}
+
+.ticketArtist {
+  margin: 0;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--t-color);
+  letter-spacing: 0.01em;
+}
+
+.ticketTitle {
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-text);
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.ticketMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-top: 0.5rem;
+}
+
+.ticketMetaItem {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+}
+
+/* ===========================
+   관심 아티스트 — 로그인 유도
+   =========================== */
+.loginTeaser {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 3rem 2rem;
+  border: 1.5px dashed var(--color-border);
+  border-radius: 16px;
+  background: linear-gradient(135deg, var(--color-accent-dim) 0%, transparent 60%);
+}
+
+.loginTeaserIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--color-accent-dim);
+  color: var(--color-accent);
+  margin-bottom: 1rem;
+}
+
+.loginTeaserTitle {
+  margin: 0 0 0.5rem;
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.loginTeaserSub {
+  margin: 0 0 1.5rem;
+  font-size: 0.9375rem;
+  color: var(--color-text-muted);
+  max-width: 360px;
+  line-height: 1.6;
+}
+
+.loginTeaserBtn {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.6875rem 1.75rem;
+  border-radius: 100px;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #fff;
+  background: var(--color-accent);
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.15s, transform 0.15s;
+}
+
+.loginTeaserBtn:hover {
+  opacity: 0.88;
+  transform: translateY(-1px);
+}
+
+/* ===========================
+   새 앨범·싱글 카드
+   =========================== */
+.albumCard {
+  flex: 0 0 160px;
+  scroll-snap-align: start;
+  cursor: pointer;
+}
+
+.albumArt {
+  width: 160px;
+  height: 160px;
+  border-radius: 12px;
+  background: linear-gradient(145deg, var(--a-from) 0%, var(--a-to) 100%);
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.albumArt::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 35% 30%, rgba(255, 255, 255, 0.15) 0%, transparent 60%);
+}
+
+.albumCard:hover .albumArt {
+  transform: scale(1.03);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.albumTypeBadge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: rgba(255, 255, 255, 0.9);
+  background: rgba(0, 0, 0, 0.28);
+  backdrop-filter: blur(4px);
+}
+
+.albumInfo {
+  padding: 0.625rem 0.125rem 0;
+}
+
+.albumArtist {
+  margin: 0 0 0.2rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.albumTitle {
+  margin: 0 0 0.2rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--color-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.albumDate {
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+}
+
 /* 반응형 */
 @media (max-width: 1279px) {
   .grid {
