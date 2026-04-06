@@ -307,7 +307,7 @@
 }
 
 /* ===========================
-   수평 스크롤 스트립
+   수평 스크롤 스트립 (모바일 기본)
    =========================== */
 .scrollStrip {
   display: flex;
@@ -320,6 +320,43 @@
 
 .scrollStrip::-webkit-scrollbar {
   display: none;
+}
+
+/* 데스크탑: 그리드 전환 */
+@media (min-width: 768px) {
+  .ticketStrip {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    overflow-x: visible;
+    scroll-snap-type: none;
+    padding-bottom: 0;
+  }
+
+  .ticketStrip .ticketCard {
+    flex: none;
+    scroll-snap-align: none;
+    width: auto;
+  }
+
+  .albumStrip {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    overflow-x: visible;
+    scroll-snap-type: none;
+    padding-bottom: 0;
+  }
+
+  .albumStrip .albumCard {
+    flex: none;
+    scroll-snap-align: none;
+    width: auto;
+  }
+
+  .albumStrip .albumArt {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1 / 1;
+  }
 }
 
 /* ===========================

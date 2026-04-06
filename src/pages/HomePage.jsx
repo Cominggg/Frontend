@@ -354,7 +354,7 @@ function HomePage() {
               </svg>
             </a>
           </div>
-          <div className={styles.scrollStrip}>
+          <div className={`${styles.scrollStrip} ${styles.ticketStrip}`}>
             {MOCK_TICKETING_SOON.map((item) => (
               <article
                 key={item.id}
@@ -418,7 +418,7 @@ function HomePage() {
           <div className={styles.sectionHeader}>
             <h2 className={styles.sectionTitle}>새 앨범·싱글</h2>
           </div>
-          <div className={styles.scrollStrip}>
+          <div className={`${styles.scrollStrip} ${styles.albumStrip}`}>
             {MOCK_NEW_RELEASES.map((item) => (
               <article key={item.id} className={styles.albumCard}>
                 <div
