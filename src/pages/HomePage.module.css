@@ -252,7 +252,28 @@
 .dotActive {
   width: 24px;
   border-radius: 4px;
-  background-color: var(--color-accent);
+  background-color: color-mix(in srgb, var(--color-accent) 30%, var(--color-border));
+  position: relative;
+  overflow: hidden;
+}
+
+.dotActive::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--color-accent);
+  border-radius: inherit;
+  transform-origin: left center;
+  animation: dotProgress 5s linear forwards;
+}
+
+@keyframes dotProgress {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+
+.dotsPaused .dotActive::after {
+  animation-play-state: paused;
 }
 
 /* ===========================

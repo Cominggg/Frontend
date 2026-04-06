@@ -329,7 +329,7 @@ function HomePage() {
             </button>
           </div>
 
-          <div className={styles.carouselDots}>
+          <div className={`${styles.carouselDots} ${isPaused ? styles.dotsPaused : ''}`}>
             {MOCK_CAROUSEL_ITEMS.map((_, i) => (
               <button
                 key={i}
