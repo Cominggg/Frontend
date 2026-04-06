@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 
 import ConcertCard from '@/components/concert/ConcertCard'
 import ConcertCardSkeleton from '@/components/concert/ConcertCardSkeleton'
+import Icon from '@/components/ui/Icon'
 import { ROUTES } from '@/constants/routes'
 import styles from './HomePage.module.css'
 
@@ -241,7 +243,8 @@ function calcDday(dateStr) {
 function HomePage() {
   const [currentSlide, setCurrentSlide] = useState(0)
   const [isPaused, setIsPaused] = useState(false)
-  const isLoading = false // TODO: React Query 연동 후 교체
+  // TODO: React Query 연동 후 useQuery의 isLoading으로 교체
+  const isLoading = false
   const total = MOCK_CAROUSEL_ITEMS.length
 
   useEffect(() => {
@@ -288,16 +291,12 @@ function HomePage() {
                     <h2 className={styles.slideTitle}>{item.title}</h2>
                     <div className={styles.slideMeta}>
                       <span className={styles.slideMetaItem}>
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <rect x="3" y="4" width="18" height="18" rx="2" ry="2" /><line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" />
-                        </svg>
+                        <Icon name="calendar" size={14} />
                         {item.date}
                       </span>
                       {item.venue && (
                         <span className={styles.slideMetaItem}>
-                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" /><circle cx="12" cy="10" r="3" />
-                          </svg>
+                          <Icon name="pin" size={14} />
                           {item.venue}
                         </span>
                       )}
@@ -318,14 +317,10 @@ function HomePage() {
             </div>
 
             <button className={`${styles.navBtn} ${styles.navPrev}`} onClick={goPrev} aria-label="이전 슬라이드">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <path d="m15 18-6-6 6-6" />
-              </svg>
+              <Icon name="chevronLeft" size={20} />
             </button>
             <button className={`${styles.navBtn} ${styles.navNext}`} onClick={goNext} aria-label="다음 슬라이드">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <path d="m9 18 6-6-6-6" />
-              </svg>
+              <Icon name="chevronRight" size={20} />
             </button>
           </div>
 
@@ -347,12 +342,10 @@ function HomePage() {
         <div className={styles.sectionInner}>
           <div className={styles.sectionHeader}>
             <h2 className={styles.sectionTitle}>티켓팅 임박</h2>
-            <a href={ROUTES.CONCERTS} className={styles.sectionMore}>
+            <Link to={ROUTES.CONCERTS} className={styles.sectionMore}>
               전체 보기
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="m9 18 6-6-6-6" />
-              </svg>
-            </a>
+              <Icon name="chevronRight" size={16} />
+            </Link>
           </div>
           <div className={`${styles.scrollStrip} ${styles.ticketStrip}`}>
             {MOCK_TICKETING_SOON.map((item) => (
@@ -368,15 +361,11 @@ function HomePage() {
                   <p className={styles.ticketTitle}>{item.title}</p>
                   <div className={styles.ticketMeta}>
                     <span className={styles.ticketMetaItem}>
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2" /><line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" />
-                      </svg>
+                      <Icon name="calendar" size={12} />
                       티켓 오픈 {item.ticketDate}
                     </span>
                     <span className={styles.ticketMetaItem}>
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" /><circle cx="12" cy="10" r="3" />
-                      </svg>
+                      <Icon name="pin" size={12} />
                       {item.venue}
                     </span>
                   </div>
@@ -392,12 +381,10 @@ function HomePage() {
         <div className={styles.sectionInner}>
           <div className={styles.sectionHeader}>
             <h2 className={styles.sectionTitle}>인기 공연</h2>
-            <a href={ROUTES.CONCERTS} className={styles.sectionMore}>
+            <Link to={ROUTES.CONCERTS} className={styles.sectionMore}>
               전체 보기
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="m9 18 6-6-6-6" />
-              </svg>
-            </a>
+              <Icon name="chevronRight" size={16} />
+            </Link>
           </div>
 
           <div className={styles.grid}>

@@ -18,6 +18,7 @@ function Header() {
 
   function handleLoginClick() {
     // TODO: 로그인 모달 오픈
+    console.warn('[Header] 로그인 모달 미구현 — 모달 컴포넌트 연결 필요')
   }
 
   function handleSearchClick() {
