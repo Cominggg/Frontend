@@ -412,27 +412,8 @@ function HomePage() {
         </div>
       </section>
 
-      {/* 관심 아티스트 공연 */}
-      <section className={styles.section}>
-        <div className={styles.sectionInner}>
-          <div className={styles.sectionHeader}>
-            <h2 className={styles.sectionTitle}>관심 아티스트 공연</h2>
-          </div>
-          <div className={styles.loginTeaser}>
-            <div className={styles.loginTeaserIcon} aria-hidden="true">
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-              </svg>
-            </div>
-            <p className={styles.loginTeaserTitle}>팔로우한 아티스트의 내한 공연을 한눈에</p>
-            <p className={styles.loginTeaserSub}>로그인하면 관심 아티스트의 새 공연 소식을 바로 확인할 수 있어요.</p>
-            <button className={styles.loginTeaserBtn}>로그인 / 회원가입</button>
-          </div>
-        </div>
-      </section>
-
       {/* 새 앨범·싱글 */}
-      <section className={`${styles.section} ${styles.sectionLast}`}>
+      <section className={styles.section}>
         <div className={styles.sectionInner}>
           <div className={styles.sectionHeader}>
             <h2 className={styles.sectionTitle}>새 앨범·싱글</h2>
@@ -453,6 +434,25 @@ function HomePage() {
                 </div>
               </article>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 관심 아티스트 공연 */}
+      <section className={`${styles.section} ${styles.sectionLast}`}>
+        <div className={styles.sectionInner}>
+          <div className={styles.sectionHeader}>
+            <h2 className={styles.sectionTitle}>관심 아티스트 공연</h2>
+          </div>
+          <div className={styles.loginTeaser}>
+            <div className={styles.loginTeaserIcon} aria-hidden="true">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+              </svg>
+            </div>
+            <p className={styles.loginTeaserTitle}>팔로우한 아티스트의 내한 공연을 한눈에</p>
+            <p className={styles.loginTeaserSub}>로그인하면 관심 아티스트의 새 공연 소식을 바로 확인할 수 있어요.</p>
+            <button className={styles.loginTeaserBtn}>로그인 / 회원가입</button>
           </div>
         </div>
       </section>
