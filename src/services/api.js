@@ -30,9 +30,10 @@ api.interceptors.response.use(
         useAuthStore.getState().setAccessToken(data.accessToken)
         originalRequest.headers.Authorization = `Bearer ${data.accessToken}`
         return api(originalRequest)
-      } catch {
+      } catch (refreshError) {
         useAuthStore.getState().clearUser()
         // 로그인 모달 트리거는 로그인 모달 구현 후 연결
+        return Promise.reject(refreshError)
       }
     }
 
