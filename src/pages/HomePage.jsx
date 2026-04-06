@@ -231,10 +231,10 @@ const MOCK_POPULAR_CONCERTS = [
 
 function calcDday(dateStr) {
   const [y, m, d] = dateStr.split('.').map(Number)
-  const target = new Date(y, m - 1, d)
   const today = new Date()
-  today.setHours(0, 0, 0, 0)
-  const diff = Math.round((target - today) / (1000 * 60 * 60 * 24))
+  const targetUTC = Date.UTC(y, m - 1, d)
+  const todayUTC = Date.UTC(today.getFullYear(), today.getMonth(), today.getDate())
+  const diff = Math.trunc((targetUTC - todayUTC) / (1000 * 60 * 60 * 24))
   if (diff === 0) return 'D-DAY'
   if (diff > 0) return `D-${diff}`
   return `D+${Math.abs(diff)}`

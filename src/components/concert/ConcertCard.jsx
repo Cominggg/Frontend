@@ -15,9 +15,10 @@ const PLACEHOLDER_PALETTE = [
 ]
 
 function getArtistColor(name) {
+  const safeName = typeof name === 'string' ? name : ''
   let hash = 0
-  for (let i = 0; i < name.length; i++) {
-    hash = (hash * 31 + name.charCodeAt(i)) | 0
+  for (let i = 0; i < safeName.length; i++) {
+    hash = (hash * 31 + safeName.charCodeAt(i)) | 0
   }
   return PLACEHOLDER_PALETTE[Math.abs(hash) % PLACEHOLDER_PALETTE.length]
 }

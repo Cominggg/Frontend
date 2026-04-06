@@ -60,7 +60,7 @@ function Header() {
                 src={user.profileImage}
                 alt={user.name}
                 className={styles.avatar}
-                onError={(e) => { e.target.src = '/assets/artist-placeholder.png' }}
+                onError={(e) => { e.target.onerror = null; e.target.src = '/assets/artist-placeholder.png' }}
               />
             </Link>
           ) : (

@@ -264,10 +264,10 @@
   background: var(--color-accent);
   border-radius: inherit;
   transform-origin: left center;
-  animation: dotProgress 5s linear forwards;
+  animation: dot-progress 5s linear forwards;
 }
 
-@keyframes dotProgress {
+@keyframes dot-progress {
   from { transform: scaleX(0); }
   to   { transform: scaleX(1); }
 }

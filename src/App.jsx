@@ -1,6 +1,8 @@
 import { Routes, Route } from 'react-router-dom'
 
+import AdminRoute from '@/components/layout/AdminRoute'
 import Layout from '@/components/layout/Layout'
+import PrivateRoute from '@/components/layout/PrivateRoute'
 import HomePage from '@/pages/HomePage'
 import { ROUTES } from '@/constants/routes'
 
@@ -15,8 +17,8 @@ function App() {
         <Route path="/concerts/:id" element={<div>공연 상세</div>} />
         <Route path={ROUTES.CALENDAR} element={<div>캘린더</div>} />
         <Route path={ROUTES.SEARCH} element={<div>통합 검색</div>} />
-        <Route path={ROUTES.MY} element={<div>마이페이지</div>} />
-        <Route path={ROUTES.ADMIN} element={<div>관리자</div>} />
+        <Route path={ROUTES.MY} element={<PrivateRoute><div>마이페이지</div></PrivateRoute>} />
+        <Route path={ROUTES.ADMIN} element={<AdminRoute><div>관리자</div></AdminRoute>} />
       </Routes>
     </Layout>
   )
