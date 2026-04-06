@@ -405,7 +405,7 @@ function HomePage() {
               ? Array.from({ length: 8 }).map((_, i) => (
                   <ConcertCardSkeleton key={i} />
                 ))
-              : MOCK_POPULAR_CONCERTS.map((concert) => (
+              : MOCK_POPULAR_CONCERTS.slice(0, 4).map((concert) => (
                   <ConcertCard key={concert.id} concert={concert} />
                 ))}
           </div>
