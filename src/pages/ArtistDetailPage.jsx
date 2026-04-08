@@ -1,0 +1,250 @@
+import { useState } from 'react'
+import { Link, useParams } from 'react-router-dom'
+
+import ArtistConcertItem from '@/components/artist/ArtistConcertItem'
+import useAuthStore from '@/stores/authStore'
+import { ROUTES } from '@/constants/routes'
+import styles from './ArtistDetailPage.module.css'
+
+// ── 아바타 플레이스홀더 팔레트 ──────────────────────────────────────
+const PLACEHOLDER_PALETTE = [
+  ['#7c3aed', '#c4b5fd'],
+  ['#0369a1', '#7dd3fc'],
+  ['#be123c', '#fda4af'],
+  ['#15803d', '#86efac'],
+  ['#b45309', '#fcd34d'],
+  ['#0f766e', '#5eead4'],
+  ['#9333ea', '#d8b4fe'],
+  ['#1d4ed8', '#93c5fd'],
+]
+
+function getArtistColor(name) {
+  const safeName = typeof name === 'string' ? name : ''
+  let hash = 0
+  for (let i = 0; i < safeName.length; i++) {
+    hash = (hash * 31 + safeName.charCodeAt(i)) | 0
+  }
+  return PLACEHOLDER_PALETTE[Math.abs(hash) % PLACEHOLDER_PALETTE.length]
+}
+
+function formatFollowers(n) {
+  if (n >= 10000) return `${(n / 10000).toFixed(1).replace(/\.0$/, '')}만명`
+  return `${n.toLocaleString()}명`
+}
+
+// ── TODO: API 연동 후 제거 ───────────────────────────────────────────
+const MOCK_ARTIST_MAP = {
+  1: {
+    id: 1, name: 'YOASOBI', imageUrl: null,
+    genres: ['J-Pop', 'Anime'], hasUpcomingConcert: true,
+    isFollowing: false, followersCount: 24800,
+    links: [
+      { id: 'spotify',   label: 'Spotify',     url: '#' },
+      { id: 'youtube',   label: 'YouTube',     url: '#' },
+      { id: 'twitter',   label: 'X (Twitter)', url: '#' },
+      { id: 'instagram', label: 'Instagram',   url: '#' },
+    ],
+    concerts: [
+      { id: 1,   title: 'YOASOBI ARENA TOUR 2025 "THE MONSTER"',  startDate: '2025.08.15', endDate: '2025.08.16', venue: 'KSPO DOME, 서울',                    status: '공연예정' },
+      { id: 101, title: 'YOASOBI THE BOOK CONCERT 2023',           startDate: '2023.05.27', endDate: '2023.05.28', venue: '올림픽공원 체조경기장, 서울',          status: '공연완료' },
+      { id: 102, title: 'YOASOBI LIVE 2022 "Into The Night"',      startDate: '2022.10.15', endDate: null,         venue: '예스24 라이브홀, 서울',               status: '공연완료' },
+      { id: 103, title: 'YOASOBI CONCERT 2021',                    startDate: '2021.09.04', endDate: null,         venue: '올림픽공원 K-아트홀, 서울',            status: '공연완료' },
+    ],
+  },
+  2: {
+    id: 2, name: 'Kenshi Yonezu', imageUrl: null,
+    genres: ['J-Pop', 'Rock'], hasUpcomingConcert: true,
+    isFollowing: true, followersCount: 31200,
+    links: [
+      { id: 'spotify',   label: 'Spotify',     url: '#' },
+      { id: 'youtube',   label: 'YouTube',     url: '#' },
+      { id: 'twitter',   label: 'X (Twitter)', url: '#' },
+    ],
+    concerts: [
+      { id: 2,   title: 'Kenshi Yonezu TOUR 2025 "LOST CORNER"',   startDate: '2025.04.19', endDate: '2025.04.20', venue: '고척스카이돔, 서울',                  status: '공연완료' },
+      { id: 201, title: 'Kenshi Yonezu STADIUM LIVE 2023',          startDate: '2023.11.18', endDate: '2023.11.19', venue: '잠실종합운동장 주경기장, 서울',        status: '공연완료' },
+      { id: 202, title: 'Kenshi Yonezu HALL TOUR 2022',             startDate: '2022.06.11', endDate: null,         venue: '올림픽공원 체조경기장, 서울',          status: '공연완료' },
+    ],
+  },
+  3: {
+    id: 3, name: 'Ado', imageUrl: null,
+    genres: ['J-Pop', 'Anime'], hasUpcomingConcert: true,
+    isFollowing: false, followersCount: 19500,
+    links: [
+      { id: 'spotify',   label: 'Spotify',     url: '#' },
+      { id: 'youtube',   label: 'YouTube',     url: '#' },
+      { id: 'twitter',   label: 'X (Twitter)', url: '#' },
+      { id: 'instagram', label: 'Instagram',   url: '#' },
+    ],
+    concerts: [
+      { id: 3,   title: 'Ado WORLD TOUR "Hibana" in Seoul',         startDate: '2025.06.21', endDate: null,         venue: '고척스카이돔, 서울',                  status: '공연예정' },
+      { id: 301, title: 'Ado WORLD TOUR 2024 "Wish"',               startDate: '2024.04.13', endDate: null,         venue: 'KSPO DOME, 서울',                    status: '공연완료' },
+      { id: 302, title: 'Ado LIVE 2023',                             startDate: '2023.08.05', endDate: null,         venue: '올림픽공원 체조경기장, 서울',          status: '공연완료' },
+    ],
+  },
+}
+
+function getMockArtist(id) {
+  // 등록된 아티스트 → 상세 데이터 반환
+  // 미등록 id → MOCK_ARTISTS 목록의 기본값으로 대체
+  const FALLBACK_NAMES = {
+    4: 'King Gnu', 5: 'Official髭男dism', 6: 'RADWIMPS',
+    7: 'Mrs. GREEN APPLE', 8: 'Fujii Kaze', 9: 'ZUTOMAYO',
+    10: 'Creepy Nuts', 11: 'ONE OK ROCK', 12: 'Eve',
+    13: 'Yorushika', 14: 'Aimer', 15: 'Aimyon',
+    16: 'mol-74', 17: 'syudou', 18: 'back number',
+  }
+
+  if (MOCK_ARTIST_MAP[id]) return MOCK_ARTIST_MAP[id]
+
+  const name = FALLBACK_NAMES[id]
+  if (!name) return null
+
+  return {
+    id, name, imageUrl: null, genres: ['J-Pop'], hasUpcomingConcert: false,
+    isFollowing: false, followersCount: 5000,
+    links: [], concerts: [],
+  }
+}
+// ────────────────────────────────────────────────────────────────────
+
+function ArtistDetailPage() {
+  const { id } = useParams()
+  const artist = getMockArtist(Number(id))
+
+  const [isFollowing, setIsFollowing] = useState(artist?.isFollowing ?? false)
+  const [imgFailed, setImgFailed] = useState(false)
+  const user = useAuthStore((s) => s.user)
+
+  // TODO: React Query 연동 후 isLoading으로 교체
+  const isLoading = false
+
+  function handleFollow() {
+    if (!user) {
+      // TODO: 로그인 모달 표시 (redirectUri: 현재 URL)
+      return
+    }
+    setIsFollowing((prev) => !prev)
+  }
+
+  if (isLoading) return null // TODO: 스켈레톤으로 교체
+
+  if (!artist) {
+    return (
+      <div className={styles.notFound}>
+        <p>찾을 수 없는 아티스트입니다.</p>
+        <Link to={ROUTES.ARTISTS} className={styles.backLink}>아티스트 목록으로</Link>
+      </div>
+    )
+  }
+
+  const { name, imageUrl, genres, hasUpcomingConcert, followersCount, links, concerts } = artist
+  const showPlaceholder = !imageUrl || imgFailed
+  const [colorFrom, colorTo] = getArtistColor(name)
+
+  return (
+    <div className={styles.page}>
+      <div className={styles.inner}>
+
+        {/* 뒤로 가기 */}
+        <Link to={ROUTES.ARTISTS} className={styles.backLink}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="m15 18-6-6 6-6" />
+          </svg>
+          아티스트 목록
+        </Link>
+
+        {/* 히어로 */}
+        <section
+          className={styles.hero}
+          style={{ '--hero-from': colorFrom + '18', '--hero-to': colorTo + '08' }}
+        >
+          {/* 아바타 */}
+          <div className={styles.avatarWrap}>
+            {showPlaceholder ? (
+              <div
+                className={styles.avatarPlaceholder}
+                style={{ '--a-from': colorFrom, '--a-to': colorTo }}
+              >
+                <span className={styles.avatarInitial}>{name.charAt(0)}</span>
+              </div>
+            ) : (
+              <img
+                src={imageUrl}
+                alt={name}
+                className={styles.avatar}
+                onError={() => setImgFailed(true)}
+              />
+            )}
+          </div>
+
+          {/* 정보 */}
+          <div className={styles.heroInfo}>
+            {hasUpcomingConcert && <span className={styles.comingBadge}>COMING</span>}
+            <h1 className={styles.artistName}>{name}</h1>
+            {genres.length > 0 && (
+              <div className={styles.genres}>
+                {genres.map((g) => (
+                  <span key={g} className={styles.genreChip}>{g}</span>
+                ))}
+              </div>
+            )}
+            <p className={styles.followers}>팔로워 {formatFollowers(followersCount)}</p>
+            <button
+              className={`${styles.followBtn} ${isFollowing ? styles.following : ''}`}
+              onClick={handleFollow}
+              aria-label={isFollowing ? `${name} 언팔로우` : `${name} 팔로우`}
+            >
+              {isFollowing ? '팔로잉' : '+ 팔로우'}
+            </button>
+          </div>
+        </section>
+
+        {/* 외부 링크 (MusicBrainz url-rels) */}
+        {links.length > 0 && (
+          <section className={styles.section}>
+            <h2 className={styles.sectionTitle}>스트리밍 / 소셜</h2>
+            <div className={styles.links}>
+              {links.map((link) => (
+                <a
+                  key={link.id}
+                  href={link.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={styles.linkBtn}
+                >
+                  {link.label}
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                    <polyline points="15 3 21 3 21 9" />
+                    <line x1="10" y1="14" x2="21" y2="3" />
+                  </svg>
+                </a>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* 내한 공연 내역 */}
+        <section className={styles.section}>
+          <h2 className={styles.sectionTitle}>
+            내한 공연 내역
+            <span className={styles.sectionCount}>{concerts.length}건</span>
+          </h2>
+          {concerts.length > 0 ? (
+            <div className={styles.concertList}>
+              {concerts.map((concert) => (
+                <ArtistConcertItem key={concert.id} concert={concert} />
+              ))}
+            </div>
+          ) : (
+            <p className={styles.empty}>등록된 내한 공연 내역이 없습니다.</p>
+          )}
+        </section>
+
+      </div>
+    </div>
+  )
+}
+
+export default ArtistDetailPage
