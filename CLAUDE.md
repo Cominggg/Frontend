@@ -34,6 +34,7 @@ Jpop 아티스트 내한 공연 정보 통합 웹 플랫폼 (KOPIS + MusicBrainz
 - 레포: `https://github.com/Cominggg/Specification`
 - Raw 기본 경로: `https://raw.githubusercontent.com/Cominggg/Specification/main/spec/`
 - **읽는 조건**: 새 기능 구현 시작 / 로컬 요약본으로 부족할 때 / `/sync-docs` 실행 시
+- **갱신 조건**: 기능 명세 변경(추가·수정·제거) 발생 시 → 마스터 명세와 로컬 요약본(`docs/features.md`) 모두 갱신 후 `CHANGELOG.md` 업데이트 (`/sync-docs` 스킬 사용)
 - **파일 매핑**: 기능→`features.md`, API→`api.md`, 인증→`auth-policy.md`, UX→`ux-policy.md`, 관리자→`admin.md`
 - 읽는 방법: `gh api repos/Cominggg/Specification/contents/spec/{파일명} --jq '.content' | base64 -d`
 - 명세 수정 후 반드시 `CHANGELOG.md`도 갱신한다 (`/sync-docs` 스킬 사용)
