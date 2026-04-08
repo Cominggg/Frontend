@@ -28,33 +28,30 @@
 /* ── 레이아웃 ── */
 .layout {
   display: grid;
-  grid-template-columns: 300px 1fr;
-  gap: 3rem;
-  align-items: flex-start;
+  grid-template-columns: 280px 1fr;
+  gap: 2.5rem;
+  align-items: start;
 }
 
-/* ── 포스터 ── */
-.posterCol {
-  position: sticky;
-  top: calc(var(--header-height) + 1.5rem);
-}
+/* ── 대표 이미지 ── */
+.thumbnailCol {}
 
-.posterWrap {
+.thumbnailWrap {
   width: 100%;
-  aspect-ratio: 2 / 3;
+  aspect-ratio: 1 / 1;
   border-radius: 16px;
   overflow: hidden;
   background: var(--color-border);
-  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
 }
 
-.poster {
+.thumbnail {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-.posterPlaceholder {
+.thumbnailPlaceholder {
   width: 100%;
   height: 100%;
   display: flex;
@@ -64,8 +61,8 @@
   padding: 1.5rem;
 }
 
-.posterArtistName {
-  font-size: 1.375rem;
+.thumbnailArtistName {
+  font-size: 1.25rem;
   font-weight: 800;
   color: rgba(255, 255, 255, 0.9);
   text-align: center;
@@ -224,6 +221,58 @@
   border-color: var(--color-accent-border);
 }
 
+/* ── 정보 포스터 (하단) ── */
+.posterSection {
+  margin-top: 3rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.posterLabel {
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  align-self: flex-start;
+}
+
+.posterWrap {
+  width: 100%;
+  max-width: 360px;
+  aspect-ratio: 2 / 3;
+  border-radius: 16px;
+  overflow: hidden;
+  background: var(--color-border);
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.15);
+}
+
+.poster {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.posterPlaceholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(145deg, var(--color-accent) 0%, var(--color-accent-border) 100%);
+  padding: 1.5rem;
+}
+
+.posterArtistName {
+  font-size: 1.375rem;
+  font-weight: 800;
+  color: rgba(255, 255, 255, 0.9);
+  text-align: center;
+  line-height: 1.35;
+  overflow-wrap: break-word;
+}
+
 /* ── Not Found ── */
 .notFound {
   display: flex;
@@ -257,13 +306,16 @@
     gap: 1.5rem;
   }
 
-  .posterCol {
-    position: static;
-    max-width: 240px;
+  .thumbnailWrap {
+    max-width: 200px;
     margin: 0 auto;
   }
 
   .title {
     font-size: 1.375rem;
+  }
+
+  .posterWrap {
+    max-width: 260px;
   }
 }

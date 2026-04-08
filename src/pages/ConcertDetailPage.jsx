@@ -9,7 +9,7 @@ import styles from './ConcertDetailPage.module.css'
 // TODO: API 연동 후 제거
 const MOCK_CONCERT_MAP = {
   1: {
-    id: 1, posterUrl: null, artistName: 'YOASOBI', artistId: 1,
+    id: 1, thumbnailUrl: null, posterUrl: null, artistName: 'YOASOBI', artistId: 1,
     title: 'YOASOBI ARENA TOUR 2025 "THE MONSTER"',
     startDate: '2025.08.15', endDate: '2025.08.16',
     venue: 'KSPO DOME, 서울', status: '공연예정',
@@ -21,7 +21,7 @@ const MOCK_CONCERT_MAP = {
     description: 'YOASOBI의 첫 한국 아레나 투어. Ayase와 ikura가 선보이는 환상적인 무대.',
   },
   2: {
-    id: 2, posterUrl: null, artistName: 'Kenshi Yonezu', artistId: 2,
+    id: 2, thumbnailUrl: null, posterUrl: null, artistName: 'Kenshi Yonezu', artistId: 2,
     title: 'Kenshi Yonezu TOUR 2025 "LOST CORNER"',
     startDate: '2025.04.19', endDate: '2025.04.20',
     venue: '고척스카이돔, 서울', status: '공연완료',
@@ -32,7 +32,7 @@ const MOCK_CONCERT_MAP = {
     description: '요네즈 켄시의 "LOST CORNER" 앨범 투어의 한국 공연.',
   },
   3: {
-    id: 3, posterUrl: null, artistName: 'Ado', artistId: 3,
+    id: 3, thumbnailUrl: null, posterUrl: null, artistName: 'Ado', artistId: 3,
     title: 'Ado WORLD TOUR "Hibana" in Seoul',
     startDate: '2025.06.21', endDate: null,
     venue: '고척스카이돔, 서울', status: '공연예정',
@@ -50,7 +50,7 @@ function getMockConcert(id) {
   const num = Number(id)
   if (num >= 4 && num <= 15) {
     return {
-      id: num, posterUrl: null, artistName: `아티스트 ${num}`, artistId: num,
+      id: num, thumbnailUrl: null, posterUrl: null, artistName: `아티스트 ${num}`, artistId: num,
       title: `공연 제목 ${num}`, startDate: '2025.01.01', endDate: null,
       venue: '서울', status: '공연예정',
       price: '미정', ticketLinks: [], description: '',
@@ -62,7 +62,8 @@ function getMockConcert(id) {
 function ConcertDetailPage() {
   const { id } = useParams()
   const concert = getMockConcert(Number(id))
-  const [imgFailed, setImgFailed] = useState(false)
+  const [thumbnailFailed, setThumbnailFailed] = useState(false)
+  const [posterFailed, setPosterFailed] = useState(false)
   const user = useAuthStore((s) => s.user)
 
   // TODO: React Query 연동 후 isLoading으로 교체
@@ -87,9 +88,10 @@ function ConcertDetailPage() {
     )
   }
 
-  const { posterUrl, artistName, artistId, title, startDate, endDate,
+  const { thumbnailUrl, posterUrl, artistName, artistId, title, startDate, endDate,
           venue, status, price, ticketLinks, description } = concert
-  const showPlaceholder = !posterUrl || imgFailed
+  const showThumbnailPlaceholder = !thumbnailUrl || thumbnailFailed
+  const showPosterPlaceholder = !posterUrl || posterFailed
 
   const dateRange = endDate && endDate !== startDate
     ? `${startDate} ~ ${endDate}`
@@ -107,27 +109,28 @@ function ConcertDetailPage() {
           공연 목록
         </Link>
 
+        {/* 대표 이미지 + 공연 정보 */}
         <div className={styles.layout}>
 
-          {/* 포스터 */}
-          <div className={styles.posterCol}>
-            <div className={styles.posterWrap}>
-              {showPlaceholder ? (
-                <div className={styles.posterPlaceholder}>
-                  <span className={styles.posterArtistName}>{artistName}</span>
+          {/* 대표 이미지 */}
+          <div className={styles.thumbnailCol}>
+            <div className={styles.thumbnailWrap}>
+              {showThumbnailPlaceholder ? (
+                <div className={styles.thumbnailPlaceholder}>
+                  <span className={styles.thumbnailArtistName}>{artistName}</span>
                 </div>
               ) : (
                 <img
-                  src={posterUrl}
-                  alt={title}
-                  className={styles.poster}
-                  onError={() => setImgFailed(true)}
+                  src={thumbnailUrl}
+                  alt={artistName}
+                  className={styles.thumbnail}
+                  onError={() => setThumbnailFailed(true)}
                 />
               )}
             </div>
           </div>
 
-          {/* 정보 */}
+          {/* 공연 정보 */}
           <div className={styles.infoCol}>
 
             {/* 상태 배지 + 아티스트명 */}
@@ -217,6 +220,25 @@ function ConcertDetailPage() {
               정보 문의
             </button>
 
+          </div>
+        </div>
+
+        {/* 정보 포스터 (하단) */}
+        <div className={styles.posterSection}>
+          <p className={styles.posterLabel}>정보 포스터</p>
+          <div className={styles.posterWrap}>
+            {showPosterPlaceholder ? (
+              <div className={styles.posterPlaceholder}>
+                <span className={styles.posterArtistName}>{artistName}</span>
+              </div>
+            ) : (
+              <img
+                src={posterUrl}
+                alt={`${title} 포스터`}
+                className={styles.poster}
+                onError={() => setPosterFailed(true)}
+              />
+            )}
           </div>
         </div>
 
