@@ -110,6 +110,31 @@
   line-height: 1.6;
 }
 
+/* ── 프로필 목록 ── */
+.profileList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin: 0;
+}
+
+.profileItem {
+  display: flex;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+}
+
+.profileItem dt {
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+  min-width: 3rem;
+}
+
+.profileItem dd {
+  margin: 0;
+  color: var(--color-text);
+}
+
 .followers {
   margin: 0;
   font-size: 0.875rem;
@@ -139,8 +164,8 @@
 }
 
 .followBtn.following:hover {
-  background: #c51843;
-  border-color: #c51843;
+  background: var(--color-accent-dark);
+  border-color: var(--color-accent-dark);
 }
 
 /* ── 섹션 공통 ── */
@@ -190,6 +215,58 @@
   border-color: var(--color-accent-border);
   color: var(--color-accent);
   background: var(--color-accent-dim);
+}
+
+/* ── 공연 탭 ── */
+.concertTabs {
+  display: flex;
+  gap: 0.25rem;
+  margin-bottom: 0.875rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.concertTab {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.5rem 0.875rem;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.concertTab:hover {
+  color: var(--color-text);
+}
+
+.concertTabActive {
+  color: var(--color-accent);
+  border-bottom-color: var(--color-accent);
+  font-weight: 600;
+}
+
+.concertTabCount {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 100px;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  background: var(--color-border);
+  color: var(--color-text-muted);
+}
+
+.concertTabActive .concertTabCount {
+  background: var(--color-accent-dim);
+  color: var(--color-accent);
 }
 
 /* ── 공연 목록 ── */

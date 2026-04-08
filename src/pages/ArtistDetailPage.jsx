@@ -4,28 +4,8 @@ import { Link, useParams } from 'react-router-dom'
 import ArtistConcertItem from '@/components/artist/ArtistConcertItem'
 import useAuthStore from '@/stores/authStore'
 import { ROUTES } from '@/constants/routes'
+import { getArtistColor } from '@/utils/artistColor'
 import styles from './ArtistDetailPage.module.css'
-
-// ── 아바타 플레이스홀더 팔레트 ──────────────────────────────────────
-const PLACEHOLDER_PALETTE = [
-  ['#7c3aed', '#c4b5fd'],
-  ['#0369a1', '#7dd3fc'],
-  ['#be123c', '#fda4af'],
-  ['#15803d', '#86efac'],
-  ['#b45309', '#fcd34d'],
-  ['#0f766e', '#5eead4'],
-  ['#9333ea', '#d8b4fe'],
-  ['#1d4ed8', '#93c5fd'],
-]
-
-function getArtistColor(name) {
-  const safeName = typeof name === 'string' ? name : ''
-  let hash = 0
-  for (let i = 0; i < safeName.length; i++) {
-    hash = (hash * 31 + safeName.charCodeAt(i)) | 0
-  }
-  return PLACEHOLDER_PALETTE[Math.abs(hash) % PLACEHOLDER_PALETTE.length]
-}
 
 function formatFollowers(n) {
   if (n >= 10000) return `${(n / 10000).toFixed(1).replace(/\.0$/, '')}만명`
@@ -38,6 +18,8 @@ const MOCK_ARTIST_MAP = {
     id: 1, name: 'YOASOBI', imageUrl: null,
     genres: ['J-Pop', 'Anime'], hasUpcomingConcert: true,
     isFollowing: false, followersCount: 24800,
+    debutDate: '2019.09.12',
+    members: ['Ayase', 'ikura'],
     links: [
       { id: 'spotify',   label: 'Spotify',     url: '#' },
       { id: 'youtube',   label: 'YouTube',     url: '#' },
@@ -45,31 +27,35 @@ const MOCK_ARTIST_MAP = {
       { id: 'instagram', label: 'Instagram',   url: '#' },
     ],
     concerts: [
-      { id: 1,   title: 'YOASOBI ARENA TOUR 2025 "THE MONSTER"',  startDate: '2025.08.15', endDate: '2025.08.16', venue: 'KSPO DOME, 서울',                    status: '공연예정' },
-      { id: 101, title: 'YOASOBI THE BOOK CONCERT 2023',           startDate: '2023.05.27', endDate: '2023.05.28', venue: '올림픽공원 체조경기장, 서울',          status: '공연완료' },
-      { id: 102, title: 'YOASOBI LIVE 2022 "Into The Night"',      startDate: '2022.10.15', endDate: null,         venue: '예스24 라이브홀, 서울',               status: '공연완료' },
-      { id: 103, title: 'YOASOBI CONCERT 2021',                    startDate: '2021.09.04', endDate: null,         venue: '올림픽공원 K-아트홀, 서울',            status: '공연완료' },
+      { id: 1,   title: 'YOASOBI ARENA TOUR 2025 "THE MONSTER"',  startDate: '2025.08.15', endDate: '2025.08.16', venue: 'KSPO DOME, 서울',               status: '공연예정' },
+      { id: 101, title: 'YOASOBI THE BOOK CONCERT 2023',           startDate: '2023.05.27', endDate: '2023.05.28', venue: '올림픽공원 체조경기장, 서울',     status: '공연완료' },
+      { id: 102, title: 'YOASOBI LIVE 2022 "Into The Night"',      startDate: '2022.10.15', endDate: null,         venue: '예스24 라이브홀, 서울',          status: '공연완료' },
+      { id: 103, title: 'YOASOBI CONCERT 2021',                    startDate: '2021.09.04', endDate: null,         venue: '올림픽공원 K-아트홀, 서울',       status: '공연완료' },
     ],
   },
   2: {
     id: 2, name: 'Kenshi Yonezu', imageUrl: null,
     genres: ['J-Pop', 'Rock'], hasUpcomingConcert: true,
     isFollowing: true, followersCount: 31200,
+    debutDate: '2012.02.29',
+    members: [],
     links: [
       { id: 'spotify',   label: 'Spotify',     url: '#' },
       { id: 'youtube',   label: 'YouTube',     url: '#' },
       { id: 'twitter',   label: 'X (Twitter)', url: '#' },
     ],
     concerts: [
-      { id: 2,   title: 'Kenshi Yonezu TOUR 2025 "LOST CORNER"',   startDate: '2025.04.19', endDate: '2025.04.20', venue: '고척스카이돔, 서울',                  status: '공연완료' },
-      { id: 201, title: 'Kenshi Yonezu STADIUM LIVE 2023',          startDate: '2023.11.18', endDate: '2023.11.19', venue: '잠실종합운동장 주경기장, 서울',        status: '공연완료' },
-      { id: 202, title: 'Kenshi Yonezu HALL TOUR 2022',             startDate: '2022.06.11', endDate: null,         venue: '올림픽공원 체조경기장, 서울',          status: '공연완료' },
+      { id: 2,   title: 'Kenshi Yonezu TOUR 2025 "LOST CORNER"',   startDate: '2025.04.19', endDate: '2025.04.20', venue: '고척스카이돔, 서울',             status: '공연완료' },
+      { id: 201, title: 'Kenshi Yonezu STADIUM LIVE 2023',          startDate: '2023.11.18', endDate: '2023.11.19', venue: '잠실종합운동장 주경기장, 서울',   status: '공연완료' },
+      { id: 202, title: 'Kenshi Yonezu HALL TOUR 2022',             startDate: '2022.06.11', endDate: null,         venue: '올림픽공원 체조경기장, 서울',     status: '공연완료' },
     ],
   },
   3: {
     id: 3, name: 'Ado', imageUrl: null,
     genres: ['J-Pop', 'Anime'], hasUpcomingConcert: true,
     isFollowing: false, followersCount: 19500,
+    debutDate: '2020.10.02',
+    members: [],
     links: [
       { id: 'spotify',   label: 'Spotify',     url: '#' },
       { id: 'youtube',   label: 'YouTube',     url: '#' },
@@ -77,16 +63,14 @@ const MOCK_ARTIST_MAP = {
       { id: 'instagram', label: 'Instagram',   url: '#' },
     ],
     concerts: [
-      { id: 3,   title: 'Ado WORLD TOUR "Hibana" in Seoul',         startDate: '2025.06.21', endDate: null,         venue: '고척스카이돔, 서울',                  status: '공연예정' },
-      { id: 301, title: 'Ado WORLD TOUR 2024 "Wish"',               startDate: '2024.04.13', endDate: null,         venue: 'KSPO DOME, 서울',                    status: '공연완료' },
-      { id: 302, title: 'Ado LIVE 2023',                             startDate: '2023.08.05', endDate: null,         venue: '올림픽공원 체조경기장, 서울',          status: '공연완료' },
+      { id: 3,   title: 'Ado WORLD TOUR "Hibana" in Seoul',         startDate: '2025.06.21', endDate: null,         venue: '고척스카이돔, 서울',             status: '공연예정' },
+      { id: 301, title: 'Ado WORLD TOUR 2024 "Wish"',               startDate: '2024.04.13', endDate: null,         venue: 'KSPO DOME, 서울',               status: '공연완료' },
+      { id: 302, title: 'Ado LIVE 2023',                             startDate: '2023.08.05', endDate: null,         venue: '올림픽공원 체조경기장, 서울',     status: '공연완료' },
     ],
   },
 }
 
 function getMockArtist(id) {
-  // 등록된 아티스트 → 상세 데이터 반환
-  // 미등록 id → MOCK_ARTISTS 목록의 기본값으로 대체
   const FALLBACK_NAMES = {
     4: 'King Gnu', 5: 'Official髭男dism', 6: 'RADWIMPS',
     7: 'Mrs. GREEN APPLE', 8: 'Fujii Kaze', 9: 'ZUTOMAYO',
@@ -103,10 +87,13 @@ function getMockArtist(id) {
   return {
     id, name, imageUrl: null, genres: ['J-Pop'], hasUpcomingConcert: false,
     isFollowing: false, followersCount: 5000,
+    debutDate: null, members: [],
     links: [], concerts: [],
   }
 }
 // ────────────────────────────────────────────────────────────────────
+
+const CONCERT_TABS = ['전체', '예정', '과거']
 
 function ArtistDetailPage() {
   const { id } = useParams()
@@ -114,6 +101,7 @@ function ArtistDetailPage() {
 
   const [isFollowing, setIsFollowing] = useState(artist?.isFollowing ?? false)
   const [imgFailed, setImgFailed] = useState(false)
+  const [concertTab, setConcertTab] = useState('전체')
   const user = useAuthStore((s) => s.user)
 
   // TODO: React Query 연동 후 isLoading으로 교체
@@ -138,9 +126,21 @@ function ArtistDetailPage() {
     )
   }
 
-  const { name, imageUrl, genres, hasUpcomingConcert, followersCount, links, concerts } = artist
+  const { name, imageUrl, genres, hasUpcomingConcert, followersCount,
+          debutDate, members, links, concerts } = artist
   const showPlaceholder = !imageUrl || imgFailed
   const [colorFrom, colorTo] = getArtistColor(name)
+
+  const upcomingConcerts = concerts.filter(
+    (c) => c.status === '공연예정' || c.status === '공연중'
+  )
+  const pastConcerts = concerts.filter(
+    (c) => c.status === '공연완료' || c.status === '공연취소'
+  )
+  const displayedConcerts =
+    concertTab === '전체' ? concerts :
+    concertTab === '예정' ? upcomingConcerts :
+    pastConcerts
 
   return (
     <div className={styles.page}>
@@ -189,6 +189,23 @@ function ArtistDetailPage() {
                 ))}
               </div>
             )}
+
+            {/* 프로필 정보 */}
+            <dl className={styles.profileList}>
+              {debutDate && (
+                <div className={styles.profileItem}>
+                  <dt>데뷔</dt>
+                  <dd>{debutDate}</dd>
+                </div>
+              )}
+{members.length > 1 && (
+                <div className={styles.profileItem}>
+                  <dt>멤버</dt>
+                  <dd>{members.join(', ')}</dd>
+                </div>
+              )}
+            </dl>
+
             <p className={styles.followers}>팔로워 {formatFollowers(followersCount)}</p>
             <button
               className={`${styles.followBtn} ${isFollowing ? styles.following : ''}`}
@@ -227,18 +244,42 @@ function ArtistDetailPage() {
 
         {/* 내한 공연 내역 */}
         <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>
-            내한 공연 내역
-            <span className={styles.sectionCount}>{concerts.length}건</span>
-          </h2>
-          {concerts.length > 0 ? (
+          <h2 className={styles.sectionTitle}>내한 공연 내역</h2>
+
+          {/* 예정 / 과거 탭 */}
+          <div className={styles.concertTabs} role="tablist" aria-label="공연 구분">
+            {CONCERT_TABS.map((tab) => {
+              const count =
+                tab === '전체' ? concerts.length :
+                tab === '예정' ? upcomingConcerts.length :
+                pastConcerts.length
+              return (
+                <button
+                  key={tab}
+                  role="tab"
+                  aria-selected={concertTab === tab}
+                  className={`${styles.concertTab} ${concertTab === tab ? styles.concertTabActive : ''}`}
+                  onClick={() => setConcertTab(tab)}
+                >
+                  {tab}
+                  <span className={styles.concertTabCount}>{count}</span>
+                </button>
+              )
+            })}
+          </div>
+
+          {displayedConcerts.length > 0 ? (
             <div className={styles.concertList}>
-              {concerts.map((concert) => (
+              {displayedConcerts.map((concert) => (
                 <ArtistConcertItem key={concert.id} concert={concert} />
               ))}
             </div>
           ) : (
-            <p className={styles.empty}>등록된 내한 공연 내역이 없습니다.</p>
+            <p className={styles.empty}>
+              {concertTab === '전체' ? '등록된 내한 공연 내역이 없습니다.' :
+               concertTab === '예정' ? '예정된 내한 공연이 없습니다.' :
+               '과거 내한 공연 내역이 없습니다.'}
+            </p>
           )}
         </section>
 

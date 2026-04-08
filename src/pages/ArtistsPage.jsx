@@ -43,14 +43,6 @@ function ArtistsPage() {
     })
   }, [query, selectedGenre])
 
-  function handleQueryChange(e) {
-    setQuery(e.target.value)
-  }
-
-  function handleGenreSelect(genre) {
-    setSelectedGenre(genre)
-  }
-
   return (
     <div className={styles.page}>
       <div className={styles.inner}>
@@ -76,7 +68,7 @@ function ArtistsPage() {
             className={styles.searchInput}
             placeholder="아티스트 검색..."
             value={query}
-            onChange={handleQueryChange}
+            onChange={(e) => setQuery(e.target.value)}
             aria-label="아티스트 검색"
           />
           {query && (
@@ -101,7 +93,7 @@ function ArtistsPage() {
               role="tab"
               aria-selected={selectedGenre === genre}
               className={`${styles.genreTab} ${selectedGenre === genre ? styles.genreTabActive : ''}`}
-              onClick={() => handleGenreSelect(genre)}
+              onClick={() => setSelectedGenre(genre)}
             >
               {genre}
             </button>

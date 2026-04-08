@@ -133,6 +133,6 @@
 }
 
 .followBtn.following:hover {
-  background: #c51843;
-  border-color: #c51843;
+  background: var(--color-accent-dark);
+  border-color: var(--color-accent-dark);
 }
