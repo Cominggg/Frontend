@@ -9,7 +9,7 @@ import styles from './ConcertDetailPage.module.css'
 // TODO: API 연동 후 제거
 const MOCK_CONCERT_MAP = {
   1: {
-    id: 1, thumbnailUrl: null, posterUrl: null, artistName: 'YOASOBI', artistId: 1,
+    id: 1, thumbnailUrl: null, posterUrls: [], artistName: 'YOASOBI', artistId: 1,
     title: 'YOASOBI ARENA TOUR 2025 "THE MONSTER"',
     startDate: '2025.08.15', endDate: '2025.08.16',
     venue: 'KSPO DOME, 서울', status: '공연예정',
@@ -21,7 +21,7 @@ const MOCK_CONCERT_MAP = {
     description: 'YOASOBI의 첫 한국 아레나 투어. Ayase와 ikura가 선보이는 환상적인 무대.',
   },
   2: {
-    id: 2, thumbnailUrl: null, posterUrl: null, artistName: 'Kenshi Yonezu', artistId: 2,
+    id: 2, thumbnailUrl: null, posterUrls: [], artistName: 'Kenshi Yonezu', artistId: 2,
     title: 'Kenshi Yonezu TOUR 2025 "LOST CORNER"',
     startDate: '2025.04.19', endDate: '2025.04.20',
     venue: '고척스카이돔, 서울', status: '공연완료',
@@ -32,7 +32,7 @@ const MOCK_CONCERT_MAP = {
     description: '요네즈 켄시의 "LOST CORNER" 앨범 투어의 한국 공연.',
   },
   3: {
-    id: 3, thumbnailUrl: null, posterUrl: null, artistName: 'Ado', artistId: 3,
+    id: 3, thumbnailUrl: null, posterUrls: [], artistName: 'Ado', artistId: 3,
     title: 'Ado WORLD TOUR "Hibana" in Seoul',
     startDate: '2025.06.21', endDate: null,
     venue: '고척스카이돔, 서울', status: '공연예정',
@@ -43,6 +43,26 @@ const MOCK_CONCERT_MAP = {
     ],
     description: 'Ado의 월드 투어 "Hibana" 한국 공연.',
   },
+  8: {
+    id: 8,
+    thumbnailUrl: 'https://etbr-cms-site.s3.ap-northeast-1.amazonaws.com/zutomayo.net/share/intense2/ZUTOMAYO_SEOUL_2026031415.jpg',
+    posterUrls: [
+      'https://cdnticket.melon.co.kr/resource/image/upload/product/2025/12/20251218120508ea897dee-3f9e-4cde-978d-e67c0bd57c27.png',
+      'https://cdnticket.melon.co.kr/resource/image/upload/product/2025/12/202512181205268a552bab-36d0-4c3e-b06b-93e0875c21ff.png',
+      'https://cdnticket.melon.co.kr/resource/image/upload/product/2025/12/20251218120531f167b29f-ccf0-4d3e-949e-9d667a378def.png',
+      'https://cdnticket.melon.co.kr/resource/image/upload/product/2025/12/202512181205377adc9baa-7269-4f58-a612-b67e55083f1c.png',
+      'https://cdnticket.melon.co.kr/resource/image/upload/product/2025/12/20251218120543d701a3a1-6a1a-48c4-909b-cf5233be71d4.png',
+    ],
+    artistName: 'ZUTOMAYO', artistId: 8,
+    title: 'ZUTOMAYO INTENSE II「坐・ZOMBIE CRAB LABO」in Seoul',
+    startDate: '2026.03.14', endDate: '2026.03.15',
+    venue: '고려대학교 화정체육관, 서울', status: '공연완료',
+    price: '전석 138,000원',
+    ticketLinks: [
+      { id: 'melon', label: '멜론티켓', url: '#' },
+    ],
+    description: 'ZUTOMAYO의 JAPAN & ASIA TOUR "INTENSE II 坐・ZOMBIE CRAB LABO" 서울 공연. 2026년 3월 14~15일 고려대학교 화정체육관에서 2일간 진행.',
+  },
 }
 
 function getMockConcert(id) {
@@ -50,7 +70,7 @@ function getMockConcert(id) {
   const num = Number(id)
   if (num >= 4 && num <= 15) {
     return {
-      id: num, thumbnailUrl: null, posterUrl: null, artistName: `아티스트 ${num}`, artistId: num,
+      id: num, thumbnailUrl: null, posterUrls: [], artistName: `아티스트 ${num}`, artistId: num,
       title: `공연 제목 ${num}`, startDate: '2025.01.01', endDate: null,
       venue: '서울', status: '공연예정',
       price: '미정', ticketLinks: [], description: '',
@@ -59,11 +79,23 @@ function getMockConcert(id) {
   return null
 }
 
+function PosterImage({ url, alt }) {
+  const [failed, setFailed] = useState(false)
+  if (failed) return null
+  return (
+    <img
+      src={url}
+      alt={alt}
+      className={styles.posterImg}
+      onError={() => setFailed(true)}
+    />
+  )
+}
+
 function ConcertDetailPage() {
   const { id } = useParams()
   const concert = getMockConcert(Number(id))
   const [thumbnailFailed, setThumbnailFailed] = useState(false)
-  const [posterFailed, setPosterFailed] = useState(false)
   const user = useAuthStore((s) => s.user)
 
   // TODO: React Query 연동 후 isLoading으로 교체
@@ -88,10 +120,9 @@ function ConcertDetailPage() {
     )
   }
 
-  const { thumbnailUrl, posterUrl, artistName, artistId, title, startDate, endDate,
+  const { thumbnailUrl, posterUrls, artistName, artistId, title, startDate, endDate,
           venue, status, price, ticketLinks, description } = concert
   const showThumbnailPlaceholder = !thumbnailUrl || thumbnailFailed
-  const showPosterPlaceholder = !posterUrl || posterFailed
 
   const dateRange = endDate && endDate !== startDate
     ? `${startDate} ~ ${endDate}`
@@ -225,21 +256,18 @@ function ConcertDetailPage() {
 
         {/* 정보 포스터 (하단) */}
         <div className={styles.posterSection}>
-          <p className={styles.posterLabel}>정보 포스터</p>
-          <div className={styles.posterWrap}>
-            {showPosterPlaceholder ? (
-              <div className={styles.posterPlaceholder}>
-                <span className={styles.posterArtistName}>{artistName}</span>
-              </div>
-            ) : (
-              <img
-                src={posterUrl}
-                alt={`${title} 포스터`}
-                className={styles.poster}
-                onError={() => setPosterFailed(true)}
-              />
-            )}
-          </div>
+          <p className={styles.posterLabel}>공연 정보</p>
+          {posterUrls.length > 0 ? (
+            <div className={styles.posterList}>
+              {posterUrls.map((url, i) => (
+                <PosterImage key={url} url={url} alt={`${title} 공연 정보 ${i + 1}`} />
+              ))}
+            </div>
+          ) : (
+            <div className={styles.posterPlaceholder}>
+              <span className={styles.posterArtistName}>{artistName}</span>
+            </div>
+          )}
         </div>
 
       </div>
