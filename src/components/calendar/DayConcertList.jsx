@@ -1,3 +1,6 @@
+import { Link } from 'react-router-dom'
+
+import { ROUTES } from '@/constants/routes'
 import styles from './DayConcertList.module.css'
 
 const WEEKDAY_NAMES = ['일', '월', '화', '수', '목', '금', '토']
@@ -58,45 +61,47 @@ function DayConcertList({ selectedDate, events, onCalendarToggle }) {
                 : ev.startDate
 
             return (
-              <li key={ev.id} className={styles.item}>
-                <span className={styles.colorBar} style={{ backgroundColor: ev.color }} />
+              <li key={ev.id}>
+                <Link to={ROUTES.CONCERT_DETAIL(ev.concertId)} className={styles.item}>
+                  <span className={styles.colorBar} style={{ backgroundColor: ev.color }} />
 
-                <div className={styles.poster}>
-                  <img
-                    src={ev.posterUrl || '/assets/poster-placeholder.png'}
-                    alt={ev.title}
-                    onError={(e) => {
-                      e.target.src = '/assets/poster-placeholder.png'
-                    }}
-                  />
-                </div>
+                  <div className={styles.poster}>
+                    <img
+                      src={ev.posterUrl || '/assets/poster-placeholder.png'}
+                      alt={ev.title}
+                      onError={(e) => {
+                        e.target.src = '/assets/poster-placeholder.png'
+                      }}
+                    />
+                  </div>
 
-                <div className={styles.info}>
-                  <p className={styles.artist}>{ev.artistName}</p>
-                  <p className={styles.concertTitle}>{ev.title}</p>
-                  <p className={styles.meta}>
-                    {dateRange}
-                    <span className={styles.sep}>·</span>
-                    {ev.venue}
-                  </p>
-                </div>
+                  <div className={styles.info}>
+                    <p className={styles.artist}>{ev.artistName}</p>
+                    <p className={styles.concertTitle}>{ev.title}</p>
+                    <p className={styles.meta}>
+                      {dateRange}
+                      <span className={styles.sep}>·</span>
+                      {ev.venue}
+                    </p>
+                  </div>
 
-                <div className={styles.actions}>
-                  <span
-                    className={styles.badge}
-                    style={{ color: statusColor, borderColor: statusColor }}
-                  >
-                    {ev.status}
-                  </span>
-                  <button
-                    className={`${styles.calBtn} ${ev.inMyCalendar ? styles.calBtnAdded : ''}`}
-                    onClick={() => onCalendarToggle(ev)}
-                    aria-label={ev.inMyCalendar ? '내 캘린더에서 제거' : '내 캘린더에 추가'}
-                  >
-                    {ev.inMyCalendar ? <CheckIcon /> : <PlusIcon />}
-                    <span>{ev.inMyCalendar ? '추가됨' : '내 캘린더'}</span>
-                  </button>
-                </div>
+                  <div className={styles.actions}>
+                    <span
+                      className={styles.badge}
+                      style={{ color: statusColor, borderColor: statusColor }}
+                    >
+                      {ev.status}
+                    </span>
+                    <button
+                      className={`${styles.calBtn} ${ev.inMyCalendar ? styles.calBtnAdded : ''}`}
+                      onClick={(e) => { e.preventDefault(); onCalendarToggle(ev) }}
+                      aria-label={ev.inMyCalendar ? '내 캘린더에서 제거' : '내 캘린더에 추가'}
+                    >
+                      {ev.inMyCalendar ? <CheckIcon /> : <PlusIcon />}
+                      <span>{ev.inMyCalendar ? '추가됨' : '내 캘린더'}</span>
+                    </button>
+                  </div>
+                </Link>
               </li>
             )
           })}
