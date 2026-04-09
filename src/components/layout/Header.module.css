@@ -66,24 +66,6 @@
   margin-left: auto;
 }
 
-.iconBtn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-  color: var(--color-text-muted);
-  background: transparent;
-  border: none;
-  border-radius: 8px;
-  transition: color 0.15s, background-color 0.15s;
-}
-
-.iconBtn:hover {
-  color: var(--color-text);
-  background-color: var(--color-surface-hover);
-}
-
 .loginBtn {
   padding: 0.375rem 1rem;
   font-size: 0.875rem;
