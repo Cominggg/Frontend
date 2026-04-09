@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link, NavLink, useNavigate } from 'react-router-dom'
+import { Link, NavLink } from 'react-router-dom'
 
 import { ROUTES } from '@/constants/routes'
 import useAuthStore from '@/stores/authStore'
@@ -13,16 +13,11 @@ const NAV_LINKS = [
 
 function Header() {
   const user = useAuthStore((s) => s.user)
-  const navigate = useNavigate()
   const [menuOpen, setMenuOpen] = useState(false)
 
   function handleLoginClick() {
     // TODO: 로그인 모달 오픈
     console.warn('[Header] 로그인 모달 미구현 — 모달 컴포넌트 연결 필요')
-  }
-
-  function handleSearchClick() {
-    navigate(ROUTES.SEARCH)
   }
 
   return (
@@ -47,13 +42,6 @@ function Header() {
         </nav>
 
         <div className={styles.actions}>
-          <button className={styles.iconBtn} onClick={handleSearchClick} aria-label="검색">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="11" cy="11" r="8" />
-              <path d="m21 21-4.35-4.35" />
-            </svg>
-          </button>
-
           {user ? (
             <Link to={ROUTES.MY} className={styles.avatarBtn}>
               <img

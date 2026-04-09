@@ -5,6 +5,8 @@ import Layout from '@/components/layout/Layout'
 import PrivateRoute from '@/components/layout/PrivateRoute'
 import ArtistDetailPage from '@/pages/ArtistDetailPage'
 import ArtistsPage from '@/pages/ArtistsPage'
+import ConcertDetailPage from '@/pages/ConcertDetailPage'
+import ConcertsPage from '@/pages/ConcertsPage'
 import HomePage from '@/pages/HomePage'
 import { ROUTES } from '@/constants/routes'
 
@@ -15,8 +17,8 @@ function App() {
         <Route path={ROUTES.HOME} element={<HomePage />} />
         <Route path={ROUTES.ARTISTS} element={<ArtistsPage />} />
         <Route path="/artists/:id" element={<ArtistDetailPage />} />
-        <Route path={ROUTES.CONCERTS} element={<div>공연 목록</div>} />
-        <Route path="/concerts/:id" element={<div>공연 상세</div>} />
+        <Route path={ROUTES.CONCERTS} element={<ConcertsPage />} />
+        <Route path="/concerts/:id" element={<ConcertDetailPage />} />
         <Route path={ROUTES.CALENDAR} element={<div>캘린더</div>} />
         <Route path={ROUTES.SEARCH} element={<div>통합 검색</div>} />
         <Route path={ROUTES.MY} element={<PrivateRoute><div>마이페이지</div></PrivateRoute>} />
