@@ -113,7 +113,7 @@ function ConcertDetailPage() {
         <div className={styles.layout}>
 
           {/* 대표 이미지 */}
-          <div className={styles.thumbnailCol}>
+          <div>
             <div className={styles.thumbnailWrap}>
               {showThumbnailPlaceholder ? (
                 <div className={styles.thumbnailPlaceholder}>

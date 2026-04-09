@@ -34,8 +34,6 @@
 }
 
 /* ── 대표 이미지 ── */
-.thumbnailCol {}
-
 .thumbnailWrap {
   width: 100%;
   aspect-ratio: 1 / 1;
