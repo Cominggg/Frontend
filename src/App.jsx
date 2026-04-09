@@ -3,6 +3,7 @@ import { Routes, Route } from 'react-router-dom'
 import AdminRoute from '@/components/layout/AdminRoute'
 import Layout from '@/components/layout/Layout'
 import PrivateRoute from '@/components/layout/PrivateRoute'
+import ScrollToTop from '@/components/layout/ScrollToTop'
 import ArtistDetailPage from '@/pages/ArtistDetailPage'
 import ArtistsPage from '@/pages/ArtistsPage'
 import CalendarPage from '@/pages/CalendarPage'
@@ -14,6 +15,7 @@ import { ROUTES } from '@/constants/routes'
 function App() {
   return (
     <Layout>
+      <ScrollToTop />
       <Routes>
         <Route path={ROUTES.HOME} element={<HomePage />} />
         <Route path={ROUTES.ARTISTS} element={<ArtistsPage />} />
