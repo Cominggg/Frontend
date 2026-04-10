@@ -1,6 +1,7 @@
-import { useState } from 'react'
-import { Link, NavLink, useLocation } from 'react-router-dom'
+import { useState, useRef, useEffect } from 'react'
+import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
 
+import { logout } from '@/services/api'
 import { ROUTES } from '@/constants/routes'
 import useAuthStore from '@/stores/authStore'
 import useLoginModalStore from '@/stores/loginModalStore'
@@ -16,10 +17,34 @@ function Header() {
   const user = useAuthStore((s) => s.user)
   const openLoginModal = useLoginModalStore((s) => s.open)
   const location = useLocation()
+  const navigate = useNavigate()
   const [menuOpen, setMenuOpen] = useState(false)
+  const [dropdownOpen, setDropdownOpen] = useState(false)
+  const dropdownRef = useRef(null)
+
+  useEffect(() => {
+    function handleClickOutside(e) {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setDropdownOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
 
   function handleLoginClick() {
     openLoginModal(location.pathname + location.search)
+  }
+
+  async function handleLogout() {
+    try {
+      await logout()
+    } catch (error) {
+      console.error('Logout failed:', error)
+    } finally {
+      setDropdownOpen(false)
+      navigate(ROUTES.HOME)
+    }
   }
 
   return (
@@ -45,14 +70,35 @@ function Header() {
 
         <div className={styles.actions}>
           {user ? (
-            <Link to={ROUTES.MY} className={styles.avatarBtn}>
-              <img
-                src={user.profileImage}
-                alt={user.name}
-                className={styles.avatar}
-                onError={(e) => { e.target.onerror = null; e.target.src = '/assets/artist-placeholder.png' }}
-              />
-            </Link>
+            <div className={styles.avatarWrapper} ref={dropdownRef}>
+              <button
+                className={styles.avatarBtn}
+                onClick={() => setDropdownOpen((v) => !v)}
+                aria-expanded={dropdownOpen}
+                aria-label="사용자 메뉴"
+              >
+                <img
+                  src={user.profileImage}
+                  alt={user.name}
+                  className={styles.avatar}
+                  onError={(e) => { e.target.onerror = null; e.target.src = '/assets/artist-placeholder.png' }}
+                />
+              </button>
+              {dropdownOpen && (
+                <div className={styles.dropdown}>
+                  <Link
+                    to={ROUTES.MY}
+                    className={styles.dropdownItem}
+                    onClick={() => setDropdownOpen(false)}
+                  >
+                    마이페이지
+                  </Link>
+                  <button className={styles.dropdownItem} onClick={() => void handleLogout()}>
+                    로그아웃
+                  </button>
+                </div>
+              )}
+            </div>
           ) : (
             <button className={styles.loginBtn} onClick={handleLoginClick}>
               로그인
@@ -86,6 +132,30 @@ function Header() {
               {label}
             </NavLink>
           ))}
+          {user ? (
+            <>
+              <Link
+                to={ROUTES.MY}
+                className={styles.mobileNavLink}
+                onClick={() => setMenuOpen(false)}
+              >
+                마이페이지
+              </Link>
+              <button
+                className={styles.mobileNavAction}
+                onClick={() => { setMenuOpen(false); void handleLogout() }}
+              >
+                로그아웃
+              </button>
+            </>
+          ) : (
+            <button
+              className={styles.mobileNavAction}
+              onClick={() => { setMenuOpen(false); handleLoginClick() }}
+            >
+              로그인
+            </button>
+          )}
         </nav>
       )}
     </header>
