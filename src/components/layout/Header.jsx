@@ -37,8 +37,14 @@ function Header() {
   }
 
   async function handleLogout() {
-    await logout()
-    navigate(ROUTES.HOME)
+    try {
+      await logout()
+    } catch (error) {
+      console.error('Logout failed:', error)
+    } finally {
+      setDropdownOpen(false)
+      navigate(ROUTES.HOME)
+    }
   }
 
   return (
@@ -87,7 +93,7 @@ function Header() {
                   >
                     마이페이지
                   </Link>
-                  <button className={styles.dropdownItem} onClick={handleLogout}>
+                  <button className={styles.dropdownItem} onClick={() => void handleLogout()}>
                     로그아웃
                   </button>
                 </div>
@@ -137,7 +143,7 @@ function Header() {
               </Link>
               <button
                 className={styles.mobileNavAction}
-                onClick={() => { setMenuOpen(false); handleLogout() }}
+                onClick={() => { setMenuOpen(false); void handleLogout() }}
               >
                 로그아웃
               </button>
