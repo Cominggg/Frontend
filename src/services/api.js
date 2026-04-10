@@ -42,4 +42,9 @@ api.interceptors.response.use(
   },
 )
 
+export async function logout() {
+  await api.post('/auth/logout')
+  useAuthStore.getState().clearUser()
+}
+
 export default api
