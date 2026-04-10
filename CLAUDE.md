@@ -6,14 +6,18 @@ Jpop 아티스트 내한 공연 정보 통합 웹 플랫폼 (KOPIS + MusicBrainz
 - React 19 + Vite 8, JavaScript (JSX, no TypeScript)
 - ESLint with react-hooks and react-refresh plugins
 - Axios (인증·에러 interceptor 중앙 처리)
-- React Router v6 (PrivateRoute로 인증 필요 페이지 보호)
+- React Router v7 (PrivateRoute로 인증 필요 페이지 보호)
 - React Query (서버 상태), Zustand (전역 상태)
+- `@/` → `src/` 경로 alias (vite.config.js 설정)
 
 ## Commands
 - `npm run dev` - start dev server
 - `npm run build` - production build
 - `npm run lint` - run ESLint
 - `npm run preview` - preview production build
+
+## 환경 변수
+- `VITE_API_BASE_URL` — 백엔드 주소 (기본값: `http://localhost:8080`, `.env` 파일에 설정)
 
 ## 핵심 규칙
 - `no-unused-vars` rule ignores names matching `^[A-Z_]`
