@@ -1,5 +1,6 @@
 import axios from 'axios'
 import useAuthStore from '@/stores/authStore'
+import useLoginModalStore from '@/stores/loginModalStore'
 
 const api = axios.create({
   baseURL: '/api',
@@ -32,7 +33,7 @@ api.interceptors.response.use(
         return api(originalRequest)
       } catch (refreshError) {
         useAuthStore.getState().clearUser()
-        // 로그인 모달 트리거는 로그인 모달 구현 후 연결
+        useLoginModalStore.getState().open(window.location.pathname + window.location.search)
         return Promise.reject(refreshError)
       }
     }

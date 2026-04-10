@@ -1,8 +1,9 @@
 import { useState } from 'react'
-import { Link, NavLink } from 'react-router-dom'
+import { Link, NavLink, useLocation } from 'react-router-dom'
 
 import { ROUTES } from '@/constants/routes'
 import useAuthStore from '@/stores/authStore'
+import useLoginModalStore from '@/stores/loginModalStore'
 import styles from './Header.module.css'
 
 const NAV_LINKS = [
@@ -13,11 +14,12 @@ const NAV_LINKS = [
 
 function Header() {
   const user = useAuthStore((s) => s.user)
+  const openLoginModal = useLoginModalStore((s) => s.open)
+  const location = useLocation()
   const [menuOpen, setMenuOpen] = useState(false)
 
   function handleLoginClick() {
-    // TODO: 로그인 모달 오픈
-    console.warn('[Header] 로그인 모달 미구현 — 모달 컴포넌트 연결 필요')
+    openLoginModal(location.pathname + location.search)
   }
 
   return (
