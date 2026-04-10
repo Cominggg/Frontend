@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link, NavLink } from 'react-router-dom'
+import { Link, NavLink, useLocation } from 'react-router-dom'
 
 import { ROUTES } from '@/constants/routes'
 import useAuthStore from '@/stores/authStore'
@@ -15,10 +15,11 @@ const NAV_LINKS = [
 function Header() {
   const user = useAuthStore((s) => s.user)
   const openLoginModal = useLoginModalStore((s) => s.open)
+  const location = useLocation()
   const [menuOpen, setMenuOpen] = useState(false)
 
   function handleLoginClick() {
-    openLoginModal()
+    openLoginModal(location.pathname + location.search)
   }
 
   return (
