@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react'
 
 import CalendarGrid from '@/components/calendar/CalendarGrid'
 import DayConcertList from '@/components/calendar/DayConcertList'
+import { isSameDay } from '@/utils/date'
 import styles from './CalendarPage.module.css'
 
 const MONTH_NAMES = ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월']
@@ -21,14 +22,6 @@ const MOCK_EVENTS = [
 
 // TODO: Initialize from GET /api/calendar/my
 const INITIAL_MY_CALENDAR_IDS = new Set([1, 3])
-
-function isSameDay(a, b) {
-  return (
-    a.getFullYear() === b.getFullYear() &&
-    a.getMonth() === b.getMonth() &&
-    a.getDate() === b.getDate()
-  )
-}
 
 function ChevronLeft() {
   return (

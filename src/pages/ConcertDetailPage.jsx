@@ -260,7 +260,7 @@ function ConcertDetailPage() {
           {posterUrls.length > 0 ? (
             <div className={styles.posterList}>
               {posterUrls.map((url, i) => (
-                <PosterImage key={url} url={url} alt={`${title} 공연 정보 ${i + 1}`} />
+                <PosterImage key={i} url={url} alt={`${title} 공연 정보 ${i + 1}`} />
               ))}
             </div>
           ) : (

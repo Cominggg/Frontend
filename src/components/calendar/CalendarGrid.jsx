@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 
+import { isSameDay } from '@/utils/date'
 import styles from './CalendarGrid.module.css'
 
 const WEEKDAYS = ['일', '월', '화', '수', '목', '금', '토']
@@ -7,14 +8,6 @@ const MAX_VISIBLE = 2
 
 function toDateStr(date) {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
-}
-
-function isSameDay(a, b) {
-  return (
-    a.getFullYear() === b.getFullYear() &&
-    a.getMonth() === b.getMonth() &&
-    a.getDate() === b.getDate()
-  )
 }
 
 function buildWeeks(year, month) {
@@ -44,7 +37,7 @@ function getEventsForDay(events, date) {
 }
 
 function CalendarGrid({ year, month, events, selectedDate, onDayClick }) {
-  const today = useMemo(() => new Date(), [])
+  const today = new Date()
   const weeks = useMemo(() => buildWeeks(year, month), [year, month])
 
   return (

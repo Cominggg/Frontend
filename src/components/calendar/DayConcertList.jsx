@@ -94,7 +94,7 @@ function DayConcertList({ selectedDate, events, onCalendarToggle }) {
                     </span>
                     <button
                       className={`${styles.calBtn} ${ev.inMyCalendar ? styles.calBtnAdded : ''}`}
-                      onClick={(e) => { e.preventDefault(); onCalendarToggle(ev) }}
+                      onClick={(e) => { e.preventDefault(); e.stopPropagation(); onCalendarToggle(ev) }}
                       aria-label={ev.inMyCalendar ? '내 캘린더에서 제거' : '내 캘린더에 추가'}
                     >
                       {ev.inMyCalendar ? <CheckIcon /> : <PlusIcon />}
