@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 
 import useLoginModalStore from '@/stores/loginModalStore'
 import styles from './LoginModal.module.css'
@@ -42,17 +42,40 @@ const PROVIDERS = [
   },
 ]
 
-function handleLogin(provider) {
-  window.location.href = `/api/auth/login/${provider}`
+const FOCUSABLE = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+
+function handleLogin(provider, redirectUri) {
+  const url = new URL(`/api/auth/login/${provider}`, window.location.origin)
+  if (redirectUri) {
+    url.searchParams.set('redirect_uri', redirectUri)
+  }
+  window.location.href = url.toString()
 }
 
 function LoginModal() {
-  const { isOpen, close } = useLoginModalStore()
+  const { isOpen, close, redirectUri } = useLoginModalStore()
+  const modalRef = useRef(null)
 
   useEffect(() => {
     if (!isOpen) return
+
+    const modal = modalRef.current
+    const focusable = modal ? [...modal.querySelectorAll(FOCUSABLE)] : []
+    focusable[0]?.focus()
+
     function handleKeyDown(e) {
-      if (e.key === 'Escape') close()
+      if (e.key === 'Escape') {
+        close()
+        return
+      }
+      if (e.key !== 'Tab' || focusable.length === 0) return
+      const first = focusable[0]
+      const last = focusable[focusable.length - 1]
+      if (e.shiftKey) {
+        if (document.activeElement === first) { e.preventDefault(); last.focus() }
+      } else {
+        if (document.activeElement === last) { e.preventDefault(); first.focus() }
+      }
     }
     document.addEventListener('keydown', handleKeyDown)
     return () => document.removeEventListener('keydown', handleKeyDown)
@@ -62,7 +85,7 @@ function LoginModal() {
 
   return (
     <div className={styles.overlay} onClick={close} role="dialog" aria-modal="true" aria-label="로그인">
-      <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+      <div className={styles.modal} onClick={(e) => e.stopPropagation()} ref={modalRef}>
         <button className={styles.closeBtn} onClick={close} aria-label="닫기">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
             <path d="M18 6 6 18M6 6l12 12" />
@@ -79,7 +102,7 @@ function LoginModal() {
             <button
               key={key}
               className={`${styles.socialBtn} ${styles[key]}`}
-              onClick={() => handleLogin(key)}
+              onClick={() => handleLogin(key, redirectUri)}
             >
               <span className={styles.socialIcon}>{icon}</span>
               {label}
