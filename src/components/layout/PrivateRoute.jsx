@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { useLocation } from 'react-router-dom'
 
 import useAuthStore from '@/stores/authStore'
@@ -8,12 +8,13 @@ function PrivateRoute({ children }) {
   const user = useAuthStore((s) => s.user)
   const location = useLocation()
   const openLoginModal = useLoginModalStore((s) => s.open)
+  const initialPath = useRef(location.pathname + location.search)
 
   useEffect(() => {
     if (!user) {
-      openLoginModal(location.pathname + location.search)
+      openLoginModal(initialPath.current)
     }
-  }, [user, location, openLoginModal])
+  }, [user, openLoginModal])
 
   if (!user) return null
 
