@@ -24,10 +24,19 @@ const MOCK_ARTISTS = [
   { id: 16, name: 'mol-74',            imageUrl: null, genres: ['Indie', 'J-Rock'],       hasUpcomingConcert: false, isFollowing: false },
   { id: 17, name: 'syudou',            imageUrl: null, genres: ['J-Pop', 'Electronic'],   hasUpcomingConcert: false, isFollowing: false },
   { id: 18, name: 'back number',       imageUrl: null, genres: ['J-Rock', 'J-Pop'],       hasUpcomingConcert: false, isFollowing: false },
+  { id: 19, name: 'SiM',              imageUrl: null, genres: ['J-Rock', 'Alternative'],  hasUpcomingConcert: false, isFollowing: false },
+  { id: 20, name: 'Vaundy',           imageUrl: null, genres: ['J-Pop', 'Indie'],          hasUpcomingConcert: true,  isFollowing: false },
+  { id: 21, name: 'milet',            imageUrl: null, genres: ['J-Pop', 'Anime'],          hasUpcomingConcert: false, isFollowing: false },
+  { id: 22, name: 'amazarashi',       imageUrl: null, genres: ['Indie', 'Alternative'],    hasUpcomingConcert: false, isFollowing: false },
+  { id: 23, name: 'BUMP OF CHICKEN',  imageUrl: null, genres: ['J-Rock', 'Indie'],         hasUpcomingConcert: false, isFollowing: false },
+  { id: 24, name: 'sumika',           imageUrl: null, genres: ['J-Pop', 'J-Rock'],         hasUpcomingConcert: false, isFollowing: false },
+  { id: 25, name: 'Saucy Dog',        imageUrl: null, genres: ['Indie', 'J-Pop'],          hasUpcomingConcert: true,  isFollowing: false },
+  { id: 26, name: 'Ryokuoushoku Shakai', imageUrl: null, genres: ['J-Pop', 'Anime'],       hasUpcomingConcert: false, isFollowing: false },
+  { id: 27, name: 'THE ORAL CIGARETTES', imageUrl: null, genres: ['J-Rock', 'Alternative'], hasUpcomingConcert: false, isFollowing: false },
 ]
 
 const ALL_GENRES = ['전체', 'J-Pop', 'J-Rock', 'Anime', 'Indie', 'Electronic', 'Hip-Hop', 'R&B', 'Soul', 'Alternative']
-const PAGE_SIZE = 24
+const PAGE_SIZE = 25
 
 function ArtistsPage() {
   const [query, setQuery] = useState('')
