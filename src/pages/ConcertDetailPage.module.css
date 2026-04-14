@@ -199,6 +199,12 @@
 }
 
 /* ── 정보 문의 ── */
+.inquiryBtns {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
 .inquiryBtn {
   display: inline-flex;
   align-items: center;
