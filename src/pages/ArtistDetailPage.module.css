@@ -168,6 +168,64 @@
   border-color: var(--color-accent-dark);
 }
 
+/* ── D-day 배너 ── */
+.ddayBanner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--color-accent) 8%, var(--color-surface));
+  border: 1.5px solid color-mix(in srgb, var(--color-accent) 25%, transparent);
+  margin-bottom: 2rem;
+  overflow: hidden;
+}
+
+.ddayContent {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  overflow: hidden;
+}
+
+.ddayLabel {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-accent);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.ddayInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  overflow: hidden;
+}
+
+.ddayTitle {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--color-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ddayDate {
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+}
+
+.ddayCount {
+  flex-shrink: 0;
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--color-accent);
+  letter-spacing: -0.04em;
+}
+
 /* ── 섹션 공통 ── */
 .section {
   margin-bottom: 2.5rem;
@@ -215,6 +273,70 @@
   border-color: var(--color-accent-border);
   color: var(--color-accent);
   background: var(--color-accent-dim);
+}
+
+/* ── 디스코그래피 ── */
+.releaseList {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--color-surface);
+}
+
+.releaseItem {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  padding: 0.75rem 1.125rem;
+}
+
+.releaseItem + .releaseItem {
+  border-top: 1px solid var(--color-border);
+}
+
+.releaseBadge {
+  flex-shrink: 0;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  min-width: 42px;
+  text-align: center;
+}
+
+.releaseBadgeALBUM {
+  background: color-mix(in srgb, var(--color-accent) 12%, transparent);
+  color: var(--color-accent);
+}
+
+.releaseBadgeSINGLE {
+  background: color-mix(in srgb, #0369a1 12%, transparent);
+  color: #0369a1;
+}
+
+.releaseBadgeEP {
+  background: color-mix(in srgb, #0f766e 12%, transparent);
+  color: #0f766e;
+}
+
+.releaseTitle {
+  flex: 1;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--color-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.releaseDate {
+  flex-shrink: 0;
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
 }
 
 /* ── 공연 탭 ── */
