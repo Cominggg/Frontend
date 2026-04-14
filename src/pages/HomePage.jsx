@@ -281,7 +281,7 @@ function HomePage() {
 
           <div className={styles.grid}>
             {isLoading
-              ? Array.from({ length: 8 }).map((_, i) => (
+              ? Array.from({ length: 4 }).map((_, i) => (
                   <ConcertCardSkeleton key={i} />
                 ))
               : MOCK_POPULAR_CONCERTS.slice(0, 4).map((concert) => (
