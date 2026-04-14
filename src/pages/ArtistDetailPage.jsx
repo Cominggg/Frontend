@@ -143,6 +143,14 @@ function ArtistDetailPage() {
     setIsFollowing((prev) => !prev)
   }
 
+  function handleArtistInquiry() {
+    if (!user) {
+      // TODO: 로그인 모달 표시 (redirectUri: 현재 URL)
+      return
+    }
+    // TODO: 문의 모달 표시 (type: ARTIST, targetId: id)
+  }
+
   if (isLoading) return null // TODO: 스켈레톤으로 교체
 
   if (!artist) {
@@ -354,6 +362,18 @@ function ArtistDetailPage() {
             </p>
           )}
         </section>
+
+        {/* 아티스트 정보 문의 */}
+        <div className={styles.inquiryRow}>
+          <button className={styles.inquiryBtn} onClick={handleArtistInquiry}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="10" />
+              <line x1="12" y1="8" x2="12" y2="12" />
+              <line x1="12" y1="16" x2="12.01" y2="16" />
+            </svg>
+            아티스트 정보 문의
+          </button>
+        </div>
 
       </div>
     </div>
