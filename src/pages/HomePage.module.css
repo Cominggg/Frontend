@@ -351,11 +351,11 @@
   display: none;
 }
 
-/* 데스크탑: 앨범만 그리드 전환 */
+/* 태블릿~: 앨범 그리드 전환 */
 @media (min-width: 768px) {
   .albumStrip {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    grid-template-columns: repeat(4, 1fr);
     overflow-x: visible;
     scroll-snap-type: none;
     padding-bottom: 0;
@@ -371,6 +371,13 @@
     width: 100%;
     height: auto;
     aspect-ratio: 1 / 1;
+  }
+}
+
+/* 데스크탑: 8건 1행 */
+@media (min-width: 1024px) {
+  .albumStrip {
+    grid-template-columns: repeat(8, 1fr);
   }
 }
 

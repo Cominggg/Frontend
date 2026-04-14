@@ -65,6 +65,7 @@ const MOCK_NEW_RELEASES = [
   { id: 5, artistName: 'Ado', title: 'Hibana', type: 'SINGLE', releaseDate: '2025.03.05', accentFrom: '#be123c', accentTo: '#fda4af' },
   { id: 6, artistName: 'Official髭男dism', title: 'Subtitle II', type: 'ALBUM', releaseDate: '2025.02.28', accentFrom: '#0f766e', accentTo: '#5eead4' },
   { id: 7, artistName: 'King Gnu', title: 'MIRROR', type: 'ALBUM', releaseDate: '2025.01.15', accentFrom: '#b45309', accentTo: '#fcd34d' },
+  { id: 8, artistName: 'Eve', title: 'Heart', type: 'EP', releaseDate: '2025.03.12', accentFrom: '#9333ea', accentTo: '#d8b4fe' },
 ]
 
 // TODO: API 연동 후 제거 (CON-03)
