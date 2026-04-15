@@ -77,12 +77,18 @@ function Header() {
                 aria-expanded={dropdownOpen}
                 aria-label="사용자 메뉴"
               >
-                <img
-                  src={user.profileImage}
-                  alt={user.name}
-                  className={styles.avatar}
-                  onError={(e) => { e.target.onerror = null; e.target.src = '/assets/artist-placeholder.png' }}
-                />
+                {user.profileImage ? (
+                  <img
+                    src={user.profileImage}
+                    alt={user.name}
+                    className={styles.avatar}
+                    onError={(e) => { e.target.onerror = null; e.target.style.display = 'none' }}
+                  />
+                ) : (
+                  <span className={styles.avatarInitial} aria-hidden="true">
+                    {user.name.charAt(0)}
+                  </span>
+                )}
               </button>
               {dropdownOpen && (
                 <div className={styles.dropdown}>
