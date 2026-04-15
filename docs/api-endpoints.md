@@ -19,6 +19,7 @@ GET    /api/artists                       name, genre, debutYear, page, size(기
 GET    /api/artists/:id
 GET    /api/artists/:id/concerts          tab: all|upcoming|past, page, size(기본 10)
 GET    /api/artists/:id/releases          type: ALBUM|SINGLE|EP, page, size(기본 10)
+GET    /api/releases/:id                  트랙리스트·크레딧·커버·소개 포함 (REL-02)
 POST   /api/artists/:id/follow            (인증)
 DELETE /api/artists/:id/follow            (인증)
 GET    /api/artists/following             (인증)
