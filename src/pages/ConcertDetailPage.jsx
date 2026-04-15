@@ -101,12 +101,20 @@ function ConcertDetailPage() {
   // TODO: React Query 연동 후 isLoading으로 교체
   const isLoading = false
 
-  function handleInquiry() {
+  function handleConcertInquiry() {
     if (!user) {
       // TODO: 로그인 모달 표시 (redirectUri: 현재 URL)
       return
     }
     // TODO: 문의 모달 표시 (type: CONCERT, targetId: id)
+  }
+
+  function handleSetlistInquiry() {
+    if (!user) {
+      // TODO: 로그인 모달 표시 (redirectUri: 현재 URL)
+      return
+    }
+    // TODO: 문의 모달 표시 (type: SETLIST, targetId: id)
   }
 
   if (isLoading) return null // TODO: 스켈레톤으로 교체
@@ -242,14 +250,23 @@ function ConcertDetailPage() {
             )}
 
             {/* 정보 문의 */}
-            <button className={styles.inquiryBtn} onClick={handleInquiry}>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <circle cx="12" cy="12" r="10" />
-                <line x1="12" y1="8" x2="12" y2="12" />
-                <line x1="12" y1="16" x2="12.01" y2="16" />
-              </svg>
-              정보 문의
-            </button>
+            <div className={styles.inquiryBtns}>
+              <button className={styles.inquiryBtn} onClick={handleConcertInquiry}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <circle cx="12" cy="12" r="10" />
+                  <line x1="12" y1="8" x2="12" y2="12" />
+                  <line x1="12" y1="16" x2="12.01" y2="16" />
+                </svg>
+                공연 정보 문의
+              </button>
+              <button className={styles.inquiryBtn} onClick={handleSetlistInquiry}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M9 11l3 3L22 4" />
+                  <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
+                </svg>
+                셋리스트 문의
+              </button>
+            </div>
 
           </div>
         </div>

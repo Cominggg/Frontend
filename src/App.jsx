@@ -10,6 +10,7 @@ import CalendarPage from '@/pages/CalendarPage'
 import ConcertDetailPage from '@/pages/ConcertDetailPage'
 import ConcertsPage from '@/pages/ConcertsPage'
 import HomePage from '@/pages/HomePage'
+import MyPage from '@/pages/MyPage'
 import { ROUTES } from '@/constants/routes'
 
 function App() {
@@ -24,7 +25,7 @@ function App() {
         <Route path="/concerts/:id" element={<ConcertDetailPage />} />
         <Route path={ROUTES.CALENDAR} element={<CalendarPage />} />
         <Route path={ROUTES.SEARCH} element={<div>통합 검색</div>} />
-        <Route path={ROUTES.MY} element={<PrivateRoute><div>마이페이지</div></PrivateRoute>} />
+        <Route path={ROUTES.MY} element={<PrivateRoute><MyPage /></PrivateRoute>} />
         <Route path={ROUTES.ADMIN} element={<AdminRoute><div>관리자</div></AdminRoute>} />
       </Routes>
     </Layout>

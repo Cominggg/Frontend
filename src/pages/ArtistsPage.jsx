@@ -24,13 +24,24 @@ const MOCK_ARTISTS = [
   { id: 16, name: 'mol-74',            imageUrl: null, genres: ['Indie', 'J-Rock'],       hasUpcomingConcert: false, isFollowing: false },
   { id: 17, name: 'syudou',            imageUrl: null, genres: ['J-Pop', 'Electronic'],   hasUpcomingConcert: false, isFollowing: false },
   { id: 18, name: 'back number',       imageUrl: null, genres: ['J-Rock', 'J-Pop'],       hasUpcomingConcert: false, isFollowing: false },
+  { id: 19, name: 'SiM',              imageUrl: null, genres: ['J-Rock', 'Alternative'],  hasUpcomingConcert: false, isFollowing: false },
+  { id: 20, name: 'Vaundy',           imageUrl: null, genres: ['J-Pop', 'Indie'],          hasUpcomingConcert: true,  isFollowing: false },
+  { id: 21, name: 'milet',            imageUrl: null, genres: ['J-Pop', 'Anime'],          hasUpcomingConcert: false, isFollowing: false },
+  { id: 22, name: 'amazarashi',       imageUrl: null, genres: ['Indie', 'Alternative'],    hasUpcomingConcert: false, isFollowing: false },
+  { id: 23, name: 'BUMP OF CHICKEN',  imageUrl: null, genres: ['J-Rock', 'Indie'],         hasUpcomingConcert: false, isFollowing: false },
+  { id: 24, name: 'sumika',           imageUrl: null, genres: ['J-Pop', 'J-Rock'],         hasUpcomingConcert: false, isFollowing: false },
+  { id: 25, name: 'Saucy Dog',        imageUrl: null, genres: ['Indie', 'J-Pop'],          hasUpcomingConcert: true,  isFollowing: false },
+  { id: 26, name: 'Ryokuoushoku Shakai', imageUrl: null, genres: ['J-Pop', 'Anime'],       hasUpcomingConcert: false, isFollowing: false },
+  { id: 27, name: 'THE ORAL CIGARETTES', imageUrl: null, genres: ['J-Rock', 'Alternative'], hasUpcomingConcert: false, isFollowing: false },
 ]
 
 const ALL_GENRES = ['전체', 'J-Pop', 'J-Rock', 'Anime', 'Indie', 'Electronic', 'Hip-Hop', 'R&B', 'Soul', 'Alternative']
+const PAGE_SIZE = 25
 
 function ArtistsPage() {
   const [query, setQuery] = useState('')
   const [selectedGenre, setSelectedGenre] = useState('전체')
+  const [currentPage, setCurrentPage] = useState(1)
   // TODO: React Query 연동 후 useQuery의 isLoading으로 교체
   const isLoading = false
 
@@ -42,6 +53,9 @@ function ArtistsPage() {
       return matchesQuery && matchesGenre
     })
   }, [query, selectedGenre])
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE))
+  const paginated = filtered.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE)
 
   return (
     <div className={styles.page}>
@@ -68,13 +82,13 @@ function ArtistsPage() {
             className={styles.searchInput}
             placeholder="아티스트 검색..."
             value={query}
-            onChange={(e) => setQuery(e.target.value)}
+            onChange={(e) => { setQuery(e.target.value); setCurrentPage(1) }}
             aria-label="아티스트 검색"
           />
           {query && (
             <button
               className={styles.searchClear}
-              onClick={() => setQuery('')}
+              onClick={() => { setQuery(''); setCurrentPage(1) }}
               aria-label="검색어 지우기"
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
@@ -93,7 +107,7 @@ function ArtistsPage() {
               role="tab"
               aria-selected={selectedGenre === genre}
               className={`${styles.genreTab} ${selectedGenre === genre ? styles.genreTabActive : ''}`}
-              onClick={() => setSelectedGenre(genre)}
+              onClick={() => { setSelectedGenre(genre); setCurrentPage(1) }}
             >
               {genre}
             </button>
@@ -109,7 +123,7 @@ function ArtistsPage() {
           </div>
         ) : filtered.length > 0 ? (
           <div className={styles.grid}>
-            {filtered.map((artist) => (
+            {paginated.map((artist) => (
               <ArtistCard key={artist.id} artist={artist} />
             ))}
           </div>
@@ -122,6 +136,43 @@ function ArtistsPage() {
               </svg>
             </span>
             <p className={styles.emptyText}>검색 결과가 없습니다. 다른 검색어를 입력해 보세요.</p>
+          </div>
+        )}
+
+        {/* 페이지네이션 */}
+        {!isLoading && totalPages > 1 && (
+          <div className={styles.pagination}>
+            <button
+              className={styles.pageBtn}
+              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+              disabled={currentPage === 1}
+              aria-label="이전 페이지"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="m15 18-6-6 6-6" />
+              </svg>
+            </button>
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+              <button
+                key={p}
+                className={`${styles.pageBtn} ${p === currentPage ? styles.pageBtnActive : ''}`}
+                onClick={() => setCurrentPage(p)}
+                aria-label={`${p}페이지`}
+                aria-current={p === currentPage ? 'page' : undefined}
+              >
+                {p}
+              </button>
+            ))}
+            <button
+              className={styles.pageBtn}
+              onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+              disabled={currentPage === totalPages}
+              aria-label="다음 페이지"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="m9 18 6-6-6-6" />
+              </svg>
+            </button>
           </div>
         )}
 

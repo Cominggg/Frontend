@@ -57,64 +57,6 @@ const MOCK_CAROUSEL_ITEMS = [
 ]
 
 // TODO: API 연동 후 제거
-const MOCK_TICKETING_SOON = [
-  {
-    id: 1,
-    artistName: 'RADWIMPS',
-    title: 'RADWIMPS LIVE TOUR 2025',
-    concertDate: '2025.11.22',
-    venue: '올림픽공원 체조경기장, 서울',
-    ticketDate: '2025.04.08',
-    accentColor: '#0e7490',
-  },
-  {
-    id: 2,
-    artistName: 'Mrs. GREEN APPLE',
-    title: 'Mrs. GREEN APPLE ARENA TOUR 2025',
-    concertDate: '2025.10.04',
-    venue: 'KSPO DOME, 서울',
-    ticketDate: '2025.04.11',
-    accentColor: '#15803d',
-  },
-  {
-    id: 3,
-    artistName: 'Creepy Nuts',
-    title: 'Creepy Nuts LIVE TOUR 2025',
-    concertDate: '2025.09.12',
-    venue: '예스24 라이브홀, 서울',
-    ticketDate: '2025.04.14',
-    accentColor: '#9f1239',
-  },
-  {
-    id: 4,
-    artistName: 'Fujii Kaze',
-    title: 'Fujii Kaze LOVE ALL SERVE ALL STADIUM LIVE',
-    concertDate: '2025.08.30',
-    venue: '잠실종합운동장 주경기장, 서울',
-    ticketDate: '2025.04.19',
-    accentColor: '#b45309',
-  },
-  {
-    id: 5,
-    artistName: 'YOASOBI',
-    title: 'YOASOBI ARENA TOUR 2025 "THE MONSTER"',
-    concertDate: '2025.08.15',
-    venue: 'KSPO DOME, 서울',
-    ticketDate: '2025.04.23',
-    accentColor: '#7c3aed',
-  },
-  {
-    id: 6,
-    artistName: 'Ado',
-    title: 'Ado WORLD TOUR "Hibana" in Seoul',
-    concertDate: '2025.06.21',
-    venue: '고척스카이돔, 서울',
-    ticketDate: '2025.04.27',
-    accentColor: '#be123c',
-  },
-]
-
-// TODO: API 연동 후 제거
 const MOCK_NEW_RELEASES = [
   { id: 1, artistName: 'Kenshi Yonezu', title: 'LOST CORNER', type: 'ALBUM', releaseDate: '2025.04.05', accentFrom: '#0369a1', accentTo: '#7dd3fc' },
   { id: 2, artistName: 'Mrs. GREEN APPLE', title: 'Soranji', type: 'SINGLE', releaseDate: '2025.03.20', accentFrom: '#15803d', accentTo: '#86efac' },
@@ -123,6 +65,7 @@ const MOCK_NEW_RELEASES = [
   { id: 5, artistName: 'Ado', title: 'Hibana', type: 'SINGLE', releaseDate: '2025.03.05', accentFrom: '#be123c', accentTo: '#fda4af' },
   { id: 6, artistName: 'Official髭男dism', title: 'Subtitle II', type: 'ALBUM', releaseDate: '2025.02.28', accentFrom: '#0f766e', accentTo: '#5eead4' },
   { id: 7, artistName: 'King Gnu', title: 'MIRROR', type: 'ALBUM', releaseDate: '2025.01.15', accentFrom: '#b45309', accentTo: '#fcd34d' },
+  { id: 8, artistName: 'Eve', title: 'Heart', type: 'EP', releaseDate: '2025.03.12', accentFrom: '#9333ea', accentTo: '#d8b4fe' },
 ]
 
 // TODO: API 연동 후 제거 (CON-03)
@@ -229,17 +172,6 @@ const MOCK_POPULAR_CONCERTS = [
   },
 ]
 
-function calcDday(dateStr) {
-  const [y, m, d] = dateStr.split('.').map(Number)
-  const today = new Date()
-  const targetUTC = Date.UTC(y, m - 1, d)
-  const todayUTC = Date.UTC(today.getFullYear(), today.getMonth(), today.getDate())
-  const diff = Math.trunc((targetUTC - todayUTC) / (1000 * 60 * 60 * 24))
-  if (diff === 0) return 'D-DAY'
-  if (diff > 0) return `D-${diff}`
-  return `D+${Math.abs(diff)}`
-}
-
 function HomePage() {
   const [currentSlide, setCurrentSlide] = useState(0)
   const [isPaused, setIsPaused] = useState(false)
@@ -337,45 +269,6 @@ function HomePage() {
         </div>
       </section>
 
-      {/* 티켓팅 임박 */}
-      <section className={`${styles.section} ${styles.sectionAlt}`}>
-        <div className={styles.sectionInner}>
-          <div className={styles.sectionHeader}>
-            <h2 className={styles.sectionTitle}>티켓팅 임박</h2>
-            <Link to={ROUTES.CONCERTS} className={styles.sectionMore}>
-              전체 보기
-              <Icon name="chevronRight" size={16} />
-            </Link>
-          </div>
-          <div className={`${styles.scrollStrip} ${styles.ticketStrip}`}>
-            {MOCK_TICKETING_SOON.map((item) => (
-              <article
-                key={item.id}
-                className={styles.ticketCard}
-                style={{ '--t-color': item.accentColor }}
-              >
-                <div className={styles.ticketAccentBar} />
-                <div className={styles.ticketBody}>
-                  <span className={styles.ddayBadge}>{calcDday(item.ticketDate)}</span>
-                  <p className={styles.ticketArtist}>{item.artistName}</p>
-                  <p className={styles.ticketTitle}>{item.title}</p>
-                  <div className={styles.ticketMeta}>
-                    <span className={styles.ticketMetaItem}>
-                      <Icon name="calendar" size={12} />
-                      티켓 오픈 {item.ticketDate}
-                    </span>
-                    <span className={styles.ticketMetaItem}>
-                      <Icon name="pin" size={12} />
-                      {item.venue}
-                    </span>
-                  </div>
-                </div>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* 인기 공연 */}
       <section className={styles.section}>
         <div className={styles.sectionInner}>
@@ -389,7 +282,7 @@ function HomePage() {
 
           <div className={styles.grid}>
             {isLoading
-              ? Array.from({ length: 8 }).map((_, i) => (
+              ? Array.from({ length: 4 }).map((_, i) => (
                   <ConcertCardSkeleton key={i} />
                 ))
               : MOCK_POPULAR_CONCERTS.slice(0, 4).map((concert) => (

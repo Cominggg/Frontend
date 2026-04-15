@@ -1,0 +1,357 @@
+.page {
+  min-height: calc(100svh - var(--header-height));
+  padding: 2.5rem 1.5rem 4rem;
+}
+
+.inner {
+  max-width: var(--max-width);
+  margin: 0 auto;
+}
+
+/* ── 페이지 헤더 ── */
+.pageHeader {
+  margin-bottom: 1.75rem;
+}
+
+.pageTitle {
+  margin: 0;
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: var(--color-text);
+  letter-spacing: -0.02em;
+}
+
+/* ── 탭 ── */
+.tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid var(--color-border);
+  margin-bottom: 2rem;
+}
+
+.tab {
+  padding: 0.625rem 1.125rem;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.tab:hover {
+  color: var(--color-text);
+}
+
+.tabActive {
+  color: var(--color-accent);
+  border-bottom-color: var(--color-accent);
+  font-weight: 600;
+}
+
+/* ── 관심 아티스트 목록 ── */
+.artistList {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--color-surface);
+}
+
+.artistRow {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+}
+
+.artistRow + .artistRow {
+  border-top: 1px solid var(--color-border);
+}
+
+.artistRowLink {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  text-decoration: none;
+  overflow: hidden;
+}
+
+.artistAvatar {
+  flex-shrink: 0;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--a-from), var(--a-to));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.artistAvatarImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.artistAvatarInitial {
+  font-size: 1.375rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.9);
+  line-height: 1;
+}
+
+.artistRowInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  overflow: hidden;
+}
+
+.artistRowNameRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.artistRowName {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.comingBadge {
+  display: inline-block;
+  background: var(--color-accent);
+  color: #fff;
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  padding: 2px 7px;
+  border-radius: 100px;
+  line-height: 1.5;
+}
+
+.artistRowGenres {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+
+.genreChip {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  background: var(--color-border);
+  padding: 2px 8px;
+  border-radius: 100px;
+  line-height: 1.5;
+}
+
+.unfollowBtn {
+  flex-shrink: 0;
+  padding: 0.375rem 0.875rem;
+  border-radius: 100px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  border: 1.5px solid var(--color-border);
+  background: none;
+  transition: color 0.15s, border-color 0.15s, background-color 0.15s;
+}
+
+.unfollowBtn:hover {
+  color: var(--color-destructive);
+  border-color: var(--color-destructive);
+  background: color-mix(in srgb, var(--color-destructive) 8%, transparent);
+}
+
+/* ── 예정 공연 목록 ── */
+.concertList {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--color-surface);
+}
+
+.concertRow {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  text-decoration: none;
+  transition: background-color 0.15s;
+}
+
+.concertRow + .concertRow {
+  border-top: 1px solid var(--color-border);
+}
+
+.concertRow:hover {
+  background: color-mix(in srgb, var(--color-accent) 4%, var(--color-surface));
+}
+
+.concertRowLeft {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  overflow: hidden;
+}
+
+.concertRowMeta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.concertRowArtist {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--color-accent);
+}
+
+.concertRowTitle {
+  margin: 0;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: var(--color-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.concertRowDetails {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.concertRowDetail {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+}
+
+.concertRowChevron {
+  flex-shrink: 0;
+  color: var(--color-border);
+}
+
+/* ── 페이지네이션 ── */
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  margin-top: 2rem;
+}
+
+.pageBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 36px;
+  height: 36px;
+  padding: 0 0.5rem;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border: 1.5px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text-muted);
+  transition: border-color 0.15s, color 0.15s, background-color 0.15s;
+}
+
+.pageBtn:hover:not(:disabled) {
+  border-color: var(--color-accent-border);
+  color: var(--color-accent);
+}
+
+.pageBtn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.pageBtnActive {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: #fff;
+  font-weight: 600;
+}
+
+.pageBtnActive:hover {
+  color: #fff;
+}
+
+/* ── 빈 상태 ── */
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.875rem;
+  padding: 4rem 1rem;
+  color: var(--color-text-muted);
+  text-align: center;
+}
+
+.emptyIcon {
+  opacity: 0.3;
+}
+
+.emptyText {
+  margin: 0;
+  font-size: 0.9375rem;
+}
+
+.emptyLink {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--color-accent);
+  text-decoration: none;
+  padding: 0.5rem 1.25rem;
+  border-radius: 100px;
+  border: 1.5px solid var(--color-accent-border);
+  transition: background-color 0.15s;
+}
+
+.emptyLink:hover {
+  background: var(--color-accent-dim);
+}
+
+/* ── 반응형 ── */
+@media (max-width: 767px) {
+  .page {
+    padding: 1.75rem 1rem 3rem;
+  }
+
+  .pageTitle {
+    font-size: 1.5rem;
+  }
+
+  .artistRow {
+    padding: 0.875rem 1rem;
+  }
+
+  .artistAvatar {
+    width: 44px;
+    height: 44px;
+  }
+
+  .artistAvatarInitial {
+    font-size: 1.125rem;
+  }
+
+  .concertRow {
+    padding: 0.875rem 1rem;
+  }
+}

@@ -37,6 +37,13 @@
   --color-accent-hover-border: rgba(225, 29, 72, 0.5);
   --color-accent-dark: #c51843;
 
+  /* 릴리즈 배지 */
+  --color-badge-single: #0369a1;
+  --color-badge-ep: #0f766e;
+
+  /* 파괴적 액션 */
+  --color-destructive: #ef4444;
+
   /* 타이포그래피 */
   --font-sans: system-ui, 'Segoe UI', 'Roboto', sans-serif;
 
