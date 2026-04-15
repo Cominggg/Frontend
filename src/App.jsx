@@ -1,5 +1,6 @@
 import { Routes, Route } from 'react-router-dom'
 
+import AdminLayout from '@/components/layout/AdminLayout'
 import AdminRoute from '@/components/layout/AdminRoute'
 import Layout from '@/components/layout/Layout'
 import PrivateRoute from '@/components/layout/PrivateRoute'
@@ -11,6 +12,11 @@ import ConcertDetailPage from '@/pages/ConcertDetailPage'
 import ConcertsPage from '@/pages/ConcertsPage'
 import HomePage from '@/pages/HomePage'
 import MyPage from '@/pages/MyPage'
+import AdminPage from '@/pages/admin/AdminPage'
+import AdminReviewQueuePage from '@/pages/admin/AdminReviewQueuePage'
+import AdminArtistFormPage from '@/pages/admin/AdminArtistFormPage'
+import AdminConcertFormPage from '@/pages/admin/AdminConcertFormPage'
+import AdminInquiriesPage from '@/pages/admin/AdminInquiriesPage'
 import { ROUTES } from '@/constants/routes'
 
 function App() {
@@ -26,7 +32,20 @@ function App() {
         <Route path={ROUTES.CALENDAR} element={<CalendarPage />} />
         <Route path={ROUTES.SEARCH} element={<div>통합 검색</div>} />
         <Route path={ROUTES.MY} element={<PrivateRoute><MyPage /></PrivateRoute>} />
-        <Route path={ROUTES.ADMIN} element={<AdminRoute><div>관리자</div></AdminRoute>} />
+
+        {/* 관리자 — 중첩 라우트 */}
+        <Route
+          path={ROUTES.ADMIN}
+          element={<AdminRoute><AdminLayout /></AdminRoute>}
+        >
+          <Route index element={<AdminPage />} />
+          <Route path="review-queue" element={<AdminReviewQueuePage />} />
+          <Route path="artists/new" element={<AdminArtistFormPage />} />
+          <Route path="artists/:id/edit" element={<AdminArtistFormPage />} />
+          <Route path="concerts/new" element={<AdminConcertFormPage />} />
+          <Route path="concerts/:id/edit" element={<AdminConcertFormPage />} />
+          <Route path="inquiries" element={<AdminInquiriesPage />} />
+        </Route>
       </Routes>
     </Layout>
   )

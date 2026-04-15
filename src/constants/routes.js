@@ -8,4 +8,10 @@ export const ROUTES = {
   SEARCH: '/search',
   MY: '/my',
   ADMIN: '/admin',
+  ADMIN_REVIEW_QUEUE: '/admin/review-queue',
+  ADMIN_ARTIST_NEW: '/admin/artists/new',
+  ADMIN_ARTIST_EDIT: (id) => `/admin/artists/${id}/edit`,
+  ADMIN_CONCERT_NEW: '/admin/concerts/new',
+  ADMIN_CONCERT_EDIT: (id) => `/admin/concerts/${id}/edit`,
+  ADMIN_INQUIRIES: '/admin/inquiries',
 }
