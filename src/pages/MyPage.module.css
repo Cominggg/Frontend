@@ -166,9 +166,9 @@
 }
 
 .unfollowBtn:hover {
-  color: #ef4444;
-  border-color: #ef4444;
-  background: color-mix(in srgb, #ef4444 8%, transparent);
+  color: var(--color-destructive);
+  border-color: var(--color-destructive);
+  background: color-mix(in srgb, var(--color-destructive) 8%, transparent);
 }
 
 /* ── 예정 공연 목록 ── */

@@ -148,8 +148,10 @@ function MyPage() {
           {TABS.map((tab) => (
             <button
               key={tab.id}
+              id={`tab-${tab.id}`}
               role="tab"
               aria-selected={activeTab === tab.id}
+              aria-controls={`tabpanel-${tab.id}`}
               className={`${styles.tab} ${activeTab === tab.id ? styles.tabActive : ''}`}
               onClick={() => setActiveTab(tab.id)}
             >
@@ -160,7 +162,7 @@ function MyPage() {
 
         {/* 관심 아티스트 탭 (MY-02) */}
         {activeTab === 'artists' && (
-          <div role="tabpanel">
+          <div role="tabpanel" id="tabpanel-artists" aria-labelledby="tab-artists">
             {followedArtists.length === 0 ? (
               <div className={styles.empty}>
                 <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={styles.emptyIcon} aria-hidden="true">
@@ -181,7 +183,7 @@ function MyPage() {
 
         {/* 예정 공연 탭 (MY-03) */}
         {activeTab === 'upcoming' && (
-          <div role="tabpanel">
+          <div role="tabpanel" id="tabpanel-upcoming" aria-labelledby="tab-upcoming">
             {paginatedUpcoming.length === 0 ? (
               <div className={styles.empty}>
                 <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={styles.emptyIcon} aria-hidden="true">
