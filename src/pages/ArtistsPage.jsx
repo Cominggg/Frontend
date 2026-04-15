@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useMemo } from 'react'
 
 import ArtistCard from '@/components/artist/ArtistCard'
 import ArtistCardSkeleton from '@/components/artist/ArtistCardSkeleton'
@@ -54,11 +54,6 @@ function ArtistsPage() {
     })
   }, [query, selectedGenre])
 
-  // 필터 변경 시 1페이지로 리셋
-  useEffect(() => {
-    setCurrentPage(1)
-  }, [query, selectedGenre])
-
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE))
   const paginated = filtered.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE)
 
@@ -87,13 +82,13 @@ function ArtistsPage() {
             className={styles.searchInput}
             placeholder="아티스트 검색..."
             value={query}
-            onChange={(e) => setQuery(e.target.value)}
+            onChange={(e) => { setQuery(e.target.value); setCurrentPage(1) }}
             aria-label="아티스트 검색"
           />
           {query && (
             <button
               className={styles.searchClear}
-              onClick={() => setQuery('')}
+              onClick={() => { setQuery(''); setCurrentPage(1) }}
               aria-label="검색어 지우기"
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
@@ -112,7 +107,7 @@ function ArtistsPage() {
               role="tab"
               aria-selected={selectedGenre === genre}
               className={`${styles.genreTab} ${selectedGenre === genre ? styles.genreTabActive : ''}`}
-              onClick={() => setSelectedGenre(genre)}
+              onClick={() => { setSelectedGenre(genre); setCurrentPage(1) }}
             >
               {genre}
             </button>
