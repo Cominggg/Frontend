@@ -13,8 +13,13 @@ function formatFollowers(n) {
 }
 
 function calcDday(dateStr) {
-  const [y, m, d] = dateStr.split('.').map(Number)
+  if (!dateStr) return null
+  const parts = dateStr.trim().split('.')
+  if (parts.length !== 3) return null
+  const [y, m, d] = parts.map(Number)
+  if (!isFinite(y) || !isFinite(m) || !isFinite(d)) return null
   const target = new Date(y, m - 1, d)
+  if (isNaN(target.getTime())) return null
   const today = new Date()
   today.setHours(0, 0, 0, 0)
   return Math.ceil((target - today) / (1000 * 60 * 60 * 24))
@@ -241,7 +246,7 @@ function ArtistDetailPage() {
                   <dd>{debutDate}</dd>
                 </div>
               )}
-{members.length > 1 && (
+              {members.length > 1 && (
                 <div className={styles.profileItem}>
                   <dt>멤버</dt>
                   <dd>{members.join(', ')}</dd>
@@ -311,7 +316,7 @@ function ArtistDetailPage() {
             <div className={styles.releaseList}>
               {releases.map((rel) => (
                 <div key={rel.id} className={styles.releaseItem}>
-                  <span className={`${styles.releaseBadge} ${styles[`releaseBadge${rel.type}`]}`}>
+                  <span className={`${styles.releaseBadge} ${styles[`releaseBadge${rel.type}`] || ''}`}>
                     {rel.type}
                   </span>
                   <span className={styles.releaseTitle}>{rel.title}</span>
