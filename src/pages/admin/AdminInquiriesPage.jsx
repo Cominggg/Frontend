@@ -174,7 +174,8 @@ function AdminInquiriesPage() {
   const [items, setItems] = useState(MOCK_INQUIRIES)
   const [statusFilter, setStatusFilter] = useState('전체')
   const [typeFilter, setTypeFilter] = useState('전체')
-  const [selected, setSelected] = useState(null)
+  const [selectedId, setSelectedId] = useState(null)
+  const selected = selectedId ? items.find((it) => it.id === selectedId) : null
 
   const filtered = items.filter((it) => {
     const matchStatus = statusFilter === '전체' || it.status === statusFilter
@@ -247,7 +248,7 @@ function AdminInquiriesPage() {
             <button
               key={item.id}
               className={styles.row}
-              onClick={() => setSelected(item)}
+              onClick={() => setSelectedId(item.id)}
             >
               <div className={styles.rowLeft}>
                 <div className={styles.rowMeta}>
@@ -273,7 +274,7 @@ function AdminInquiriesPage() {
       {selected && (
         <DetailModal
           item={selected}
-          onClose={() => setSelected(null)}
+          onClose={() => setSelectedId(null)}
           onResolve={handleResolve}
           onReject={handleReject}
         />
