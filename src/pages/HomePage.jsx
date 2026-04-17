@@ -5,6 +5,7 @@ import ConcertCard from '@/components/concert/ConcertCard'
 import ConcertCardSkeleton from '@/components/concert/ConcertCardSkeleton'
 import Icon from '@/components/ui/Icon'
 import { ROUTES } from '@/constants/routes'
+import { MOCK_FOLLOWED_CONCERTS } from '@/mocks/followedArtistMocks'
 import useAuthStore from '@/stores/authStore'
 import useLoginModalStore from '@/stores/loginModalStore'
 import styles from './HomePage.module.css'
@@ -68,50 +69,6 @@ const MOCK_NEW_RELEASES = [
   { id: 6, artistName: 'Official髭男dism', title: 'Subtitle II', type: 'ALBUM', releaseDate: '2025.02.28', accentFrom: '#0f766e', accentTo: '#5eead4' },
   { id: 7, artistName: 'King Gnu', title: 'MIRROR', type: 'ALBUM', releaseDate: '2025.01.15', accentFrom: '#b45309', accentTo: '#fcd34d' },
   { id: 8, artistName: 'Eve', title: 'Heart', type: 'EP', releaseDate: '2025.03.12', accentFrom: '#9333ea', accentTo: '#d8b4fe' },
-]
-
-// TODO: API 연동 후 제거 (관심 아티스트 팔로우 공연 — 로그인 상태일 때 노출)
-const MOCK_FOLLOWED_CONCERTS = [
-  {
-    id: 1,
-    posterUrl: null,
-    artistName: 'YOASOBI',
-    title: 'YOASOBI ARENA TOUR 2025 "THE MONSTER"',
-    startDate: '2025.08.15',
-    endDate: '2025.08.16',
-    venue: 'KSPO DOME, 서울',
-    status: '공연예정',
-  },
-  {
-    id: 3,
-    posterUrl: null,
-    artistName: 'Ado',
-    title: 'Ado WORLD TOUR "Hibana" in Seoul',
-    startDate: '2025.06.21',
-    endDate: null,
-    venue: '고척스카이돔, 서울',
-    status: '공연예정',
-  },
-  {
-    id: 4,
-    posterUrl: null,
-    artistName: 'King Gnu',
-    title: 'King Gnu Live Tour 2025',
-    startDate: '2025.07.05',
-    endDate: '2025.07.06',
-    venue: '올림픽공원 체조경기장, 서울',
-    status: '공연예정',
-  },
-  {
-    id: 9,
-    posterUrl: null,
-    artistName: 'RADWIMPS',
-    title: 'RADWIMPS LIVE TOUR 2025',
-    startDate: '2025.11.22',
-    endDate: null,
-    venue: '올림픽공원 체조경기장, 서울',
-    status: '공연예정',
-  },
 ]
 
 // TODO: API 연동 후 제거 (CON-03)
@@ -395,7 +352,7 @@ function HomePage() {
               </div>
               <p className={styles.loginTeaserTitle}>팔로우한 아티스트의 내한 공연을 한눈에</p>
               <p className={styles.loginTeaserSub}>로그인하면 관심 아티스트의 새 공연 소식을 바로 확인할 수 있어요.</p>
-              <button className={styles.loginTeaserBtn} onClick={() => openLoginModal()}>
+              <button className={styles.loginTeaserBtn} onClick={() => openLoginModal(window.location.pathname)}>
                 로그인 / 회원가입
               </button>
             </div>
