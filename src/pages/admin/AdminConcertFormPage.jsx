@@ -208,7 +208,7 @@ function AdminConcertFormPage() {
           <button
             type="submit"
             className={styles.btnSubmit}
-            disabled={saving || !form.title.trim() || !form.artistName.trim()}
+            disabled={saving || !form.title.trim() || !form.artistName.trim() || !form.startDate}
           >
             {saving ? '저장 중...' : isEdit ? '수정 저장' : '공연 등록'}
           </button>
