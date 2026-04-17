@@ -5,6 +5,8 @@ import ConcertCard from '@/components/concert/ConcertCard'
 import ConcertCardSkeleton from '@/components/concert/ConcertCardSkeleton'
 import Icon from '@/components/ui/Icon'
 import { ROUTES } from '@/constants/routes'
+import useAuthStore from '@/stores/authStore'
+import useLoginModalStore from '@/stores/loginModalStore'
 import styles from './HomePage.module.css'
 
 // TODO: API 연동 후 제거
@@ -66,6 +68,50 @@ const MOCK_NEW_RELEASES = [
   { id: 6, artistName: 'Official髭男dism', title: 'Subtitle II', type: 'ALBUM', releaseDate: '2025.02.28', accentFrom: '#0f766e', accentTo: '#5eead4' },
   { id: 7, artistName: 'King Gnu', title: 'MIRROR', type: 'ALBUM', releaseDate: '2025.01.15', accentFrom: '#b45309', accentTo: '#fcd34d' },
   { id: 8, artistName: 'Eve', title: 'Heart', type: 'EP', releaseDate: '2025.03.12', accentFrom: '#9333ea', accentTo: '#d8b4fe' },
+]
+
+// TODO: API 연동 후 제거 (관심 아티스트 팔로우 공연 — 로그인 상태일 때 노출)
+const MOCK_FOLLOWED_CONCERTS = [
+  {
+    id: 1,
+    posterUrl: null,
+    artistName: 'YOASOBI',
+    title: 'YOASOBI ARENA TOUR 2025 "THE MONSTER"',
+    startDate: '2025.08.15',
+    endDate: '2025.08.16',
+    venue: 'KSPO DOME, 서울',
+    status: '공연예정',
+  },
+  {
+    id: 3,
+    posterUrl: null,
+    artistName: 'Ado',
+    title: 'Ado WORLD TOUR "Hibana" in Seoul',
+    startDate: '2025.06.21',
+    endDate: null,
+    venue: '고척스카이돔, 서울',
+    status: '공연예정',
+  },
+  {
+    id: 4,
+    posterUrl: null,
+    artistName: 'King Gnu',
+    title: 'King Gnu Live Tour 2025',
+    startDate: '2025.07.05',
+    endDate: '2025.07.06',
+    venue: '올림픽공원 체조경기장, 서울',
+    status: '공연예정',
+  },
+  {
+    id: 9,
+    posterUrl: null,
+    artistName: 'RADWIMPS',
+    title: 'RADWIMPS LIVE TOUR 2025',
+    startDate: '2025.11.22',
+    endDate: null,
+    venue: '올림픽공원 체조경기장, 서울',
+    status: '공연예정',
+  },
 ]
 
 // TODO: API 연동 후 제거 (CON-03)
@@ -175,6 +221,8 @@ const MOCK_POPULAR_CONCERTS = [
 function HomePage() {
   const [currentSlide, setCurrentSlide] = useState(0)
   const [isPaused, setIsPaused] = useState(false)
+  const user = useAuthStore((s) => s.user)
+  const openLoginModal = useLoginModalStore((s) => s.open)
   // TODO: React Query 연동 후 useQuery의 isLoading으로 교체
   const isLoading = false
   const total = MOCK_CAROUSEL_ITEMS.length
@@ -323,17 +371,35 @@ function HomePage() {
         <div className={styles.sectionInner}>
           <div className={styles.sectionHeader}>
             <h2 className={styles.sectionTitle}>관심 아티스트 공연</h2>
+            {user && (
+              <Link to={ROUTES.CONCERTS} className={styles.sectionMore}>
+                전체 보기
+                <Icon name="chevronRight" size={16} />
+              </Link>
+            )}
           </div>
-          <div className={styles.loginTeaser}>
-            <div className={styles.loginTeaserIcon} aria-hidden="true">
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-              </svg>
+          {user ? (
+            <div className={styles.grid}>
+              {isLoading
+                ? Array.from({ length: 4 }).map((_, i) => <ConcertCardSkeleton key={i} />)
+                : MOCK_FOLLOWED_CONCERTS.map((concert) => (
+                    <ConcertCard key={concert.id} concert={concert} />
+                  ))}
             </div>
-            <p className={styles.loginTeaserTitle}>팔로우한 아티스트의 내한 공연을 한눈에</p>
-            <p className={styles.loginTeaserSub}>로그인하면 관심 아티스트의 새 공연 소식을 바로 확인할 수 있어요.</p>
-            <button className={styles.loginTeaserBtn}>로그인 / 회원가입</button>
-          </div>
+          ) : (
+            <div className={styles.loginTeaser}>
+              <div className={styles.loginTeaserIcon} aria-hidden="true">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                </svg>
+              </div>
+              <p className={styles.loginTeaserTitle}>팔로우한 아티스트의 내한 공연을 한눈에</p>
+              <p className={styles.loginTeaserSub}>로그인하면 관심 아티스트의 새 공연 소식을 바로 확인할 수 있어요.</p>
+              <button className={styles.loginTeaserBtn} onClick={() => openLoginModal()}>
+                로그인 / 회원가입
+              </button>
+            </div>
+          )}
         </div>
       </section>
     </div>
