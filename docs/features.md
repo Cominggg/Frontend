@@ -39,6 +39,7 @@
 | CON-04 | 관심 아티스트 예정 공연 필터 | P0 |
 | CON-05 | 셋리스트 조회 (setlist.fm, 공연 완료 후) | P2 |
 | CON-06 | 공연 상태 자동 갱신 (KOPIS updatedate 감지) | P1 |
+| CON-07 | 공연 상세 데이터 없음 Empty View (404 시 EmptyState 컴포넌트 표시, "공연 정보가 존재하지 않습니다") | P0 |
 
 ### 캘린더
 
