@@ -375,7 +375,7 @@
 }
 
 /* 데스크탑: 8건 1행 */
-@media (min-width: 1024px) {
+@media (min-width: 1280px) {
   .albumStrip {
     grid-template-columns: repeat(8, 1fr);
   }
@@ -563,8 +563,3 @@
   }
 }
 
-@media (max-width: 420px) {
-  .grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}

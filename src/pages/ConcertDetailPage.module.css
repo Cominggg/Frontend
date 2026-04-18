@@ -292,7 +292,7 @@
 }
 
 /* ── 반응형 ── */
-@media (max-width: 1024px) {
+@media (max-width: 900px) {
   .layout {
     grid-template-columns: 240px 1fr;
     gap: 2rem;
