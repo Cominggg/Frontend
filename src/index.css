@@ -58,18 +58,17 @@
 
 /* ===========================
    다크 모드
+   JS 로드 전 FOUC 방지: 시스템 설정으로 먼저 적용
+   JS 로드 후: html[data-theme] 으로 덮어씀
    =========================== */
 @media (prefers-color-scheme: dark) {
-  :root {
-    /* 색상 — 다크 */
+  :root:not([data-theme="light"]) {
     --color-bg: #0f0f1a;
     --color-surface: #1a1a2e;
     --color-surface-hover: #2a1a22;
     --color-border: #2e2e42;
     --color-text: #f0f0f5;
     --color-text-muted: #9ca3af;
-
-    /* 액센트 파생 — 다크 */
     --color-header-bg: rgba(15, 15, 26, 0.85);
     --color-mobile-nav-bg: rgba(26, 26, 46, 0.98);
     --color-accent-border: rgba(225, 29, 72, 0.35);
@@ -78,9 +77,30 @@
     --color-accent-hover-bg: rgba(225, 29, 72, 0.18);
     --color-accent-hover-border: rgba(225, 29, 72, 0.6);
     --color-accent-dark: #e11d48;
-
     color-scheme: dark;
   }
+}
+
+html[data-theme="dark"] {
+  --color-bg: #0f0f1a;
+  --color-surface: #1a1a2e;
+  --color-surface-hover: #2a1a22;
+  --color-border: #2e2e42;
+  --color-text: #f0f0f5;
+  --color-text-muted: #9ca3af;
+  --color-header-bg: rgba(15, 15, 26, 0.85);
+  --color-mobile-nav-bg: rgba(26, 26, 46, 0.98);
+  --color-accent-border: rgba(225, 29, 72, 0.35);
+  --color-accent-shadow: rgba(225, 29, 72, 0.18);
+  --color-accent-focus-border: rgba(225, 29, 72, 0.55);
+  --color-accent-hover-bg: rgba(225, 29, 72, 0.18);
+  --color-accent-hover-border: rgba(225, 29, 72, 0.6);
+  --color-accent-dark: #e11d48;
+  color-scheme: dark;
+}
+
+html[data-theme="light"] {
+  color-scheme: light;
 }
 
 /* ===========================

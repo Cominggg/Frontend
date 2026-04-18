@@ -62,8 +62,27 @@
 .actions {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 1rem;
   margin-left: auto;
+}
+
+.themeBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  background: transparent;
+  border: 1px solid var(--color-border);
+  color: var(--color-text-muted);
+  transition: color 0.15s, background-color 0.15s, border-color 0.15s;
+}
+
+.themeBtn:hover {
+  color: var(--color-text);
+  background-color: var(--color-surface-hover);
+  border-color: var(--color-accent-border);
 }
 
 .loginBtn {
@@ -223,7 +242,8 @@
     display: none;
   }
 
-  .actions {
+  .loginBtn,
+  .avatarWrapper {
     display: none;
   }
 
