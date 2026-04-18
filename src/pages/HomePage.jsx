@@ -181,6 +181,7 @@ function HomePage() {
   const [noTransition, setNoTransition] = useState(false)
   const [isPaused, setIsPaused] = useState(false)
   const touchStartX = useRef(null)
+  const isAnimating = useRef(false)
   const user = useAuthStore((s) => s.user)
   const openLoginModal = useLoginModalStore((s) => s.open)
   // TODO: React Query 연동 후 useQuery의 isLoading으로 교체
@@ -191,7 +192,10 @@ function HomePage() {
   useEffect(() => {
     if (isPaused) return
     const id = setInterval(() => {
-      setDisplayIndex((i) => i + 1)
+      if (!isAnimating.current) {
+        isAnimating.current = true
+        setDisplayIndex((i) => i + 1)
+      }
     }, 5000)
     return () => clearInterval(id)
   }, [isPaused])
@@ -201,24 +205,37 @@ function HomePage() {
     if (displayIndex === total + 1) {
       setNoTransition(true)
       setDisplayIndex(1)
+      // noTransition 상태에서 클릭하면 transition 없어 transitionend 미발생 → isAnimating 고착
+      // double-rAF 이후 해제 (useEffect에서 처리)
     } else if (displayIndex === 0) {
       setNoTransition(true)
       setDisplayIndex(total)
+    } else {
+      isAnimating.current = false
     }
   }
 
-  // 순간이동 후 다음 프레임에 트랜지션 복원
+  // 순간이동 후 다음 프레임에 트랜지션 복원, 클론 스냅인 경우 여기서 isAnimating 해제
   useEffect(() => {
     if (!noTransition) return
-    const raf = requestAnimationFrame(() => requestAnimationFrame(() => setNoTransition(false)))
+    const raf = requestAnimationFrame(() =>
+      requestAnimationFrame(() => {
+        setNoTransition(false)
+        isAnimating.current = false
+      })
+    )
     return () => cancelAnimationFrame(raf)
   }, [noTransition])
 
   function goPrev() {
+    if (isAnimating.current) return
+    isAnimating.current = true
     setDisplayIndex((i) => i - 1)
   }
 
   function goNext() {
+    if (isAnimating.current) return
+    isAnimating.current = true
     setDisplayIndex((i) => i + 1)
   }
 
@@ -229,7 +246,7 @@ function HomePage() {
   function handleTouchEnd(e) {
     if (touchStartX.current === null) return
     const diff = touchStartX.current - e.changedTouches[0].clientX
-    if (Math.abs(diff) > 40) diff > 0 ? goNext() : goPrev()
+    if (Math.abs(diff) > 40 && !isAnimating.current) diff > 0 ? goNext() : goPrev()
     touchStartX.current = null
   }
 
