@@ -176,29 +176,50 @@ const MOCK_POPULAR_CONCERTS = [
 ]
 
 function HomePage() {
-  const [currentSlide, setCurrentSlide] = useState(0)
+  const total = MOCK_CAROUSEL_ITEMS.length
+  const [displayIndex, setDisplayIndex] = useState(1)
+  const [noTransition, setNoTransition] = useState(false)
   const [isPaused, setIsPaused] = useState(false)
   const touchStartX = useRef(null)
   const user = useAuthStore((s) => s.user)
   const openLoginModal = useLoginModalStore((s) => s.open)
   // TODO: React Query 연동 후 useQuery의 isLoading으로 교체
   const isLoading = false
-  const total = MOCK_CAROUSEL_ITEMS.length
+
+  const activeIndex = (displayIndex - 1 + total) % total
 
   useEffect(() => {
     if (isPaused) return
     const id = setInterval(() => {
-      setCurrentSlide((i) => (i + 1) % total)
+      setDisplayIndex((i) => i + 1)
     }, 5000)
     return () => clearInterval(id)
-  }, [isPaused, total])
+  }, [isPaused])
+
+  // 클론 슬라이드 도착 후 실제 슬라이드로 순간이동
+  function handleTransitionEnd() {
+    if (displayIndex === total + 1) {
+      setNoTransition(true)
+      setDisplayIndex(1)
+    } else if (displayIndex === 0) {
+      setNoTransition(true)
+      setDisplayIndex(total)
+    }
+  }
+
+  // 순간이동 후 다음 프레임에 트랜지션 복원
+  useEffect(() => {
+    if (!noTransition) return
+    const raf = requestAnimationFrame(() => requestAnimationFrame(() => setNoTransition(false)))
+    return () => cancelAnimationFrame(raf)
+  }, [noTransition])
 
   function goPrev() {
-    setCurrentSlide((i) => (i - 1 + total) % total)
+    setDisplayIndex((i) => i - 1)
   }
 
   function goNext() {
-    setCurrentSlide((i) => (i + 1) % total)
+    setDisplayIndex((i) => i + 1)
   }
 
   function handleTouchStart(e) {
@@ -226,11 +247,15 @@ function HomePage() {
           >
             <div
               className={styles.carouselTrack}
-              style={{ transform: `translateX(-${currentSlide * 100}%)` }}
+              style={{
+                transform: `translateX(-${displayIndex * 100}%)`,
+                transition: noTransition ? 'none' : undefined,
+              }}
+              onTransitionEnd={handleTransitionEnd}
             >
-              {MOCK_CAROUSEL_ITEMS.map((item) => (
+              {[MOCK_CAROUSEL_ITEMS[total - 1], ...MOCK_CAROUSEL_ITEMS, MOCK_CAROUSEL_ITEMS[0]].map((item, idx) => (
                 <article
-                  key={item.id}
+                  key={idx}
                   className={styles.carouselSlide}
                   style={{ '--slide-accent': item.accentColor }}
                 >
@@ -279,8 +304,8 @@ function HomePage() {
             {MOCK_CAROUSEL_ITEMS.map((_, i) => (
               <button
                 key={i}
-                className={`${styles.dot} ${i === currentSlide ? styles.dotActive : ''}`}
-                onClick={() => setCurrentSlide(i)}
+                className={`${styles.dot} ${i === activeIndex ? styles.dotActive : ''}`}
+                onClick={() => setDisplayIndex(i + 1)}
                 aria-label={`${i + 1}번째 슬라이드로 이동`}
               />
             ))}
