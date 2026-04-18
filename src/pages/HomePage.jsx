@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 
 import ConcertCard from '@/components/concert/ConcertCard'
@@ -178,6 +178,7 @@ const MOCK_POPULAR_CONCERTS = [
 function HomePage() {
   const [currentSlide, setCurrentSlide] = useState(0)
   const [isPaused, setIsPaused] = useState(false)
+  const touchStartX = useRef(null)
   const user = useAuthStore((s) => s.user)
   const openLoginModal = useLoginModalStore((s) => s.open)
   // TODO: React Query 연동 후 useQuery의 isLoading으로 교체
@@ -200,6 +201,17 @@ function HomePage() {
     setCurrentSlide((i) => (i + 1) % total)
   }
 
+  function handleTouchStart(e) {
+    touchStartX.current = e.touches[0].clientX
+  }
+
+  function handleTouchEnd(e) {
+    if (touchStartX.current === null) return
+    const diff = touchStartX.current - e.changedTouches[0].clientX
+    if (Math.abs(diff) > 40) diff > 0 ? goNext() : goPrev()
+    touchStartX.current = null
+  }
+
   return (
     <div className={styles.page}>
       {/* 캐러셀 */}
@@ -209,6 +221,8 @@ function HomePage() {
             className={styles.carouselViewport}
             onMouseEnter={() => setIsPaused(true)}
             onMouseLeave={() => setIsPaused(false)}
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
           >
             <div
               className={styles.carouselTrack}
