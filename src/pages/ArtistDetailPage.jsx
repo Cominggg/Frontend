@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 
 import ArtistConcertItem from '@/components/artist/ArtistConcertItem'
+import EmptyState from '@/components/ui/EmptyState'
 import useAuthStore from '@/stores/authStore'
 import { ROUTES } from '@/constants/routes'
 import { getArtistColor } from '@/utils/artistColor'
@@ -360,11 +361,13 @@ function ArtistDetailPage() {
               ))}
             </div>
           ) : (
-            <p className={styles.empty}>
-              {concertTab === '전체' ? '등록된 내한 공연 내역이 없습니다.' :
-               concertTab === '예정' ? '예정된 내한 공연이 없습니다.' :
-               '과거 내한 공연 내역이 없습니다.'}
-            </p>
+            <EmptyState
+              message={
+                concertTab === '전체' ? '등록된 내한 공연 내역이 없습니다.' :
+                concertTab === '예정' ? '예정된 내한 공연이 없습니다.' :
+                '과거 내한 공연 내역이 없습니다.'
+              }
+            />
           )}
         </section>
 
