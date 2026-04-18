@@ -257,36 +257,9 @@
   display: block;
 }
 
-.posterPlaceholder {
-  width: 100%;
-  max-width: 360px;
-  aspect-ratio: 2 / 3;
-  border-radius: 16px;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(145deg, var(--color-accent) 0%, var(--color-accent-border) 100%);
-  padding: 1.5rem;
-  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.15);
-}
-
-.posterArtistName {
-  font-size: 1.375rem;
-  font-weight: 800;
-  color: rgba(255, 255, 255, 0.9);
-  text-align: center;
-  line-height: 1.35;
-  overflow-wrap: break-word;
-}
-
-/* ── Not Found ── */
-.notFound {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1rem;
-  padding: 5rem 1rem;
+.posterEmpty {
+  padding: 3rem 1rem;
+  font-size: 0.9375rem;
   color: var(--color-text-muted);
   text-align: center;
 }
@@ -322,7 +295,4 @@
     font-size: 1.375rem;
   }
 
-  .posterPlaceholder {
-    max-width: 260px;
-  }
 }
