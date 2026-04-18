@@ -354,7 +354,7 @@ function HomePage() {
       </section>
 
       {/* 새 앨범·싱글 */}
-      <section className={`${styles.section} ${styles.sectionAlt}`}>
+      <section className={styles.section}>
         <div className={styles.sectionInner}>
           <div className={styles.sectionHeader}>
             <h2 className={styles.sectionTitle}>새 앨범·싱글</h2>
