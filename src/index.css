@@ -57,6 +57,33 @@
 
 
 /* ===========================
+   다크 모드
+   =========================== */
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* 색상 — 다크 */
+    --color-bg: #0f0f1a;
+    --color-surface: #1a1a2e;
+    --color-surface-hover: #2a1a22;
+    --color-border: #2e2e42;
+    --color-text: #f0f0f5;
+    --color-text-muted: #9ca3af;
+
+    /* 액센트 파생 — 다크 */
+    --color-header-bg: rgba(15, 15, 26, 0.85);
+    --color-mobile-nav-bg: rgba(26, 26, 46, 0.98);
+    --color-accent-border: rgba(225, 29, 72, 0.35);
+    --color-accent-shadow: rgba(225, 29, 72, 0.18);
+    --color-accent-focus-border: rgba(225, 29, 72, 0.55);
+    --color-accent-hover-bg: rgba(225, 29, 72, 0.18);
+    --color-accent-hover-border: rgba(225, 29, 72, 0.6);
+    --color-accent-dark: #e11d48;
+
+    color-scheme: dark;
+  }
+}
+
+/* ===========================
    리셋
    =========================== */
 *,
