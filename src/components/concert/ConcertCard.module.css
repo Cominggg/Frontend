@@ -29,11 +29,6 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.3s;
-}
-
-.card:hover .poster {
-  transform: scale(1.04);
 }
 
 /* 포스터 플레이스홀더 */
@@ -48,7 +43,6 @@
   background: linear-gradient(145deg, var(--p-from) 0%, var(--p-to) 100%);
   position: relative;
   overflow: hidden;
-  transition: transform 0.3s;
 }
 
 .posterPlaceholder::before {
@@ -62,9 +56,6 @@
   pointer-events: none;
 }
 
-.card:hover .posterPlaceholder {
-  transform: scale(1.04);
-}
 
 .posterArtistName {
   position: relative;
@@ -105,7 +96,6 @@
   font-weight: 600;
   letter-spacing: 0.04em;
   color: var(--color-accent-light);
-  text-transform: uppercase;
 }
 
 .title {

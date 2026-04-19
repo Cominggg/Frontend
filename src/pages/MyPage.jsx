@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 
 import Badge from '@/components/ui/Badge'
+import EmptyState from '@/components/ui/EmptyState'
 import { ROUTES } from '@/constants/routes'
 import { getArtistColor } from '@/utils/artistColor'
 import styles from './MyPage.module.css'
@@ -164,13 +165,15 @@ function MyPage() {
         {activeTab === 'artists' && (
           <div role="tabpanel" id="tabpanel-artists" aria-labelledby="tab-artists">
             {followedArtists.length === 0 ? (
-              <div className={styles.empty}>
-                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={styles.emptyIcon} aria-hidden="true">
-                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-                </svg>
-                <p className={styles.emptyText}>팔로우한 아티스트가 없습니다.</p>
-                <Link to={ROUTES.ARTISTS} className={styles.emptyLink}>아티스트 둘러보기</Link>
-              </div>
+              <EmptyState
+                icon={
+                  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                  </svg>
+                }
+                message="팔로우한 아티스트가 없습니다."
+                action={{ label: '아티스트 둘러보기', to: ROUTES.ARTISTS }}
+              />
             ) : (
               <div className={styles.artistList}>
                 {followedArtists.map((artist) => (
@@ -185,15 +188,17 @@ function MyPage() {
         {activeTab === 'upcoming' && (
           <div role="tabpanel" id="tabpanel-upcoming" aria-labelledby="tab-upcoming">
             {paginatedUpcoming.length === 0 ? (
-              <div className={styles.empty}>
-                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={styles.emptyIcon} aria-hidden="true">
-                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-                  <line x1="16" y1="2" x2="16" y2="6" />
-                  <line x1="8" y1="2" x2="8" y2="6" />
-                  <line x1="3" y1="10" x2="21" y2="10" />
-                </svg>
-                <p className={styles.emptyText}>예정된 공연이 없습니다.</p>
-              </div>
+              <EmptyState
+                icon={
+                  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                    <line x1="16" y1="2" x2="16" y2="6" />
+                    <line x1="8" y1="2" x2="8" y2="6" />
+                    <line x1="3" y1="10" x2="21" y2="10" />
+                  </svg>
+                }
+                message="예정된 공연이 없습니다."
+              />
             ) : (
               <>
                 <div className={styles.concertList}>

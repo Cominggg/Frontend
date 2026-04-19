@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 
 import Badge from '@/components/ui/Badge'
+import EmptyState from '@/components/ui/EmptyState'
 import useAuthStore from '@/stores/authStore'
 import { ROUTES } from '@/constants/routes'
 import styles from './ConcertDetailPage.module.css'
@@ -121,10 +122,17 @@ function ConcertDetailPage() {
 
   if (!concert) {
     return (
-      <div className={styles.notFound}>
-        <p>찾을 수 없는 공연입니다.</p>
-        <Link to={ROUTES.CONCERTS} className={styles.backLink}>공연 목록으로</Link>
-      </div>
+      <EmptyState
+        icon={
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="12" cy="12" r="10" />
+            <line x1="12" y1="8" x2="12" y2="12" />
+            <line x1="12" y1="16" x2="12.01" y2="16" />
+          </svg>
+        }
+        message="공연 정보가 존재하지 않습니다"
+        action={{ to: ROUTES.CONCERTS, label: '공연 목록으로' }}
+      />
     )
   }
 
@@ -281,9 +289,7 @@ function ConcertDetailPage() {
               ))}
             </div>
           ) : (
-            <div className={styles.posterPlaceholder}>
-              <span className={styles.posterArtistName}>{artistName}</span>
-            </div>
+            <p className={styles.posterEmpty}>공연 정보가 존재하지 않습니다</p>
           )}
         </div>
 

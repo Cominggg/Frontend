@@ -1,12 +1,12 @@
 export const PLACEHOLDER_PALETTE = [
-  ['#7c3aed', '#c4b5fd'],
-  ['#0369a1', '#7dd3fc'],
-  ['#be123c', '#fda4af'],
-  ['#15803d', '#86efac'],
-  ['#b45309', '#fcd34d'],
-  ['#0f766e', '#5eead4'],
-  ['#9333ea', '#d8b4fe'],
-  ['#1d4ed8', '#93c5fd'],
+  ['#6d28d9', '#a78bfa'],
+  ['#1d4ed8', '#60a5fa'],
+  ['#9f1239', '#fb7185'],
+  ['#15803d', '#4ade80'],
+  ['#b45309', '#fbbf24'],
+  ['#0f766e', '#2dd4bf'],
+  ['#7c3aed', '#c084fc'],
+  ['#1e40af', '#818cf8'],
 ]
 
 export function getArtistColor(name) {

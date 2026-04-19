@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react'
 
 import ConcertCard from '@/components/concert/ConcertCard'
 import ConcertCardSkeleton from '@/components/concert/ConcertCardSkeleton'
+import EmptyState from '@/components/ui/EmptyState'
 import { MOCK_FOLLOWED_ARTISTS } from '@/mocks/followedArtistMocks'
 import useAuthStore from '@/stores/authStore'
 import useLoginModalStore from '@/stores/loginModalStore'
@@ -99,23 +100,21 @@ function ConcertsPage() {
           )}
         </div>
 
-        {/* 공연 상태 필터 */}
-        <div className={styles.filterBar} role="tablist" aria-label="공연 상태 필터">
-          {STATUS_FILTERS.map((s) => (
-            <button
-              key={s}
-              role="tab"
-              aria-selected={selectedStatus === s}
-              className={`${styles.filterTab} ${selectedStatus === s ? styles.filterTabActive : ''}`}
-              onClick={() => setSelectedStatus(s)}
-            >
-              {s}
-            </button>
-          ))}
-        </div>
-
-        {/* 관심 아티스트 필터 토글 */}
-        <div className={styles.followedRow}>
+        {/* 공연 상태 필터 + 관심 아티스트 토글 */}
+        <div className={styles.filterRow}>
+          <div className={styles.filterBar} role="tablist" aria-label="공연 상태 필터">
+            {STATUS_FILTERS.map((s) => (
+              <button
+                key={s}
+                role="tab"
+                aria-selected={selectedStatus === s}
+                className={`${styles.filterTab} ${selectedStatus === s ? styles.filterTabActive : ''}`}
+                onClick={() => setSelectedStatus(s)}
+              >
+                {s}
+              </button>
+            ))}
+          </div>
           <button
             className={`${styles.followedToggle} ${effectiveFollowedOnly ? styles.followedToggleActive : ''}`}
             onClick={handleFollowedToggle}
@@ -142,17 +141,17 @@ function ConcertsPage() {
             ))}
           </div>
         ) : (
-          <div className={styles.empty}>
-            <span className={styles.emptyIcon} aria-hidden="true">
+          <EmptyState
+            icon={
               <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                 <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
                 <line x1="16" y1="2" x2="16" y2="6" />
                 <line x1="8" y1="2" x2="8" y2="6" />
                 <line x1="3" y1="10" x2="21" y2="10" />
               </svg>
-            </span>
-            <p className={styles.emptyText}>해당 조건의 공연이 없습니다.</p>
-          </div>
+            }
+            message="해당 조건의 공연이 없습니다."
+          />
         )}
 
       </div>

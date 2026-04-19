@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 
 import ConcertCard from '@/components/concert/ConcertCard'
@@ -176,28 +176,78 @@ const MOCK_POPULAR_CONCERTS = [
 ]
 
 function HomePage() {
-  const [currentSlide, setCurrentSlide] = useState(0)
+  const total = MOCK_CAROUSEL_ITEMS.length
+  const [displayIndex, setDisplayIndex] = useState(1)
+  const [noTransition, setNoTransition] = useState(false)
   const [isPaused, setIsPaused] = useState(false)
+  const touchStartX = useRef(null)
+  const isAnimating = useRef(false)
   const user = useAuthStore((s) => s.user)
   const openLoginModal = useLoginModalStore((s) => s.open)
   // TODO: React Query 연동 후 useQuery의 isLoading으로 교체
   const isLoading = false
-  const total = MOCK_CAROUSEL_ITEMS.length
+
+  const activeIndex = (displayIndex - 1 + total) % total
 
   useEffect(() => {
     if (isPaused) return
     const id = setInterval(() => {
-      setCurrentSlide((i) => (i + 1) % total)
+      if (!isAnimating.current) {
+        isAnimating.current = true
+        setDisplayIndex((i) => i + 1)
+      }
     }, 5000)
     return () => clearInterval(id)
-  }, [isPaused, total])
+  }, [isPaused])
+
+  // 클론 슬라이드 도착 후 실제 슬라이드로 순간이동
+  function handleTransitionEnd() {
+    if (displayIndex === total + 1) {
+      setNoTransition(true)
+      setDisplayIndex(1)
+      // noTransition 상태에서 클릭하면 transition 없어 transitionend 미발생 → isAnimating 고착
+      // double-rAF 이후 해제 (useEffect에서 처리)
+    } else if (displayIndex === 0) {
+      setNoTransition(true)
+      setDisplayIndex(total)
+    } else {
+      isAnimating.current = false
+    }
+  }
+
+  // 순간이동 후 다음 프레임에 트랜지션 복원, 클론 스냅인 경우 여기서 isAnimating 해제
+  useEffect(() => {
+    if (!noTransition) return
+    const raf = requestAnimationFrame(() =>
+      requestAnimationFrame(() => {
+        setNoTransition(false)
+        isAnimating.current = false
+      })
+    )
+    return () => cancelAnimationFrame(raf)
+  }, [noTransition])
 
   function goPrev() {
-    setCurrentSlide((i) => (i - 1 + total) % total)
+    if (isAnimating.current) return
+    isAnimating.current = true
+    setDisplayIndex((i) => i - 1)
   }
 
   function goNext() {
-    setCurrentSlide((i) => (i + 1) % total)
+    if (isAnimating.current) return
+    isAnimating.current = true
+    setDisplayIndex((i) => i + 1)
+  }
+
+  function handleTouchStart(e) {
+    touchStartX.current = e.touches[0].clientX
+  }
+
+  function handleTouchEnd(e) {
+    if (touchStartX.current === null) return
+    const diff = touchStartX.current - e.changedTouches[0].clientX
+    if (Math.abs(diff) > 40 && !isAnimating.current) diff > 0 ? goNext() : goPrev()
+    touchStartX.current = null
   }
 
   return (
@@ -209,14 +259,22 @@ function HomePage() {
             className={styles.carouselViewport}
             onMouseEnter={() => setIsPaused(true)}
             onMouseLeave={() => setIsPaused(false)}
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
           >
             <div
               className={styles.carouselTrack}
-              style={{ transform: `translateX(-${currentSlide * 100}%)` }}
+              style={{
+                transform: `translateX(-${displayIndex * 100}%)`,
+                transition: noTransition ? 'none' : undefined,
+              }}
+              onTransitionEnd={handleTransitionEnd}
             >
-              {MOCK_CAROUSEL_ITEMS.map((item) => (
+              {[MOCK_CAROUSEL_ITEMS[total - 1], ...MOCK_CAROUSEL_ITEMS, MOCK_CAROUSEL_ITEMS[0]].map((item, idx) => {
+                const keyPrefix = idx === 0 ? 'clone-prev' : idx === total + 1 ? 'clone-next' : 'slide'
+                return (
                 <article
-                  key={item.id}
+                  key={`${keyPrefix}-${item.id}`}
                   className={styles.carouselSlide}
                   style={{ '--slide-accent': item.accentColor }}
                 >
@@ -250,7 +308,7 @@ function HomePage() {
                     <span className={styles.slideInitial}>{item.artistName.charAt(0)}</span>
                   </div>
                 </article>
-              ))}
+              )})}
             </div>
 
             <button className={`${styles.navBtn} ${styles.navPrev}`} onClick={goPrev} aria-label="이전 슬라이드">
@@ -265,8 +323,8 @@ function HomePage() {
             {MOCK_CAROUSEL_ITEMS.map((_, i) => (
               <button
                 key={i}
-                className={`${styles.dot} ${i === currentSlide ? styles.dotActive : ''}`}
-                onClick={() => setCurrentSlide(i)}
+                className={`${styles.dot} ${i === activeIndex ? styles.dotActive : ''}`}
+                onClick={() => setDisplayIndex(i + 1)}
                 aria-label={`${i + 1}번째 슬라이드로 이동`}
               />
             ))}
@@ -298,7 +356,7 @@ function HomePage() {
       </section>
 
       {/* 새 앨범·싱글 */}
-      <section className={`${styles.section} ${styles.sectionAlt}`}>
+      <section className={styles.section}>
         <div className={styles.sectionInner}>
           <div className={styles.sectionHeader}>
             <h2 className={styles.sectionTitle}>새 앨범·싱글</h2>

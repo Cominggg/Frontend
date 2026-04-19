@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react'
 
 import ArtistCard from '@/components/artist/ArtistCard'
 import ArtistCardSkeleton from '@/components/artist/ArtistCardSkeleton'
+import EmptyState from '@/components/ui/EmptyState'
 import styles from './ArtistsPage.module.css'
 
 // TODO: API 연동 후 제거
@@ -128,15 +129,15 @@ function ArtistsPage() {
             ))}
           </div>
         ) : (
-          <div className={styles.empty}>
-            <span className={styles.emptyIcon} aria-hidden="true">
+          <EmptyState
+            icon={
               <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                 <circle cx="11" cy="11" r="8" />
                 <line x1="21" y1="21" x2="16.65" y2="16.65" />
               </svg>
-            </span>
-            <p className={styles.emptyText}>검색 결과가 없습니다. 다른 검색어를 입력해 보세요.</p>
-          </div>
+            }
+            message="검색 결과가 없습니다. 다른 검색어를 입력해 보세요."
+          />
         )}
 
         {/* 페이지네이션 */}

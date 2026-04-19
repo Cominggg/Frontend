@@ -207,18 +207,18 @@
   justify-content: center;
   width: 40px;
   height: 40px;
-  background: rgba(255, 255, 255, 0.85);
+  background: var(--color-overlay-btn-bg);
   backdrop-filter: blur(8px);
-  border: 1px solid rgba(0, 0, 0, 0.08);
+  border: 1px solid var(--color-overlay-btn-border);
   border-radius: 50%;
   color: var(--color-text);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 2px 8px var(--color-overlay-btn-shadow);
   transition: background 0.15s, box-shadow 0.15s, transform 0.15s;
 }
 
 .navBtn:hover {
-  background: rgba(255, 255, 255, 0.98);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  background: var(--color-overlay-btn-bg-hover);
+  box-shadow: 0 4px 16px var(--color-overlay-btn-shadow-hover);
   transform: translateY(-50%) scale(1.05);
 }
 
@@ -243,7 +243,7 @@
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background-color: var(--color-border);
+  background-color: var(--color-dot-inactive);
   border: none;
   padding: 0;
   transition: background-color 0.2s, width 0.2s, border-radius 0.2s;
@@ -280,11 +280,7 @@
    섹션
    =========================== */
 .section {
-  padding: 2.5rem 0 3rem;
-}
-
-.sectionAlt {
-  background: color-mix(in srgb, var(--color-surface-alt, var(--color-border)) 40%, var(--color-surface));
+  padding: 3rem 0 3.5rem;
 }
 
 .sectionInner {
@@ -375,7 +371,7 @@
 }
 
 /* 데스크탑: 8건 1행 */
-@media (min-width: 1024px) {
+@media (min-width: 1280px) {
   .albumStrip {
     grid-template-columns: repeat(8, 1fr);
   }
@@ -546,12 +542,11 @@
   }
 
   .navBtn {
-    width: 32px;
-    height: 32px;
+    display: none;
   }
 
   .section {
-    padding: 1.75rem 0 2.5rem;
+    padding: 2rem 0 2.75rem;
   }
 
   .sectionInner {
@@ -564,8 +559,3 @@
   }
 }
 
-@media (max-width: 420px) {
-  .grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}

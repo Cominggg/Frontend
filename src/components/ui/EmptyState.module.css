@@ -1,0 +1,34 @@
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 5rem 1rem;
+  color: var(--color-text-muted);
+  text-align: center;
+}
+
+.icon {
+  opacity: 0.45;
+  display: flex;
+}
+
+.message {
+  margin: 0;
+  font-size: 0.9375rem;
+}
+
+.action {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--color-accent);
+  text-decoration: none;
+  padding: 0.5rem 1.25rem;
+  border-radius: 100px;
+  border: 1.5px solid var(--color-accent-border);
+  transition: background-color 0.15s;
+}
+
+.action:hover {
+  background: var(--color-accent-dim);
+}
