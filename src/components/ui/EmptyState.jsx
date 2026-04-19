@@ -11,9 +11,9 @@ export default function EmptyState({ icon, message, action }) {
       )}
       <p className={styles.message}>{message}</p>
       {action && (
-        <Link to={action.to} className={styles.action}>
-          {action.label}
-        </Link>
+        action.href
+          ? <a href={action.href} className={styles.action} target="_blank" rel="noopener noreferrer">{action.label}</a>
+          : <Link to={action.to} className={styles.action}>{action.label}</Link>
       )}
     </div>
   );
