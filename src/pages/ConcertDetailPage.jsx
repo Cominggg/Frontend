@@ -154,7 +154,6 @@ function ConcertDetailPage() {
   const { thumbnailUrl, posterUrls, artistName, artistId, title, startDate, endDate,
           venue, status, price, ticketLinks, description, setlist } = concert
   const showThumbnailPlaceholder = !thumbnailUrl || thumbnailFailed
-  const effectiveTab = activeTab
 
   const dateRange = endDate && endDate !== startDate
     ? `${startDate} ~ ${endDate}`
@@ -301,14 +300,14 @@ function ConcertDetailPage() {
         <div className={styles.tabSection}>
           <div className={styles.tabBar}>
             <button
-              className={`${styles.tabBtn} ${effectiveTab === 'info' ? styles.tabBtnActive : ''}`}
+              className={`${styles.tabBtn} ${activeTab === 'info' ? styles.tabBtnActive : ''}`}
               onClick={() => setActiveTab('info')}
             >
               공연 정보
             </button>
             {status === '공연완료' && (
               <button
-                className={`${styles.tabBtn} ${effectiveTab === 'setlist' ? styles.tabBtnActive : ''}`}
+                className={`${styles.tabBtn} ${activeTab === 'setlist' ? styles.tabBtnActive : ''}`}
                 onClick={() => setActiveTab('setlist')}
               >
                 셋리스트
@@ -316,7 +315,7 @@ function ConcertDetailPage() {
             )}
           </div>
 
-          {effectiveTab === 'setlist' && status === '공연완료' && (
+          {activeTab === 'setlist' && status === '공연완료' && (
             <div className={styles.tabPanel}>
               {setlist && setlist.length > 0 ? (
                 <ol className={styles.setlistTrackList}>
@@ -333,7 +332,7 @@ function ConcertDetailPage() {
             </div>
           )}
 
-          {effectiveTab === 'info' && (
+          {activeTab === 'info' && (
             <div className={styles.tabPanel}>
               {posterUrls.length > 0 ? (
                 <div className={styles.posterList}>
