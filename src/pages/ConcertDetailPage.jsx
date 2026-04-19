@@ -31,6 +31,20 @@ const MOCK_CONCERT_MAP = {
       { id: 'yes24', label: 'YES24', url: '#' },
     ],
     description: '요네즈 켄시의 "LOST CORNER" 앨범 투어의 한국 공연.',
+    setlist: [
+      { order: 1, title: 'Pale Blue' },
+      { order: 2, title: 'KICK BACK' },
+      { order: 3, title: 'Lemon' },
+      { order: 4, title: 'Moonlight' },
+      { order: 5, title: 'M八七' },
+      { order: 6, title: 'POP SONG' },
+      { order: 7, title: 'メフィスト' },
+      { order: 8, title: 'LOST CORNER' },
+      { order: 9, title: '死神' },
+      { order: 10, title: 'Flamingo' },
+      { order: 11, title: '地球儀' },
+      { order: 12, title: 'PLACEBO + 世界の終わり' },
+    ],
   },
   3: {
     id: 3, thumbnailUrl: null, posterUrls: [], artistName: 'Ado', artistId: 3,
@@ -97,6 +111,7 @@ function ConcertDetailPage() {
   const { id } = useParams()
   const concert = getMockConcert(Number(id))
   const [thumbnailFailed, setThumbnailFailed] = useState(false)
+  const [activeTab, setActiveTab] = useState('info')
   const user = useAuthStore((s) => s.user)
 
   // TODO: React Query 연동 후 isLoading으로 교체
@@ -137,8 +152,9 @@ function ConcertDetailPage() {
   }
 
   const { thumbnailUrl, posterUrls, artistName, artistId, title, startDate, endDate,
-          venue, status, price, ticketLinks, description } = concert
+          venue, status, price, ticketLinks, description, setlist } = concert
   const showThumbnailPlaceholder = !thumbnailUrl || thumbnailFailed
+  const effectiveTab = activeTab
 
   const dateRange = endDate && endDate !== startDate
     ? `${startDate} ~ ${endDate}`
@@ -281,17 +297,54 @@ function ConcertDetailPage() {
           </div>
         </div>
 
-        {/* 정보 포스터 (하단) */}
-        <div className={styles.posterSection}>
-          <p className={styles.posterLabel}>공연 정보</p>
-          {posterUrls.length > 0 ? (
-            <div className={styles.posterList}>
-              {posterUrls.map((url, i) => (
-                <PosterImage key={i} url={url} alt={`${title} 공연 정보 ${i + 1}`} />
-              ))}
+        {/* 하단 탭 */}
+        <div className={styles.tabSection}>
+          <div className={styles.tabBar}>
+            <button
+              className={`${styles.tabBtn} ${effectiveTab === 'info' ? styles.tabBtnActive : ''}`}
+              onClick={() => setActiveTab('info')}
+            >
+              공연 정보
+            </button>
+            {status === '공연완료' && (
+              <button
+                className={`${styles.tabBtn} ${effectiveTab === 'setlist' ? styles.tabBtnActive : ''}`}
+                onClick={() => setActiveTab('setlist')}
+              >
+                셋리스트
+              </button>
+            )}
+          </div>
+
+          {effectiveTab === 'setlist' && status === '공연완료' && (
+            <div className={styles.tabPanel}>
+              {setlist && setlist.length > 0 ? (
+                <ol className={styles.setlistTrackList}>
+                  {setlist.map((track) => (
+                    <li key={track.order} className={styles.setlistTrack}>
+                      <span className={styles.setlistOrder}>{track.order}</span>
+                      <span className={styles.setlistTitle}>{track.title}</span>
+                    </li>
+                  ))}
+                </ol>
+              ) : (
+                <p className={styles.setlistEmpty}>아직 등록된 셋리스트가 없습니다.</p>
+              )}
             </div>
-          ) : (
-            <p className={styles.posterEmpty}>공연 정보가 존재하지 않습니다</p>
+          )}
+
+          {effectiveTab === 'info' && (
+            <div className={styles.tabPanel}>
+              {posterUrls.length > 0 ? (
+                <div className={styles.posterList}>
+                  {posterUrls.map((url, i) => (
+                    <PosterImage key={i} url={url} alt={`${title} 공연 정보 ${i + 1}`} />
+                  ))}
+                </div>
+              ) : (
+                <p className={styles.posterEmpty}>공연 정보가 존재하지 않습니다</p>
+              )}
+            </div>
           )}
         </div>
 
