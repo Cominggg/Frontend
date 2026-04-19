@@ -225,19 +225,86 @@
   border-color: var(--color-accent-border);
 }
 
-/* ── 정보 포스터 (하단) ── */
-.posterSection {
+/* ── 하단 탭 ── */
+.tabSection {
   margin-top: 3rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.875rem;
 }
 
-.posterLabel {
-  margin: 0;
-  font-size: 0.875rem;
+.tabBar {
+  display: flex;
+  gap: 0;
+  border-bottom: 2px solid var(--color-border);
+  margin-bottom: 1.5rem;
+}
+
+.tabBtn {
+  padding: 0.625rem 1.25rem;
+  font-size: 0.9375rem;
   font-weight: 600;
   color: var(--color-text-muted);
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.tabBtn:hover {
+  color: var(--color-text);
+}
+
+.tabBtnActive {
+  color: var(--color-accent);
+  border-bottom-color: var(--color-accent);
+}
+
+.tabPanel {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+/* ── 정보 포스터 (하단) ── */
+.setlistTrackList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.setlistTrack {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 1.25rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.setlistTrack:last-child {
+  border-bottom: none;
+}
+
+.setlistOrder {
+  min-width: 1.5rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  text-align: right;
+}
+
+.setlistTitle {
+  font-size: 0.9375rem;
+  color: var(--color-text-primary);
+}
+
+.setlistEmpty {
+  padding: 3rem 1rem;
+  font-size: 0.9375rem;
+  color: var(--color-text-muted);
+  text-align: center;
 }
 
 .posterList {
