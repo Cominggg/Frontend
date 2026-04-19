@@ -270,9 +270,11 @@ function HomePage() {
               }}
               onTransitionEnd={handleTransitionEnd}
             >
-              {[MOCK_CAROUSEL_ITEMS[total - 1], ...MOCK_CAROUSEL_ITEMS, MOCK_CAROUSEL_ITEMS[0]].map((item, idx) => (
+              {[MOCK_CAROUSEL_ITEMS[total - 1], ...MOCK_CAROUSEL_ITEMS, MOCK_CAROUSEL_ITEMS[0]].map((item, idx) => {
+                const keyPrefix = idx === 0 ? 'clone-prev' : idx === total + 1 ? 'clone-next' : 'slide'
+                return (
                 <article
-                  key={idx}
+                  key={`${keyPrefix}-${item.id}`}
                   className={styles.carouselSlide}
                   style={{ '--slide-accent': item.accentColor }}
                 >
@@ -306,7 +308,7 @@ function HomePage() {
                     <span className={styles.slideInitial}>{item.artistName.charAt(0)}</span>
                   </div>
                 </article>
-              ))}
+              )})}
             </div>
 
             <button className={`${styles.navBtn} ${styles.navPrev}`} onClick={goPrev} aria-label="이전 슬라이드">
