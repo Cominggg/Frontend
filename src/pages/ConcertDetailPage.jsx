@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link, useParams } from 'react-router-dom'
 
 import Badge from '@/components/ui/Badge'
@@ -113,6 +113,8 @@ function ConcertDetailPage() {
   const [thumbnailFailed, setThumbnailFailed] = useState(false)
   const [activeTab, setActiveTab] = useState('info')
   const user = useAuthStore((s) => s.user)
+
+  useEffect(() => { setActiveTab('info') }, [id])
 
   // TODO: React Query 연동 후 isLoading으로 교체
   const isLoading = false
