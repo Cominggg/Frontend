@@ -152,13 +152,14 @@ function ConcertRow({ concert }) {
 function InquiryRow({ inquiry }) {
   const [expanded, setExpanded] = useState(false)
   const { type, title, status, createdAt, resultMessage, rejectReason } = inquiry
+  const hasDetail = status === 'RESOLVED' || status === 'REJECTED'
 
   return (
     <div className={styles.inquiryItem}>
       <button
-        className={styles.inquiryRowBtn}
-        onClick={() => setExpanded((p) => !p)}
-        aria-expanded={expanded}
+        className={`${styles.inquiryRowBtn} ${!hasDetail ? styles.inquiryRowBtnStatic : ''}`}
+        onClick={() => hasDetail && setExpanded((p) => !p)}
+        aria-expanded={hasDetail ? expanded : undefined}
       >
         <div className={styles.inquiryRowMain}>
           <div className={styles.inquiryRowMeta}>
@@ -170,24 +171,20 @@ function InquiryRow({ inquiry }) {
           <p className={styles.inquiryTitle}>{title}</p>
           <span className={styles.inquiryDate}>{createdAt}</span>
         </div>
-        <svg
-          className={`${styles.inquiryChevron} ${expanded ? styles.inquiryChevronOpen : ''}`}
-          width="16" height="16" viewBox="0 0 24 24" fill="none"
-          stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
-          aria-hidden="true"
-        >
-          <path d="m6 9 6 6 6-6" />
-        </svg>
+        {hasDetail && (
+          <svg
+            className={`${styles.inquiryChevron} ${expanded ? styles.inquiryChevronOpen : ''}`}
+            width="16" height="16" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
+            aria-hidden="true"
+          >
+            <path d="m6 9 6 6 6-6" />
+          </svg>
+        )}
       </button>
 
-      {expanded && (
+      {hasDetail && expanded && (
         <div className={styles.inquiryDetail}>
-          {status === 'PENDING' && (
-            <p className={styles.inquiryDetailText}>검토 대기 중입니다.</p>
-          )}
-          {status === 'IN_PROGRESS' && (
-            <p className={styles.inquiryDetailText}>현재 처리 중입니다.</p>
-          )}
           {status === 'RESOLVED' && (
             <>
               <p className={styles.inquiryDetailLabel}>처리 결과</p>

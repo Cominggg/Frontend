@@ -370,6 +370,14 @@
   background: color-mix(in srgb, var(--color-accent) 4%, var(--color-surface));
 }
 
+.inquiryRowBtnStatic {
+  cursor: default;
+}
+
+.inquiryRowBtnStatic:hover {
+  background: none;
+}
+
 .inquiryRowMain {
   flex: 1;
   display: flex;
