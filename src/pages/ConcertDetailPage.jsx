@@ -3,7 +3,9 @@ import { Link, useParams } from 'react-router-dom'
 
 import Badge from '@/components/ui/Badge'
 import EmptyState from '@/components/ui/EmptyState'
+import InquiryModal from '@/components/ui/InquiryModal'
 import useAuthStore from '@/stores/authStore'
+import useLoginModalStore from '@/stores/loginModalStore'
 import { ROUTES } from '@/constants/routes'
 import styles from './ConcertDetailPage.module.css'
 
@@ -112,7 +114,9 @@ function ConcertDetailPage() {
   const concert = getMockConcert(Number(id))
   const [thumbnailFailed, setThumbnailFailed] = useState(false)
   const [activeTab, setActiveTab] = useState('info')
+  const [inquiryType, setInquiryType] = useState(null)
   const user = useAuthStore((s) => s.user)
+  const openLoginModal = useLoginModalStore((s) => s.open)
 
   useEffect(() => { setActiveTab('info') }, [id])
 
@@ -120,19 +124,13 @@ function ConcertDetailPage() {
   const isLoading = false
 
   function handleConcertInquiry() {
-    if (!user) {
-      // TODO: 로그인 모달 표시 (redirectUri: 현재 URL)
-      return
-    }
-    // TODO: 문의 모달 표시 (type: CONCERT, targetId: id)
+    if (!user) { openLoginModal(window.location.href); return }
+    setInquiryType('CONCERT')
   }
 
   function handleSetlistInquiry() {
-    if (!user) {
-      // TODO: 로그인 모달 표시 (redirectUri: 현재 URL)
-      return
-    }
-    // TODO: 문의 모달 표시 (type: SETLIST, targetId: id)
+    if (!user) { openLoginModal(window.location.href); return }
+    setInquiryType('SETLIST')
   }
 
   if (isLoading) return null // TODO: 스켈레톤으로 교체
@@ -162,6 +160,7 @@ function ConcertDetailPage() {
     : startDate
 
   return (
+    <>
     <div className={styles.page}>
       <div className={styles.inner}>
 
@@ -351,6 +350,14 @@ function ConcertDetailPage() {
 
       </div>
     </div>
+
+    <InquiryModal
+      key={inquiryType}
+      isOpen={inquiryType !== null}
+      onClose={() => setInquiryType(null)}
+      type={inquiryType}
+    />
+    </>
   )
 }
 

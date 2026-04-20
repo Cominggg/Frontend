@@ -10,7 +10,7 @@ const TYPE_LABELS = {
 
 const FOCUSABLE = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
 
-function InquiryModal({ isOpen, onClose, type, targetId }) {
+function InquiryModal({ isOpen, onClose, type }) {
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
   const [submitted, setSubmitted] = useState(false)
@@ -18,9 +18,6 @@ function InquiryModal({ isOpen, onClose, type, targetId }) {
 
   useEffect(() => {
     if (!isOpen) return
-    setTitle('')
-    setContent('')
-    setSubmitted(false)
 
     const modal = modalRef.current
     const focusable = modal ? [...modal.querySelectorAll(FOCUSABLE)] : []
