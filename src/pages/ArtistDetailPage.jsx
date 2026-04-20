@@ -3,7 +3,9 @@ import { Link, useParams } from 'react-router-dom'
 
 import ArtistConcertItem from '@/components/artist/ArtistConcertItem'
 import EmptyState from '@/components/ui/EmptyState'
+import InquiryModal from '@/components/ui/InquiryModal'
 import useAuthStore from '@/stores/authStore'
+import useLoginModalStore from '@/stores/loginModalStore'
 import { ROUTES } from '@/constants/routes'
 import { getArtistColor } from '@/utils/artistColor'
 import styles from './ArtistDetailPage.module.css'
@@ -136,7 +138,9 @@ function ArtistDetailPage() {
   const [isFollowing, setIsFollowing] = useState(artist?.isFollowing ?? false)
   const [imgFailed, setImgFailed] = useState(false)
   const [concertTab, setConcertTab] = useState('전체')
+  const [inquiryOpen, setInquiryOpen] = useState(false)
   const user = useAuthStore((s) => s.user)
+  const openLoginModal = useLoginModalStore((s) => s.open)
 
   // TODO: React Query 연동 후 isLoading으로 교체
   const isLoading = false
@@ -150,11 +154,8 @@ function ArtistDetailPage() {
   }
 
   function handleArtistInquiry() {
-    if (!user) {
-      // TODO: 로그인 모달 표시 (redirectUri: 현재 URL)
-      return
-    }
-    // TODO: 문의 모달 표시 (type: ARTIST, targetId: id)
+    if (!user) { openLoginModal(window.location.href); return }
+    setInquiryOpen(true)
   }
 
   if (isLoading) return null // TODO: 스켈레톤으로 교체
@@ -192,6 +193,7 @@ function ArtistDetailPage() {
   const showDday = dday !== null && dday >= 0
 
   return (
+    <>
     <div className={styles.page}>
       <div className={styles.inner}>
 
@@ -385,6 +387,13 @@ function ArtistDetailPage() {
 
       </div>
     </div>
+    <InquiryModal
+      key={inquiryOpen ? 'open' : 'closed'}
+      isOpen={inquiryOpen}
+      onClose={() => setInquiryOpen(false)}
+      type="ARTIST"
+    />
+    </>
   )
 }
 

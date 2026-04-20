@@ -1,9 +1,11 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link, useParams } from 'react-router-dom'
 
 import Badge from '@/components/ui/Badge'
 import EmptyState from '@/components/ui/EmptyState'
+import InquiryModal from '@/components/ui/InquiryModal'
 import useAuthStore from '@/stores/authStore'
+import useLoginModalStore from '@/stores/loginModalStore'
 import { ROUTES } from '@/constants/routes'
 import styles from './ConcertDetailPage.module.css'
 
@@ -112,25 +114,23 @@ function ConcertDetailPage() {
   const concert = getMockConcert(Number(id))
   const [thumbnailFailed, setThumbnailFailed] = useState(false)
   const [activeTab, setActiveTab] = useState('info')
+  const [inquiryType, setInquiryType] = useState(null)
   const user = useAuthStore((s) => s.user)
+  const openLoginModal = useLoginModalStore((s) => s.open)
+
+  useEffect(() => { setActiveTab('info') }, [id])
 
   // TODO: React Query 연동 후 isLoading으로 교체
   const isLoading = false
 
   function handleConcertInquiry() {
-    if (!user) {
-      // TODO: 로그인 모달 표시 (redirectUri: 현재 URL)
-      return
-    }
-    // TODO: 문의 모달 표시 (type: CONCERT, targetId: id)
+    if (!user) { openLoginModal(window.location.href); return }
+    setInquiryType('CONCERT')
   }
 
   function handleSetlistInquiry() {
-    if (!user) {
-      // TODO: 로그인 모달 표시 (redirectUri: 현재 URL)
-      return
-    }
-    // TODO: 문의 모달 표시 (type: SETLIST, targetId: id)
+    if (!user) { openLoginModal(window.location.href); return }
+    setInquiryType('SETLIST')
   }
 
   if (isLoading) return null // TODO: 스켈레톤으로 교체
@@ -154,13 +154,13 @@ function ConcertDetailPage() {
   const { thumbnailUrl, posterUrls, artistName, artistId, title, startDate, endDate,
           venue, status, price, ticketLinks, description, setlist } = concert
   const showThumbnailPlaceholder = !thumbnailUrl || thumbnailFailed
-  const effectiveTab = activeTab
 
   const dateRange = endDate && endDate !== startDate
     ? `${startDate} ~ ${endDate}`
     : startDate
 
   return (
+    <>
     <div className={styles.page}>
       <div className={styles.inner}>
 
@@ -301,14 +301,14 @@ function ConcertDetailPage() {
         <div className={styles.tabSection}>
           <div className={styles.tabBar}>
             <button
-              className={`${styles.tabBtn} ${effectiveTab === 'info' ? styles.tabBtnActive : ''}`}
+              className={`${styles.tabBtn} ${activeTab === 'info' ? styles.tabBtnActive : ''}`}
               onClick={() => setActiveTab('info')}
             >
               공연 정보
             </button>
             {status === '공연완료' && (
               <button
-                className={`${styles.tabBtn} ${effectiveTab === 'setlist' ? styles.tabBtnActive : ''}`}
+                className={`${styles.tabBtn} ${activeTab === 'setlist' ? styles.tabBtnActive : ''}`}
                 onClick={() => setActiveTab('setlist')}
               >
                 셋리스트
@@ -316,7 +316,7 @@ function ConcertDetailPage() {
             )}
           </div>
 
-          {effectiveTab === 'setlist' && status === '공연완료' && (
+          {activeTab === 'setlist' && status === '공연완료' && (
             <div className={styles.tabPanel}>
               {setlist && setlist.length > 0 ? (
                 <ol className={styles.setlistTrackList}>
@@ -333,7 +333,7 @@ function ConcertDetailPage() {
             </div>
           )}
 
-          {effectiveTab === 'info' && (
+          {activeTab === 'info' && (
             <div className={styles.tabPanel}>
               {posterUrls.length > 0 ? (
                 <div className={styles.posterList}>
@@ -350,6 +350,14 @@ function ConcertDetailPage() {
 
       </div>
     </div>
+
+    <InquiryModal
+      key={inquiryType}
+      isOpen={inquiryType !== null}
+      onClose={() => setInquiryType(null)}
+      type={inquiryType}
+    />
+    </>
   )
 }
 
