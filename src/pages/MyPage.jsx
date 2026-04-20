@@ -23,9 +23,25 @@ const MOCK_UPCOMING_CONCERTS = [
   { id: 10, artistName: 'Fujii Kaze',        title: 'Fujii Kaze LOVE ALL SERVE ALL STADIUM LIVE', startDate: '2025.08.30', endDate: '2025.08.31', venue: '잠실종합운동장 주경기장, 서울',   status: '공연예정' },
 ]
 
+// TODO: API 연동 후 제거 (MY-01)
+const MOCK_PAST_CONCERTS = [
+  { id: 1,   artistName: 'YOASOBI',         title: 'YOASOBI ARENA TOUR 2025 "THE MONSTER"',    startDate: '2025.08.15', endDate: '2025.08.16', venue: 'KSPO DOME, 서울',                   status: '공연완료' },
+  { id: 2,   artistName: 'Kenshi Yonezu',   title: 'Kenshi Yonezu TOUR 2025 "LOST CORNER"',    startDate: '2025.04.19', endDate: '2025.04.20', venue: '고척스카이돔, 서울',                 status: '공연완료' },
+  { id: 3,   artistName: 'Ado',             title: 'Ado WORLD TOUR "Hibana" in Seoul',          startDate: '2025.06.21', endDate: null,         venue: '고척스카이돔, 서울',                 status: '공연완료' },
+  { id: 201, artistName: 'Kenshi Yonezu',   title: 'Kenshi Yonezu STADIUM LIVE 2023',           startDate: '2023.11.18', endDate: '2023.11.19', venue: '잠실종합운동장 주경기장, 서울',       status: '공연완료' },
+  { id: 101, artistName: 'YOASOBI',         title: 'YOASOBI THE BOOK CONCERT 2023',             startDate: '2023.05.27', endDate: '2023.05.28', venue: '올림픽공원 체조경기장, 서울',         status: '공연완료' },
+  { id: 301, artistName: 'Ado',             title: 'Ado WORLD TOUR 2024 "Wish"',                startDate: '2024.04.13', endDate: null,         venue: 'KSPO DOME, 서울',                   status: '공연완료' },
+  { id: 202, artistName: 'Kenshi Yonezu',   title: 'Kenshi Yonezu HALL TOUR 2022',              startDate: '2022.06.11', endDate: null,         venue: '올림픽공원 체조경기장, 서울',         status: '공연완료' },
+  { id: 102, artistName: 'YOASOBI',         title: 'YOASOBI LIVE 2022 "Into The Night"',        startDate: '2022.10.15', endDate: null,         venue: '예스24 라이브홀, 서울',               status: '공연완료' },
+  { id: 302, artistName: 'Ado',             title: 'Ado LIVE 2023',                             startDate: '2023.08.05', endDate: null,         venue: '올림픽공원 체조경기장, 서울',         status: '공연완료' },
+  { id: 103, artistName: 'YOASOBI',         title: 'YOASOBI CONCERT 2021',                      startDate: '2021.09.04', endDate: null,         venue: '올림픽공원 K-아트홀, 서울',           status: '공연완료' },
+  { id: 401, artistName: 'RADWIMPS',        title: 'RADWIMPS LIVE TOUR 2024',                   startDate: '2024.09.14', endDate: '2024.09.15', venue: '올림픽공원 체조경기장, 서울',         status: '공연완료' },
+]
+
 const TABS = [
   { id: 'artists',  label: '관심 아티스트' },
   { id: 'upcoming', label: '예정 공연' },
+  { id: 'history',  label: '다녀온 공연' },
 ]
 
 const MY_PAGE_SIZE = 10
@@ -124,6 +140,7 @@ function MyPage() {
   const [activeTab, setActiveTab] = useState('artists')
   const [followedArtists, setFollowedArtists] = useState(MOCK_FOLLOWED_ARTISTS)
   const [upcomingPage, setUpcomingPage] = useState(1)
+  const [historyPage, setHistoryPage] = useState(1)
 
   function handleUnfollow(artistId) {
     setFollowedArtists((prev) => prev.filter((a) => a.id !== artistId))
@@ -133,6 +150,12 @@ function MyPage() {
   const paginatedUpcoming = MOCK_UPCOMING_CONCERTS.slice(
     (upcomingPage - 1) * MY_PAGE_SIZE,
     upcomingPage * MY_PAGE_SIZE
+  )
+
+  const totalHistoryPages = Math.max(1, Math.ceil(MOCK_PAST_CONCERTS.length / MY_PAGE_SIZE))
+  const paginatedHistory = MOCK_PAST_CONCERTS.slice(
+    (historyPage - 1) * MY_PAGE_SIZE,
+    historyPage * MY_PAGE_SIZE
   )
 
   return (
@@ -234,6 +257,67 @@ function MyPage() {
                       className={styles.pageBtn}
                       onClick={() => setUpcomingPage((p) => Math.min(totalUpcomingPages, p + 1))}
                       disabled={upcomingPage === totalUpcomingPages}
+                      aria-label="다음 페이지"
+                    >
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                        <path d="m9 18 6-6-6-6" />
+                      </svg>
+                    </button>
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+        )}
+
+        {/* 다녀온 공연 탭 (MY-01) */}
+        {activeTab === 'history' && (
+          <div role="tabpanel" id="tabpanel-history" aria-labelledby="tab-history">
+            {paginatedHistory.length === 0 ? (
+              <EmptyState
+                icon={
+                  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M9 11l3 3L22 4" />
+                    <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
+                  </svg>
+                }
+                message="다녀온 공연 내역이 없습니다."
+              />
+            ) : (
+              <>
+                <div className={styles.concertList}>
+                  {paginatedHistory.map((concert) => (
+                    <ConcertRow key={concert.id} concert={concert} />
+                  ))}
+                </div>
+
+                {totalHistoryPages > 1 && (
+                  <div className={styles.pagination}>
+                    <button
+                      className={styles.pageBtn}
+                      onClick={() => setHistoryPage((p) => Math.max(1, p - 1))}
+                      disabled={historyPage === 1}
+                      aria-label="이전 페이지"
+                    >
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                        <path d="m15 18-6-6 6-6" />
+                      </svg>
+                    </button>
+                    {Array.from({ length: totalHistoryPages }, (_, i) => i + 1).map((p) => (
+                      <button
+                        key={p}
+                        className={`${styles.pageBtn} ${p === historyPage ? styles.pageBtnActive : ''}`}
+                        onClick={() => setHistoryPage(p)}
+                        aria-label={`${p}페이지`}
+                        aria-current={p === historyPage ? 'page' : undefined}
+                      >
+                        {p}
+                      </button>
+                    ))}
+                    <button
+                      className={styles.pageBtn}
+                      onClick={() => setHistoryPage((p) => Math.min(totalHistoryPages, p + 1))}
+                      disabled={historyPage === totalHistoryPages}
                       aria-label="다음 페이지"
                     >
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
