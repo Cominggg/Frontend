@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
+import { Link } from 'react-router-dom'
 
+import { ROUTES } from '@/constants/routes'
 import styles from './InquiryModal.module.css'
 
 const TYPE_LABELS = {
@@ -68,7 +70,10 @@ function InquiryModal({ isOpen, onClose, type }) {
             </div>
             <p className={styles.successTitle}>문의가 접수되었습니다</p>
             <p className={styles.successDesc}>검토 후 마이페이지 &gt; 내 문의 내역에서 처리 결과를 확인하실 수 있습니다.</p>
-            <button className={styles.confirmBtn} onClick={onClose}>확인</button>
+            <div className={styles.successActions}>
+              <button className={styles.confirmBtn} onClick={onClose}>닫기</button>
+              <Link to={ROUTES.MY} className={styles.myInquiryLink} onClick={onClose}>내 문의 보기</Link>
+            </div>
           </div>
         ) : (
           <>
@@ -104,7 +109,9 @@ function InquiryModal({ isOpen, onClose, type }) {
                   required
                   rows={5}
                 />
-                <span className={styles.charCount}>{content.length} / 1000</span>
+                <span className={`${styles.charCount} ${content.length >= 900 ? styles.charCountWarn : ''}`}>
+                  {content.length} / 1000
+                </span>
               </div>
 
               <button
