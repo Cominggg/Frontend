@@ -38,10 +38,23 @@ const MOCK_PAST_CONCERTS = [
   { id: 401, artistName: 'RADWIMPS',        title: 'RADWIMPS LIVE TOUR 2024',                   startDate: '2024.09.14', endDate: '2024.09.15', venue: '올림픽공원 체조경기장, 서울',         status: '공연완료' },
 ]
 
+// TODO: API 연동 후 제거 (INQ-04)
+const MOCK_INQUIRIES = [
+  { id: 1, type: 'CONCERT', title: 'YOASOBI 2025 공연 예매처 링크가 잘못되어 있습니다',   status: 'RESOLVED',    createdAt: '2025.08.20', resultMessage: '안내해 주신 내용을 확인하여 예매처 링크를 수정하였습니다. 감사합니다.' },
+  { id: 2, type: 'ARTIST',  title: 'Kenshi Yonezu 멤버 정보가 틀립니다',                  status: 'REJECTED',    createdAt: '2025.07.15', rejectReason: '현재 등록된 정보는 공식 프로필 기준으로 정확합니다.' },
+  { id: 3, type: 'SETLIST', title: 'Ado Hibana 공연 셋리스트 일부 누락',                  status: 'IN_PROGRESS', createdAt: '2025.06.30' },
+  { id: 4, type: 'CONCERT', title: 'King Gnu 2025 공연 장소 정보 수정 요청',               status: 'PENDING',     createdAt: '2025.06.10' },
+  { id: 5, type: 'ARTIST',  title: 'RADWIMPS 공식 홈페이지 링크 오류',                    status: 'RESOLVED',    createdAt: '2025.05.22', resultMessage: '공식 홈페이지 링크를 최신 주소로 업데이트하였습니다.' },
+]
+
+const INQ_TYPE_LABELS = { CONCERT: '공연 정보', ARTIST: '아티스트 정보', SETLIST: '셋리스트' }
+const INQ_STATUS_LABELS = { PENDING: '접수', IN_PROGRESS: '처리중', RESOLVED: '완료', REJECTED: '반려' }
+
 const TABS = [
-  { id: 'artists',  label: '관심 아티스트' },
-  { id: 'upcoming', label: '예정 공연' },
-  { id: 'history',  label: '다녀온 공연' },
+  { id: 'artists',   label: '관심 아티스트' },
+  { id: 'upcoming',  label: '예정 공연' },
+  { id: 'history',   label: '다녀온 공연' },
+  { id: 'inquiries', label: '내 문의' },
 ]
 
 const MY_PAGE_SIZE = 10
@@ -136,11 +149,69 @@ function ConcertRow({ concert }) {
   )
 }
 
+function InquiryRow({ inquiry }) {
+  const [expanded, setExpanded] = useState(false)
+  const { type, title, status, createdAt, resultMessage, rejectReason } = inquiry
+
+  return (
+    <div className={styles.inquiryItem}>
+      <button
+        className={styles.inquiryRowBtn}
+        onClick={() => setExpanded((p) => !p)}
+        aria-expanded={expanded}
+      >
+        <div className={styles.inquiryRowMain}>
+          <div className={styles.inquiryRowMeta}>
+            <span className={styles.inquiryType}>{INQ_TYPE_LABELS[type] ?? type}</span>
+            <span className={`${styles.inquiryStatus} ${styles[`inquiryStatus${status}`]}`}>
+              {INQ_STATUS_LABELS[status] ?? status}
+            </span>
+          </div>
+          <p className={styles.inquiryTitle}>{title}</p>
+          <span className={styles.inquiryDate}>{createdAt}</span>
+        </div>
+        <svg
+          className={`${styles.inquiryChevron} ${expanded ? styles.inquiryChevronOpen : ''}`}
+          width="16" height="16" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
+          aria-hidden="true"
+        >
+          <path d="m6 9 6 6 6-6" />
+        </svg>
+      </button>
+
+      {expanded && (
+        <div className={styles.inquiryDetail}>
+          {status === 'PENDING' && (
+            <p className={styles.inquiryDetailText}>검토 대기 중입니다.</p>
+          )}
+          {status === 'IN_PROGRESS' && (
+            <p className={styles.inquiryDetailText}>현재 처리 중입니다.</p>
+          )}
+          {status === 'RESOLVED' && (
+            <>
+              <p className={styles.inquiryDetailLabel}>처리 결과</p>
+              <p className={styles.inquiryDetailText}>{resultMessage}</p>
+            </>
+          )}
+          {status === 'REJECTED' && (
+            <>
+              <p className={styles.inquiryDetailLabel}>반려 사유</p>
+              <p className={styles.inquiryDetailText}>{rejectReason}</p>
+            </>
+          )}
+        </div>
+      )}
+    </div>
+  )
+}
+
 function MyPage() {
   const [activeTab, setActiveTab] = useState('artists')
   const [followedArtists, setFollowedArtists] = useState(MOCK_FOLLOWED_ARTISTS)
   const [upcomingPage, setUpcomingPage] = useState(1)
   const [historyPage, setHistoryPage] = useState(1)
+  const [inquiryPage, setInquiryPage] = useState(1)
 
   function handleUnfollow(artistId) {
     setFollowedArtists((prev) => prev.filter((a) => a.id !== artistId))
@@ -156,6 +227,12 @@ function MyPage() {
   const paginatedHistory = MOCK_PAST_CONCERTS.slice(
     (historyPage - 1) * MY_PAGE_SIZE,
     historyPage * MY_PAGE_SIZE
+  )
+
+  const totalInquiryPages = Math.max(1, Math.ceil(MOCK_INQUIRIES.length / MY_PAGE_SIZE))
+  const paginatedInquiries = MOCK_INQUIRIES.slice(
+    (inquiryPage - 1) * MY_PAGE_SIZE,
+    inquiryPage * MY_PAGE_SIZE
   )
 
   return (
@@ -318,6 +395,68 @@ function MyPage() {
                       className={styles.pageBtn}
                       onClick={() => setHistoryPage((p) => Math.min(totalHistoryPages, p + 1))}
                       disabled={historyPage === totalHistoryPages}
+                      aria-label="다음 페이지"
+                    >
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                        <path d="m9 18 6-6-6-6" />
+                      </svg>
+                    </button>
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+        )}
+
+        {/* 내 문의 탭 (INQ-04) */}
+        {activeTab === 'inquiries' && (
+          <div role="tabpanel" id="tabpanel-inquiries" aria-labelledby="tab-inquiries">
+            {paginatedInquiries.length === 0 ? (
+              <EmptyState
+                icon={
+                  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="12" r="10" />
+                    <line x1="12" y1="8" x2="12" y2="12" />
+                    <line x1="12" y1="16" x2="12.01" y2="16" />
+                  </svg>
+                }
+                message="등록한 문의 내역이 없습니다."
+              />
+            ) : (
+              <>
+                <div className={styles.inquiryList}>
+                  {paginatedInquiries.map((inquiry) => (
+                    <InquiryRow key={inquiry.id} inquiry={inquiry} />
+                  ))}
+                </div>
+
+                {totalInquiryPages > 1 && (
+                  <div className={styles.pagination}>
+                    <button
+                      className={styles.pageBtn}
+                      onClick={() => setInquiryPage((p) => Math.max(1, p - 1))}
+                      disabled={inquiryPage === 1}
+                      aria-label="이전 페이지"
+                    >
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                        <path d="m15 18-6-6 6-6" />
+                      </svg>
+                    </button>
+                    {Array.from({ length: totalInquiryPages }, (_, i) => i + 1).map((p) => (
+                      <button
+                        key={p}
+                        className={`${styles.pageBtn} ${p === inquiryPage ? styles.pageBtnActive : ''}`}
+                        onClick={() => setInquiryPage(p)}
+                        aria-label={`${p}페이지`}
+                        aria-current={p === inquiryPage ? 'page' : undefined}
+                      >
+                        {p}
+                      </button>
+                    ))}
+                    <button
+                      className={styles.pageBtn}
+                      onClick={() => setInquiryPage((p) => Math.min(totalInquiryPages, p + 1))}
+                      disabled={inquiryPage === totalInquiryPages}
                       aria-label="다음 페이지"
                     >
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
