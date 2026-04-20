@@ -50,8 +50,8 @@ function InquiryModal({ isOpen, onClose, type }) {
   }
 
   return (
-    <div className={styles.overlay} onClick={onClose} role="dialog" aria-modal="true" aria-label={typeLabel}>
-      <div className={styles.modal} onClick={(e) => e.stopPropagation()} ref={modalRef}>
+    <div className={styles.overlay} onClick={onClose}>
+      <div className={styles.modal} role="dialog" aria-modal="true" aria-label={typeLabel} onClick={(e) => e.stopPropagation()} ref={modalRef}>
         <button className={styles.closeBtn} onClick={onClose} aria-label="닫기">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
             <path d="M18 6 6 18M6 6l12 12" />
