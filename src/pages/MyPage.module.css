@@ -27,6 +27,13 @@
   gap: 0;
   border-bottom: 1px solid var(--color-border);
   margin-bottom: 2rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.tabs::-webkit-scrollbar {
+  display: none;
 }
 
 .tab {
