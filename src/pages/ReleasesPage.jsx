@@ -21,7 +21,8 @@ const MOCK_RELEASES = [
   { id: 12, coverUrl: null, artistName: 'ONE OK ROCK',      title: 'Luxury Disease', type: 'ALBUM',  releaseDate: '2022.09.09' },
 ]
 
-const TYPE_FILTERS = ['전체', 'ALBUM', 'SINGLE', 'EP']
+const TYPE_FILTERS = ['전체', 'ALBUM', 'SINGLE', 'EP', '기타']
+const MAIN_TYPES = ['ALBUM', 'SINGLE', 'EP']
 const PAGE_SIZE = 20
 
 function ReleasesPage() {
@@ -36,7 +37,9 @@ function ReleasesPage() {
     return [...MOCK_RELEASES]
       .filter((r) => {
         const matchesQuery = !q || r.title.toLowerCase().includes(q) || r.artistName.toLowerCase().includes(q)
-        const matchesType = selectedType === '전체' || r.type === selectedType
+        const matchesType =
+          selectedType === '전체' ||
+          (selectedType === '기타' ? !MAIN_TYPES.includes(r.type) : r.type === selectedType)
         return matchesQuery && matchesType
       })
       .sort((a, b) => b.releaseDate.localeCompare(a.releaseDate))
