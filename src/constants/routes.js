@@ -4,6 +4,8 @@ export const ROUTES = {
   ARTIST_DETAIL: (id) => `/artists/${id}`,
   CONCERTS: '/concerts',
   CONCERT_DETAIL: (id) => `/concerts/${id}`,
+  RELEASES: '/releases',
+  RELEASE_DETAIL: (id) => `/releases/${id}`,
   CALENDAR: '/calendar',
   SEARCH: '/search',
   MY: '/my',
