@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 
 import Badge from '@/components/ui/Badge'
@@ -6,6 +6,9 @@ import EmptyState from '@/components/ui/EmptyState'
 import { ROUTES } from '@/constants/routes'
 import { getArtistColor } from '@/utils/artistColor'
 import styles from './MyPage.module.css'
+
+// TODO: API 연동 후 제거 (AUTH-02)
+const MOCK_USER = { nickname: '라이브덕후', avatarUrl: null }
 
 // TODO: API 연동 후 제거
 const MOCK_FOLLOWED_ARTISTS = [
@@ -203,8 +206,229 @@ function InquiryRow({ inquiry }) {
   )
 }
 
+const FOCUSABLE = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp']
+const MAX_FILE_SIZE = 5 * 1024 * 1024
+const MAX_NICKNAME = 20
+
+function useModalFocusTrap(isOpen, onClose, modalRef) {
+  useEffect(() => {
+    if (!isOpen) return
+    const modal = modalRef.current
+    const focusable = modal ? [...modal.querySelectorAll(FOCUSABLE)] : []
+    focusable[0]?.focus()
+
+    function handleKey(e) {
+      if (e.key === 'Escape') { onClose(); return }
+      if (e.key !== 'Tab' || focusable.length === 0) return
+      const first = focusable[0]
+      const last = focusable[focusable.length - 1]
+      if (e.shiftKey) {
+        if (document.activeElement === first) { e.preventDefault(); last.focus() }
+      } else {
+        if (document.activeElement === last) { e.preventDefault(); first.focus() }
+      }
+    }
+    document.addEventListener('keydown', handleKey)
+    return () => document.removeEventListener('keydown', handleKey)
+  }, [isOpen, onClose, modalRef])
+}
+
+function ProfileEditModal({ isOpen, onClose }) {
+  const [nickname, setNickname] = useState(MOCK_USER.nickname)
+  const [previewUrl, setPreviewUrl] = useState(MOCK_USER.avatarUrl)
+  const [fileError, setFileError] = useState(null)
+  const fileInputRef = useRef(null)
+  const modalRef = useRef(null)
+
+  useModalFocusTrap(isOpen, onClose, modalRef)
+
+  useEffect(() => {
+    return () => { if (previewUrl && previewUrl !== MOCK_USER.avatarUrl) URL.revokeObjectURL(previewUrl) }
+  }, [previewUrl])
+
+  if (!isOpen) return null
+
+  function handleFileChange(e) {
+    const file = e.target.files?.[0]
+    if (!file) return
+    if (!ALLOWED_TYPES.includes(file.type)) {
+      setFileError('jpg, png, webp 파일만 업로드할 수 있습니다.')
+      e.target.value = ''
+      return
+    }
+    if (file.size > MAX_FILE_SIZE) {
+      setFileError('파일 크기는 5MB 이하여야 합니다.')
+      e.target.value = ''
+      return
+    }
+    setFileError(null)
+    if (previewUrl && previewUrl !== MOCK_USER.avatarUrl) URL.revokeObjectURL(previewUrl)
+    setPreviewUrl(URL.createObjectURL(file))
+  }
+
+  function handleSave(e) {
+    e.preventDefault()
+    if (!nickname.trim()) return
+    // TODO: API 연동 — PATCH /api/users/me (AUTH-02)
+    onClose()
+  }
+
+  const showInitial = !previewUrl
+
+  return (
+    <div className={styles.modalOverlay} onClick={onClose} role="dialog" aria-modal="true" aria-labelledby="profile-edit-title">
+      <div className={styles.modalBox} ref={modalRef} onClick={(e) => e.stopPropagation()}>
+        <button className={styles.modalCloseBtn} onClick={onClose} aria-label="닫기">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="M18 6 6 18M6 6l12 12" />
+          </svg>
+        </button>
+
+        <h2 id="profile-edit-title" className={styles.modalTitle}>프로필 수정</h2>
+
+        <form onSubmit={handleSave}>
+          {/* 아바타 업로드 */}
+          <div className={styles.modalAvatarWrap}>
+            <button
+              type="button"
+              className={styles.modalAvatarBtn}
+              onClick={() => fileInputRef.current?.click()}
+              aria-label="프로필 사진 변경"
+            >
+              <div className={styles.modalAvatar}>
+                {showInitial ? (
+                  <span className={styles.modalAvatarInitial}>{nickname.trim().charAt(0) || '?'}</span>
+                ) : (
+                  <img src={previewUrl} alt="프로필 미리보기" className={styles.modalAvatarImg} />
+                )}
+              </div>
+              <div className={styles.modalAvatarCameraOverlay} aria-hidden="true">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
+                  <circle cx="12" cy="13" r="4" />
+                </svg>
+              </div>
+            </button>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              className={styles.modalFileInput}
+              onChange={handleFileChange}
+              aria-label="프로필 이미지 파일 선택"
+            />
+            {fileError && <p className={styles.modalFileError}>{fileError}</p>}
+            <p className={styles.modalFileHint}>jpg · png · webp, 최대 5MB</p>
+          </div>
+
+          {/* 닉네임 입력 */}
+          <div className={styles.modalField}>
+            <label htmlFor="edit-nickname" className={styles.modalLabel}>닉네임</label>
+            <div className={styles.modalInputWrap}>
+              <input
+                id="edit-nickname"
+                type="text"
+                className={styles.modalInput}
+                value={nickname}
+                onChange={(e) => setNickname(e.target.value.slice(0, MAX_NICKNAME))}
+                maxLength={MAX_NICKNAME}
+                placeholder="닉네임을 입력하세요"
+              />
+              <span className={`${styles.modalCharCount} ${nickname.length >= MAX_NICKNAME ? styles.modalCharCountMax : ''}`}>
+                {nickname.length}/{MAX_NICKNAME}
+              </span>
+            </div>
+          </div>
+
+          {/* 버튼 */}
+          <div className={styles.modalActions}>
+            <button type="button" className={styles.modalCancelBtn} onClick={onClose}>취소</button>
+            <button type="submit" className={styles.modalSaveBtn} disabled={!nickname.trim()}>저장</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  )
+}
+
+function WithdrawalModal({ isOpen, onClose }) {
+  const modalRef = useRef(null)
+
+  useModalFocusTrap(isOpen, onClose, modalRef)
+
+  if (!isOpen) return null
+
+  function handleConfirm() {
+    // TODO: API 연동 — DELETE /api/users/me (AUTH-03)
+    onClose()
+  }
+
+  return (
+    <div className={styles.modalOverlay} onClick={onClose} role="dialog" aria-modal="true" aria-labelledby="withdrawal-title">
+      <div className={styles.modalBox} ref={modalRef} onClick={(e) => e.stopPropagation()}>
+        <button className={styles.modalCloseBtn} onClick={onClose} aria-label="닫기">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="M18 6 6 18M6 6l12 12" />
+          </svg>
+        </button>
+
+        <div className={styles.withdrawalIcon} aria-hidden="true">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+            <line x1="12" y1="9" x2="12" y2="13" />
+            <line x1="12" y1="17" x2="12.01" y2="17" />
+          </svg>
+        </div>
+
+        <h2 id="withdrawal-title" className={styles.modalTitle}>정말 탈퇴하시겠습니까?</h2>
+        <p className={styles.withdrawalDesc}>
+          탈퇴하면 관심 아티스트, 캘린더, 문의 내역 등 모든 데이터가 삭제되며 복구할 수 없습니다.
+        </p>
+
+        <div className={styles.modalActions}>
+          <button type="button" className={styles.modalCancelBtn} onClick={onClose}>취소</button>
+          <button type="button" className={styles.withdrawalConfirmBtn} onClick={handleConfirm}>탈퇴하기</button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function ProfileCard({ onEditClick }) {
+  const [imgFailed, setImgFailed] = useState(false)
+  const showPlaceholder = !MOCK_USER.avatarUrl || imgFailed
+
+  return (
+    <div className={styles.profileCard}>
+      <div className={styles.profileAvatar}>
+        {showPlaceholder ? (
+          <span className={styles.profileAvatarInitial}>
+            {MOCK_USER.nickname.charAt(0)}
+          </span>
+        ) : (
+          <img
+            src={MOCK_USER.avatarUrl}
+            alt={MOCK_USER.nickname}
+            className={styles.profileAvatarImg}
+            onError={() => setImgFailed(true)}
+          />
+        )}
+      </div>
+      <div className={styles.profileInfo}>
+        <p className={styles.profileNickname}>{MOCK_USER.nickname}</p>
+      </div>
+      <button className={styles.profileEditBtn} onClick={onEditClick}>
+        프로필 수정
+      </button>
+    </div>
+  )
+}
+
 function MyPage() {
   const [activeTab, setActiveTab] = useState('artists')
+  const [profileEditOpen, setProfileEditOpen] = useState(false)
+  const [withdrawalOpen, setWithdrawalOpen] = useState(false)
   const [followedArtists, setFollowedArtists] = useState(MOCK_FOLLOWED_ARTISTS)
   const [upcomingPage, setUpcomingPage] = useState(1)
   const [historyPage, setHistoryPage] = useState(1)
@@ -236,10 +460,9 @@ function MyPage() {
     <div className={styles.page}>
       <div className={styles.inner}>
 
-        {/* 페이지 헤더 */}
-        <div className={styles.pageHeader}>
-          <h1 className={styles.pageTitle}>마이페이지</h1>
-        </div>
+        {/* 프로필 카드 (AUTH-02) */}
+        <ProfileCard onEditClick={() => setProfileEditOpen(true)} />
+        {profileEditOpen && <ProfileEditModal isOpen={profileEditOpen} onClose={() => setProfileEditOpen(false)} />}
 
         {/* 탭 */}
         <div className={styles.tabs} role="tablist">
@@ -466,6 +689,17 @@ function MyPage() {
             )}
           </div>
         )}
+
+        {/* 회원 탈퇴 (AUTH-03) */}
+        <div className={styles.withdrawalSection}>
+          <button
+            className={styles.withdrawalBtn}
+            onClick={() => setWithdrawalOpen(true)}
+          >
+            회원 탈퇴
+          </button>
+        </div>
+        <WithdrawalModal isOpen={withdrawalOpen} onClose={() => setWithdrawalOpen(false)} />
 
       </div>
     </div>
