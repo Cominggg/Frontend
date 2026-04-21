@@ -430,17 +430,6 @@
   border-color: var(--color-accent-border);
 }
 
-/* ── Not Found ── */
-.notFound {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1rem;
-  padding: 5rem 1rem;
-  color: var(--color-text-muted);
-  text-align: center;
-}
-
 /* ── 반응형 ── */
 @media (max-width: 767px) {
   .page {
