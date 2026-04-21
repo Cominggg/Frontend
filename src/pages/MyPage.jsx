@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 
 import Badge from '@/components/ui/Badge'
@@ -206,6 +206,148 @@ function InquiryRow({ inquiry }) {
   )
 }
 
+const FOCUSABLE = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp']
+const MAX_FILE_SIZE = 5 * 1024 * 1024
+const MAX_NICKNAME = 20
+
+function ProfileEditModal({ isOpen, onClose }) {
+  const [nickname, setNickname] = useState(MOCK_USER.nickname)
+  const [previewUrl, setPreviewUrl] = useState(MOCK_USER.avatarUrl)
+  const [fileError, setFileError] = useState(null)
+  const fileInputRef = useRef(null)
+  const modalRef = useRef(null)
+
+  useEffect(() => {
+    if (!isOpen) return
+    const modal = modalRef.current
+    const focusable = modal ? [...modal.querySelectorAll(FOCUSABLE)] : []
+    focusable[0]?.focus()
+
+    function handleKey(e) {
+      if (e.key === 'Escape') { onClose(); return }
+      if (e.key !== 'Tab' || focusable.length === 0) return
+      const first = focusable[0]
+      const last = focusable[focusable.length - 1]
+      if (e.shiftKey) {
+        if (document.activeElement === first) { e.preventDefault(); last.focus() }
+      } else {
+        if (document.activeElement === last) { e.preventDefault(); first.focus() }
+      }
+    }
+    document.addEventListener('keydown', handleKey)
+    return () => document.removeEventListener('keydown', handleKey)
+  }, [isOpen, onClose])
+
+  useEffect(() => {
+    return () => { if (previewUrl && previewUrl !== MOCK_USER.avatarUrl) URL.revokeObjectURL(previewUrl) }
+  }, [previewUrl])
+
+  if (!isOpen) return null
+
+  function handleFileChange(e) {
+    const file = e.target.files?.[0]
+    if (!file) return
+    if (!ALLOWED_TYPES.includes(file.type)) {
+      setFileError('jpg, png, webp 파일만 업로드할 수 있습니다.')
+      e.target.value = ''
+      return
+    }
+    if (file.size > MAX_FILE_SIZE) {
+      setFileError('파일 크기는 5MB 이하여야 합니다.')
+      e.target.value = ''
+      return
+    }
+    setFileError(null)
+    if (previewUrl && previewUrl !== MOCK_USER.avatarUrl) URL.revokeObjectURL(previewUrl)
+    setPreviewUrl(URL.createObjectURL(file))
+  }
+
+  function handleSave(e) {
+    e.preventDefault()
+    if (!nickname.trim()) return
+    // TODO: API 연동 — PATCH /api/users/me (AUTH-02)
+    onClose()
+  }
+
+  const showInitial = !previewUrl
+
+  return (
+    <div className={styles.modalOverlay} onClick={onClose} role="dialog" aria-modal="true" aria-labelledby="profile-edit-title">
+      <div className={styles.modalBox} ref={modalRef} onClick={(e) => e.stopPropagation()}>
+        <button className={styles.modalCloseBtn} onClick={onClose} aria-label="닫기">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="M18 6 6 18M6 6l12 12" />
+          </svg>
+        </button>
+
+        <h2 id="profile-edit-title" className={styles.modalTitle}>프로필 수정</h2>
+
+        <form onSubmit={handleSave}>
+          {/* 아바타 업로드 */}
+          <div className={styles.modalAvatarWrap}>
+            <button
+              type="button"
+              className={styles.modalAvatarBtn}
+              onClick={() => fileInputRef.current?.click()}
+              aria-label="프로필 사진 변경"
+            >
+              <div className={styles.modalAvatar}>
+                {showInitial ? (
+                  <span className={styles.modalAvatarInitial}>{nickname.trim().charAt(0) || '?'}</span>
+                ) : (
+                  <img src={previewUrl} alt="프로필 미리보기" className={styles.modalAvatarImg} />
+                )}
+              </div>
+              <div className={styles.modalAvatarCameraOverlay} aria-hidden="true">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
+                  <circle cx="12" cy="13" r="4" />
+                </svg>
+              </div>
+            </button>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              className={styles.modalFileInput}
+              onChange={handleFileChange}
+              aria-label="프로필 이미지 파일 선택"
+            />
+            {fileError && <p className={styles.modalFileError}>{fileError}</p>}
+            <p className={styles.modalFileHint}>jpg · png · webp, 최대 5MB</p>
+          </div>
+
+          {/* 닉네임 입력 */}
+          <div className={styles.modalField}>
+            <label htmlFor="edit-nickname" className={styles.modalLabel}>닉네임</label>
+            <div className={styles.modalInputWrap}>
+              <input
+                id="edit-nickname"
+                type="text"
+                className={styles.modalInput}
+                value={nickname}
+                onChange={(e) => setNickname(e.target.value.slice(0, MAX_NICKNAME))}
+                maxLength={MAX_NICKNAME}
+                placeholder="닉네임을 입력하세요"
+              />
+              <span className={`${styles.modalCharCount} ${nickname.length >= MAX_NICKNAME ? styles.modalCharCountMax : ''}`}>
+                {nickname.length}/{MAX_NICKNAME}
+              </span>
+            </div>
+          </div>
+
+          {/* 버튼 */}
+          <div className={styles.modalActions}>
+            <button type="button" className={styles.modalCancelBtn} onClick={onClose}>취소</button>
+            <button type="submit" className={styles.modalSaveBtn} disabled={!nickname.trim()}>저장</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  )
+}
+
 function ProfileCard({ onEditClick }) {
   const [imgFailed, setImgFailed] = useState(false)
   const showPlaceholder = !MOCK_USER.avatarUrl || imgFailed
@@ -238,6 +380,7 @@ function ProfileCard({ onEditClick }) {
 
 function MyPage() {
   const [activeTab, setActiveTab] = useState('artists')
+  const [profileEditOpen, setProfileEditOpen] = useState(false)
   const [followedArtists, setFollowedArtists] = useState(MOCK_FOLLOWED_ARTISTS)
   const [upcomingPage, setUpcomingPage] = useState(1)
   const [historyPage, setHistoryPage] = useState(1)
@@ -270,7 +413,8 @@ function MyPage() {
       <div className={styles.inner}>
 
         {/* 프로필 카드 (AUTH-02) */}
-        <ProfileCard onEditClick={() => {}} />
+        <ProfileCard onEditClick={() => setProfileEditOpen(true)} />
+        <ProfileEditModal isOpen={profileEditOpen} onClose={() => setProfileEditOpen(false)} />
 
         {/* 탭 */}
         <div className={styles.tabs} role="tablist">

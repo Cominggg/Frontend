@@ -546,6 +546,225 @@
   line-height: 1.6;
 }
 
+/* ── 프로필 수정 모달 ── */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  padding: 1rem;
+}
+
+.modalBox {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  padding: 2.25rem 2rem 2rem;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+}
+
+.modalCloseBtn {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  color: var(--color-text-muted);
+  transition: background-color 0.15s, color 0.15s;
+}
+
+.modalCloseBtn:hover {
+  background-color: color-mix(in srgb, var(--color-text-muted) 10%, transparent);
+  color: var(--color-text);
+}
+
+.modalTitle {
+  margin: 0 0 1.75rem;
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.modalAvatarWrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.modalAvatarBtn {
+  position: relative;
+  background: none;
+  border: none;
+  padding: 0;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.modalAvatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #9f1239, #fb7185);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.modalAvatarImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.modalAvatarInitial {
+  font-size: 2rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.9);
+  line-height: 1;
+}
+
+.modalAvatarCameraOverlay {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+
+.modalAvatarBtn:hover .modalAvatarCameraOverlay,
+.modalAvatarBtn:focus-visible .modalAvatarCameraOverlay {
+  opacity: 1;
+}
+
+.modalFileInput {
+  display: none;
+}
+
+.modalFileError {
+  margin: 0;
+  font-size: 0.8125rem;
+  color: var(--color-destructive);
+}
+
+.modalFileHint {
+  margin: 0;
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+}
+
+.modalField {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1.75rem;
+}
+
+.modalLabel {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.modalInputWrap {
+  position: relative;
+}
+
+.modalInput {
+  width: 100%;
+  padding: 0.625rem 3rem 0.625rem 0.875rem;
+  font-size: 0.9375rem;
+  color: var(--color-text);
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-border);
+  border-radius: 10px;
+  outline: none;
+  transition: border-color 0.15s;
+  box-sizing: border-box;
+}
+
+.modalInput:focus {
+  border-color: var(--color-accent-focus-border, var(--color-accent));
+}
+
+.modalCharCount {
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+  pointer-events: none;
+}
+
+.modalCharCountMax {
+  color: var(--color-destructive);
+}
+
+.modalActions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.modalCancelBtn {
+  flex: 1;
+  padding: 0.6875rem 1rem;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  border: 1.5px solid var(--color-border);
+  border-radius: 10px;
+  background: none;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.modalCancelBtn:hover {
+  color: var(--color-text);
+  border-color: color-mix(in srgb, var(--color-text-muted) 50%, transparent);
+}
+
+.modalSaveBtn {
+  flex: 1;
+  padding: 0.6875rem 1rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #fff;
+  background: var(--color-accent);
+  border: none;
+  border-radius: 10px;
+  transition: opacity 0.15s;
+}
+
+.modalSaveBtn:hover:not(:disabled) {
+  opacity: 0.88;
+}
+
+.modalSaveBtn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
 /* ── 반응형 ── */
 @media (max-width: 767px) {
   .page {
