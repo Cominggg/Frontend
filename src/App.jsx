@@ -13,6 +13,7 @@ import ConcertsPage from '@/pages/ConcertsPage'
 import ReleaseDetailPage from '@/pages/ReleaseDetailPage'
 import HomePage from '@/pages/HomePage'
 import MyPage from '@/pages/MyPage'
+import NotFoundPage from '@/pages/NotFoundPage'
 import AdminPage from '@/pages/admin/AdminPage'
 import AdminReviewQueuePage from '@/pages/admin/AdminReviewQueuePage'
 import AdminArtistFormPage from '@/pages/admin/AdminArtistFormPage'
@@ -48,6 +49,8 @@ function App() {
           <Route path="concerts/:id/edit" element={<AdminConcertFormPage />} />
           <Route path="inquiries" element={<AdminInquiriesPage />} />
         </Route>
+
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </Layout>
   )
