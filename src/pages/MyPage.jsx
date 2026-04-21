@@ -7,6 +7,9 @@ import { ROUTES } from '@/constants/routes'
 import { getArtistColor } from '@/utils/artistColor'
 import styles from './MyPage.module.css'
 
+// TODO: API 연동 후 제거 (AUTH-02)
+const MOCK_USER = { nickname: '라이브덕후', avatarUrl: null }
+
 // TODO: API 연동 후 제거
 const MOCK_FOLLOWED_ARTISTS = [
   { id: 2, name: 'Kenshi Yonezu', imageUrl: null, genres: ['J-Pop', 'Rock'], hasUpcomingConcert: false },
@@ -203,6 +206,36 @@ function InquiryRow({ inquiry }) {
   )
 }
 
+function ProfileCard({ onEditClick }) {
+  const [imgFailed, setImgFailed] = useState(false)
+  const showPlaceholder = !MOCK_USER.avatarUrl || imgFailed
+
+  return (
+    <div className={styles.profileCard}>
+      <div className={styles.profileAvatar}>
+        {showPlaceholder ? (
+          <span className={styles.profileAvatarInitial}>
+            {MOCK_USER.nickname.charAt(0)}
+          </span>
+        ) : (
+          <img
+            src={MOCK_USER.avatarUrl}
+            alt={MOCK_USER.nickname}
+            className={styles.profileAvatarImg}
+            onError={() => setImgFailed(true)}
+          />
+        )}
+      </div>
+      <div className={styles.profileInfo}>
+        <p className={styles.profileNickname}>{MOCK_USER.nickname}</p>
+      </div>
+      <button className={styles.profileEditBtn} onClick={onEditClick}>
+        프로필 수정
+      </button>
+    </div>
+  )
+}
+
 function MyPage() {
   const [activeTab, setActiveTab] = useState('artists')
   const [followedArtists, setFollowedArtists] = useState(MOCK_FOLLOWED_ARTISTS)
@@ -236,10 +269,8 @@ function MyPage() {
     <div className={styles.page}>
       <div className={styles.inner}>
 
-        {/* 페이지 헤더 */}
-        <div className={styles.pageHeader}>
-          <h1 className={styles.pageTitle}>마이페이지</h1>
-        </div>
+        {/* 프로필 카드 (AUTH-02) */}
+        <ProfileCard onEditClick={() => {}} />
 
         {/* 탭 */}
         <div className={styles.tabs} role="tablist">
