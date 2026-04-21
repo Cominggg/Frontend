@@ -211,13 +211,7 @@ const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp']
 const MAX_FILE_SIZE = 5 * 1024 * 1024
 const MAX_NICKNAME = 20
 
-function ProfileEditModal({ isOpen, onClose }) {
-  const [nickname, setNickname] = useState(MOCK_USER.nickname)
-  const [previewUrl, setPreviewUrl] = useState(MOCK_USER.avatarUrl)
-  const [fileError, setFileError] = useState(null)
-  const fileInputRef = useRef(null)
-  const modalRef = useRef(null)
-
+function useModalFocusTrap(isOpen, onClose, modalRef) {
   useEffect(() => {
     if (!isOpen) return
     const modal = modalRef.current
@@ -237,7 +231,17 @@ function ProfileEditModal({ isOpen, onClose }) {
     }
     document.addEventListener('keydown', handleKey)
     return () => document.removeEventListener('keydown', handleKey)
-  }, [isOpen, onClose])
+  }, [isOpen, onClose, modalRef])
+}
+
+function ProfileEditModal({ isOpen, onClose }) {
+  const [nickname, setNickname] = useState(MOCK_USER.nickname)
+  const [previewUrl, setPreviewUrl] = useState(MOCK_USER.avatarUrl)
+  const [fileError, setFileError] = useState(null)
+  const fileInputRef = useRef(null)
+  const modalRef = useRef(null)
+
+  useModalFocusTrap(isOpen, onClose, modalRef)
 
   useEffect(() => {
     return () => { if (previewUrl && previewUrl !== MOCK_USER.avatarUrl) URL.revokeObjectURL(previewUrl) }
@@ -351,26 +355,7 @@ function ProfileEditModal({ isOpen, onClose }) {
 function WithdrawalModal({ isOpen, onClose }) {
   const modalRef = useRef(null)
 
-  useEffect(() => {
-    if (!isOpen) return
-    const modal = modalRef.current
-    const focusable = modal ? [...modal.querySelectorAll(FOCUSABLE)] : []
-    focusable[0]?.focus()
-
-    function handleKey(e) {
-      if (e.key === 'Escape') { onClose(); return }
-      if (e.key !== 'Tab' || focusable.length === 0) return
-      const first = focusable[0]
-      const last = focusable[focusable.length - 1]
-      if (e.shiftKey) {
-        if (document.activeElement === first) { e.preventDefault(); last.focus() }
-      } else {
-        if (document.activeElement === last) { e.preventDefault(); first.focus() }
-      }
-    }
-    document.addEventListener('keydown', handleKey)
-    return () => document.removeEventListener('keydown', handleKey)
-  }, [isOpen, onClose])
+  useModalFocusTrap(isOpen, onClose, modalRef)
 
   if (!isOpen) return null
 
@@ -477,7 +462,7 @@ function MyPage() {
 
         {/* 프로필 카드 (AUTH-02) */}
         <ProfileCard onEditClick={() => setProfileEditOpen(true)} />
-        <ProfileEditModal isOpen={profileEditOpen} onClose={() => setProfileEditOpen(false)} />
+        {profileEditOpen && <ProfileEditModal isOpen={profileEditOpen} onClose={() => setProfileEditOpen(false)} />}
 
         {/* 탭 */}
         <div className={styles.tabs} role="tablist">
