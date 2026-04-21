@@ -297,7 +297,12 @@ function HomePage() {
                       )}
                     </div>
                     <div className={styles.slideActions}>
-                      <button className={styles.slideBtnPrimary}>자세히 보기</button>
+                      <Link
+                        to={item.type === 'concert' ? ROUTES.CONCERT_DETAIL(item.id) : ROUTES.RELEASE_DETAIL(item.id)}
+                        className={styles.slideBtnPrimary}
+                      >
+                        자세히 보기
+                      </Link>
                       {item.type === 'concert' && (
                         <button className={styles.slideBtnSecondary}>티켓 구매</button>
                       )}
@@ -363,7 +368,7 @@ function HomePage() {
           </div>
           <div className={`${styles.scrollStrip} ${styles.albumStrip}`}>
             {MOCK_NEW_RELEASES.map((item) => (
-              <article key={item.id} className={styles.albumCard}>
+              <Link key={item.id} to={ROUTES.RELEASE_DETAIL(item.id)} className={styles.albumCard}>
                 <div
                   className={styles.albumArt}
                   style={{ '--a-from': item.accentFrom, '--a-to': item.accentTo }}
@@ -375,7 +380,7 @@ function HomePage() {
                   <p className={styles.albumTitle}>{item.title}</p>
                   <p className={styles.albumDate}>{item.releaseDate}</p>
                 </div>
-              </article>
+              </Link>
             ))}
           </div>
         </div>
