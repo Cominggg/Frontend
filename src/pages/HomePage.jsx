@@ -298,7 +298,7 @@ function HomePage() {
                     </div>
                     <div className={styles.slideActions}>
                       <Link
-                        to={item.type === 'concert' ? ROUTES.CONCERT_DETAIL(item.id) : ROUTES.RELEASE_DETAIL(item.id)}
+                        to={item.type !== 'concert' ? ROUTES.RELEASE_DETAIL(item.id) : ROUTES.CONCERT_DETAIL(item.id)}
                         className={styles.slideBtnPrimary}
                       >
                         자세히 보기
