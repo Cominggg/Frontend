@@ -765,6 +765,66 @@
   cursor: default;
 }
 
+/* ── 회원 탈퇴 ── */
+.withdrawalSection {
+  margin-top: 3rem;
+  display: flex;
+  justify-content: center;
+}
+
+.withdrawalBtn {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  background: none;
+  border: none;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  opacity: 0.6;
+  transition: color 0.15s, opacity 0.15s;
+}
+
+.withdrawalBtn:hover {
+  color: var(--color-destructive);
+  opacity: 1;
+}
+
+.withdrawalIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--color-destructive) 10%, transparent);
+  color: var(--color-destructive);
+  margin: 0 auto 1.25rem;
+}
+
+.withdrawalDesc {
+  margin: -0.75rem 0 1.75rem;
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+  line-height: 1.6;
+  text-align: center;
+}
+
+.withdrawalConfirmBtn {
+  flex: 1;
+  padding: 0.6875rem 1rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #fff;
+  background: var(--color-destructive);
+  border: none;
+  border-radius: 10px;
+  transition: opacity 0.15s;
+}
+
+.withdrawalConfirmBtn:hover {
+  opacity: 0.88;
+}
+
 /* ── 반응형 ── */
 @media (max-width: 767px) {
   .page {
