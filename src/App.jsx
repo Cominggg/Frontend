@@ -11,6 +11,7 @@ import CalendarPage from '@/pages/CalendarPage'
 import ConcertDetailPage from '@/pages/ConcertDetailPage'
 import ConcertsPage from '@/pages/ConcertsPage'
 import ReleaseDetailPage from '@/pages/ReleaseDetailPage'
+import ReleasesPage from '@/pages/ReleasesPage'
 import HomePage from '@/pages/HomePage'
 import MyPage from '@/pages/MyPage'
 import NotFoundPage from '@/pages/NotFoundPage'
@@ -31,6 +32,7 @@ function App() {
         <Route path="/artists/:id" element={<ArtistDetailPage />} />
         <Route path={ROUTES.CONCERTS} element={<ConcertsPage />} />
         <Route path="/concerts/:id" element={<ConcertDetailPage />} />
+        <Route path={ROUTES.RELEASES} element={<ReleasesPage />} />
         <Route path="/releases/:id" element={<ReleaseDetailPage />} />
         <Route path={ROUTES.CALENDAR} element={<CalendarPage />} />
         <Route path={ROUTES.SEARCH} element={<div>통합 검색</div>} />
