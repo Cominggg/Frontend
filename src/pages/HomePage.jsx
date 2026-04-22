@@ -365,6 +365,10 @@ function HomePage() {
         <div className={styles.sectionInner}>
           <div className={styles.sectionHeader}>
             <h2 className={styles.sectionTitle}>새 앨범·싱글</h2>
+            <Link to={ROUTES.RELEASES} className={styles.sectionMore}>
+              전체 보기
+              <Icon name="chevronRight" size={16} />
+            </Link>
           </div>
           <div className={`${styles.scrollStrip} ${styles.albumStrip}`}>
             {MOCK_NEW_RELEASES.map((item) => (
