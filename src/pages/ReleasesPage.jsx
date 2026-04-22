@@ -21,8 +21,8 @@ const MOCK_RELEASES = [
   { id: 12, coverUrl: null, artistName: 'ONE OK ROCK',      title: 'Luxury Disease', type: 'ALBUM',  releaseDate: '2022.09.09' },
 ]
 
-const TYPE_FILTERS = ['전체', 'ALBUM', 'SINGLE', 'EP', '기타']
 const MAIN_TYPES = ['ALBUM', 'SINGLE', 'EP']
+const TYPE_FILTERS = ['전체', ...MAIN_TYPES, '기타']
 const PAGE_SIZE = 20
 
 function ReleasesPage() {
