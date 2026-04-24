@@ -71,6 +71,9 @@ const MOCK_NEW_RELEASES = [
   { id: 8, artistName: 'Eve', title: 'Heart', type: 'EP', releaseDate: '2025.03.12', accentFrom: '#9333ea', accentTo: '#d8b4fe' },
 ]
 
+// TODO: API 연동 후 제거
+const MOCK_STATS = { concertCount: 12 }
+
 // TODO: API 연동 후 제거 (CON-03)
 const MOCK_POPULAR_CONCERTS = [
   {
@@ -336,6 +339,24 @@ function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* 이달 공연 통계 배너 */}
+      <div className={styles.statsBanner}>
+        <div className={styles.sectionInner}>
+          <Link to={ROUTES.CONCERTS} className={styles.statsBannerCard}>
+            <div className={styles.statsBody}>
+              <span className={styles.statsNumber}>{MOCK_STATS.concertCount}</span>
+              <div className={styles.statsLabelGroup}>
+                <span className={styles.statsEyebrow}>이번 달</span>
+                <span className={styles.statsLabel}>예정 내한 공연</span>
+              </div>
+            </div>
+            <div className={styles.statsArrow} aria-hidden="true">
+              <Icon name="chevronRight" size={24} />
+            </div>
+          </Link>
+        </div>
+      </div>
 
       {/* 인기 공연 */}
       <section className={styles.section}>
