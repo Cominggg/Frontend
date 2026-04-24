@@ -74,6 +74,15 @@ const MOCK_NEW_RELEASES = [
 // TODO: API 연동 후 제거
 const MOCK_STATS = { concertCount: 12 }
 
+// TODO: API 연동 후 제거 — 날짜 오름차순 5건
+const MOCK_UPCOMING_CONCERTS = [
+  { id: 5, startDate: '2025.04.19', artistName: 'Kenshi Yonezu', title: 'TOUR 2025 "LOST CORNER"', venue: '고척스카이돔, 서울', accentColor: '#0369a1' },
+  { id: 4, startDate: '2025.05.24', artistName: 'Official髭男dism', title: 'ARENA TOUR 2025', venue: '잠실실내체육관, 서울', accentColor: '#0f766e' },
+  { id: 3, startDate: '2025.06.21', artistName: 'Ado', title: 'WORLD TOUR "Hibana" in Seoul', venue: '고척스카이돔, 서울', accentColor: '#be123c' },
+  { id: 2, startDate: '2025.07.05', artistName: 'King Gnu', title: 'Live Tour 2025', venue: '올림픽공원 체조경기장, 서울', accentColor: '#b45309' },
+  { id: 1, startDate: '2025.08.15', artistName: 'YOASOBI', title: 'ARENA TOUR 2025 "THE MONSTER"', venue: 'KSPO DOME, 서울', accentColor: '#7c3aed' },
+]
+
 // TODO: API 연동 후 제거 (CON-03)
 const MOCK_POPULAR_CONCERTS = [
   {
@@ -357,6 +366,38 @@ function HomePage() {
           </Link>
         </div>
       </div>
+
+      {/* 다가오는 공연 */}
+      <section className={styles.section}>
+        <div className={styles.sectionInner}>
+          <div className={styles.sectionHeader}>
+            <h2 className={styles.sectionTitle}>다가오는 공연</h2>
+            <Link to={ROUTES.CONCERTS} className={styles.sectionMore}>
+              전체 보기
+              <Icon name="chevronRight" size={16} />
+            </Link>
+          </div>
+          <ol className={styles.upcomingList}>
+            {MOCK_UPCOMING_CONCERTS.map((item) => (
+              <li key={item.id}>
+                <Link
+                  to={ROUTES.CONCERT_DETAIL(item.id)}
+                  className={styles.upcomingItem}
+                  style={{ '--item-accent': item.accentColor }}
+                >
+                  <span className={styles.upcomingDate}>{item.startDate}</span>
+                  <span className={styles.upcomingArtist}>{item.artistName}</span>
+                  <span className={styles.upcomingTitle}>{item.title}</span>
+                  <span className={styles.upcomingVenue}>
+                    <Icon name="pin" size={12} />
+                    {item.venue}
+                  </span>
+                </Link>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </section>
 
       {/* 인기 공연 */}
       <section className={styles.section}>
