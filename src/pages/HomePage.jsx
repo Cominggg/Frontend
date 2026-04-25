@@ -71,6 +71,26 @@ const MOCK_NEW_RELEASES = [
   { id: 8, artistName: 'Eve', title: 'Heart', type: 'EP', releaseDate: '2025.03.12', accentFrom: '#9333ea', accentTo: '#d8b4fe' },
 ]
 
+// TODO: API 연동 후 제거
+const MOCK_STATS = { concertCount: 12 }
+
+function getDday(dateStr, today) {
+  const target = new Date(dateStr.replace(/\./g, '-'))
+  const diff = Math.ceil((target - today) / (1000 * 60 * 60 * 24))
+  if (diff === 0) return 'D-DAY'
+  if (diff > 0) return `D-${diff}`
+  return null
+}
+
+// TODO: API 연동 후 제거 — 날짜 오름차순 5건
+const MOCK_UPCOMING_CONCERTS = [
+  { id: 5, startDate: '2025.04.19', artistName: 'Kenshi Yonezu', title: 'TOUR 2025 "LOST CORNER"', venue: '고척스카이돔, 서울', accentColor: '#0369a1' },
+  { id: 4, startDate: '2025.05.24', artistName: 'Official髭男dism', title: 'ARENA TOUR 2025', venue: '잠실실내체육관, 서울', accentColor: '#0f766e' },
+  { id: 3, startDate: '2025.06.21', artistName: 'Ado', title: 'WORLD TOUR "Hibana" in Seoul', venue: '고척스카이돔, 서울', accentColor: '#be123c' },
+  { id: 2, startDate: '2025.07.05', artistName: 'King Gnu', title: 'Live Tour 2025', venue: '올림픽공원 체조경기장, 서울', accentColor: '#b45309' },
+  { id: 1, startDate: '2025.08.15', artistName: 'YOASOBI', title: 'ARENA TOUR 2025 "THE MONSTER"', venue: 'KSPO DOME, 서울', accentColor: '#7c3aed' },
+]
+
 // TODO: API 연동 후 제거 (CON-03)
 const MOCK_POPULAR_CONCERTS = [
   {
@@ -186,6 +206,7 @@ function HomePage() {
   const openLoginModal = useLoginModalStore((s) => s.open)
   // TODO: React Query 연동 후 useQuery의 isLoading으로 교체
   const isLoading = false
+  const today = (() => { const d = new Date(); d.setHours(0, 0, 0, 0); return d })()
 
   const activeIndex = (displayIndex - 1 + total) % total
 
@@ -357,6 +378,50 @@ function HomePage() {
                   <ConcertCard key={concert.id} concert={concert} />
                 ))}
           </div>
+        </div>
+      </section>
+
+      {/* 다가오는 공연 */}
+      <section className={styles.section}>
+        <div className={styles.sectionInner}>
+          <div className={styles.sectionHeader}>
+            <div className={styles.sectionTitleGroup}>
+              <h2 className={styles.sectionTitle}>다가오는 공연</h2>
+              <Link to={ROUTES.CONCERTS} className={styles.statsChip}>
+                이달 {MOCK_STATS.concertCount}건
+                <Icon name="chevronRight" size={13} />
+              </Link>
+            </div>
+            <Link to={ROUTES.CONCERTS} className={styles.sectionMore}>
+              전체 보기
+              <Icon name="chevronRight" size={16} />
+            </Link>
+          </div>
+          <ol className={styles.upcomingList}>
+            {MOCK_UPCOMING_CONCERTS.map((item) => {
+              const dday = getDday(item.startDate, today)
+              return (
+                <li key={item.id}>
+                  <Link
+                    to={ROUTES.CONCERT_DETAIL(item.id)}
+                    className={styles.upcomingItem}
+                    style={{ '--item-accent': item.accentColor }}
+                  >
+                    <span className={styles.upcomingDate}>
+                      {item.startDate}
+                      {dday && <span className={styles.ddayChip}>{dday}</span>}
+                    </span>
+                    <span className={styles.upcomingArtist}>{item.artistName}</span>
+                    <span className={styles.upcomingTitle}>{item.title}</span>
+                    <span className={styles.upcomingVenue}>
+                      <Icon name="pin" size={12} />
+                      {item.venue}
+                    </span>
+                  </Link>
+                </li>
+              )
+            })}
+          </ol>
         </div>
       </section>
 
