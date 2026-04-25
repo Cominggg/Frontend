@@ -36,24 +36,18 @@ const MOCK_ARTISTS = [
   { id: 27, name: 'THE ORAL CIGARETTES', imageUrl: null, genres: ['J-Rock', 'Alternative'], hasUpcomingConcert: false, isFollowing: false },
 ]
 
-const ALL_GENRES = ['전체', 'J-Pop', 'J-Rock', 'Anime', 'Indie', 'Electronic', 'Hip-Hop', 'R&B', 'Soul', 'Alternative']
 const PAGE_SIZE = 25
 
 function ArtistsPage() {
   const [query, setQuery] = useState('')
-  const [selectedGenre, setSelectedGenre] = useState('전체')
   const [currentPage, setCurrentPage] = useState(1)
   // TODO: React Query 연동 후 useQuery의 isLoading으로 교체
   const isLoading = false
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase()
-    return MOCK_ARTISTS.filter((a) => {
-      const matchesQuery = !q || a.name.toLowerCase().includes(q)
-      const matchesGenre = selectedGenre === '전체' || a.genres.includes(selectedGenre)
-      return matchesQuery && matchesGenre
-    })
-  }, [query, selectedGenre])
+    return MOCK_ARTISTS.filter((a) => !q || a.name.toLowerCase().includes(q))
+  }, [query])
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE))
   const paginated = filtered.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE)
@@ -98,21 +92,6 @@ function ArtistsPage() {
               </svg>
             </button>
           )}
-        </div>
-
-        {/* 장르 필터 */}
-        <div className={styles.genreBar} role="tablist" aria-label="장르 필터">
-          {ALL_GENRES.map((genre) => (
-            <button
-              key={genre}
-              role="tab"
-              aria-selected={selectedGenre === genre}
-              className={`${styles.genreTab} ${selectedGenre === genre ? styles.genreTabActive : ''}`}
-              onClick={() => { setSelectedGenre(genre); setCurrentPage(1) }}
-            >
-              {genre}
-            </button>
-          ))}
         </div>
 
         {/* 아티스트 그리드 */}
