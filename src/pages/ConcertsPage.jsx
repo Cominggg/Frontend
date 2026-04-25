@@ -25,6 +25,12 @@ const MOCK_CONCERTS = [
   { id: 13, posterUrl: null, artistName: 'Ado',               title: 'Ado WORLD TOUR 2024 "Wish"',                   startDate: '2024.04.13', endDate: null,         venue: 'KSPO DOME, 서울',                  status: '공연완료' },
   { id: 14, posterUrl: null, artistName: 'YOASOBI',           title: 'YOASOBI THE BOOK CONCERT 2023',                startDate: '2023.05.27', endDate: '2023.05.28', venue: '올림픽공원 체조경기장, 서울',       status: '공연완료' },
   { id: 15, posterUrl: null, artistName: 'Kenshi Yonezu',     title: 'Kenshi Yonezu STADIUM LIVE 2023',              startDate: '2023.11.18', endDate: '2023.11.19', venue: '잠실종합운동장 주경기장, 서울',     status: '공연완료' },
+  { id: 16, posterUrl: null, artistName: 'Vaundy',            title: 'Vaundy one man live "replica"',                 startDate: '2025.11.22', endDate: null,         venue: '올림픽공원 체조경기장, 서울',       status: '공연예정' },
+  { id: 17, posterUrl: null, artistName: 'Eve',               title: 'Eve LIVE TOUR 2025 "Smile"',                   startDate: '2025.09.20', endDate: null,         venue: 'YES24 라이브홀, 서울',              status: '공연예정' },
+  { id: 18, posterUrl: null, artistName: 'Yorushika',         title: 'Yorushika LIVE 2024 "Plagiarism"',             startDate: '2024.10.05', endDate: null,         venue: 'KSPO DOME, 서울',                  status: '공연완료' },
+  { id: 19, posterUrl: null, artistName: 'milet',             title: 'milet live tour "eyes" in Seoul',               startDate: '2025.03.15', endDate: null,         venue: 'YES24 라이브홀, 서울',              status: '공연완료' },
+  { id: 20, posterUrl: null, artistName: 'Saucy Dog',         title: 'Saucy Dog LIVE TOUR 2025',                     startDate: '2025.10.04', endDate: null,         venue: '올림픽공원 체조경기장, 서울',       status: '공연예정' },
+  { id: 21, posterUrl: null, artistName: 'amazarashi',        title: 'amazarashi LIVE 2025 "Minima Moralia"',        startDate: '2025.08.23', endDate: null,         venue: 'YES24 라이브홀, 서울',              status: '공연예정' },
 ]
 
 const STATUS_FILTERS = ['전체', '공연예정', '공연중', '공연완료', '공연취소']
