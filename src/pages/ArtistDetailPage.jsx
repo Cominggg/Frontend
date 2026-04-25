@@ -35,7 +35,6 @@ const MOCK_ARTIST_MAP = {
     genres: ['J-Pop', 'Anime'], hasUpcomingConcert: true,
     isFollowing: false, followersCount: 24800,
     debutDate: '2019.09.12',
-    members: ['Ayase', 'ikura'],
     links: [
       { id: 'spotify',   label: 'Spotify',     url: '#' },
       { id: 'youtube',   label: 'YouTube',     url: '#' },
@@ -62,7 +61,6 @@ const MOCK_ARTIST_MAP = {
     genres: ['J-Pop', 'Rock'], hasUpcomingConcert: false,
     isFollowing: true, followersCount: 31200,
     debutDate: '2012.02.29',
-    members: [],
     links: [
       { id: 'spotify',   label: 'Spotify',     url: '#' },
       { id: 'youtube',   label: 'YouTube',     url: '#' },
@@ -85,7 +83,6 @@ const MOCK_ARTIST_MAP = {
     genres: ['J-Pop', 'Anime'], hasUpcomingConcert: true,
     isFollowing: false, followersCount: 19500,
     debutDate: '2020.10.02',
-    members: [],
     links: [
       { id: 'spotify',   label: 'Spotify',     url: '#' },
       { id: 'youtube',   label: 'YouTube',     url: '#' },
@@ -123,7 +120,7 @@ function getMockArtist(id) {
   return {
     id, name, imageUrl: null, genres: ['J-Pop'], hasUpcomingConcert: false,
     isFollowing: false, followersCount: 5000,
-    debutDate: null, members: [],
+    debutDate: null,
     links: [], concerts: [], releases: [],
   }
 }
@@ -177,7 +174,7 @@ function ArtistDetailPage() {
   }
 
   const { name, imageUrl, genres, hasUpcomingConcert, followersCount,
-          debutDate, members, links, concerts, releases } = artist
+          debutDate, links, concerts, releases } = artist
   const showPlaceholder = !imageUrl || imgFailed
   const [colorFrom, colorTo] = getArtistColor(name)
 
@@ -254,12 +251,6 @@ function ArtistDetailPage() {
                 <div className={styles.profileItem}>
                   <dt>데뷔</dt>
                   <dd>{debutDate}</dd>
-                </div>
-              )}
-              {members.length > 1 && (
-                <div className={styles.profileItem}>
-                  <dt>멤버</dt>
-                  <dd>{members.join(', ')}</dd>
                 </div>
               )}
             </dl>
