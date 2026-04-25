@@ -3,6 +3,7 @@ import { useState, useMemo } from 'react'
 import ReleaseCard from '@/components/release/ReleaseCard'
 import ReleaseCardSkeleton from '@/components/release/ReleaseCardSkeleton'
 import EmptyState from '@/components/ui/EmptyState'
+import Pagination from '@/components/ui/Pagination'
 import styles from './ReleasesPage.module.css'
 
 // TODO: API 연동 후 제거
@@ -143,40 +144,11 @@ function ReleasesPage() {
 
         {/* 페이지네이션 */}
         {!isLoading && totalPages > 1 && (
-          <div className={styles.pagination} aria-label="페이지 네비게이션">
-            <button
-              className={styles.pageBtn}
-              onClick={() => setPage((p) => p - 1)}
-              disabled={page === 1}
-              aria-label="이전 페이지"
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <polyline points="15 18 9 12 15 6" />
-              </svg>
-            </button>
-
-            {Array.from({ length: totalPages }, (_, i) => i + 1).map((n) => (
-              <button
-                key={n}
-                className={`${styles.pageBtn} ${n === page ? styles.pageBtnActive : ''}`}
-                onClick={() => setPage(n)}
-                aria-current={n === page ? 'page' : undefined}
-              >
-                {n}
-              </button>
-            ))}
-
-            <button
-              className={styles.pageBtn}
-              onClick={() => setPage((p) => p + 1)}
-              disabled={page === totalPages}
-              aria-label="다음 페이지"
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <polyline points="9 18 15 12 9 6" />
-              </svg>
-            </button>
-          </div>
+          <Pagination
+            currentPage={page}
+            totalPages={totalPages}
+            onPageChange={setPage}
+          />
         )}
 
       </div>
