@@ -74,10 +74,8 @@ const MOCK_NEW_RELEASES = [
 // TODO: API 연동 후 제거
 const MOCK_STATS = { concertCount: 12 }
 
-function getDday(dateStr) {
+function getDday(dateStr, today) {
   const target = new Date(dateStr.replace(/\./g, '-'))
-  const today = new Date()
-  today.setHours(0, 0, 0, 0)
   const diff = Math.ceil((target - today) / (1000 * 60 * 60 * 24))
   if (diff === 0) return 'D-DAY'
   if (diff > 0) return `D-${diff}`
@@ -208,6 +206,7 @@ function HomePage() {
   const openLoginModal = useLoginModalStore((s) => s.open)
   // TODO: React Query 연동 후 useQuery의 isLoading으로 교체
   const isLoading = false
+  const today = (() => { const d = new Date(); d.setHours(0, 0, 0, 0); return d })()
 
   const activeIndex = (displayIndex - 1 + total) % total
 
@@ -400,7 +399,7 @@ function HomePage() {
           </div>
           <ol className={styles.upcomingList}>
             {MOCK_UPCOMING_CONCERTS.map((item) => {
-              const dday = getDday(item.startDate)
+              const dday = getDday(item.startDate, today)
               return (
                 <li key={item.id}>
                   <Link
