@@ -7,7 +7,7 @@ import { getArtistColor } from '@/utils/artistColor'
 import styles from './ArtistCard.module.css'
 
 function ArtistCard({ artist }) {
-  const { id, name, imageUrl, genres, hasUpcomingConcert } = artist
+  const { id, name, imageUrl, hasUpcomingConcert } = artist
   const [isFollowing, setIsFollowing] = useState(artist.isFollowing)
   const [imgFailed, setImgFailed] = useState(false)
   const user = useAuthStore((s) => s.user)
@@ -48,13 +48,6 @@ function ArtistCard({ artist }) {
         </div>
         <div className={styles.info}>
           <p className={styles.name}>{name}</p>
-          {(genres ?? []).length > 0 && (
-            <div className={styles.genres}>
-              {(genres ?? []).slice(0, 2).map((g) => (
-                <span key={g} className={styles.genreChip}>{g}</span>
-              ))}
-            </div>
-          )}
         </div>
       </Link>
       <button

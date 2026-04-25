@@ -7,53 +7,47 @@ import styles from './ArtistsPage.module.css'
 
 // TODO: API 연동 후 제거
 const MOCK_ARTISTS = [
-  { id: 1,  name: 'YOASOBI',           imageUrl: null, genres: ['J-Pop', 'Anime'],       hasUpcomingConcert: true,  isFollowing: false },
-  { id: 2,  name: 'Kenshi Yonezu',     imageUrl: null, genres: ['J-Pop', 'Rock'],         hasUpcomingConcert: true,  isFollowing: true  },
-  { id: 3,  name: 'Ado',               imageUrl: null, genres: ['J-Pop', 'Anime'],        hasUpcomingConcert: true,  isFollowing: false },
-  { id: 4,  name: 'King Gnu',          imageUrl: null, genres: ['J-Rock', 'Indie'],       hasUpcomingConcert: true,  isFollowing: false },
-  { id: 5,  name: 'Official髭男dism',  imageUrl: null, genres: ['J-Pop', 'R&B'],          hasUpcomingConcert: false, isFollowing: false },
-  { id: 6,  name: 'RADWIMPS',          imageUrl: null, genres: ['J-Rock', 'Anime'],       hasUpcomingConcert: true,  isFollowing: true  },
-  { id: 7,  name: 'Mrs. GREEN APPLE',  imageUrl: null, genres: ['J-Pop', 'J-Rock'],       hasUpcomingConcert: true,  isFollowing: false },
-  { id: 8,  name: 'Fujii Kaze',        imageUrl: null, genres: ['J-Pop', 'Soul'],         hasUpcomingConcert: true,  isFollowing: false },
-  { id: 9,  name: 'ZUTOMAYO',          imageUrl: null, genres: ['J-Pop', 'Electronic'],   hasUpcomingConcert: true,  isFollowing: false },
-  { id: 10, name: 'Creepy Nuts',       imageUrl: null, genres: ['Hip-Hop', 'J-Pop'],      hasUpcomingConcert: true,  isFollowing: false },
-  { id: 11, name: 'ONE OK ROCK',       imageUrl: null, genres: ['J-Rock', 'Alternative'], hasUpcomingConcert: false, isFollowing: false },
-  { id: 12, name: 'Eve',               imageUrl: null, genres: ['J-Pop', 'Anime'],        hasUpcomingConcert: false, isFollowing: false },
-  { id: 13, name: 'Yorushika',         imageUrl: null, genres: ['Indie', 'J-Pop'],        hasUpcomingConcert: false, isFollowing: false },
-  { id: 14, name: 'Aimer',             imageUrl: null, genres: ['J-Pop', 'Anime'],        hasUpcomingConcert: false, isFollowing: false },
-  { id: 15, name: 'Aimyon',            imageUrl: null, genres: ['J-Pop', 'Indie'],        hasUpcomingConcert: false, isFollowing: false },
-  { id: 16, name: 'mol-74',            imageUrl: null, genres: ['Indie', 'J-Rock'],       hasUpcomingConcert: false, isFollowing: false },
-  { id: 17, name: 'syudou',            imageUrl: null, genres: ['J-Pop', 'Electronic'],   hasUpcomingConcert: false, isFollowing: false },
-  { id: 18, name: 'back number',       imageUrl: null, genres: ['J-Rock', 'J-Pop'],       hasUpcomingConcert: false, isFollowing: false },
-  { id: 19, name: 'SiM',              imageUrl: null, genres: ['J-Rock', 'Alternative'],  hasUpcomingConcert: false, isFollowing: false },
-  { id: 20, name: 'Vaundy',           imageUrl: null, genres: ['J-Pop', 'Indie'],          hasUpcomingConcert: true,  isFollowing: false },
-  { id: 21, name: 'milet',            imageUrl: null, genres: ['J-Pop', 'Anime'],          hasUpcomingConcert: false, isFollowing: false },
-  { id: 22, name: 'amazarashi',       imageUrl: null, genres: ['Indie', 'Alternative'],    hasUpcomingConcert: false, isFollowing: false },
-  { id: 23, name: 'BUMP OF CHICKEN',  imageUrl: null, genres: ['J-Rock', 'Indie'],         hasUpcomingConcert: false, isFollowing: false },
-  { id: 24, name: 'sumika',           imageUrl: null, genres: ['J-Pop', 'J-Rock'],         hasUpcomingConcert: false, isFollowing: false },
-  { id: 25, name: 'Saucy Dog',        imageUrl: null, genres: ['Indie', 'J-Pop'],          hasUpcomingConcert: true,  isFollowing: false },
-  { id: 26, name: 'Ryokuoushoku Shakai', imageUrl: null, genres: ['J-Pop', 'Anime'],       hasUpcomingConcert: false, isFollowing: false },
-  { id: 27, name: 'THE ORAL CIGARETTES', imageUrl: null, genres: ['J-Rock', 'Alternative'], hasUpcomingConcert: false, isFollowing: false },
+  { id: 1,  name: 'YOASOBI',              imageUrl: null, hasUpcomingConcert: true,  isFollowing: false },
+  { id: 2,  name: 'Kenshi Yonezu',        imageUrl: null, hasUpcomingConcert: true,  isFollowing: true  },
+  { id: 3,  name: 'Ado',                  imageUrl: null, hasUpcomingConcert: true,  isFollowing: false },
+  { id: 4,  name: 'King Gnu',             imageUrl: null, hasUpcomingConcert: true,  isFollowing: false },
+  { id: 5,  name: 'Official髭男dism',     imageUrl: null, hasUpcomingConcert: false, isFollowing: false },
+  { id: 6,  name: 'RADWIMPS',             imageUrl: null, hasUpcomingConcert: true,  isFollowing: true  },
+  { id: 7,  name: 'Mrs. GREEN APPLE',     imageUrl: null, hasUpcomingConcert: true,  isFollowing: false },
+  { id: 8,  name: 'Fujii Kaze',           imageUrl: null, hasUpcomingConcert: true,  isFollowing: false },
+  { id: 9,  name: 'ZUTOMAYO',             imageUrl: null, hasUpcomingConcert: true,  isFollowing: false },
+  { id: 10, name: 'Creepy Nuts',          imageUrl: null, hasUpcomingConcert: true,  isFollowing: false },
+  { id: 11, name: 'ONE OK ROCK',          imageUrl: null, hasUpcomingConcert: false, isFollowing: false },
+  { id: 12, name: 'Eve',                  imageUrl: null, hasUpcomingConcert: false, isFollowing: false },
+  { id: 13, name: 'Yorushika',            imageUrl: null, hasUpcomingConcert: false, isFollowing: false },
+  { id: 14, name: 'Aimer',               imageUrl: null, hasUpcomingConcert: false, isFollowing: false },
+  { id: 15, name: 'Aimyon',              imageUrl: null, hasUpcomingConcert: false, isFollowing: false },
+  { id: 16, name: 'mol-74',              imageUrl: null, hasUpcomingConcert: false, isFollowing: false },
+  { id: 17, name: 'syudou',              imageUrl: null, hasUpcomingConcert: false, isFollowing: false },
+  { id: 18, name: 'back number',         imageUrl: null, hasUpcomingConcert: false, isFollowing: false },
+  { id: 19, name: 'SiM',                imageUrl: null, hasUpcomingConcert: false, isFollowing: false },
+  { id: 20, name: 'Vaundy',             imageUrl: null, hasUpcomingConcert: true,  isFollowing: false },
+  { id: 21, name: 'milet',              imageUrl: null, hasUpcomingConcert: false, isFollowing: false },
+  { id: 22, name: 'amazarashi',         imageUrl: null, hasUpcomingConcert: false, isFollowing: false },
+  { id: 23, name: 'BUMP OF CHICKEN',    imageUrl: null, hasUpcomingConcert: false, isFollowing: false },
+  { id: 24, name: 'sumika',             imageUrl: null, hasUpcomingConcert: false, isFollowing: false },
+  { id: 25, name: 'Saucy Dog',          imageUrl: null, hasUpcomingConcert: true,  isFollowing: false },
+  { id: 26, name: 'Ryokuoushoku Shakai',imageUrl: null, hasUpcomingConcert: false, isFollowing: false },
+  { id: 27, name: 'THE ORAL CIGARETTES',imageUrl: null, hasUpcomingConcert: false, isFollowing: false },
 ]
 
-const ALL_GENRES = ['전체', 'J-Pop', 'J-Rock', 'Anime', 'Indie', 'Electronic', 'Hip-Hop', 'R&B', 'Soul', 'Alternative']
 const PAGE_SIZE = 25
 
 function ArtistsPage() {
   const [query, setQuery] = useState('')
-  const [selectedGenre, setSelectedGenre] = useState('전체')
   const [currentPage, setCurrentPage] = useState(1)
   // TODO: React Query 연동 후 useQuery의 isLoading으로 교체
   const isLoading = false
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase()
-    return MOCK_ARTISTS.filter((a) => {
-      const matchesQuery = !q || a.name.toLowerCase().includes(q)
-      const matchesGenre = selectedGenre === '전체' || a.genres.includes(selectedGenre)
-      return matchesQuery && matchesGenre
-    })
-  }, [query, selectedGenre])
+    return MOCK_ARTISTS.filter((a) => !q || a.name.toLowerCase().includes(q))
+  }, [query])
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE))
   const paginated = filtered.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE)
@@ -98,21 +92,6 @@ function ArtistsPage() {
               </svg>
             </button>
           )}
-        </div>
-
-        {/* 장르 필터 */}
-        <div className={styles.genreBar} role="tablist" aria-label="장르 필터">
-          {ALL_GENRES.map((genre) => (
-            <button
-              key={genre}
-              role="tab"
-              aria-selected={selectedGenre === genre}
-              className={`${styles.genreTab} ${selectedGenre === genre ? styles.genreTabActive : ''}`}
-              onClick={() => { setSelectedGenre(genre); setCurrentPage(1) }}
-            >
-              {genre}
-            </button>
-          ))}
         </div>
 
         {/* 아티스트 그리드 */}

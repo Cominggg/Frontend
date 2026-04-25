@@ -2,6 +2,8 @@ import { useState, useMemo } from 'react'
 
 import CalendarGrid from '@/components/calendar/CalendarGrid'
 import DayConcertList from '@/components/calendar/DayConcertList'
+import useAuthStore from '@/stores/authStore'
+import useLoginModalStore from '@/stores/loginModalStore'
 import { isSameDay } from '@/utils/date'
 import styles from './CalendarPage.module.css'
 
@@ -47,8 +49,9 @@ function CalendarPage() {
   const [viewMode, setViewMode] = useState('all') // 'all' | 'my'
   const [myCalendarIds, setMyCalendarIds] = useState(INITIAL_MY_CALENDAR_IDS)
 
-  // TODO: const { user } = useAuthStore()
-  const isLoggedIn = false
+  const user = useAuthStore((s) => s.user)
+  const isLoggedIn = !!user
+  const openLoginModal = useLoginModalStore((s) => s.open)
 
   // 공연별 고정 색상 할당
   const colorMap = useMemo(() => {
@@ -96,7 +99,7 @@ function CalendarPage() {
 
   function handleViewMode(mode) {
     if (mode === 'my' && !isLoggedIn) {
-      // TODO: openLoginModal({ redirectUri: '/calendar' })
+      openLoginModal({ redirectUri: '/calendar' })
       return
     }
     setViewMode(mode)
@@ -104,7 +107,7 @@ function CalendarPage() {
 
   function handleCalendarToggle(ev) {
     if (!isLoggedIn) {
-      // TODO: openLoginModal({ redirectUri: '/calendar' })
+      openLoginModal({ redirectUri: '/calendar' })
       return
     }
     // TODO: call POST /api/calendar/:concertId or DELETE /api/calendar/:concertId

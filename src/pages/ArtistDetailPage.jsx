@@ -32,10 +32,9 @@ function calcDday(dateStr) {
 const MOCK_ARTIST_MAP = {
   1: {
     id: 1, name: 'YOASOBI', imageUrl: null,
-    genres: ['J-Pop', 'Anime'], hasUpcomingConcert: true,
+    hasUpcomingConcert: true,
     isFollowing: false, followersCount: 24800,
     debutDate: '2019.09.12',
-    members: ['Ayase', 'ikura'],
     links: [
       { id: 'spotify',   label: 'Spotify',     url: '#' },
       { id: 'youtube',   label: 'YouTube',     url: '#' },
@@ -59,10 +58,9 @@ const MOCK_ARTIST_MAP = {
   },
   2: {
     id: 2, name: 'Kenshi Yonezu', imageUrl: null,
-    genres: ['J-Pop', 'Rock'], hasUpcomingConcert: false,
+    hasUpcomingConcert: false,
     isFollowing: true, followersCount: 31200,
     debutDate: '2012.02.29',
-    members: [],
     links: [
       { id: 'spotify',   label: 'Spotify',     url: '#' },
       { id: 'youtube',   label: 'YouTube',     url: '#' },
@@ -82,10 +80,9 @@ const MOCK_ARTIST_MAP = {
   },
   3: {
     id: 3, name: 'Ado', imageUrl: null,
-    genres: ['J-Pop', 'Anime'], hasUpcomingConcert: true,
+    hasUpcomingConcert: true,
     isFollowing: false, followersCount: 19500,
     debutDate: '2020.10.02',
-    members: [],
     links: [
       { id: 'spotify',   label: 'Spotify',     url: '#' },
       { id: 'youtube',   label: 'YouTube',     url: '#' },
@@ -121,9 +118,9 @@ function getMockArtist(id) {
   if (!name) return null
 
   return {
-    id, name, imageUrl: null, genres: ['J-Pop'], hasUpcomingConcert: false,
+    id, name, imageUrl: null, hasUpcomingConcert: false,
     isFollowing: false, followersCount: 5000,
-    debutDate: null, members: [],
+    debutDate: null,
     links: [], concerts: [], releases: [],
   }
 }
@@ -176,8 +173,8 @@ function ArtistDetailPage() {
     )
   }
 
-  const { name, imageUrl, genres, hasUpcomingConcert, followersCount,
-          debutDate, members, links, concerts, releases } = artist
+  const { name, imageUrl, hasUpcomingConcert, followersCount,
+          debutDate, links, concerts, releases } = artist
   const showPlaceholder = !imageUrl || imgFailed
   const [colorFrom, colorTo] = getArtistColor(name)
 
@@ -240,13 +237,6 @@ function ArtistDetailPage() {
           <div className={styles.heroInfo}>
             {hasUpcomingConcert && <span className={styles.comingBadge}>COMING</span>}
             <h1 className={styles.artistName}>{name}</h1>
-            {genres.length > 0 && (
-              <div className={styles.genres}>
-                {genres.map((g) => (
-                  <span key={g} className={styles.genreChip}>{g}</span>
-                ))}
-              </div>
-            )}
 
             {/* 프로필 정보 */}
             <dl className={styles.profileList}>
@@ -254,12 +244,6 @@ function ArtistDetailPage() {
                 <div className={styles.profileItem}>
                   <dt>데뷔</dt>
                   <dd>{debutDate}</dd>
-                </div>
-              )}
-              {members.length > 1 && (
-                <div className={styles.profileItem}>
-                  <dt>멤버</dt>
-                  <dd>{members.join(', ')}</dd>
                 </div>
               )}
             </dl>
