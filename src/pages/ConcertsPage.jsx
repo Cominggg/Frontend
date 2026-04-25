@@ -28,11 +28,13 @@ const MOCK_CONCERTS = [
 ]
 
 const STATUS_FILTERS = ['전체', '공연예정', '공연중', '공연완료', '공연취소']
+const ITEMS_PER_PAGE = 20
 
 function ConcertsPage() {
   const [query, setQuery] = useState('')
   const [selectedStatus, setSelectedStatus] = useState('전체')
   const [followedOnly, setFollowedOnly] = useState(false)
+  const [currentPage, setCurrentPage] = useState(1)
   const user = useAuthStore((s) => s.user)
   const openLoginModal = useLoginModalStore((s) => s.open)
   // 비로그인 상태에서는 토글이 켜져 있더라도 필터를 적용하지 않음
@@ -46,6 +48,7 @@ function ConcertsPage() {
       return
     }
     setFollowedOnly((prev) => !prev)
+    setCurrentPage(1)
   }
 
   const filtered = useMemo(() => {
@@ -57,6 +60,9 @@ function ConcertsPage() {
       return matchesQuery && matchesStatus && matchesFollowed
     })
   }, [query, selectedStatus, effectiveFollowedOnly])
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / ITEMS_PER_PAGE))
+  const paginated = filtered.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE)
 
   return (
     <div className={styles.page}>
@@ -83,13 +89,13 @@ function ConcertsPage() {
             className={styles.searchInput}
             placeholder="공연명 또는 아티스트 검색..."
             value={query}
-            onChange={(e) => setQuery(e.target.value)}
+            onChange={(e) => { setQuery(e.target.value); setCurrentPage(1) }}
             aria-label="공연 검색"
           />
           {query && (
             <button
               className={styles.searchClear}
-              onClick={() => setQuery('')}
+              onClick={() => { setQuery(''); setCurrentPage(1) }}
               aria-label="검색어 지우기"
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
@@ -109,7 +115,7 @@ function ConcertsPage() {
                 role="tab"
                 aria-selected={selectedStatus === s}
                 className={`${styles.filterTab} ${selectedStatus === s ? styles.filterTabActive : ''}`}
-                onClick={() => setSelectedStatus(s)}
+                onClick={() => { setSelectedStatus(s); setCurrentPage(1) }}
               >
                 {s}
               </button>
@@ -136,7 +142,7 @@ function ConcertsPage() {
           </div>
         ) : filtered.length > 0 ? (
           <div className={styles.grid}>
-            {filtered.map((concert) => (
+            {paginated.map((concert) => (
               <ConcertCard key={concert.id} concert={concert} />
             ))}
           </div>
@@ -152,6 +158,43 @@ function ConcertsPage() {
             }
             message="해당 조건의 공연이 없습니다."
           />
+        )}
+
+        {/* 페이지네이션 */}
+        {!isLoading && totalPages > 1 && (
+          <div className={styles.pagination}>
+            <button
+              className={styles.pageBtn}
+              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+              disabled={currentPage === 1}
+              aria-label="이전 페이지"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="m15 18-6-6 6-6" />
+              </svg>
+            </button>
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+              <button
+                key={p}
+                className={`${styles.pageBtn} ${p === currentPage ? styles.pageBtnActive : ''}`}
+                onClick={() => setCurrentPage(p)}
+                aria-label={`${p}페이지`}
+                aria-current={p === currentPage ? 'page' : undefined}
+              >
+                {p}
+              </button>
+            ))}
+            <button
+              className={styles.pageBtn}
+              onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+              disabled={currentPage === totalPages}
+              aria-label="다음 페이지"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="m9 18 6-6-6-6" />
+              </svg>
+            </button>
+          </div>
         )}
 
       </div>
