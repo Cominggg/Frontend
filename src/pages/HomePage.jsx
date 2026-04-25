@@ -74,6 +74,16 @@ const MOCK_NEW_RELEASES = [
 // TODO: API 연동 후 제거
 const MOCK_STATS = { concertCount: 12 }
 
+function getDday(dateStr) {
+  const target = new Date(dateStr.replace(/\./g, '-'))
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+  const diff = Math.ceil((target - today) / (1000 * 60 * 60 * 24))
+  if (diff === 0) return 'D-DAY'
+  if (diff > 0) return `D-${diff}`
+  return null
+}
+
 // TODO: API 연동 후 제거 — 날짜 오름차순 5건
 const MOCK_UPCOMING_CONCERTS = [
   { id: 5, startDate: '2025.04.19', artistName: 'Kenshi Yonezu', title: 'TOUR 2025 "LOST CORNER"', venue: '고척스카이돔, 서울', accentColor: '#0369a1' },
@@ -349,56 +359,6 @@ function HomePage() {
         </div>
       </section>
 
-      {/* 이달 공연 통계 배너 */}
-      <div className={styles.statsBanner}>
-        <div className={styles.sectionInner}>
-          <Link to={ROUTES.CONCERTS} className={styles.statsBannerCard}>
-            <div className={styles.statsBody}>
-              <span className={styles.statsNumber}>{MOCK_STATS.concertCount}</span>
-              <div className={styles.statsLabelGroup}>
-                <span className={styles.statsEyebrow}>이번 달</span>
-                <span className={styles.statsLabel}>예정 내한 공연</span>
-              </div>
-            </div>
-            <div className={styles.statsArrow} aria-hidden="true">
-              <Icon name="chevronRight" size={24} />
-            </div>
-          </Link>
-        </div>
-      </div>
-
-      {/* 다가오는 공연 */}
-      <section className={styles.section}>
-        <div className={styles.sectionInner}>
-          <div className={styles.sectionHeader}>
-            <h2 className={styles.sectionTitle}>다가오는 공연</h2>
-            <Link to={ROUTES.CONCERTS} className={styles.sectionMore}>
-              전체 보기
-              <Icon name="chevronRight" size={16} />
-            </Link>
-          </div>
-          <ol className={styles.upcomingList}>
-            {MOCK_UPCOMING_CONCERTS.map((item) => (
-              <li key={item.id}>
-                <Link
-                  to={ROUTES.CONCERT_DETAIL(item.id)}
-                  className={styles.upcomingItem}
-                  style={{ '--item-accent': item.accentColor }}
-                >
-                  <span className={styles.upcomingDate}>{item.startDate}</span>
-                  <span className={styles.upcomingArtist}>{item.artistName}</span>
-                  <span className={styles.upcomingTitle}>{item.title}</span>
-                  <span className={styles.upcomingVenue}>
-                    <Icon name="pin" size={12} />
-                    {item.venue}
-                  </span>
-                </Link>
-              </li>
-            ))}
-          </ol>
-        </div>
-      </section>
-
       {/* 인기 공연 */}
       <section className={styles.section}>
         <div className={styles.sectionInner}>
@@ -419,6 +379,50 @@ function HomePage() {
                   <ConcertCard key={concert.id} concert={concert} />
                 ))}
           </div>
+        </div>
+      </section>
+
+      {/* 다가오는 공연 */}
+      <section className={styles.section}>
+        <div className={styles.sectionInner}>
+          <div className={styles.sectionHeader}>
+            <div className={styles.sectionTitleGroup}>
+              <h2 className={styles.sectionTitle}>다가오는 공연</h2>
+              <Link to={ROUTES.CONCERTS} className={styles.statsChip}>
+                이달 {MOCK_STATS.concertCount}건
+                <Icon name="chevronRight" size={13} />
+              </Link>
+            </div>
+            <Link to={ROUTES.CONCERTS} className={styles.sectionMore}>
+              전체 보기
+              <Icon name="chevronRight" size={16} />
+            </Link>
+          </div>
+          <ol className={styles.upcomingList}>
+            {MOCK_UPCOMING_CONCERTS.map((item) => {
+              const dday = getDday(item.startDate)
+              return (
+                <li key={item.id}>
+                  <Link
+                    to={ROUTES.CONCERT_DETAIL(item.id)}
+                    className={styles.upcomingItem}
+                    style={{ '--item-accent': item.accentColor }}
+                  >
+                    <span className={styles.upcomingDate}>
+                      {item.startDate}
+                      {dday && <span className={styles.ddayChip}>{dday}</span>}
+                    </span>
+                    <span className={styles.upcomingArtist}>{item.artistName}</span>
+                    <span className={styles.upcomingTitle}>{item.title}</span>
+                    <span className={styles.upcomingVenue}>
+                      <Icon name="pin" size={12} />
+                      {item.venue}
+                    </span>
+                  </Link>
+                </li>
+              )
+            })}
+          </ol>
         </div>
       </section>
 
