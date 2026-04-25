@@ -15,7 +15,7 @@ PUT    /api/auth/me                       (인증) multipart/form-data
 
 ## 아티스트
 ```text
-GET    /api/artists                       name, genre, debutYear, page, size(기본 25)
+GET    /api/artists                       name, page, size(기본 25)
 GET    /api/artists/:id
 GET    /api/artists/:id/concerts          tab: all|upcoming|past, page, size(기본 10)
 GET    /api/artists/:id/releases          type: ALBUM|SINGLE|EP, page, size(기본 10)
@@ -27,7 +27,8 @@ GET    /api/artists/following             (인증)
 
 ## 공연
 ```text
-GET  /api/concerts                        date, artistId, region, page, size(기본 20)
+GET  /api/concerts                        dateFrom(YYYY-MM-DD), dateTo(YYYY-MM-DD), artistId, region, page, size(기본 20). 기존 date 파라미터 하위 호환 유지
+GET  /api/concerts/stats                  year(int), month(int) → { "concertCount": N }. 홈 이달 통계 배너용
 GET  /api/concerts/:id
 GET  /api/concerts/:id/setlist
 GET  /api/concerts/popular
