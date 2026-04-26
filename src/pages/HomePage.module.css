@@ -560,7 +560,7 @@
 }
 
 /* ===========================
-   subZone — 새 앨범 + 관심 아티스트 공연 2단
+   subZone — 탭 전환 (새 앨범·싱글 / 관심 아티스트 공연)
    =========================== */
 .subZone {
   padding: 3rem 0 4rem;
@@ -570,24 +570,47 @@
   max-width: var(--max-width);
   margin: 0 auto;
   padding: 0 2rem;
+}
+
+/* 탭 헤더 */
+.subZoneTabs {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  border-bottom: 1px solid var(--color-border);
+  margin-bottom: 1.75rem;
+}
+
+.tab {
+  padding: 0.625rem 1.125rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  cursor: pointer;
+  transition: color 0.15s;
+}
+
+.tab:hover {
+  color: var(--color-text);
+}
+
+.tabActive {
+  color: var(--color-text);
+  border-bottom-color: var(--color-accent);
+}
+
+.tabMore {
+  margin-left: auto;
+}
+
+/* 4열 그리드 (관심 아티스트 공연, 풀 와이드) */
+.gridFour {
   display: grid;
-  grid-template-columns: 1fr 360px;
-  gap: 2rem;
-  align-items: start;
-}
-
-.subZoneLeft {
-  min-width: 0;
-}
-
-.subZoneRight {
-  min-width: 0;
-}
-
-/* 2열 그리드 (관심 아티스트 공연, 우측 패널 내) */
-.gridTwo {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 1.25rem;
 }
 
@@ -692,7 +715,7 @@
 
 /* 반응형 */
 
-/* 1100px 이하: mainZone / subZone 단열 전환 */
+/* 1100px 이하: mainZone 단열 전환 */
 @media (max-width: 1100px) {
   .mainZoneInner {
     grid-template-columns: 1fr;
@@ -700,10 +723,6 @@
 
   .mainZoneRight {
     position: static;
-  }
-
-  .subZoneInner {
-    grid-template-columns: 1fr;
   }
 }
 
@@ -756,11 +775,10 @@
 
   .subZoneInner {
     padding: 0 1.25rem;
-    gap: 1.5rem;
   }
 
   .gridThree,
-  .gridTwo {
+  .gridFour {
     grid-template-columns: repeat(2, 1fr);
     gap: 0.875rem;
   }

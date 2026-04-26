@@ -224,6 +224,7 @@ function HomePage() {
   const [displayIndex, setDisplayIndex] = useState(1)
   const [noTransition, setNoTransition] = useState(false)
   const [isPaused, setIsPaused] = useState(false)
+  const [subZoneTab, setSubZoneTab] = useState('albums')
   const touchStartX = useRef(null)
   const isAnimating = useRef(false)
   const user = useAuthStore((s) => s.user)
@@ -434,18 +435,39 @@ function HomePage() {
         </div>
       </div>
 
-      {/* subZone: 새 앨범·싱글 + 관심 아티스트 공연 */}
+      {/* subZone: 새 앨범·싱글 / 관심 아티스트 공연 탭 */}
       <div className={styles.subZone}>
         <div className={styles.subZoneInner}>
-          {/* 새 앨범·싱글 (좌) */}
-          <section className={styles.subZoneLeft}>
-            <div className={styles.sectionHeader}>
-              <h2 className={styles.sectionTitle}>새 앨범·싱글</h2>
-              <Link to={ROUTES.RELEASES} className={styles.sectionMore}>
-                전체 보기
-                <Icon name="chevronRight" size={16} />
-              </Link>
+          <div className={styles.subZoneTabs}>
+            <button
+              className={`${styles.tab} ${subZoneTab === 'albums' ? styles.tabActive : ''}`}
+              onClick={() => setSubZoneTab('albums')}
+            >
+              새 앨범·싱글
+            </button>
+            <button
+              className={`${styles.tab} ${subZoneTab === 'followed' ? styles.tabActive : ''}`}
+              onClick={() => setSubZoneTab('followed')}
+            >
+              관심 아티스트 공연
+            </button>
+            <div className={styles.tabMore}>
+              {subZoneTab === 'albums' && (
+                <Link to={ROUTES.RELEASES} className={styles.sectionMore}>
+                  전체 보기
+                  <Icon name="chevronRight" size={16} />
+                </Link>
+              )}
+              {subZoneTab === 'followed' && user && (
+                <Link to={ROUTES.CONCERTS} className={styles.sectionMore}>
+                  전체 보기
+                  <Icon name="chevronRight" size={16} />
+                </Link>
+              )}
             </div>
+          </div>
+
+          {subZoneTab === 'albums' && (
             <div className={`${styles.scrollStrip} ${styles.albumStrip}`}>
               {MOCK_NEW_RELEASES.map((item) => (
                 <Link key={item.id} to={ROUTES.RELEASE_DETAIL(item.id)} className={styles.albumCard}>
@@ -463,21 +485,11 @@ function HomePage() {
                 </Link>
               ))}
             </div>
-          </section>
+          )}
 
-          {/* 관심 아티스트 공연 (우) */}
-          <section className={styles.subZoneRight}>
-            <div className={styles.sectionHeader}>
-              <h2 className={styles.sectionTitle}>관심 아티스트 공연</h2>
-              {user && (
-                <Link to={ROUTES.CONCERTS} className={styles.sectionMore}>
-                  전체 보기
-                  <Icon name="chevronRight" size={16} />
-                </Link>
-              )}
-            </div>
-            {user ? (
-              <div className={styles.gridTwo}>
+          {subZoneTab === 'followed' && (
+            user ? (
+              <div className={styles.gridFour}>
                 {isLoading
                   ? Array.from({ length: 4 }).map((_, i) => <ConcertCardSkeleton key={i} />)
                   : MOCK_FOLLOWED_CONCERTS.map((concert) => (
@@ -497,8 +509,8 @@ function HomePage() {
                   로그인 / 회원가입
                 </button>
               </div>
-            )}
-          </section>
+            )
+          )}
         </div>
       </div>
     </div>
