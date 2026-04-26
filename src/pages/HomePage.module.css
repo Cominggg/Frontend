@@ -719,6 +719,13 @@
 
 /* 반응형 */
 
+/* 1101px 이상(데스크탑): 인기 공연 3개만 표시 */
+@media (min-width: 1101px) {
+  .gridThree > *:nth-child(n+4) {
+    display: none;
+  }
+}
+
 /* 1100px 이하: mainZone 단열 전환 */
 @media (max-width: 1100px) {
   .mainZoneInner {
@@ -727,13 +734,6 @@
 
   .mainZoneRight {
     position: static;
-  }
-}
-
-/* 900px 이하: 3열 그리드 → 2열 */
-@media (max-width: 900px) {
-  .gridThree {
-    grid-template-columns: repeat(2, 1fr);
   }
 }
 
@@ -791,7 +791,24 @@
     gap: 0.125rem;
   }
 
-  .gridThree,
+  .gridThree {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    gap: 0.875rem;
+    padding-bottom: 6px;
+  }
+
+  .gridThree::-webkit-scrollbar {
+    display: none;
+  }
+
+  .gridThree > * {
+    flex: 0 0 68%;
+    scroll-snap-align: start;
+  }
+
   .gridFour {
     grid-template-columns: repeat(2, 1fr);
     gap: 0.875rem;

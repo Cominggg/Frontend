@@ -397,7 +397,7 @@ function HomePage() {
             <div className={styles.gridThree}>
               {isLoading
                 ? Array.from({ length: 3 }).map((_, i) => <ConcertCardSkeleton key={i} />)
-                : MOCK_POPULAR_CONCERTS.slice(0, 3).map((concert) => (
+                : MOCK_POPULAR_CONCERTS.slice(0, 6).map((concert) => (
                     <ConcertCard key={concert.id} concert={concert} />
                   ))}
             </div>
