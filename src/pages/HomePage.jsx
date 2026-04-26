@@ -381,28 +381,58 @@ function HomePage() {
         </div>
       </section>
 
-      {/* 인기 공연 */}
-      <section className={styles.section}>
-        <div className={styles.sectionInner}>
-          <div className={styles.sectionHeader}>
-            <h2 className={styles.sectionTitle}>인기 공연</h2>
-            <Link to={ROUTES.CONCERTS} className={styles.sectionMore}>
-              전체 보기
-              <Icon name="chevronRight" size={16} />
-            </Link>
-          </div>
+      {/* mainZone: 인기 공연 + 다가오는 공연 */}
+      <div className={styles.mainZone}>
+        <div className={styles.mainZoneInner}>
+          {/* 인기 공연 (좌) */}
+          <section className={styles.mainZoneLeft}>
+            <div className={styles.sectionHeader}>
+              <h2 className={styles.sectionTitle}>인기 공연</h2>
+              <Link to={ROUTES.CONCERTS} className={styles.sectionMore}>
+                전체 보기
+                <Icon name="chevronRight" size={16} />
+              </Link>
+            </div>
+            <div className={styles.gridThree}>
+              {isLoading
+                ? Array.from({ length: 3 }).map((_, i) => <ConcertCardSkeleton key={i} />)
+                : MOCK_POPULAR_CONCERTS.slice(0, 3).map((concert) => (
+                    <ConcertCard key={concert.id} concert={concert} />
+                  ))}
+            </div>
+          </section>
 
-          <div className={styles.grid}>
-            {isLoading
-              ? Array.from({ length: 4 }).map((_, i) => (
-                  <ConcertCardSkeleton key={i} />
-                ))
-              : MOCK_POPULAR_CONCERTS.slice(0, 4).map((concert) => (
-                  <ConcertCard key={concert.id} concert={concert} />
+          {/* 다가오는 공연 (우, sticky) */}
+          <aside className={styles.mainZoneRight}>
+            <div className={styles.upcomingPanel}>
+              <div className={styles.upcomingPanelHeader}>
+                <h2 className={styles.sectionTitle}>다가오는 공연</h2>
+                <Link to={ROUTES.CONCERTS} className={styles.sectionMore}>
+                  전체 보기
+                  <Icon name="chevronRight" size={16} />
+                </Link>
+              </div>
+              <ul className={styles.upcomingList}>
+                {MOCK_UPCOMING_CONCERTS.map((concert) => (
+                  <li key={concert.id}>
+                    <Link to={ROUTES.CONCERT_DETAIL(concert.id)} className={styles.upcomingItem}>
+                      <div className={styles.upcomingDday}>D-{concert.dday}</div>
+                      <div className={styles.upcomingInfo}>
+                        <p className={styles.upcomingArtist}>{concert.artistName}</p>
+                        <p className={styles.upcomingTitle}>{concert.title}</p>
+                        <p className={styles.upcomingMeta}>
+                          <Icon name="calendar" size={12} />
+                          {concert.startDate} · {concert.venue}
+                        </p>
+                      </div>
+                    </Link>
+                  </li>
                 ))}
-          </div>
+              </ul>
+            </div>
+          </aside>
         </div>
-      </section>
+      </div>
 
       {/* 새 앨범·싱글 */}
       <section className={styles.section}>

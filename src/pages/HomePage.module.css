@@ -516,6 +516,39 @@
 }
 
 /* ===========================
+   mainZone — 인기 공연 + 다가오는 공연 2단
+   =========================== */
+.mainZone {
+  padding: 3rem 0 0;
+}
+
+.mainZoneInner {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 2rem;
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 2rem;
+  align-items: start;
+}
+
+.mainZoneLeft {
+  min-width: 0;
+}
+
+.mainZoneRight {
+  position: sticky;
+  top: calc(var(--header-height) + 1.5rem);
+}
+
+/* 3열 그리드 (인기 공연) */
+.gridThree {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.25rem;
+}
+
+/* ===========================
    다가오는 공연 — compact 리스트 패널
    =========================== */
 .upcomingPanel {
