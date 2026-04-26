@@ -591,6 +591,8 @@
   margin-bottom: -1px;
   cursor: pointer;
   transition: color 0.15s;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .tab:hover {
@@ -777,6 +779,16 @@
 
   .subZoneInner {
     padding: 0 1.25rem;
+  }
+
+  .tab {
+    font-size: 0.875rem;
+    padding: 0.5rem 0.75rem;
+  }
+
+  .tabMore .sectionMore {
+    font-size: 0.8125rem;
+    gap: 0.125rem;
   }
 
   .gridThree,
