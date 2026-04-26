@@ -71,6 +71,50 @@ const MOCK_NEW_RELEASES = [
   { id: 8, artistName: 'Eve', title: 'Heart', type: 'EP', releaseDate: '2025.03.12', accentFrom: '#9333ea', accentTo: '#d8b4fe' },
 ]
 
+// TODO: API 연동 후 제거 (다가오는 공연 패널)
+const MOCK_UPCOMING_CONCERTS = [
+  {
+    id: 1,
+    artistName: 'YOASOBI',
+    title: 'ARENA TOUR 2025 "THE MONSTER"',
+    startDate: '2025.08.15',
+    venue: 'KSPO DOME, 서울',
+    dday: 111,
+  },
+  {
+    id: 2,
+    artistName: 'King Gnu',
+    title: 'Live Tour 2025',
+    startDate: '2025.07.05',
+    venue: '올림픽공원 체조경기장, 서울',
+    dday: 70,
+  },
+  {
+    id: 3,
+    artistName: 'Ado',
+    title: 'WORLD TOUR "Hibana" in Seoul',
+    startDate: '2025.06.21',
+    venue: '고척스카이돔, 서울',
+    dday: 56,
+  },
+  {
+    id: 4,
+    artistName: 'Mrs. GREEN APPLE',
+    title: 'ARENA TOUR 2025',
+    startDate: '2025.10.04',
+    venue: 'KSPO DOME, 서울',
+    dday: 161,
+  },
+  {
+    id: 5,
+    artistName: 'RADWIMPS',
+    title: 'LIVE TOUR 2025',
+    startDate: '2025.11.22',
+    venue: '올림픽공원 체조경기장, 서울',
+    dday: 210,
+  },
+]
+
 // TODO: API 연동 후 제거 (CON-03)
 const MOCK_POPULAR_CONCERTS = [
   {
