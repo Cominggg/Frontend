@@ -434,72 +434,73 @@ function HomePage() {
         </div>
       </div>
 
-      {/* 새 앨범·싱글 */}
-      <section className={styles.section}>
-        <div className={styles.sectionInner}>
-          <div className={styles.sectionHeader}>
-            <h2 className={styles.sectionTitle}>새 앨범·싱글</h2>
-            <Link to={ROUTES.RELEASES} className={styles.sectionMore}>
-              전체 보기
-              <Icon name="chevronRight" size={16} />
-            </Link>
-          </div>
-          <div className={`${styles.scrollStrip} ${styles.albumStrip}`}>
-            {MOCK_NEW_RELEASES.map((item) => (
-              <Link key={item.id} to={ROUTES.RELEASE_DETAIL(item.id)} className={styles.albumCard}>
-                <div
-                  className={styles.albumArt}
-                  style={{ '--a-from': item.accentFrom, '--a-to': item.accentTo }}
-                >
-                  <span className={styles.albumTypeBadge}>{item.type}</span>
-                </div>
-                <div className={styles.albumInfo}>
-                  <p className={styles.albumArtist}>{item.artistName}</p>
-                  <p className={styles.albumTitle}>{item.title}</p>
-                  <p className={styles.albumDate}>{item.releaseDate}</p>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* 관심 아티스트 공연 */}
-      <section className={`${styles.section} ${styles.sectionLast}`}>
-        <div className={styles.sectionInner}>
-          <div className={styles.sectionHeader}>
-            <h2 className={styles.sectionTitle}>관심 아티스트 공연</h2>
-            {user && (
-              <Link to={ROUTES.CONCERTS} className={styles.sectionMore}>
+      {/* subZone: 새 앨범·싱글 + 관심 아티스트 공연 */}
+      <div className={styles.subZone}>
+        <div className={styles.subZoneInner}>
+          {/* 새 앨범·싱글 (좌) */}
+          <section className={styles.subZoneLeft}>
+            <div className={styles.sectionHeader}>
+              <h2 className={styles.sectionTitle}>새 앨범·싱글</h2>
+              <Link to={ROUTES.RELEASES} className={styles.sectionMore}>
                 전체 보기
                 <Icon name="chevronRight" size={16} />
               </Link>
-            )}
-          </div>
-          {user ? (
-            <div className={styles.grid}>
-              {isLoading
-                ? Array.from({ length: 4 }).map((_, i) => <ConcertCardSkeleton key={i} />)
-                : MOCK_FOLLOWED_CONCERTS.map((concert) => (
-                    <ConcertCard key={concert.id} concert={concert} />
-                  ))}
             </div>
-          ) : (
-            <div className={styles.loginTeaser}>
-              <div className={styles.loginTeaserIcon} aria-hidden="true">
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-                </svg>
+            <div className={`${styles.scrollStrip} ${styles.albumStrip}`}>
+              {MOCK_NEW_RELEASES.map((item) => (
+                <Link key={item.id} to={ROUTES.RELEASE_DETAIL(item.id)} className={styles.albumCard}>
+                  <div
+                    className={styles.albumArt}
+                    style={{ '--a-from': item.accentFrom, '--a-to': item.accentTo }}
+                  >
+                    <span className={styles.albumTypeBadge}>{item.type}</span>
+                  </div>
+                  <div className={styles.albumInfo}>
+                    <p className={styles.albumArtist}>{item.artistName}</p>
+                    <p className={styles.albumTitle}>{item.title}</p>
+                    <p className={styles.albumDate}>{item.releaseDate}</p>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </section>
+
+          {/* 관심 아티스트 공연 (우) */}
+          <section className={styles.subZoneRight}>
+            <div className={styles.sectionHeader}>
+              <h2 className={styles.sectionTitle}>관심 아티스트 공연</h2>
+              {user && (
+                <Link to={ROUTES.CONCERTS} className={styles.sectionMore}>
+                  전체 보기
+                  <Icon name="chevronRight" size={16} />
+                </Link>
+              )}
+            </div>
+            {user ? (
+              <div className={styles.gridTwo}>
+                {isLoading
+                  ? Array.from({ length: 4 }).map((_, i) => <ConcertCardSkeleton key={i} />)
+                  : MOCK_FOLLOWED_CONCERTS.map((concert) => (
+                      <ConcertCard key={concert.id} concert={concert} />
+                    ))}
               </div>
-              <p className={styles.loginTeaserTitle}>팔로우한 아티스트의 내한 공연을 한눈에</p>
-              <p className={styles.loginTeaserSub}>로그인하면 관심 아티스트의 새 공연 소식을 바로 확인할 수 있어요.</p>
-              <button className={styles.loginTeaserBtn} onClick={() => openLoginModal(window.location.pathname)}>
-                로그인 / 회원가입
-              </button>
-            </div>
-          )}
+            ) : (
+              <div className={styles.loginTeaser}>
+                <div className={styles.loginTeaserIcon} aria-hidden="true">
+                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                  </svg>
+                </div>
+                <p className={styles.loginTeaserTitle}>팔로우한 아티스트의 내한 공연을 한눈에</p>
+                <p className={styles.loginTeaserSub}>로그인하면 관심 아티스트의 새 공연 소식을 바로 확인할 수 있어요.</p>
+                <button className={styles.loginTeaserBtn} onClick={() => openLoginModal(window.location.pathname)}>
+                  로그인 / 회원가입
+                </button>
+              </div>
+            )}
+          </section>
         </div>
-      </section>
+      </div>
     </div>
   )
 }

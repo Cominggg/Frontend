@@ -549,6 +549,38 @@
 }
 
 /* ===========================
+   subZone — 새 앨범 + 관심 아티스트 공연 2단
+   =========================== */
+.subZone {
+  padding: 3rem 0 4rem;
+}
+
+.subZoneInner {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 2rem;
+  display: grid;
+  grid-template-columns: 1fr 440px;
+  gap: 2rem;
+  align-items: start;
+}
+
+.subZoneLeft {
+  min-width: 0;
+}
+
+.subZoneRight {
+  min-width: 0;
+}
+
+/* 2열 그리드 (관심 아티스트 공연, 우측 패널 내) */
+.gridTwo {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.25rem;
+}
+
+/* ===========================
    다가오는 공연 — compact 리스트 패널
    =========================== */
 .upcomingPanel {
