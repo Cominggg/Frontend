@@ -310,6 +310,12 @@
   letter-spacing: -0.01em;
 }
 
+.mainZoneRight .sectionTitle,
+.subZoneRight .sectionTitle {
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
 .sectionMore {
   display: flex;
   align-items: center;
@@ -532,7 +538,7 @@
   margin: 0 auto;
   padding: 0 2rem;
   display: grid;
-  grid-template-columns: 1fr 340px;
+  grid-template-columns: 1fr 360px;
   gap: 2rem;
   align-items: start;
 }
@@ -565,7 +571,7 @@
   margin: 0 auto;
   padding: 0 2rem;
   display: grid;
-  grid-template-columns: 1fr 440px;
+  grid-template-columns: 1fr 360px;
   gap: 2rem;
   align-items: start;
 }
