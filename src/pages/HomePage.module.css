@@ -643,10 +643,15 @@
   height: 52px;
   border-radius: 10px;
   background: var(--color-accent-dim);
-  font-size: 0.8125rem;
-  font-weight: 800;
+  font-size: 0.9375rem;
+  font-weight: 900;
   color: var(--color-accent);
-  letter-spacing: -0.01em;
+  letter-spacing: -0.03em;
+}
+
+.upcomingDdayUrgent {
+  background: color-mix(in srgb, var(--color-accent) 15%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-accent) 30%, transparent);
 }
 
 .upcomingInfo {

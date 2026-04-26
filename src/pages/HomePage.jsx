@@ -416,7 +416,7 @@ function HomePage() {
                 {MOCK_UPCOMING_CONCERTS.map((concert) => (
                   <li key={concert.id}>
                     <Link to={ROUTES.CONCERT_DETAIL(concert.id)} className={styles.upcomingItem}>
-                      <div className={styles.upcomingDday}>D-{concert.dday}</div>
+                      <div className={`${styles.upcomingDday} ${concert.dday <= 7 ? styles.upcomingDdayUrgent : ''}`}>D-{concert.dday}</div>
                       <div className={styles.upcomingInfo}>
                         <p className={styles.upcomingArtist}>{concert.artistName}</p>
                         <p className={styles.upcomingTitle}>{concert.title}</p>
