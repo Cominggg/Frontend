@@ -10,6 +10,7 @@
 }
 
 .carouselInner {
+  position: relative;
   max-width: var(--max-width);
   margin: 0 auto;
   padding: 0 2rem;
@@ -231,13 +232,17 @@
   right: 1rem;
 }
 
-/* 닷 인디케이터 */
+/* 닷 인디케이터 — 슬라이드 하단 오버레이 */
 .carouselDots {
+  position: absolute;
+  bottom: 0.75rem;
+  left: 50%;
+  transform: translateX(-50%);
   display: flex;
   align-items: center;
-  justify-content: center;
   gap: 0.5rem;
-  padding: 1rem 0;
+  padding: 0;
+  z-index: 2;
 }
 
 .dot {
@@ -519,7 +524,7 @@
    mainZone — 인기 공연 + 다가오는 공연 2단
    =========================== */
 .mainZone {
-  padding: 3rem 0 0;
+  padding: 2.5rem 0 0;
 }
 
 .mainZoneInner {
