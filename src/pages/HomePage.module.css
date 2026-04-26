@@ -675,12 +675,30 @@
 }
 
 /* 반응형 */
-@media (max-width: 900px) {
-  .grid {
-    grid-template-columns: repeat(3, 1fr);
+
+/* 1100px 이하: mainZone / subZone 단열 전환 */
+@media (max-width: 1100px) {
+  .mainZoneInner {
+    grid-template-columns: 1fr;
+  }
+
+  .mainZoneRight {
+    position: static;
+  }
+
+  .subZoneInner {
+    grid-template-columns: 1fr;
   }
 }
 
+/* 900px 이하: 3열 그리드 → 2열 */
+@media (max-width: 900px) {
+  .gridThree {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* 767px 이하: 모바일 */
 @media (max-width: 767px) {
   .carouselSection {
     padding: 1.25rem 0 0;
@@ -707,15 +725,26 @@
     display: none;
   }
 
-  .section {
-    padding: 2rem 0 2.75rem;
+  .mainZone {
+    padding: 2rem 0 0;
   }
 
-  .sectionInner {
+  .mainZoneInner {
     padding: 0 1.25rem;
+    gap: 1.5rem;
   }
 
-  .grid {
+  .subZone {
+    padding: 2rem 0 3rem;
+  }
+
+  .subZoneInner {
+    padding: 0 1.25rem;
+    gap: 1.5rem;
+  }
+
+  .gridThree,
+  .gridTwo {
     grid-template-columns: repeat(2, 1fr);
     gap: 0.875rem;
   }
