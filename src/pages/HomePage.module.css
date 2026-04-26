@@ -82,6 +82,12 @@
   line-height: 1.25;
   letter-spacing: -0.025em;
   color: var(--color-text);
+  text-wrap: balance;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .slideMeta {
