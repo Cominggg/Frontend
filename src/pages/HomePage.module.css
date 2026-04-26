@@ -189,11 +189,11 @@
 .slideInitial {
   position: relative;
   z-index: 1;
-  font-size: 17rem;
+  font-size: clamp(10rem, 18vw, 17rem);
   font-weight: 900;
   line-height: 1;
   color: var(--slide-accent);
-  opacity: 0.13;
+  opacity: 0.07;
   user-select: none;
   letter-spacing: -0.06em;
 }
