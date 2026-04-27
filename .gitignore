@@ -15,6 +15,11 @@ dist-ssr
 # Playwright MCP
 .playwright-mcp/
 
+# Screenshots (작업 중 캡처본)
+*.png
+*.jpg
+*.jpeg
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
