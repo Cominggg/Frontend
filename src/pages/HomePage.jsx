@@ -71,9 +71,6 @@ const MOCK_NEW_RELEASES = [
   { id: 8, artistName: 'Eve', title: 'Heart', type: 'EP', releaseDate: '2025.03.12', accentFrom: '#9333ea', accentTo: '#d8b4fe' },
 ]
 
-// TODO: API 연동 후 제거
-const MOCK_STATS = { concertCount: 12 }
-
 function getDday(dateStr, today) {
   const target = new Date(dateStr.replace(/\./g, '-'))
   const diff = Math.ceil((target - today) / (1000 * 60 * 60 * 24))
@@ -200,6 +197,8 @@ function HomePage() {
   const [displayIndex, setDisplayIndex] = useState(1)
   const [noTransition, setNoTransition] = useState(false)
   const [isPaused, setIsPaused] = useState(false)
+  const [subZoneTab, setSubZoneTab] = useState('albums')
+  const [isDesktop, setIsDesktop] = useState(() => window.innerWidth >= 1101)
   const touchStartX = useRef(null)
   const isAnimating = useRef(false)
   const user = useAuthStore((s) => s.user)
@@ -209,6 +208,13 @@ function HomePage() {
   const today = (() => { const d = new Date(); d.setHours(0, 0, 0, 0); return d })()
 
   const activeIndex = (displayIndex - 1 + total) % total
+
+  useEffect(() => {
+    const mq = window.matchMedia('(min-width: 1101px)')
+    const handler = (e) => setIsDesktop(e.matches)
+    mq.addEventListener('change', handler)
+    return () => mq.removeEventListener('change', handler)
+  }, [])
 
   useEffect(() => {
     if (isPaused) return
@@ -358,139 +364,143 @@ function HomePage() {
         </div>
       </section>
 
-      {/* 인기 공연 */}
-      <section className={styles.section}>
-        <div className={styles.sectionInner}>
-          <div className={styles.sectionHeader}>
-            <h2 className={styles.sectionTitle}>인기 공연</h2>
-            <Link to={ROUTES.CONCERTS} className={styles.sectionMore}>
-              전체 보기
-              <Icon name="chevronRight" size={16} />
-            </Link>
-          </div>
-
-          <div className={styles.grid}>
-            {isLoading
-              ? Array.from({ length: 4 }).map((_, i) => (
-                  <ConcertCardSkeleton key={i} />
-                ))
-              : MOCK_POPULAR_CONCERTS.slice(0, 4).map((concert) => (
-                  <ConcertCard key={concert.id} concert={concert} />
-                ))}
-          </div>
-        </div>
-      </section>
-
-      {/* 다가오는 공연 */}
-      <section className={styles.section}>
-        <div className={styles.sectionInner}>
-          <div className={styles.sectionHeader}>
-            <div className={styles.sectionTitleGroup}>
-              <h2 className={styles.sectionTitle}>다가오는 공연</h2>
-              <Link to={ROUTES.CONCERTS} className={styles.statsChip}>
-                이달 {MOCK_STATS.concertCount}건
-                <Icon name="chevronRight" size={13} />
-              </Link>
-            </div>
-            <Link to={ROUTES.CONCERTS} className={styles.sectionMore}>
-              전체 보기
-              <Icon name="chevronRight" size={16} />
-            </Link>
-          </div>
-          <ol className={styles.upcomingList}>
-            {MOCK_UPCOMING_CONCERTS.map((item) => {
-              const dday = getDday(item.startDate, today)
-              return (
-                <li key={item.id}>
-                  <Link
-                    to={ROUTES.CONCERT_DETAIL(item.id)}
-                    className={styles.upcomingItem}
-                    style={{ '--item-accent': item.accentColor }}
-                  >
-                    <span className={styles.upcomingDate}>
-                      {item.startDate}
-                      {dday && <span className={styles.ddayChip}>{dday}</span>}
-                    </span>
-                    <span className={styles.upcomingArtist}>{item.artistName}</span>
-                    <span className={styles.upcomingTitle}>{item.title}</span>
-                    <span className={styles.upcomingVenue}>
-                      <Icon name="pin" size={12} />
-                      {item.venue}
-                    </span>
-                  </Link>
-                </li>
-              )
-            })}
-          </ol>
-        </div>
-      </section>
-
-      {/* 새 앨범·싱글 */}
-      <section className={styles.section}>
-        <div className={styles.sectionInner}>
-          <div className={styles.sectionHeader}>
-            <h2 className={styles.sectionTitle}>새 앨범·싱글</h2>
-            <Link to={ROUTES.RELEASES} className={styles.sectionMore}>
-              전체 보기
-              <Icon name="chevronRight" size={16} />
-            </Link>
-          </div>
-          <div className={`${styles.scrollStrip} ${styles.albumStrip}`}>
-            {MOCK_NEW_RELEASES.map((item) => (
-              <Link key={item.id} to={ROUTES.RELEASE_DETAIL(item.id)} className={styles.albumCard}>
-                <div
-                  className={styles.albumArt}
-                  style={{ '--a-from': item.accentFrom, '--a-to': item.accentTo }}
-                >
-                  <span className={styles.albumTypeBadge}>{item.type}</span>
-                </div>
-                <div className={styles.albumInfo}>
-                  <p className={styles.albumArtist}>{item.artistName}</p>
-                  <p className={styles.albumTitle}>{item.title}</p>
-                  <p className={styles.albumDate}>{item.releaseDate}</p>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* 관심 아티스트 공연 */}
-      <section className={`${styles.section} ${styles.sectionLast}`}>
-        <div className={styles.sectionInner}>
-          <div className={styles.sectionHeader}>
-            <h2 className={styles.sectionTitle}>관심 아티스트 공연</h2>
-            {user && (
+      {/* mainZone: 인기 공연 + 다가오는 공연 */}
+      <div className={styles.mainZone}>
+        <div className={styles.mainZoneInner}>
+          {/* 인기 공연 (좌) */}
+          <section className={styles.mainZoneLeft}>
+            <div className={styles.sectionHeader}>
+              <h2 className={styles.sectionTitle}>인기 공연</h2>
               <Link to={ROUTES.CONCERTS} className={styles.sectionMore}>
                 전체 보기
                 <Icon name="chevronRight" size={16} />
               </Link>
-            )}
-          </div>
-          {user ? (
-            <div className={styles.grid}>
+            </div>
+            <div className={styles.gridThree}>
               {isLoading
-                ? Array.from({ length: 4 }).map((_, i) => <ConcertCardSkeleton key={i} />)
-                : MOCK_FOLLOWED_CONCERTS.map((concert) => (
+                ? Array.from({ length: isDesktop ? 3 : 6 }).map((_, i) => <ConcertCardSkeleton key={i} />)
+                : MOCK_POPULAR_CONCERTS.slice(0, isDesktop ? 3 : 6).map((concert) => (
                     <ConcertCard key={concert.id} concert={concert} />
                   ))}
             </div>
-          ) : (
-            <div className={styles.loginTeaser}>
-              <div className={styles.loginTeaserIcon} aria-hidden="true">
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-                </svg>
+          </section>
+
+          {/* 다가오는 공연 (우) */}
+          <aside className={styles.mainZoneRight}>
+            <div className={styles.upcomingPanel}>
+              <div className={styles.upcomingPanelHeader}>
+                <h2 className={styles.sectionTitle}>다가오는 공연</h2>
+                <Link to={ROUTES.CONCERTS} className={styles.sectionMore}>
+                  전체 보기
+                  <Icon name="chevronRight" size={16} />
+                </Link>
               </div>
-              <p className={styles.loginTeaserTitle}>팔로우한 아티스트의 내한 공연을 한눈에</p>
-              <p className={styles.loginTeaserSub}>로그인하면 관심 아티스트의 새 공연 소식을 바로 확인할 수 있어요.</p>
-              <button className={styles.loginTeaserBtn} onClick={() => openLoginModal(window.location.pathname)}>
-                로그인 / 회원가입
-              </button>
+              <ul className={styles.upcomingList}>
+                {MOCK_UPCOMING_CONCERTS.map((concert) => {
+                  const dday = getDday(concert.startDate, today)
+                  const isUrgent = dday && dday !== 'D-DAY' && parseInt(dday.replace('D-', '')) <= 7
+                  return (
+                    <li key={concert.id}>
+                      <Link to={ROUTES.CONCERT_DETAIL(concert.id)} className={styles.upcomingItem}>
+                        <div className={`${styles.upcomingDday} ${isUrgent ? styles.upcomingDdayUrgent : ''}`}>
+                          {dday ?? '-'}
+                        </div>
+                        <div className={styles.upcomingInfo}>
+                          <p className={styles.upcomingArtist}>{concert.artistName}</p>
+                          <p className={styles.upcomingTitle}>{concert.title}</p>
+                          <p className={styles.upcomingMeta}>
+                            <Icon name="calendar" size={12} />
+                            {concert.startDate} · {concert.venue}
+                          </p>
+                        </div>
+                      </Link>
+                    </li>
+                  )
+                })}
+              </ul>
+            </div>
+          </aside>
+        </div>
+      </div>
+
+      {/* subZone: 새 앨범·싱글 / 관심 아티스트 공연 탭 */}
+      <div className={styles.subZone}>
+        <div className={styles.subZoneInner}>
+          <div className={styles.subZoneTabs}>
+            <button
+              className={`${styles.tab} ${subZoneTab === 'albums' ? styles.tabActive : ''}`}
+              onClick={() => setSubZoneTab('albums')}
+            >
+              새 앨범·싱글
+            </button>
+            <button
+              className={`${styles.tab} ${subZoneTab === 'followed' ? styles.tabActive : ''}`}
+              onClick={() => setSubZoneTab('followed')}
+            >
+              관심 아티스트 공연
+            </button>
+            <div className={styles.tabMore}>
+              {subZoneTab === 'albums' && (
+                <Link to={ROUTES.RELEASES} className={styles.sectionMore}>
+                  전체 보기
+                  <Icon name="chevronRight" size={16} />
+                </Link>
+              )}
+              {subZoneTab === 'followed' && user && (
+                <Link to={ROUTES.CONCERTS} className={styles.sectionMore}>
+                  전체 보기
+                  <Icon name="chevronRight" size={16} />
+                </Link>
+              )}
+            </div>
+          </div>
+
+          {subZoneTab === 'albums' && (
+            <div className={`${styles.scrollStrip} ${styles.albumStrip}`}>
+              {MOCK_NEW_RELEASES.map((item) => (
+                <Link key={item.id} to={ROUTES.RELEASE_DETAIL(item.id)} className={styles.albumCard}>
+                  <div
+                    className={styles.albumArt}
+                    style={{ '--a-from': item.accentFrom, '--a-to': item.accentTo }}
+                  >
+                    <span className={styles.albumTypeBadge}>{item.type}</span>
+                  </div>
+                  <div className={styles.albumInfo}>
+                    <p className={styles.albumArtist}>{item.artistName}</p>
+                    <p className={styles.albumTitle}>{item.title}</p>
+                    <p className={styles.albumDate}>{item.releaseDate}</p>
+                  </div>
+                </Link>
+              ))}
             </div>
           )}
+
+          {subZoneTab === 'followed' && (
+            user ? (
+              <div className={styles.gridFour}>
+                {isLoading
+                  ? Array.from({ length: 4 }).map((_, i) => <ConcertCardSkeleton key={i} />)
+                  : MOCK_FOLLOWED_CONCERTS.map((concert) => (
+                      <ConcertCard key={concert.id} concert={concert} />
+                    ))}
+              </div>
+            ) : (
+              <div className={styles.loginTeaser}>
+                <div className={styles.loginTeaserIcon} aria-hidden="true">
+                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                  </svg>
+                </div>
+                <p className={styles.loginTeaserTitle}>팔로우한 아티스트의 내한 공연을 한눈에</p>
+                <p className={styles.loginTeaserSub}>로그인하면 관심 아티스트의 새 공연 소식을 바로 확인할 수 있어요.</p>
+                <button className={styles.loginTeaserBtn} onClick={() => openLoginModal(window.location.pathname)}>
+                  로그인 / 회원가입
+                </button>
+              </div>
+            )
+          )}
         </div>
-      </section>
+      </div>
     </div>
   )
 }
