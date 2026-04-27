@@ -113,6 +113,14 @@ const MOCK_UPCOMING_CONCERTS = [
     venue: '올림픽공원 체조경기장, 서울',
     dday: 210,
   },
+  {
+    id: 6,
+    artistName: 'Fujii Kaze',
+    title: 'LOVE ALL SERVE ALL STADIUM TOUR',
+    startDate: '2025.12.13',
+    venue: '잠실올림픽주경기장, 서울',
+    dday: 231,
+  },
 ]
 
 // TODO: API 연동 후 제거 (CON-03)

@@ -545,16 +545,11 @@
   display: grid;
   grid-template-columns: 1fr 360px;
   gap: 2rem;
-  align-items: start;
+  align-items: stretch;
 }
 
 .mainZoneLeft {
   min-width: 0;
-}
-
-.mainZoneRight {
-  position: sticky;
-  top: calc(var(--header-height) + 1.5rem);
 }
 
 /* 3열 그리드 (인기 공연) */
@@ -628,6 +623,7 @@
   display: flex;
   flex-direction: column;
   gap: 0;
+  height: 100%;
 }
 
 .upcomingPanelHeader {
@@ -638,6 +634,7 @@
 }
 
 .upcomingList {
+  flex: 1;
   display: flex;
   flex-direction: column;
   gap: 0;
@@ -650,10 +647,11 @@
 }
 
 .upcomingItem {
+  flex: 1;
   display: flex;
   align-items: center;
   gap: 1rem;
-  padding: 0.875rem 1rem;
+  padding: 0.75rem 1rem;
   border-bottom: 1px solid var(--color-border);
   text-decoration: none;
   color: inherit;
@@ -693,7 +691,7 @@
 }
 
 .upcomingArtist {
-  margin: 0 0 0.2rem;
+  margin: 0 0 0.1rem;
   font-size: 0.75rem;
   font-weight: 600;
   color: var(--color-text-muted);
@@ -703,7 +701,7 @@
 }
 
 .upcomingTitle {
-  margin: 0 0 0.25rem;
+  margin: 0 0 0.1rem;
   font-size: 0.875rem;
   font-weight: 700;
   color: var(--color-text);
@@ -713,6 +711,7 @@
 }
 
 .upcomingMeta {
+  margin: 0;
   display: flex;
   align-items: center;
   gap: 0.375rem;
