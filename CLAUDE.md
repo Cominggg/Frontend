@@ -16,13 +16,29 @@ Jpop 아티스트 내한 공연 정보 통합 웹 플랫폼 (KOPIS + MusicBrainz
 - `npm run lint` - run ESLint
 - `npm run preview` - preview production build
 
+## 디렉터리 구조
+```
+src/
+  components/   # 도메인별 분리: artist·auth·calendar·concert·layout·release·ui
+  pages/        # 라우트 단위 페이지
+  stores/       # Zustand 스토어 (authStore·loginModalStore·themeStore)
+  services/     # api.js — Axios 인스턴스 및 인터셉터 중앙 관리
+  mocks/        # API 연동 전 개발용 목 데이터
+  hooks/        # 커스텀 훅 (현재 미사용)
+  utils/        # 유틸 함수
+  constants/    # 상수
+```
+
 ## 환경 변수
 - `VITE_API_BASE_URL` — 백엔드 주소 (기본값: `http://localhost:8080`, `.env` 파일에 설정)
 
 ## 핵심 규칙
 - `no-unused-vars` rule ignores names matching `^[A-Z_]`
+- 스타일: CSS Modules 사용 (`Page.jsx` + `Page.module.css` 페어)
 - 소셜 로그인: Google / Kakao만 지원 (Naver 없음)
 - 비로그인 보호 기능 접근 시: 페이지 이동이 아닌 **로그인 모달** 표시 (redirect_uri로 현재 URL 유지)
+- 로그인 모달: `loginModalStore`로 전역 제어
+- 관리자 보호: `AdminRoute` 컴포넌트 사용 (`PrivateRoute`와 구분)
 - Access Token은 Authorization 헤더, Refresh Token은 HttpOnly Cookie
 - 401 응답 → Axios interceptor에서 자동 refresh, 실패 시 로그인 이동
 
