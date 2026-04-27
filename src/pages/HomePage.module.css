@@ -336,6 +336,32 @@
   color: var(--color-accent-light);
 }
 
+.sectionTitleGroup {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.statsChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.15rem;
+  padding: 0.25rem 0.6rem 0.25rem 0.75rem;
+  border-radius: 100px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--color-accent);
+  background: color-mix(in srgb, var(--color-accent) 10%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-accent) 20%, transparent);
+  text-decoration: none;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.statsChip:hover {
+  background: color-mix(in srgb, var(--color-accent) 16%, transparent);
+  border-color: color-mix(in srgb, var(--color-accent) 35%, transparent);
+}
+
 /* 그리드 */
 .grid {
   display: grid;
@@ -724,13 +750,6 @@
 
 /* 반응형 */
 
-/* 1101px 이상(데스크탑): 인기 공연 3개만 표시 */
-@media (min-width: 1101px) {
-  .gridThree > *:nth-child(n+4) {
-    display: none;
-  }
-}
-
 /* 1100px 이하: mainZone 단열 전환 */
 @media (max-width: 1100px) {
   .mainZoneInner {
@@ -819,4 +838,3 @@
     gap: 0.875rem;
   }
 }
-

@@ -95,21 +95,6 @@
   line-height: 1.1;
 }
 
-.genres {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.375rem;
-}
-
-.genreChip {
-  font-size: 0.8125rem;
-  color: var(--color-text-muted);
-  background: var(--color-border);
-  padding: 3px 10px;
-  border-radius: 100px;
-  line-height: 1.6;
-}
-
 /* ── 프로필 목록 ── */
 .profileList {
   display: flex;

@@ -71,56 +71,21 @@ const MOCK_NEW_RELEASES = [
   { id: 8, artistName: 'Eve', title: 'Heart', type: 'EP', releaseDate: '2025.03.12', accentFrom: '#9333ea', accentTo: '#d8b4fe' },
 ]
 
-// TODO: API 연동 후 제거 (다가오는 공연 패널)
+function getDday(dateStr, today) {
+  const target = new Date(dateStr.replace(/\./g, '-'))
+  const diff = Math.ceil((target - today) / (1000 * 60 * 60 * 24))
+  if (diff === 0) return 'D-DAY'
+  if (diff > 0) return `D-${diff}`
+  return null
+}
+
+// TODO: API 연동 후 제거 — 날짜 오름차순 5건
 const MOCK_UPCOMING_CONCERTS = [
-  {
-    id: 1,
-    artistName: 'YOASOBI',
-    title: 'ARENA TOUR 2025 "THE MONSTER"',
-    startDate: '2025.08.15',
-    venue: 'KSPO DOME, 서울',
-    dday: 111,
-  },
-  {
-    id: 2,
-    artistName: 'King Gnu',
-    title: 'Live Tour 2025',
-    startDate: '2025.07.05',
-    venue: '올림픽공원 체조경기장, 서울',
-    dday: 70,
-  },
-  {
-    id: 3,
-    artistName: 'Ado',
-    title: 'WORLD TOUR "Hibana" in Seoul',
-    startDate: '2025.06.21',
-    venue: '고척스카이돔, 서울',
-    dday: 56,
-  },
-  {
-    id: 4,
-    artistName: 'Mrs. GREEN APPLE',
-    title: 'ARENA TOUR 2025',
-    startDate: '2025.10.04',
-    venue: 'KSPO DOME, 서울',
-    dday: 161,
-  },
-  {
-    id: 5,
-    artistName: 'RADWIMPS',
-    title: 'LIVE TOUR 2025',
-    startDate: '2025.11.22',
-    venue: '올림픽공원 체조경기장, 서울',
-    dday: 210,
-  },
-  {
-    id: 6,
-    artistName: 'Fujii Kaze',
-    title: 'LOVE ALL SERVE ALL STADIUM TOUR',
-    startDate: '2025.12.13',
-    venue: '잠실올림픽주경기장, 서울',
-    dday: 231,
-  },
+  { id: 5, startDate: '2025.04.19', artistName: 'Kenshi Yonezu', title: 'TOUR 2025 "LOST CORNER"', venue: '고척스카이돔, 서울', accentColor: '#0369a1' },
+  { id: 4, startDate: '2025.05.24', artistName: 'Official髭男dism', title: 'ARENA TOUR 2025', venue: '잠실실내체육관, 서울', accentColor: '#0f766e' },
+  { id: 3, startDate: '2025.06.21', artistName: 'Ado', title: 'WORLD TOUR "Hibana" in Seoul', venue: '고척스카이돔, 서울', accentColor: '#be123c' },
+  { id: 2, startDate: '2025.07.05', artistName: 'King Gnu', title: 'Live Tour 2025', venue: '올림픽공원 체조경기장, 서울', accentColor: '#b45309' },
+  { id: 1, startDate: '2025.08.15', artistName: 'YOASOBI', title: 'ARENA TOUR 2025 "THE MONSTER"', venue: 'KSPO DOME, 서울', accentColor: '#7c3aed' },
 ]
 
 // TODO: API 연동 후 제거 (CON-03)
@@ -233,14 +198,23 @@ function HomePage() {
   const [noTransition, setNoTransition] = useState(false)
   const [isPaused, setIsPaused] = useState(false)
   const [subZoneTab, setSubZoneTab] = useState('albums')
+  const [isDesktop, setIsDesktop] = useState(() => window.innerWidth >= 1101)
   const touchStartX = useRef(null)
   const isAnimating = useRef(false)
   const user = useAuthStore((s) => s.user)
   const openLoginModal = useLoginModalStore((s) => s.open)
   // TODO: React Query 연동 후 useQuery의 isLoading으로 교체
   const isLoading = false
+  const today = (() => { const d = new Date(); d.setHours(0, 0, 0, 0); return d })()
 
   const activeIndex = (displayIndex - 1 + total) % total
+
+  useEffect(() => {
+    const mq = window.matchMedia('(min-width: 1101px)')
+    const handler = (e) => setIsDesktop(e.matches)
+    mq.addEventListener('change', handler)
+    return () => mq.removeEventListener('change', handler)
+  }, [])
 
   useEffect(() => {
     if (isPaused) return
@@ -404,14 +378,14 @@ function HomePage() {
             </div>
             <div className={styles.gridThree}>
               {isLoading
-                ? Array.from({ length: 3 }).map((_, i) => <ConcertCardSkeleton key={i} />)
-                : MOCK_POPULAR_CONCERTS.slice(0, 6).map((concert) => (
+                ? Array.from({ length: isDesktop ? 3 : 6 }).map((_, i) => <ConcertCardSkeleton key={i} />)
+                : MOCK_POPULAR_CONCERTS.slice(0, isDesktop ? 3 : 6).map((concert) => (
                     <ConcertCard key={concert.id} concert={concert} />
                   ))}
             </div>
           </section>
 
-          {/* 다가오는 공연 (우, sticky) */}
+          {/* 다가오는 공연 (우) */}
           <aside className={styles.mainZoneRight}>
             <div className={styles.upcomingPanel}>
               <div className={styles.upcomingPanelHeader}>
@@ -422,21 +396,27 @@ function HomePage() {
                 </Link>
               </div>
               <ul className={styles.upcomingList}>
-                {MOCK_UPCOMING_CONCERTS.map((concert) => (
-                  <li key={concert.id}>
-                    <Link to={ROUTES.CONCERT_DETAIL(concert.id)} className={styles.upcomingItem}>
-                      <div className={`${styles.upcomingDday} ${concert.dday <= 7 ? styles.upcomingDdayUrgent : ''}`}>D-{concert.dday}</div>
-                      <div className={styles.upcomingInfo}>
-                        <p className={styles.upcomingArtist}>{concert.artistName}</p>
-                        <p className={styles.upcomingTitle}>{concert.title}</p>
-                        <p className={styles.upcomingMeta}>
-                          <Icon name="calendar" size={12} />
-                          {concert.startDate} · {concert.venue}
-                        </p>
-                      </div>
-                    </Link>
-                  </li>
-                ))}
+                {MOCK_UPCOMING_CONCERTS.map((concert) => {
+                  const dday = getDday(concert.startDate, today)
+                  const isUrgent = dday && dday !== 'D-DAY' && parseInt(dday.replace('D-', '')) <= 7
+                  return (
+                    <li key={concert.id}>
+                      <Link to={ROUTES.CONCERT_DETAIL(concert.id)} className={styles.upcomingItem}>
+                        <div className={`${styles.upcomingDday} ${isUrgent ? styles.upcomingDdayUrgent : ''}`}>
+                          {dday ?? '-'}
+                        </div>
+                        <div className={styles.upcomingInfo}>
+                          <p className={styles.upcomingArtist}>{concert.artistName}</p>
+                          <p className={styles.upcomingTitle}>{concert.title}</p>
+                          <p className={styles.upcomingMeta}>
+                            <Icon name="calendar" size={12} />
+                            {concert.startDate} · {concert.venue}
+                          </p>
+                        </div>
+                      </Link>
+                    </li>
+                  )
+                })}
               </ul>
             </div>
           </aside>

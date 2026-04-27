@@ -1,6 +1,8 @@
 import styles from './Pagination.module.css'
 
 function Pagination({ currentPage, totalPages, onPageChange }) {
+  if (!totalPages || totalPages < 1) return null
+
   return (
     <div className={styles.pagination} aria-label="페이지 네비게이션">
       <button
