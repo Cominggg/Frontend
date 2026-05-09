@@ -144,9 +144,10 @@
 
 .bodyGrid {
   display: grid;
-  grid-template-columns: 1fr 360px;
+  grid-template-columns: 1fr;
   gap: 3rem;
   align-items: start;
+  max-width: 680px;
 }
 
 .sectionHeading {
@@ -205,74 +206,12 @@
   font-variant-numeric: tabular-nums;
 }
 
-/* ── 사이드바 ── */
-.sidebar {
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
-}
-
-/* 소개 텍스트 */
-.descSection {
-  display: flex;
-  flex-direction: column;
-}
-
-.descText {
-  font-size: 0.9375rem;
-  line-height: 1.75;
-  color: var(--color-text-muted);
-  margin: 0;
-  padding: 1.25rem;
-  border-radius: 12px;
-  border: 1px solid var(--color-border);
-  background: var(--color-surface);
-}
-
-/* 크레딧 */
-.creditsSection {
-  display: flex;
-  flex-direction: column;
-}
-
-.creditBox {
-  border: 1px solid var(--color-border);
-  border-radius: 12px;
-  padding: 1.25rem;
-  background: var(--color-surface);
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.creditGroup {
-  display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
-}
-
-.creditRole {
-  font-size: 0.6875rem;
-  font-weight: 700;
-  letter-spacing: 0.07em;
-  text-transform: uppercase;
-  color: var(--color-text-muted);
-}
-
-.creditNames {
-  font-size: 0.9375rem;
-  color: var(--color-text);
-  line-height: 1.5;
+.labelText {
+  font-size: 0.8125rem;
+  color: rgba(255, 255, 255, 0.55);
 }
 
 /* ── 반응형 ── */
-@media (max-width: 900px) {
-  .bodyGrid {
-    grid-template-columns: 1fr 300px;
-    gap: 2rem;
-  }
-}
-
 @media (max-width: 767px) {
   .hero {
     padding: 2.5rem 1rem 2rem;
@@ -302,8 +241,5 @@
     padding: 1.5rem 1rem 3rem;
   }
 
-  .bodyGrid {
-    grid-template-columns: 1fr;
-    gap: 2rem;
-  }
 }
+
