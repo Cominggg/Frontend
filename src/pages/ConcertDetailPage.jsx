@@ -17,6 +17,7 @@ const MOCK_CONCERT_MAP = {
     startDate: '2025.08.15', endDate: '2025.08.16',
     venue: 'KSPO DOME, 서울', status: '공연예정',
     price: '전석 165,000원',
+    isInCalendar: false,
     ticketLinks: [
       { id: 'interpark', label: '인터파크', url: '#' },
       { id: 'melon', label: '멜론티켓', url: '#' },
@@ -28,6 +29,7 @@ const MOCK_CONCERT_MAP = {
     startDate: '2025.04.19', endDate: '2025.04.20',
     venue: '고척스카이돔, 서울', status: '공연완료',
     price: '전석 154,000원',
+    isInCalendar: true,
     ticketLinks: [
       { id: 'yes24', label: 'YES24', url: '#' },
     ],
@@ -52,6 +54,7 @@ const MOCK_CONCERT_MAP = {
     startDate: '2025.06.21', endDate: null,
     venue: '고척스카이돔, 서울', status: '공연예정',
     price: 'VIP 242,000원 / 전석 165,000원',
+    isInCalendar: false,
     ticketLinks: [
       { id: 'interpark', label: '인터파크', url: '#' },
       { id: 'yes24', label: 'YES24', url: '#' },
@@ -72,6 +75,7 @@ const MOCK_CONCERT_MAP = {
     startDate: '2026.03.14', endDate: '2026.03.15',
     venue: '고려대학교 화정체육관, 서울', status: '공연완료',
     price: '전석 138,000원',
+    isInCalendar: false,
     ticketLinks: [
       { id: 'melon', label: '멜론티켓', url: '#' },
     ],
@@ -111,13 +115,21 @@ function ConcertDetailPage() {
   const [thumbnailFailed, setThumbnailFailed] = useState(false)
   const [activeTab, setActiveTab] = useState('info')
   const [inquiryType, setInquiryType] = useState(null)
+  const [isInCalendar, setIsInCalendar] = useState(concert?.isInCalendar ?? false)
   const user = useAuthStore((s) => s.user)
   const openLoginModal = useLoginModalStore((s) => s.open)
 
   useEffect(() => { setActiveTab('info') }, [id])
+  useEffect(() => { setIsInCalendar(concert?.isInCalendar ?? false) }, [concert])
 
   // TODO: React Query 연동 후 isLoading으로 교체
   const isLoading = false
+
+  function handleCalendar() {
+    if (!user) { openLoginModal(window.location.href); return }
+    // TODO: API 연동 — isInCalendar ? DELETE /api/calendar/{id} : POST /api/calendar/{id}
+    setIsInCalendar((prev) => !prev)
+  }
 
   function handleConcertInquiry() {
     if (!user) { openLoginModal(window.location.href); return }
@@ -239,6 +251,22 @@ function ConcertDetailPage() {
                 </div>
               )}
             </dl>
+
+            {/* 캘린더 추가·제거 */}
+            <button
+              className={`${styles.calendarBtn} ${isInCalendar ? styles.calendarBtnActive : ''}`}
+              onClick={handleCalendar}
+              aria-pressed={isInCalendar}
+            >
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                <line x1="16" y1="2" x2="16" y2="6" />
+                <line x1="8" y1="2" x2="8" y2="6" />
+                <line x1="3" y1="10" x2="21" y2="10" />
+                {isInCalendar && <polyline points="9 14 11 16 15 12" />}
+              </svg>
+              {isInCalendar ? '캘린더에서 제거' : '내 캘린더에 추가'}
+            </button>
 
             {/* 예매처 링크 */}
             {ticketLinks.length > 0 && (

@@ -158,6 +158,33 @@
   background: var(--color-surface);
 }
 
+/* ── 캘린더 버튼 ── */
+.calendarBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.25rem;
+  border-radius: 8px;
+  border: 1.5px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.calendarBtn:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+.calendarBtnActive {
+  border-color: var(--color-accent);
+  background: color-mix(in srgb, var(--color-accent) 10%, transparent);
+  color: var(--color-accent);
+}
+
 /* ── 예매처 ── */
 .ticketSection {
   display: flex;
