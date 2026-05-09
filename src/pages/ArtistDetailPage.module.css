@@ -270,15 +270,80 @@
   background: var(--color-surface);
 }
 
+.releaseGroup + .releaseGroup {
+  border-top: 1px solid var(--color-border);
+}
+
 .releaseItem {
   display: flex;
   align-items: center;
   gap: 0.875rem;
   padding: 0.75rem 1.125rem;
+  width: 100%;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: default;
 }
 
-.releaseItem + .releaseItem {
+.releaseItemToggle {
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.releaseItemToggle:hover {
+  background: var(--color-surface-hover);
+}
+
+.releaseChevron {
+  flex-shrink: 0;
+  color: var(--color-text-muted);
+  transition: transform 0.2s;
+}
+
+.releaseChevronOpen {
+  transform: rotate(180deg);
+}
+
+.trackList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
   border-top: 1px solid var(--color-border);
+  background: var(--color-surface-secondary, color-mix(in srgb, var(--color-surface) 60%, var(--color-bg)));
+}
+
+.trackItem {
+  display: grid;
+  grid-template-columns: 1.75rem 1fr auto;
+  gap: 0.625rem;
+  align-items: center;
+  padding: 0.5rem 1.125rem;
+}
+
+.trackItem + .trackItem {
+  border-top: 1px solid var(--color-border);
+}
+
+.trackPosition {
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.trackTitle {
+  font-size: 0.875rem;
+  color: var(--color-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.trackDuration {
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
 }
 
 .releaseBadge {
