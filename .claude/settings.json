@@ -5,5 +5,18 @@
   },
   "permissions": {
     "defaultMode": "bypassPermissions"
+  },
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "find /Users/youhyuk/Coming/Frontend -maxdepth 1 \\( -name '*.png' -o -name '*.jpg' -o -name '*.jpeg' \\) -delete 2>/dev/null || true",
+            "statusMessage": "Playwright 임시 스크린샷 정리 중..."
+          }
+        ]
+      }
+    ]
   }
 }
