@@ -170,10 +170,7 @@ function ArtistDetailPage() {
   const isLoading = false
 
   function handleFollow() {
-    if (!user) {
-      // TODO: 로그인 모달 표시 (redirectUri: 현재 URL)
-      return
-    }
+    if (!user) { openLoginModal(window.location.href); return }
     setIsFollowing((prev) => !prev)
   }
 
