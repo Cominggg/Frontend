@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 
 import useAuthStore from '@/stores/authStore'
+import useLoginModalStore from '@/stores/loginModalStore'
 import { ROUTES } from '@/constants/routes'
 import { getArtistColor } from '@/utils/artistColor'
 import styles from './ArtistCard.module.css'
@@ -11,6 +12,7 @@ function ArtistCard({ artist }) {
   const [isFollowing, setIsFollowing] = useState(artist.isFollowing)
   const [imgFailed, setImgFailed] = useState(false)
   const user = useAuthStore((s) => s.user)
+  const openLoginModal = useLoginModalStore((s) => s.open)
 
   const showPlaceholder = !imageUrl || imgFailed
   const [colorFrom, colorTo] = getArtistColor(name)
@@ -18,10 +20,7 @@ function ArtistCard({ artist }) {
   function handleFollow(e) {
     e.preventDefault()
     e.stopPropagation()
-    if (!user) {
-      // TODO: 로그인 모달 표시 (redirectUri: 현재 URL)
-      return
-    }
+    if (!user) { openLoginModal(window.location.href); return }
     setIsFollowing((prev) => !prev)
   }
 

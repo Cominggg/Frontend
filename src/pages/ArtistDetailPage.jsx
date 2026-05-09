@@ -15,6 +15,11 @@ function formatFollowers(n) {
   return `${n.toLocaleString()}명`
 }
 
+function fmtMs(ms) {
+  const s = Math.round(ms / 1000)
+  return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`
+}
+
 function calcDday(dateStr) {
   if (!dateStr) return null
   const parts = dateStr.trim().split('.')
@@ -49,11 +54,18 @@ const MOCK_ARTIST_MAP = {
       { id: 103, title: 'YOASOBI CONCERT 2021',                     startDate: '2021.09.04', endDate: null,         venue: '올림픽공원 K-아트홀, 서울',       status: '공연완료' },
     ],
     releases: [
-      { id: 1, title: 'THE BOOK 4', type: 'ALBUM', releaseDate: '2025.02.15' },
-      { id: 2, title: 'Idol', type: 'SINGLE', releaseDate: '2023.05.19' },
-      { id: 3, title: 'THE BOOK 3', type: 'ALBUM', releaseDate: '2023.03.29' },
-      { id: 4, title: 'THE BOOK 2', type: 'ALBUM', releaseDate: '2022.06.29' },
-      { id: 5, title: 'THE BOOK', type: 'ALBUM', releaseDate: '2021.01.06' },
+      { id: 1, title: 'THE BOOK 4', type: 'ALBUM', releaseDate: '2025.02.15', tracks: [
+        { position: 1, title: 'アイドル', length_ms: 208000 },
+        { position: 2, title: '勇者', length_ms: 241000 },
+        { position: 3, title: '祝福', length_ms: 250000 },
+        { position: 4, title: 'セブンティーン', length_ms: 236000 },
+      ]},
+      { id: 2, title: 'Idol', type: 'SINGLE', releaseDate: '2023.05.19', tracks: [
+        { position: 1, title: 'アイドル', length_ms: 208000 },
+      ]},
+      { id: 3, title: 'THE BOOK 3', type: 'ALBUM', releaseDate: '2023.03.29', tracks: [] },
+      { id: 4, title: 'THE BOOK 2', type: 'ALBUM', releaseDate: '2022.06.29', tracks: [] },
+      { id: 5, title: 'THE BOOK', type: 'ALBUM', releaseDate: '2021.01.06', tracks: [] },
     ],
   },
   2: {
@@ -72,10 +84,19 @@ const MOCK_ARTIST_MAP = {
       { id: 202, title: 'Kenshi Yonezu HALL TOUR 2022',             startDate: '2022.06.11', endDate: null,         venue: '올림픽공원 체조경기장, 서울',     status: '공연완료' },
     ],
     releases: [
-      { id: 1, title: 'LOST CORNER', type: 'ALBUM', releaseDate: '2025.04.05' },
-      { id: 2, title: 'Spinning Globe', type: 'SINGLE', releaseDate: '2022.12.08' },
-      { id: 3, title: 'STRAY SHEEP', type: 'ALBUM', releaseDate: '2020.08.05' },
-      { id: 4, title: 'Pale Blue', type: 'SINGLE', releaseDate: '2021.06.16' },
+      { id: 1, title: 'LOST CORNER', type: 'ALBUM', releaseDate: '2025.04.05', tracks: [
+        { position: 1, title: 'LOST CORNER', length_ms: 262000 },
+        { position: 2, title: 'LADY', length_ms: 238000 },
+        { position: 3, title: 'メガヒットソング', length_ms: 227000 },
+        { position: 4, title: 'Azalea', length_ms: 251000 },
+      ]},
+      { id: 2, title: 'Spinning Globe', type: 'SINGLE', releaseDate: '2022.12.08', tracks: [
+        { position: 1, title: 'Spinning Globe', length_ms: 315000 },
+      ]},
+      { id: 3, title: 'STRAY SHEEP', type: 'ALBUM', releaseDate: '2020.08.05', tracks: [] },
+      { id: 4, title: 'Pale Blue', type: 'SINGLE', releaseDate: '2021.06.16', tracks: [
+        { position: 1, title: 'Pale Blue', length_ms: 290000 },
+      ]},
     ],
   },
   3: {
@@ -96,9 +117,14 @@ const MOCK_ARTIST_MAP = {
       { id: 302, title: 'Ado LIVE 2023',                             startDate: '2023.08.05', endDate: null,         venue: '올림픽공원 체조경기장, 서울',     status: '공연완료' },
     ],
     releases: [
-      { id: 1, title: 'Hibana', type: 'SINGLE', releaseDate: '2025.03.05' },
-      { id: 2, title: 'Uta no Uta', type: 'ALBUM', releaseDate: '2023.04.26' },
-      { id: 3, title: 'Usseewa', type: 'SINGLE', releaseDate: '2020.10.02' },
+      { id: 1, title: 'Hibana', type: 'SINGLE', releaseDate: '2025.03.05', tracks: [
+        { position: 1, title: 'Hibana', length_ms: 224000 },
+        { position: 2, title: 'Hibana (Instrumental)', length_ms: 224000 },
+      ]},
+      { id: 2, title: 'Uta no Uta', type: 'ALBUM', releaseDate: '2023.04.26', tracks: [] },
+      { id: 3, title: 'Usseewa', type: 'SINGLE', releaseDate: '2020.10.02', tracks: [
+        { position: 1, title: 'うっせぇわ', length_ms: 207000 },
+      ]},
     ],
   },
 }
@@ -135,6 +161,7 @@ function ArtistDetailPage() {
   const [isFollowing, setIsFollowing] = useState(artist?.isFollowing ?? false)
   const [imgFailed, setImgFailed] = useState(false)
   const [concertTab, setConcertTab] = useState('전체')
+  const [openReleaseId, setOpenReleaseId] = useState(null)
   const [inquiryOpen, setInquiryOpen] = useState(false)
   const user = useAuthStore((s) => s.user)
   const openLoginModal = useLoginModalStore((s) => s.open)
@@ -143,10 +170,7 @@ function ArtistDetailPage() {
   const isLoading = false
 
   function handleFollow() {
-    if (!user) {
-      // TODO: 로그인 모달 표시 (redirectUri: 현재 URL)
-      return
-    }
+    if (!user) { openLoginModal(window.location.href); return }
     setIsFollowing((prev) => !prev)
   }
 
@@ -308,15 +332,48 @@ function ArtistDetailPage() {
               <span className={styles.sectionCount}>{releases.length}</span>
             </h2>
             <div className={styles.releaseList}>
-              {releases.map((rel) => (
-                <div key={rel.id} className={styles.releaseItem}>
-                  <span className={`${styles.releaseBadge} ${styles[`releaseBadge${rel.type}`] || ''}`}>
-                    {rel.type}
-                  </span>
-                  <span className={styles.releaseTitle}>{rel.title}</span>
-                  <span className={styles.releaseDate}>{rel.releaseDate}</span>
-                </div>
-              ))}
+              {releases.map((rel) => {
+                const hasTracks = rel.tracks && rel.tracks.length > 0
+                const isOpen = openReleaseId === rel.id
+                return (
+                  <div key={rel.id} className={styles.releaseGroup}>
+                    <button
+                      className={`${styles.releaseItem} ${hasTracks ? styles.releaseItemToggle : ''}`}
+                      onClick={() => hasTracks && setOpenReleaseId(isOpen ? null : rel.id)}
+                      aria-expanded={hasTracks ? isOpen : undefined}
+                      disabled={!hasTracks}
+                    >
+                      <span className={`${styles.releaseBadge} ${styles[`releaseBadge${rel.type}`] || ''}`}>
+                        {rel.type}
+                      </span>
+                      <span className={styles.releaseTitle}>{rel.title}</span>
+                      <span className={styles.releaseDate}>{rel.releaseDate}</span>
+                      {hasTracks && (
+                        <svg
+                          className={`${styles.releaseChevron} ${isOpen ? styles.releaseChevronOpen : ''}`}
+                          width="14" height="14" viewBox="0 0 24 24"
+                          fill="none" stroke="currentColor" strokeWidth="2"
+                          strokeLinecap="round" strokeLinejoin="round"
+                          aria-hidden="true"
+                        >
+                          <polyline points="6 9 12 15 18 9" />
+                        </svg>
+                      )}
+                    </button>
+                    {hasTracks && isOpen && (
+                      <ol className={styles.trackList}>
+                        {rel.tracks.map((t) => (
+                          <li key={t.position} className={styles.trackItem}>
+                            <span className={styles.trackPosition}>{t.position}</span>
+                            <span className={styles.trackTitle}>{t.title}</span>
+                            <span className={styles.trackDuration}>{fmtMs(t.length_ms)}</span>
+                          </li>
+                        ))}
+                      </ol>
+                    )}
+                  </div>
+                )
+              })}
             </div>
           </section>
         )}

@@ -21,20 +21,23 @@ Jpop 아티스트 내한 공연 정보 통합 웹 플랫폼 (KOPIS + MusicBrainz
 src/
   components/   # 도메인별 분리: artist·auth·calendar·concert·layout·release·ui
   pages/        # 라우트 단위 페이지
+    admin/      # 관리자 전용 페이지 (AdminRoute로 보호)
   stores/       # Zustand 스토어 (authStore·loginModalStore·themeStore)
-  services/     # api.js — Axios 인스턴스 및 인터셉터 중앙 관리
-  mocks/        # API 연동 전 개발용 목 데이터
-  hooks/        # 커스텀 훅 (현재 미사용)
+  services/     # api.js 단일 파일 — Axios 인스턴스 및 인터셉터 중앙 관리
+  mocks/        # followedArtistMocks.js만 존재; 대부분 목 데이터는 각 페이지에 인라인 선언
+  hooks/        # 커스텀 훅 (현재 빈 디렉터리)
   utils/        # 유틸 함수
   constants/    # 상수
 ```
 
 ## 환경 변수
 - `VITE_API_BASE_URL` — 백엔드 주소 (기본값: `http://localhost:8080`, `.env` 파일에 설정)
+  - 개발 서버는 `/api/**` 경로를 이 주소로 자동 프록시 (CORS 설정 불필요)
 
 ## 핵심 규칙
 - `no-unused-vars` rule ignores names matching `^[A-Z_]`
 - 스타일: CSS Modules 사용 (`Page.jsx` + `Page.module.css` 페어)
+- 목 데이터: 각 페이지 상단에 `const MOCK_*_MAP = {...}` 인라인 선언, `// TODO: API 연동 후 제거` 주석 표기
 - 소셜 로그인: Google / Kakao만 지원 (Naver 없음)
 - 비로그인 보호 기능 접근 시: 페이지 이동이 아닌 **로그인 모달** 표시 (redirect_uri로 현재 URL 유지)
 - 로그인 모달: `loginModalStore`로 전역 제어

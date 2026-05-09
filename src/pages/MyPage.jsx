@@ -12,8 +12,8 @@ const MOCK_USER = { nickname: '라이브덕후', avatarUrl: null }
 
 // TODO: API 연동 후 제거
 const MOCK_FOLLOWED_ARTISTS = [
-  { id: 2, name: 'Kenshi Yonezu', imageUrl: null, genres: ['J-Pop', 'Rock'], hasUpcomingConcert: false },
-  { id: 6, name: 'RADWIMPS',      imageUrl: null, genres: ['J-Rock', 'Anime'], hasUpcomingConcert: true  },
+  { id: 2, name: 'Kenshi Yonezu', imageUrl: null, hasUpcomingConcert: false },
+  { id: 6, name: 'RADWIMPS',      imageUrl: null, hasUpcomingConcert: true  },
 ]
 
 // TODO: API 연동 후 제거 (MY-03)
@@ -92,13 +92,6 @@ function ArtistRow({ artist, onUnfollow }) {
               <span className={styles.comingBadge}>COMING</span>
             )}
           </div>
-          {artist.genres.length > 0 && (
-            <div className={styles.artistRowGenres}>
-              {artist.genres.map((g) => (
-                <span key={g} className={styles.genreChip}>{g}</span>
-              ))}
-            </div>
-          )}
         </div>
       </Link>
       <button

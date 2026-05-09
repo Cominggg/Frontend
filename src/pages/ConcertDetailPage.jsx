@@ -17,11 +17,11 @@ const MOCK_CONCERT_MAP = {
     startDate: '2025.08.15', endDate: '2025.08.16',
     venue: 'KSPO DOME, 서울', status: '공연예정',
     price: '전석 165,000원',
+    isInCalendar: false,
     ticketLinks: [
       { id: 'interpark', label: '인터파크', url: '#' },
       { id: 'melon', label: '멜론티켓', url: '#' },
     ],
-    description: 'YOASOBI의 첫 한국 아레나 투어. Ayase와 ikura가 선보이는 환상적인 무대.',
   },
   2: {
     id: 2, thumbnailUrl: null, posterUrls: [], artistName: 'Kenshi Yonezu', artistId: 2,
@@ -29,10 +29,10 @@ const MOCK_CONCERT_MAP = {
     startDate: '2025.04.19', endDate: '2025.04.20',
     venue: '고척스카이돔, 서울', status: '공연완료',
     price: '전석 154,000원',
+    isInCalendar: true,
     ticketLinks: [
       { id: 'yes24', label: 'YES24', url: '#' },
     ],
-    description: '요네즈 켄시의 "LOST CORNER" 앨범 투어의 한국 공연.',
     setlist: [
       { order: 1, title: 'Pale Blue' },
       { order: 2, title: 'KICK BACK' },
@@ -54,11 +54,11 @@ const MOCK_CONCERT_MAP = {
     startDate: '2025.06.21', endDate: null,
     venue: '고척스카이돔, 서울', status: '공연예정',
     price: 'VIP 242,000원 / 전석 165,000원',
+    isInCalendar: false,
     ticketLinks: [
       { id: 'interpark', label: '인터파크', url: '#' },
       { id: 'yes24', label: 'YES24', url: '#' },
     ],
-    description: 'Ado의 월드 투어 "Hibana" 한국 공연.',
   },
   8: {
     id: 8,
@@ -75,10 +75,10 @@ const MOCK_CONCERT_MAP = {
     startDate: '2026.03.14', endDate: '2026.03.15',
     venue: '고려대학교 화정체육관, 서울', status: '공연완료',
     price: '전석 138,000원',
+    isInCalendar: false,
     ticketLinks: [
       { id: 'melon', label: '멜론티켓', url: '#' },
     ],
-    description: 'ZUTOMAYO의 JAPAN & ASIA TOUR "INTENSE II 坐・ZOMBIE CRAB LABO" 서울 공연. 2026년 3월 14~15일 고려대학교 화정체육관에서 2일간 진행.',
   },
 }
 
@@ -90,7 +90,7 @@ function getMockConcert(id) {
       id: num, thumbnailUrl: null, posterUrls: [], artistName: `아티스트 ${num}`, artistId: num,
       title: `공연 제목 ${num}`, startDate: '2025.01.01', endDate: null,
       venue: '서울', status: '공연예정',
-      price: '미정', ticketLinks: [], description: '',
+      price: '미정', ticketLinks: [],
     }
   }
   return null
@@ -115,13 +115,23 @@ function ConcertDetailPage() {
   const [thumbnailFailed, setThumbnailFailed] = useState(false)
   const [activeTab, setActiveTab] = useState('info')
   const [inquiryType, setInquiryType] = useState(null)
+  const [isInCalendar, setIsInCalendar] = useState(concert?.isInCalendar ?? false)
   const user = useAuthStore((s) => s.user)
   const openLoginModal = useLoginModalStore((s) => s.open)
 
   useEffect(() => { setActiveTab('info') }, [id])
+  // id 변경 시 캘린더 상태 리셋 — concert 객체 참조가 아닌 id 기준으로 동기화
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => { setIsInCalendar(concert?.isInCalendar ?? false) }, [id])
 
   // TODO: React Query 연동 후 isLoading으로 교체
   const isLoading = false
+
+  function handleCalendar() {
+    if (!user) { openLoginModal(window.location.href); return }
+    // TODO: API 연동 — isInCalendar ? DELETE /api/calendar/{id} : POST /api/calendar/{id}
+    setIsInCalendar((prev) => !prev)
+  }
 
   function handleConcertInquiry() {
     if (!user) { openLoginModal(window.location.href); return }
@@ -152,7 +162,7 @@ function ConcertDetailPage() {
   }
 
   const { thumbnailUrl, posterUrls, artistName, artistId, title, startDate, endDate,
-          venue, status, price, ticketLinks, description, setlist } = concert
+          venue, status, price, ticketLinks, setlist } = concert
   const showThumbnailPlaceholder = !thumbnailUrl || thumbnailFailed
 
   const dateRange = endDate && endDate !== startDate
@@ -244,9 +254,21 @@ function ConcertDetailPage() {
               )}
             </dl>
 
-            {description && (
-              <p className={styles.description}>{description}</p>
-            )}
+            {/* 캘린더 추가·제거 */}
+            <button
+              className={`${styles.calendarBtn} ${isInCalendar ? styles.calendarBtnActive : ''}`}
+              onClick={handleCalendar}
+              aria-pressed={isInCalendar}
+            >
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                <line x1="16" y1="2" x2="16" y2="6" />
+                <line x1="8" y1="2" x2="8" y2="6" />
+                <line x1="3" y1="10" x2="21" y2="10" />
+                {isInCalendar && <polyline points="9 14 11 16 15 12" />}
+              </svg>
+              {isInCalendar ? '캘린더에서 제거' : '내 캘린더에 추가'}
+            </button>
 
             {/* 예매처 링크 */}
             {ticketLinks.length > 0 && (
