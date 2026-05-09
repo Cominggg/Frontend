@@ -120,7 +120,9 @@ function ConcertDetailPage() {
   const openLoginModal = useLoginModalStore((s) => s.open)
 
   useEffect(() => { setActiveTab('info') }, [id])
-  useEffect(() => { setIsInCalendar(concert?.isInCalendar ?? false) }, [concert])
+  // id 변경 시 캘린더 상태 리셋 — concert 객체 참조가 아닌 id 기준으로 동기화
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => { setIsInCalendar(concert?.isInCalendar ?? false) }, [id])
 
   // TODO: React Query 연동 후 isLoading으로 교체
   const isLoading = false
