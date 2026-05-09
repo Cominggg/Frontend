@@ -21,7 +21,6 @@ const MOCK_CONCERT_MAP = {
       { id: 'interpark', label: '인터파크', url: '#' },
       { id: 'melon', label: '멜론티켓', url: '#' },
     ],
-    description: 'YOASOBI의 첫 한국 아레나 투어. Ayase와 ikura가 선보이는 환상적인 무대.',
   },
   2: {
     id: 2, thumbnailUrl: null, posterUrls: [], artistName: 'Kenshi Yonezu', artistId: 2,
@@ -32,7 +31,6 @@ const MOCK_CONCERT_MAP = {
     ticketLinks: [
       { id: 'yes24', label: 'YES24', url: '#' },
     ],
-    description: '요네즈 켄시의 "LOST CORNER" 앨범 투어의 한국 공연.',
     setlist: [
       { order: 1, title: 'Pale Blue' },
       { order: 2, title: 'KICK BACK' },
@@ -58,7 +56,6 @@ const MOCK_CONCERT_MAP = {
       { id: 'interpark', label: '인터파크', url: '#' },
       { id: 'yes24', label: 'YES24', url: '#' },
     ],
-    description: 'Ado의 월드 투어 "Hibana" 한국 공연.',
   },
   8: {
     id: 8,
@@ -78,7 +75,6 @@ const MOCK_CONCERT_MAP = {
     ticketLinks: [
       { id: 'melon', label: '멜론티켓', url: '#' },
     ],
-    description: 'ZUTOMAYO의 JAPAN & ASIA TOUR "INTENSE II 坐・ZOMBIE CRAB LABO" 서울 공연. 2026년 3월 14~15일 고려대학교 화정체육관에서 2일간 진행.',
   },
 }
 
@@ -90,7 +86,7 @@ function getMockConcert(id) {
       id: num, thumbnailUrl: null, posterUrls: [], artistName: `아티스트 ${num}`, artistId: num,
       title: `공연 제목 ${num}`, startDate: '2025.01.01', endDate: null,
       venue: '서울', status: '공연예정',
-      price: '미정', ticketLinks: [], description: '',
+      price: '미정', ticketLinks: [],
     }
   }
   return null
@@ -152,7 +148,7 @@ function ConcertDetailPage() {
   }
 
   const { thumbnailUrl, posterUrls, artistName, artistId, title, startDate, endDate,
-          venue, status, price, ticketLinks, description, setlist } = concert
+          venue, status, price, ticketLinks, setlist } = concert
   const showThumbnailPlaceholder = !thumbnailUrl || thumbnailFailed
 
   const dateRange = endDate && endDate !== startDate
@@ -243,10 +239,6 @@ function ConcertDetailPage() {
                 </div>
               )}
             </dl>
-
-            {description && (
-              <p className={styles.description}>{description}</p>
-            )}
 
             {/* 예매처 링크 */}
             {ticketLinks.length > 0 && (
