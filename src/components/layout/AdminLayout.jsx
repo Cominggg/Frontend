@@ -16,15 +16,6 @@ const NAV_ITEMS = [
     ),
   },
   {
-    to: ROUTES.ADMIN_REVIEW_QUEUE,
-    label: '매칭 검토 큐',
-    icon: (
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-        <path d="M9 11l3 3L22 4" /><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
-      </svg>
-    ),
-  },
-  {
     to: ROUTES.ADMIN_ARTIST_NEW,
     label: '아티스트 등록',
     icon: (
