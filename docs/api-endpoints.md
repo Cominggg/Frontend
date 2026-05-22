@@ -35,7 +35,7 @@ GET    /api/artists/following             (인증) 응답당 hasUpcomingConcert 
 ## 공연
 ```text
 GET  /api/concerts                        dateFrom(YYYY-MM-DD), dateTo(YYYY-MM-DD), artistId, region,
-                                          status(공연예정|공연중|공연완료|공연취소), page, size(기본 20)
+                                          status(UPCOMING|ONGOING|ENDED|CANCELLED), page, size(기본 20)
                                           홈 "다가오는 공연": dateFrom={오늘}&size=6 재사용
 GET  /api/concerts/stats                  year(int), month(int) → { "concertCount": N }
 GET  /api/concerts/:id                    조회수 +1. 응답: isInCalendar, thumbnailUrl, posterUrls[], ticketLinks[{id,label,url}]
