@@ -1,13 +1,13 @@
 export const CONCERT_STATUS_COLOR = {
-  '공연예정': '#1565C0',
-  '공연중': '#2E7D32',
-  '공연완료': '#757575',
-  '공연취소': '#C62828',
+  UPCOMING:  '#1565C0',
+  ONGOING:   '#2E7D32',
+  ENDED:     '#757575',
+  CANCELLED: '#C62828',
 }
 
 export const CONCERT_STATUS_LABEL = {
-  '공연예정': '공연예정',
-  '공연중': '공연중',
-  '공연완료': '공연완료',
-  '공연취소': '공연취소',
+  UPCOMING:  '공연예정',
+  ONGOING:   '공연중',
+  ENDED:     '공연완료',
+  CANCELLED: '공연취소',
 }
