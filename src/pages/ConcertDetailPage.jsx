@@ -15,7 +15,7 @@ const MOCK_CONCERT_MAP = {
     id: 1, thumbnailUrl: null, posterUrls: [], artistName: 'YOASOBI', artistId: 1,
     title: 'YOASOBI ARENA TOUR 2025 "THE MONSTER"',
     startDate: '2025.08.15', endDate: '2025.08.16',
-    venue: 'KSPO DOME, 서울', status: '공연예정',
+    venue: 'KSPO DOME, 서울', status: 'UPCOMING',
     price: '전석 165,000원',
     isInCalendar: false,
     ticketLinks: [
@@ -27,7 +27,7 @@ const MOCK_CONCERT_MAP = {
     id: 2, thumbnailUrl: null, posterUrls: [], artistName: 'Kenshi Yonezu', artistId: 2,
     title: 'Kenshi Yonezu TOUR 2025 "LOST CORNER"',
     startDate: '2025.04.19', endDate: '2025.04.20',
-    venue: '고척스카이돔, 서울', status: '공연완료',
+    venue: '고척스카이돔, 서울', status: 'ENDED',
     price: '전석 154,000원',
     isInCalendar: true,
     ticketLinks: [
@@ -52,7 +52,7 @@ const MOCK_CONCERT_MAP = {
     id: 3, thumbnailUrl: null, posterUrls: [], artistName: 'Ado', artistId: 3,
     title: 'Ado WORLD TOUR "Hibana" in Seoul',
     startDate: '2025.06.21', endDate: null,
-    venue: '고척스카이돔, 서울', status: '공연예정',
+    venue: '고척스카이돔, 서울', status: 'UPCOMING',
     price: 'VIP 242,000원 / 전석 165,000원',
     isInCalendar: false,
     ticketLinks: [
@@ -73,7 +73,7 @@ const MOCK_CONCERT_MAP = {
     artistName: 'ZUTOMAYO', artistId: 8,
     title: 'ZUTOMAYO INTENSE II「坐・ZOMBIE CRAB LABO」in Seoul',
     startDate: '2026.03.14', endDate: '2026.03.15',
-    venue: '고려대학교 화정체육관, 서울', status: '공연완료',
+    venue: '고려대학교 화정체육관, 서울', status: 'ENDED',
     price: '전석 138,000원',
     isInCalendar: false,
     ticketLinks: [
@@ -89,7 +89,7 @@ function getMockConcert(id) {
     return {
       id: num, thumbnailUrl: null, posterUrls: [], artistName: `아티스트 ${num}`, artistId: num,
       title: `공연 제목 ${num}`, startDate: '2025.01.01', endDate: null,
-      venue: '서울', status: '공연예정',
+      venue: '서울', status: 'UPCOMING',
       price: '미정', ticketLinks: [],
     }
   }

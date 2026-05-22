@@ -99,7 +99,7 @@ const MOCK_POPULAR_CONCERTS = [
     startDate: '2025.08.15',
     endDate: '2025.08.16',
     venue: 'KSPO DOME, 서울',
-    status: '공연예정',
+    status: 'UPCOMING',
   },
   {
     id: 2,
@@ -109,7 +109,7 @@ const MOCK_POPULAR_CONCERTS = [
     startDate: '2025.07.05',
     endDate: '2025.07.06',
     venue: '올림픽공원 체조경기장, 서울',
-    status: '공연예정',
+    status: 'UPCOMING',
   },
   {
     id: 3,
@@ -119,7 +119,7 @@ const MOCK_POPULAR_CONCERTS = [
     startDate: '2025.06.21',
     endDate: null,
     venue: '고척스카이돔, 서울',
-    status: '공연예정',
+    status: 'UPCOMING',
   },
   {
     id: 4,
@@ -129,7 +129,7 @@ const MOCK_POPULAR_CONCERTS = [
     startDate: '2025.05.24',
     endDate: '2025.05.25',
     venue: '잠실실내체육관, 서울',
-    status: '공연중',
+    status: 'ONGOING',
   },
   {
     id: 5,
@@ -139,7 +139,7 @@ const MOCK_POPULAR_CONCERTS = [
     startDate: '2025.04.19',
     endDate: '2025.04.20',
     venue: '고척스카이돔, 서울',
-    status: '공연완료',
+    status: 'ENDED',
   },
   {
     id: 6,
@@ -149,7 +149,7 @@ const MOCK_POPULAR_CONCERTS = [
     startDate: '2026.03.14',
     endDate: '2026.03.15',
     venue: '고려대학교 화정체육관, 서울',
-    status: '공연완료',
+    status: 'ENDED',
   },
   {
     id: 7,
@@ -159,7 +159,7 @@ const MOCK_POPULAR_CONCERTS = [
     startDate: '2025.10.04',
     endDate: '2025.10.05',
     venue: 'KSPO DOME, 서울',
-    status: '공연예정',
+    status: 'UPCOMING',
   },
   {
     id: 8,
@@ -169,7 +169,7 @@ const MOCK_POPULAR_CONCERTS = [
     startDate: '2025.03.08',
     endDate: '2025.03.09',
     venue: '올림픽공원 체조경기장, 서울',
-    status: '공연완료',
+    status: 'ENDED',
   },
   {
     id: 9,
@@ -179,7 +179,7 @@ const MOCK_POPULAR_CONCERTS = [
     startDate: '2025.11.22',
     endDate: null,
     venue: '올림픽공원 체조경기장, 서울',
-    status: '공연예정',
+    status: 'UPCOMING',
   },
   {
     id: 10,
@@ -189,7 +189,7 @@ const MOCK_POPULAR_CONCERTS = [
     startDate: '2025.08.30',
     endDate: '2025.08.31',
     venue: '잠실종합운동장 주경기장, 서울',
-    status: '공연예정',
+    status: 'UPCOMING',
   },
 ]
 
