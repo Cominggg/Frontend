@@ -45,19 +45,10 @@ src/
 - Access Token은 Authorization 헤더, Refresh Token은 HttpOnly Cookie
 - 401 응답 → Axios interceptor에서 자동 refresh, 실패 시 로그인 이동
 
-## 참조 문서
+## 명세 위치 (Cominggg/Specification)
 
-### 평소 참조 (로컬 요약본 — 항상 여기서 먼저 확인)
-- [`docs/code-conventions.md`](docs/code-conventions.md) — 파일 구조, 네이밍, 컴포넌트·훅·API·CSS 작성 규칙
-- [`docs/ux-conventions.md`](docs/ux-conventions.md) — 반응형, 로딩, 배지 색상, 에러 처리 등
-- [`docs/features.md`](docs/features.md) — 기능 ID별 명세, 우선순위(P0/P1/P2), 라우트 구조 (프론트 요약)
-- [`docs/api-endpoints.md`](docs/api-endpoints.md) — 프론트에서 사용하는 API 목록 (프론트 요약)
+명세는 외부 레포에 있다. `/read-spec` 스킬로 접근한다.
 
-### 마스터 명세 (조건부 조회 — 아래 상황에서만 읽는다)
-- 레포: `https://github.com/Cominggg/Specification`
-- Raw 기본 경로: `https://raw.githubusercontent.com/Cominggg/Specification/main/spec/`
-- **읽는 조건**: 새 기능 구현 시작 / 로컬 요약본으로 부족할 때 / `/sync-docs` 실행 시
-- **갱신 조건**: 기능 명세 변경(추가·수정·제거) 발생 시 → 마스터 명세와 로컬 요약본(`docs/features.md`) 모두 갱신 후 `CHANGELOG.md` 업데이트 (`/sync-docs` 스킬 사용)
-- **파일 매핑**: 기능→`features.md`, API→`api.md`, 인증→`auth-policy.md`, UX→`ux-policy.md`, 관리자→`admin.md`
-- 읽는 방법: `gh api repos/Cominggg/Specification/contents/spec/{파일명} --jq '.content' | base64 -d`
-- 명세 수정 후 반드시 `CHANGELOG.md`도 갱신한다 (`/sync-docs` 스킬 사용)
+- ERD: `spec/erd.md`
+- 인증 정책: `spec/auth-policy.md`
+- API 전체: `spec/api/_index.md`

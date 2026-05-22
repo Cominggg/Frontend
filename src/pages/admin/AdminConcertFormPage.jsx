@@ -16,17 +16,17 @@ const MOCK_CONCERT = {
   endDate: '2025-08-16',
   venue: 'KSPO DOME, 서울',
   price: '전석 165,000원',
-  status: '공연예정',
+  status: 'UPCOMING',
   ticketLinks: 'https://ticket.interpark.com/example\nhttps://ticket.melon.com/example',
   description: 'YOASOBI의 첫 한국 아레나 투어.',
 }
 
 const MOCK_STATUS_LOG = [
-  { changedAt: '2025.04.10 14:32', from: '공연예정', to: '공연중', adminEmail: 'admin@coming.com', note: '공연 시작' },
-  { changedAt: '2025.04.11 22:00', from: '공연중', to: '공연완료', adminEmail: 'admin@coming.com', note: '공연 종료' },
+  { changedAt: '2025.04.10 14:32', from: 'UPCOMING', to: 'ONGOING', adminEmail: 'admin@coming.com', note: '공연 시작' },
+  { changedAt: '2025.04.11 22:00', from: 'ONGOING', to: 'ENDED', adminEmail: 'admin@coming.com', note: '공연 종료' },
 ]
 
-const STATUS_OPTIONS = ['공연예정', '공연중', '공연완료', '공연취소']
+const STATUS_OPTIONS = ['UPCOMING', 'ONGOING', 'ENDED', 'CANCELLED']
 
 function AdminConcertFormPage() {
   const { id } = useParams()
@@ -35,7 +35,7 @@ function AdminConcertFormPage() {
   const initial = isEdit ? MOCK_CONCERT : {
     artistId: '', artistName: '', kopisId: '', title: '',
     startDate: '', endDate: '', venue: '', price: '',
-    status: '공연예정', ticketLinks: '', description: '',
+    status: 'UPCOMING', ticketLinks: '', description: '',
   }
 
   const [form, setForm] = useState(initial)

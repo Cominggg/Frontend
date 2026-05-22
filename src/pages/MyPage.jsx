@@ -18,27 +18,27 @@ const MOCK_FOLLOWED_ARTISTS = [
 
 // TODO: API 연동 후 제거 (MY-03)
 const MOCK_UPCOMING_CONCERTS = [
-  { id: 1,  artistName: 'YOASOBI',          title: 'YOASOBI ARENA TOUR 2025 "THE MONSTER"',    startDate: '2025.08.15', endDate: '2025.08.16', venue: 'KSPO DOME, 서울',                   status: '공연예정' },
-  { id: 2,  artistName: 'King Gnu',          title: 'King Gnu Live Tour 2025',                  startDate: '2025.07.05', endDate: '2025.07.06', venue: '올림픽공원 체조경기장, 서울',         status: '공연예정' },
-  { id: 3,  artistName: 'Ado',               title: 'Ado WORLD TOUR "Hibana" in Seoul',         startDate: '2025.06.21', endDate: null,         venue: '고척스카이돔, 서울',                 status: '공연예정' },
-  { id: 7,  artistName: 'Mrs. GREEN APPLE',  title: 'Mrs. GREEN APPLE ARENA TOUR 2025',         startDate: '2025.10.04', endDate: '2025.10.05', venue: 'KSPO DOME, 서울',                   status: '공연예정' },
-  { id: 9,  artistName: 'RADWIMPS',          title: 'RADWIMPS LIVE TOUR 2025',                  startDate: '2025.11.22', endDate: null,         venue: '올림픽공원 체조경기장, 서울',         status: '공연예정' },
-  { id: 10, artistName: 'Fujii Kaze',        title: 'Fujii Kaze LOVE ALL SERVE ALL STADIUM LIVE', startDate: '2025.08.30', endDate: '2025.08.31', venue: '잠실종합운동장 주경기장, 서울',   status: '공연예정' },
+  { id: 1,  artistName: 'YOASOBI',          title: 'YOASOBI ARENA TOUR 2025 "THE MONSTER"',    startDate: '2025.08.15', endDate: '2025.08.16', venue: 'KSPO DOME, 서울',                   status: 'UPCOMING' },
+  { id: 2,  artistName: 'King Gnu',          title: 'King Gnu Live Tour 2025',                  startDate: '2025.07.05', endDate: '2025.07.06', venue: '올림픽공원 체조경기장, 서울',         status: 'UPCOMING' },
+  { id: 3,  artistName: 'Ado',               title: 'Ado WORLD TOUR "Hibana" in Seoul',         startDate: '2025.06.21', endDate: null,         venue: '고척스카이돔, 서울',                 status: 'UPCOMING' },
+  { id: 7,  artistName: 'Mrs. GREEN APPLE',  title: 'Mrs. GREEN APPLE ARENA TOUR 2025',         startDate: '2025.10.04', endDate: '2025.10.05', venue: 'KSPO DOME, 서울',                   status: 'UPCOMING' },
+  { id: 9,  artistName: 'RADWIMPS',          title: 'RADWIMPS LIVE TOUR 2025',                  startDate: '2025.11.22', endDate: null,         venue: '올림픽공원 체조경기장, 서울',         status: 'UPCOMING' },
+  { id: 10, artistName: 'Fujii Kaze',        title: 'Fujii Kaze LOVE ALL SERVE ALL STADIUM LIVE', startDate: '2025.08.30', endDate: '2025.08.31', venue: '잠실종합운동장 주경기장, 서울',   status: 'UPCOMING' },
 ]
 
 // TODO: API 연동 후 제거 (MY-01)
 const MOCK_PAST_CONCERTS = [
-  { id: 1,   artistName: 'YOASOBI',         title: 'YOASOBI ARENA TOUR 2025 "THE MONSTER"',    startDate: '2025.08.15', endDate: '2025.08.16', venue: 'KSPO DOME, 서울',                   status: '공연완료' },
-  { id: 2,   artistName: 'Kenshi Yonezu',   title: 'Kenshi Yonezu TOUR 2025 "LOST CORNER"',    startDate: '2025.04.19', endDate: '2025.04.20', venue: '고척스카이돔, 서울',                 status: '공연완료' },
-  { id: 3,   artistName: 'Ado',             title: 'Ado WORLD TOUR "Hibana" in Seoul',          startDate: '2025.06.21', endDate: null,         venue: '고척스카이돔, 서울',                 status: '공연완료' },
-  { id: 201, artistName: 'Kenshi Yonezu',   title: 'Kenshi Yonezu STADIUM LIVE 2023',           startDate: '2023.11.18', endDate: '2023.11.19', venue: '잠실종합운동장 주경기장, 서울',       status: '공연완료' },
-  { id: 101, artistName: 'YOASOBI',         title: 'YOASOBI THE BOOK CONCERT 2023',             startDate: '2023.05.27', endDate: '2023.05.28', venue: '올림픽공원 체조경기장, 서울',         status: '공연완료' },
-  { id: 301, artistName: 'Ado',             title: 'Ado WORLD TOUR 2024 "Wish"',                startDate: '2024.04.13', endDate: null,         venue: 'KSPO DOME, 서울',                   status: '공연완료' },
-  { id: 202, artistName: 'Kenshi Yonezu',   title: 'Kenshi Yonezu HALL TOUR 2022',              startDate: '2022.06.11', endDate: null,         venue: '올림픽공원 체조경기장, 서울',         status: '공연완료' },
-  { id: 102, artistName: 'YOASOBI',         title: 'YOASOBI LIVE 2022 "Into The Night"',        startDate: '2022.10.15', endDate: null,         venue: '예스24 라이브홀, 서울',               status: '공연완료' },
-  { id: 302, artistName: 'Ado',             title: 'Ado LIVE 2023',                             startDate: '2023.08.05', endDate: null,         venue: '올림픽공원 체조경기장, 서울',         status: '공연완료' },
-  { id: 103, artistName: 'YOASOBI',         title: 'YOASOBI CONCERT 2021',                      startDate: '2021.09.04', endDate: null,         venue: '올림픽공원 K-아트홀, 서울',           status: '공연완료' },
-  { id: 401, artistName: 'RADWIMPS',        title: 'RADWIMPS LIVE TOUR 2024',                   startDate: '2024.09.14', endDate: '2024.09.15', venue: '올림픽공원 체조경기장, 서울',         status: '공연완료' },
+  { id: 1,   artistName: 'YOASOBI',         title: 'YOASOBI ARENA TOUR 2025 "THE MONSTER"',    startDate: '2025.08.15', endDate: '2025.08.16', venue: 'KSPO DOME, 서울',                   status: 'ENDED' },
+  { id: 2,   artistName: 'Kenshi Yonezu',   title: 'Kenshi Yonezu TOUR 2025 "LOST CORNER"',    startDate: '2025.04.19', endDate: '2025.04.20', venue: '고척스카이돔, 서울',                 status: 'ENDED' },
+  { id: 3,   artistName: 'Ado',             title: 'Ado WORLD TOUR "Hibana" in Seoul',          startDate: '2025.06.21', endDate: null,         venue: '고척스카이돔, 서울',                 status: 'ENDED' },
+  { id: 201, artistName: 'Kenshi Yonezu',   title: 'Kenshi Yonezu STADIUM LIVE 2023',           startDate: '2023.11.18', endDate: '2023.11.19', venue: '잠실종합운동장 주경기장, 서울',       status: 'ENDED' },
+  { id: 101, artistName: 'YOASOBI',         title: 'YOASOBI THE BOOK CONCERT 2023',             startDate: '2023.05.27', endDate: '2023.05.28', venue: '올림픽공원 체조경기장, 서울',         status: 'ENDED' },
+  { id: 301, artistName: 'Ado',             title: 'Ado WORLD TOUR 2024 "Wish"',                startDate: '2024.04.13', endDate: null,         venue: 'KSPO DOME, 서울',                   status: 'ENDED' },
+  { id: 202, artistName: 'Kenshi Yonezu',   title: 'Kenshi Yonezu HALL TOUR 2022',              startDate: '2022.06.11', endDate: null,         venue: '올림픽공원 체조경기장, 서울',         status: 'ENDED' },
+  { id: 102, artistName: 'YOASOBI',         title: 'YOASOBI LIVE 2022 "Into The Night"',        startDate: '2022.10.15', endDate: null,         venue: '예스24 라이브홀, 서울',               status: 'ENDED' },
+  { id: 302, artistName: 'Ado',             title: 'Ado LIVE 2023',                             startDate: '2023.08.05', endDate: null,         venue: '올림픽공원 체조경기장, 서울',         status: 'ENDED' },
+  { id: 103, artistName: 'YOASOBI',         title: 'YOASOBI CONCERT 2021',                      startDate: '2021.09.04', endDate: null,         venue: '올림픽공원 K-아트홀, 서울',           status: 'ENDED' },
+  { id: 401, artistName: 'RADWIMPS',        title: 'RADWIMPS LIVE TOUR 2024',                   startDate: '2024.09.14', endDate: '2024.09.15', venue: '올림픽공원 체조경기장, 서울',         status: 'ENDED' },
 ]
 
 // TODO: API 연동 후 제거 (INQ-04)

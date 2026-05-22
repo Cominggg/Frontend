@@ -47,11 +47,11 @@ const MOCK_ARTIST_MAP = {
       { id: 'instagram', label: 'Instagram',   url: '#' },
     ],
     concerts: [
-      { id: 104, title: 'YOASOBI WORLD TOUR 2026 in Seoul',         startDate: '2026.07.20', endDate: '2026.07.21', venue: 'KSPO DOME, 서울',               status: '공연예정' },
-      { id: 1,   title: 'YOASOBI ARENA TOUR 2025 "THE MONSTER"',   startDate: '2025.08.15', endDate: '2025.08.16', venue: 'KSPO DOME, 서울',               status: '공연완료' },
-      { id: 101, title: 'YOASOBI THE BOOK CONCERT 2023',            startDate: '2023.05.27', endDate: '2023.05.28', venue: '올림픽공원 체조경기장, 서울',     status: '공연완료' },
-      { id: 102, title: 'YOASOBI LIVE 2022 "Into The Night"',       startDate: '2022.10.15', endDate: null,         venue: '예스24 라이브홀, 서울',          status: '공연완료' },
-      { id: 103, title: 'YOASOBI CONCERT 2021',                     startDate: '2021.09.04', endDate: null,         venue: '올림픽공원 K-아트홀, 서울',       status: '공연완료' },
+      { id: 104, title: 'YOASOBI WORLD TOUR 2026 in Seoul',         startDate: '2026.07.20', endDate: '2026.07.21', venue: 'KSPO DOME, 서울',               status: 'UPCOMING' },
+      { id: 1,   title: 'YOASOBI ARENA TOUR 2025 "THE MONSTER"',   startDate: '2025.08.15', endDate: '2025.08.16', venue: 'KSPO DOME, 서울',               status: 'ENDED' },
+      { id: 101, title: 'YOASOBI THE BOOK CONCERT 2023',            startDate: '2023.05.27', endDate: '2023.05.28', venue: '올림픽공원 체조경기장, 서울',     status: 'ENDED' },
+      { id: 102, title: 'YOASOBI LIVE 2022 "Into The Night"',       startDate: '2022.10.15', endDate: null,         venue: '예스24 라이브홀, 서울',          status: 'ENDED' },
+      { id: 103, title: 'YOASOBI CONCERT 2021',                     startDate: '2021.09.04', endDate: null,         venue: '올림픽공원 K-아트홀, 서울',       status: 'ENDED' },
     ],
     releases: [
       { id: 1, title: 'THE BOOK 4', type: 'ALBUM', releaseDate: '2025.02.15', tracks: [
@@ -79,9 +79,9 @@ const MOCK_ARTIST_MAP = {
       { id: 'twitter',   label: 'X (Twitter)', url: '#' },
     ],
     concerts: [
-      { id: 2,   title: 'Kenshi Yonezu TOUR 2025 "LOST CORNER"',   startDate: '2025.04.19', endDate: '2025.04.20', venue: '고척스카이돔, 서울',             status: '공연완료' },
-      { id: 201, title: 'Kenshi Yonezu STADIUM LIVE 2023',          startDate: '2023.11.18', endDate: '2023.11.19', venue: '잠실종합운동장 주경기장, 서울',   status: '공연완료' },
-      { id: 202, title: 'Kenshi Yonezu HALL TOUR 2022',             startDate: '2022.06.11', endDate: null,         venue: '올림픽공원 체조경기장, 서울',     status: '공연완료' },
+      { id: 2,   title: 'Kenshi Yonezu TOUR 2025 "LOST CORNER"',   startDate: '2025.04.19', endDate: '2025.04.20', venue: '고척스카이돔, 서울',             status: 'ENDED' },
+      { id: 201, title: 'Kenshi Yonezu STADIUM LIVE 2023',          startDate: '2023.11.18', endDate: '2023.11.19', venue: '잠실종합운동장 주경기장, 서울',   status: 'ENDED' },
+      { id: 202, title: 'Kenshi Yonezu HALL TOUR 2022',             startDate: '2022.06.11', endDate: null,         venue: '올림픽공원 체조경기장, 서울',     status: 'ENDED' },
     ],
     releases: [
       { id: 1, title: 'LOST CORNER', type: 'ALBUM', releaseDate: '2025.04.05', tracks: [
@@ -111,10 +111,10 @@ const MOCK_ARTIST_MAP = {
       { id: 'instagram', label: 'Instagram',   url: '#' },
     ],
     concerts: [
-      { id: 303, title: 'Ado WORLD TOUR 2026 "INAZUMA" in Seoul',   startDate: '2026.08.10', endDate: null,         venue: '고척스카이돔, 서울',             status: '공연예정' },
-      { id: 3,   title: 'Ado WORLD TOUR "Hibana" in Seoul',         startDate: '2025.06.21', endDate: null,         venue: '고척스카이돔, 서울',             status: '공연완료' },
-      { id: 301, title: 'Ado WORLD TOUR 2024 "Wish"',               startDate: '2024.04.13', endDate: null,         venue: 'KSPO DOME, 서울',               status: '공연완료' },
-      { id: 302, title: 'Ado LIVE 2023',                             startDate: '2023.08.05', endDate: null,         venue: '올림픽공원 체조경기장, 서울',     status: '공연완료' },
+      { id: 303, title: 'Ado WORLD TOUR 2026 "INAZUMA" in Seoul',   startDate: '2026.08.10', endDate: null,         venue: '고척스카이돔, 서울',             status: 'UPCOMING' },
+      { id: 3,   title: 'Ado WORLD TOUR "Hibana" in Seoul',         startDate: '2025.06.21', endDate: null,         venue: '고척스카이돔, 서울',             status: 'ENDED' },
+      { id: 301, title: 'Ado WORLD TOUR 2024 "Wish"',               startDate: '2024.04.13', endDate: null,         venue: 'KSPO DOME, 서울',               status: 'ENDED' },
+      { id: 302, title: 'Ado LIVE 2023',                             startDate: '2023.08.05', endDate: null,         venue: '올림픽공원 체조경기장, 서울',     status: 'ENDED' },
     ],
     releases: [
       { id: 1, title: 'Hibana', type: 'SINGLE', releaseDate: '2025.03.05', tracks: [
@@ -203,10 +203,10 @@ function ArtistDetailPage() {
   const [colorFrom, colorTo] = getArtistColor(name)
 
   const upcomingConcerts = concerts.filter(
-    (c) => c.status === '공연예정' || c.status === '공연중'
+    (c) => c.status === 'UPCOMING' || c.status === 'ONGOING'
   )
   const pastConcerts = concerts.filter(
-    (c) => c.status === '공연완료' || c.status === '공연취소'
+    (c) => c.status === 'ENDED' || c.status === 'CANCELLED'
   )
   const displayedConcerts =
     concertTab === '전체' ? concerts :

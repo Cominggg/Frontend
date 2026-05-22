@@ -11,7 +11,7 @@ export const MOCK_FOLLOWED_CONCERTS = [
     startDate: '2025.08.15',
     endDate: '2025.08.16',
     venue: 'KSPO DOME, 서울',
-    status: '공연예정',
+    status: 'UPCOMING',
   },
   {
     id: 3,
@@ -21,7 +21,7 @@ export const MOCK_FOLLOWED_CONCERTS = [
     startDate: '2025.06.21',
     endDate: null,
     venue: '고척스카이돔, 서울',
-    status: '공연예정',
+    status: 'UPCOMING',
   },
   {
     id: 4,
@@ -31,7 +31,7 @@ export const MOCK_FOLLOWED_CONCERTS = [
     startDate: '2025.09.06',
     endDate: '2025.09.07',
     venue: '올림픽공원 체조경기장, 서울',
-    status: '공연예정',
+    status: 'UPCOMING',
   },
   {
     id: 5,
@@ -41,6 +41,6 @@ export const MOCK_FOLLOWED_CONCERTS = [
     startDate: '2025.07.12',
     endDate: null,
     venue: '올림픽공원 체조경기장, 서울',
-    status: '공연예정',
+    status: 'UPCOMING',
   },
 ]
