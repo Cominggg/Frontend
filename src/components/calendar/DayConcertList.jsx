@@ -6,10 +6,10 @@ import styles from './DayConcertList.module.css'
 const WEEKDAY_NAMES = ['일', '월', '화', '수', '목', '금', '토']
 
 const STATUS_COLORS = {
-  공연예정: '#1565C0',
-  공연중: '#2E7D32',
-  공연완료: '#757575',
-  공연취소: '#C62828',
+  UPCOMING:  '#1565C0',
+  ONGOING:   '#2E7D32',
+  ENDED:     '#757575',
+  CANCELLED: '#C62828',
 }
 
 function toDateStr(date) {

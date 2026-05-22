@@ -34,12 +34,18 @@ const MOCK_CONCERTS = [
   { id: 21, posterUrl: null, artistName: 'amazarashi',        title: 'amazarashi LIVE 2025 "Minima Moralia"',        startDate: '2025.08.23', endDate: null,         venue: 'YES24 라이브홀, 서울',              status: '공연예정' },
 ]
 
-const STATUS_FILTERS = ['전체', '공연예정', '공연중', '공연완료', '공연취소']
+const STATUS_FILTERS = [
+  { value: '',          label: '전체' },
+  { value: 'UPCOMING',  label: '공연예정' },
+  { value: 'ONGOING',   label: '공연중' },
+  { value: 'ENDED',     label: '공연완료' },
+  { value: 'CANCELLED', label: '공연취소' },
+]
 const ITEMS_PER_PAGE = 20
 
 function ConcertsPage() {
   const [query, setQuery] = useState('')
-  const [selectedStatus, setSelectedStatus] = useState('전체')
+  const [selectedStatus, setSelectedStatus] = useState('')
   const [followedOnly, setFollowedOnly] = useState(false)
   const [currentPage, setCurrentPage] = useState(1)
   const user = useAuthStore((s) => s.user)
@@ -62,7 +68,7 @@ function ConcertsPage() {
     const q = query.trim().toLowerCase()
     return MOCK_CONCERTS.filter((c) => {
       const matchesQuery = !q || c.title.toLowerCase().includes(q) || c.artistName.toLowerCase().includes(q)
-      const matchesStatus = selectedStatus === '전체' || c.status === selectedStatus
+      const matchesStatus = !selectedStatus || c.status === selectedStatus
       const matchesFollowed = !effectiveFollowedOnly || MOCK_FOLLOWED_ARTISTS.has(c.artistName)
       return matchesQuery && matchesStatus && matchesFollowed
     })
@@ -118,13 +124,13 @@ function ConcertsPage() {
           <div className={styles.filterBar} role="tablist" aria-label="공연 상태 필터">
             {STATUS_FILTERS.map((s) => (
               <button
-                key={s}
+                key={s.value}
                 role="tab"
-                aria-selected={selectedStatus === s}
-                className={`${styles.filterTab} ${selectedStatus === s ? styles.filterTabActive : ''}`}
-                onClick={() => { setSelectedStatus(s); setCurrentPage(1) }}
+                aria-selected={selectedStatus === s.value}
+                className={`${styles.filterTab} ${selectedStatus === s.value ? styles.filterTabActive : ''}`}
+                onClick={() => { setSelectedStatus(s.value); setCurrentPage(1) }}
               >
-                {s}
+                {s.label}
               </button>
             ))}
           </div>

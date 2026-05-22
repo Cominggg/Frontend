@@ -26,7 +26,7 @@ const MOCK_STATUS_LOG = [
   { changedAt: '2025.04.11 22:00', from: '공연중', to: '공연완료', adminEmail: 'admin@coming.com', note: '공연 종료' },
 ]
 
-const STATUS_OPTIONS = ['공연예정', '공연중', '공연완료', '공연취소']
+const STATUS_OPTIONS = ['UPCOMING', 'ONGOING', 'ENDED', 'CANCELLED']
 
 function AdminConcertFormPage() {
   const { id } = useParams()

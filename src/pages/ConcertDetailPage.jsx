@@ -305,7 +305,7 @@ function ConcertDetailPage() {
                 </svg>
                 공연 정보 문의
               </button>
-              {concert.status === '공연완료' && (
+              {concert.status === 'ENDED' && (
                 <button className={styles.inquiryBtn} onClick={handleSetlistInquiry}>
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                     <path d="M9 11l3 3L22 4" />
@@ -328,7 +328,7 @@ function ConcertDetailPage() {
             >
               공연 정보
             </button>
-            {status === '공연완료' && (
+            {status === 'ENDED' && (
               <button
                 className={`${styles.tabBtn} ${activeTab === 'setlist' ? styles.tabBtnActive : ''}`}
                 onClick={() => setActiveTab('setlist')}
@@ -338,7 +338,7 @@ function ConcertDetailPage() {
             )}
           </div>
 
-          {activeTab === 'setlist' && status === '공연완료' && (
+          {activeTab === 'setlist' && status === 'ENDED' && (
             <div className={styles.tabPanel}>
               {setlist && setlist.length > 0 ? (
                 <ol className={styles.setlistTrackList}>

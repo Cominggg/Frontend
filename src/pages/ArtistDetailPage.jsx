@@ -203,10 +203,10 @@ function ArtistDetailPage() {
   const [colorFrom, colorTo] = getArtistColor(name)
 
   const upcomingConcerts = concerts.filter(
-    (c) => c.status === '공연예정' || c.status === '공연중'
+    (c) => c.status === 'UPCOMING' || c.status === 'ONGOING'
   )
   const pastConcerts = concerts.filter(
-    (c) => c.status === '공연완료' || c.status === '공연취소'
+    (c) => c.status === 'ENDED' || c.status === 'CANCELLED'
   )
   const displayedConcerts =
     concertTab === '전체' ? concerts :
