@@ -8,6 +8,7 @@ import { ROUTES } from '@/constants/routes'
 import { MOCK_FOLLOWED_CONCERTS } from '@/mocks/followedArtistMocks'
 import useAuthStore from '@/stores/authStore'
 import useLoginModalStore from '@/stores/loginModalStore'
+import { formatDate } from '@/utils/date'
 import styles from './HomePage.module.css'
 
 // TODO: API 연동 후 제거
@@ -72,7 +73,8 @@ const MOCK_NEW_RELEASES = [
 ]
 
 function getDday(dateStr, today) {
-  const target = new Date(dateStr.replace(/\./g, '-'))
+  const [y, m, d] = dateStr.split('-').map(Number)
+  const target = new Date(y, m - 1, d)
   const diff = Math.ceil((target - today) / (1000 * 60 * 60 * 24))
   if (diff === 0) return 'D-DAY'
   if (diff > 0) return `D-${diff}`
@@ -81,12 +83,12 @@ function getDday(dateStr, today) {
 
 // TODO: API 연동 후 제거 — 날짜 오름차순 6건
 const MOCK_UPCOMING_CONCERTS = [
-  { id: 5, startDate: '2025.04.19', artistName: 'Kenshi Yonezu', title: 'TOUR 2025 "LOST CORNER"', venue: '고척스카이돔, 서울', accentColor: '#0369a1' },
-  { id: 4, startDate: '2025.05.24', artistName: 'Official髭男dism', title: 'ARENA TOUR 2025', venue: '잠실실내체육관, 서울', accentColor: '#0f766e' },
-  { id: 3, startDate: '2025.06.21', artistName: 'Ado', title: 'WORLD TOUR "Hibana" in Seoul', venue: '고척스카이돔, 서울', accentColor: '#be123c' },
-  { id: 2, startDate: '2025.07.05', artistName: 'King Gnu', title: 'Live Tour 2025', venue: '올림픽공원 체조경기장, 서울', accentColor: '#b45309' },
-  { id: 1, startDate: '2025.08.15', artistName: 'YOASOBI', title: 'ARENA TOUR 2025 "THE MONSTER"', venue: 'KSPO DOME, 서울', accentColor: '#7c3aed' },
-  { id: 7, startDate: '2025.10.04', artistName: 'Mrs. GREEN APPLE', title: 'ARENA TOUR 2025', venue: 'KSPO DOME, 서울', accentColor: '#15803d' },
+  { id: 5, startDate: '2025-04-19', artistName: 'Kenshi Yonezu', title: 'TOUR 2025 "LOST CORNER"', venue: '고척스카이돔, 서울', accentColor: '#0369a1' },
+  { id: 4, startDate: '2025-05-24', artistName: 'Official髭男dism', title: 'ARENA TOUR 2025', venue: '잠실실내체육관, 서울', accentColor: '#0f766e' },
+  { id: 3, startDate: '2025-06-21', artistName: 'Ado', title: 'WORLD TOUR "Hibana" in Seoul', venue: '고척스카이돔, 서울', accentColor: '#be123c' },
+  { id: 2, startDate: '2025-07-05', artistName: 'King Gnu', title: 'Live Tour 2025', venue: '올림픽공원 체조경기장, 서울', accentColor: '#b45309' },
+  { id: 1, startDate: '2025-08-15', artistName: 'YOASOBI', title: 'ARENA TOUR 2025 "THE MONSTER"', venue: 'KSPO DOME, 서울', accentColor: '#7c3aed' },
+  { id: 7, startDate: '2025-10-04', artistName: 'Mrs. GREEN APPLE', title: 'ARENA TOUR 2025', venue: 'KSPO DOME, 서울', accentColor: '#15803d' },
 ]
 
 // TODO: API 연동 후 제거 (CON-03)
@@ -96,8 +98,8 @@ const MOCK_POPULAR_CONCERTS = [
     posterUrl: null,
     artistName: 'YOASOBI',
     title: 'YOASOBI ARENA TOUR 2025 "THE MONSTER"',
-    startDate: '2025.08.15',
-    endDate: '2025.08.16',
+    startDate: '2025-08-15',
+    endDate: '2025-08-16',
     venue: 'KSPO DOME, 서울',
     status: 'UPCOMING',
   },
@@ -106,8 +108,8 @@ const MOCK_POPULAR_CONCERTS = [
     posterUrl: null,
     artistName: 'King Gnu',
     title: 'King Gnu Live Tour 2025',
-    startDate: '2025.07.05',
-    endDate: '2025.07.06',
+    startDate: '2025-07-05',
+    endDate: '2025-07-06',
     venue: '올림픽공원 체조경기장, 서울',
     status: 'UPCOMING',
   },
@@ -116,7 +118,7 @@ const MOCK_POPULAR_CONCERTS = [
     posterUrl: null,
     artistName: 'Ado',
     title: 'Ado WORLD TOUR "Hibana" in Seoul',
-    startDate: '2025.06.21',
+    startDate: '2025-06-21',
     endDate: null,
     venue: '고척스카이돔, 서울',
     status: 'UPCOMING',
@@ -126,8 +128,8 @@ const MOCK_POPULAR_CONCERTS = [
     posterUrl: null,
     artistName: 'Official髭男dism',
     title: 'Official髭男dism ARENA TOUR 2025',
-    startDate: '2025.05.24',
-    endDate: '2025.05.25',
+    startDate: '2025-05-24',
+    endDate: '2025-05-25',
     venue: '잠실실내체육관, 서울',
     status: 'ONGOING',
   },
@@ -136,8 +138,8 @@ const MOCK_POPULAR_CONCERTS = [
     posterUrl: null,
     artistName: 'Kenshi Yonezu',
     title: 'Kenshi Yonezu TOUR 2025 "LOST CORNER"',
-    startDate: '2025.04.19',
-    endDate: '2025.04.20',
+    startDate: '2025-04-19',
+    endDate: '2025-04-20',
     venue: '고척스카이돔, 서울',
     status: 'ENDED',
   },
@@ -146,8 +148,8 @@ const MOCK_POPULAR_CONCERTS = [
     posterUrl: 'https://etbr-cms-site.s3.ap-northeast-1.amazonaws.com/zutomayo.net/share/intense2/ZUTOMAYO_SEOUL_2026031415.jpg',
     artistName: 'ZUTOMAYO',
     title: 'ZUTOMAYO INTENSE II「坐・ZOMBIE CRAB LABO」in Seoul',
-    startDate: '2026.03.14',
-    endDate: '2026.03.15',
+    startDate: '2026-03-14',
+    endDate: '2026-03-15',
     venue: '고려대학교 화정체육관, 서울',
     status: 'ENDED',
   },
@@ -156,8 +158,8 @@ const MOCK_POPULAR_CONCERTS = [
     posterUrl: null,
     artistName: 'Mrs. GREEN APPLE',
     title: 'Mrs. GREEN APPLE ARENA TOUR 2025',
-    startDate: '2025.10.04',
-    endDate: '2025.10.05',
+    startDate: '2025-10-04',
+    endDate: '2025-10-05',
     venue: 'KSPO DOME, 서울',
     status: 'UPCOMING',
   },
@@ -166,8 +168,8 @@ const MOCK_POPULAR_CONCERTS = [
     posterUrl: null,
     artistName: 'ONE OK ROCK',
     title: 'ONE OK ROCK 2025 LUXURY DISEASE ASIA TOUR',
-    startDate: '2025.03.08',
-    endDate: '2025.03.09',
+    startDate: '2025-03-08',
+    endDate: '2025-03-09',
     venue: '올림픽공원 체조경기장, 서울',
     status: 'ENDED',
   },
@@ -176,7 +178,7 @@ const MOCK_POPULAR_CONCERTS = [
     posterUrl: null,
     artistName: 'RADWIMPS',
     title: 'RADWIMPS LIVE TOUR 2025',
-    startDate: '2025.11.22',
+    startDate: '2025-11-22',
     endDate: null,
     venue: '올림픽공원 체조경기장, 서울',
     status: 'UPCOMING',
@@ -186,8 +188,8 @@ const MOCK_POPULAR_CONCERTS = [
     posterUrl: null,
     artistName: 'Fujii Kaze',
     title: 'Fujii Kaze LOVE ALL SERVE ALL STADIUM LIVE',
-    startDate: '2025.08.30',
-    endDate: '2025.08.31',
+    startDate: '2025-08-30',
+    endDate: '2025-08-31',
     venue: '잠실종합운동장 주경기장, 서울',
     status: 'UPCOMING',
   },
@@ -411,7 +413,7 @@ function HomePage() {
                           <p className={styles.upcomingTitle}>{concert.title}</p>
                           <p className={styles.upcomingMeta}>
                             <Icon name="calendar" size={12} />
-                            {concert.startDate} · {concert.venue}
+                            {formatDate(concert.startDate)} · {concert.venue}
                           </p>
                         </div>
                       </Link>
