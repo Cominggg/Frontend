@@ -5,3 +5,9 @@ export function isSameDay(a, b) {
     a.getDate() === b.getDate()
   )
 }
+
+// 'YYYY-MM-DD' → 'YYYY.MM.DD'
+export function formatDate(isoStr) {
+  if (!isoStr) return ''
+  return isoStr.replace(/-/g, '.')
+}
