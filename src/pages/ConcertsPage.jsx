@@ -4,6 +4,7 @@ import ConcertCard from '@/components/concert/ConcertCard'
 import ConcertCardSkeleton from '@/components/concert/ConcertCardSkeleton'
 import EmptyState from '@/components/ui/EmptyState'
 import Pagination from '@/components/ui/Pagination'
+import { CONCERT_STATUS_LABEL } from '@/constants/concert'
 import { MOCK_FOLLOWED_ARTISTS } from '@/mocks/followedArtistMocks'
 import useAuthStore from '@/stores/authStore'
 import useLoginModalStore from '@/stores/loginModalStore'
@@ -34,18 +35,12 @@ const MOCK_CONCERTS = [
   { id: 21, posterUrl: null, artistName: 'amazarashi',        title: 'amazarashi LIVE 2025 "Minima Moralia"',        startDate: '2025-08-23', endDate: null,         venue: 'YES24 라이브홀, 서울',              status: 'UPCOMING' },
 ]
 
-const STATUS_FILTERS = [
-  { value: '',          label: '전체' },
-  { value: 'UPCOMING',  label: '공연예정' },
-  { value: 'ONGOING',   label: '공연중' },
-  { value: 'ENDED',     label: '공연완료' },
-  { value: 'CANCELLED', label: '공연취소' },
-]
+const STATUS_FILTERS = ['ALL', 'UPCOMING', 'ONGOING', 'ENDED', 'CANCELLED']
 const ITEMS_PER_PAGE = 20
 
 function ConcertsPage() {
   const [query, setQuery] = useState('')
-  const [selectedStatus, setSelectedStatus] = useState('')
+  const [selectedStatus, setSelectedStatus] = useState('ALL')
   const [followedOnly, setFollowedOnly] = useState(false)
   const [currentPage, setCurrentPage] = useState(1)
   const user = useAuthStore((s) => s.user)
@@ -68,7 +63,7 @@ function ConcertsPage() {
     const q = query.trim().toLowerCase()
     return MOCK_CONCERTS.filter((c) => {
       const matchesQuery = !q || c.title.toLowerCase().includes(q) || c.artistName.toLowerCase().includes(q)
-      const matchesStatus = !selectedStatus || c.status === selectedStatus
+      const matchesStatus = selectedStatus === 'ALL' || c.status === selectedStatus
       const matchesFollowed = !effectiveFollowedOnly || MOCK_FOLLOWED_ARTISTS.has(c.artistName)
       return matchesQuery && matchesStatus && matchesFollowed
     })
@@ -124,13 +119,13 @@ function ConcertsPage() {
           <div className={styles.filterBar} role="tablist" aria-label="공연 상태 필터">
             {STATUS_FILTERS.map((s) => (
               <button
-                key={s.value}
+                key={s}
                 role="tab"
-                aria-selected={selectedStatus === s.value}
-                className={`${styles.filterTab} ${selectedStatus === s.value ? styles.filterTabActive : ''}`}
-                onClick={() => { setSelectedStatus(s.value); setCurrentPage(1) }}
+                aria-selected={selectedStatus === s}
+                className={`${styles.filterTab} ${selectedStatus === s ? styles.filterTabActive : ''}`}
+                onClick={() => { setSelectedStatus(s); setCurrentPage(1) }}
               >
-                {s.label}
+                {s === 'ALL' ? '전체' : CONCERT_STATUS_LABEL[s]}
               </button>
             ))}
           </div>
