@@ -1,57 +1,44 @@
-import { useState, useMemo } from 'react'
+import { useState, useEffect } from 'react'
+import { useQuery } from '@tanstack/react-query'
 
 import ArtistCard from '@/components/artist/ArtistCard'
 import ArtistCardSkeleton from '@/components/artist/ArtistCardSkeleton'
 import EmptyState from '@/components/ui/EmptyState'
 import Pagination from '@/components/ui/Pagination'
+import { getArtists } from '@/services/artistApi'
 import styles from './ArtistsPage.module.css'
-
-// TODO: API 연동 후 제거
-const MOCK_ARTISTS = [
-  { id: 1,  name: 'YOASOBI',              imageUrl: null, hasUpcomingConcert: true,  isFollowing: false },
-  { id: 2,  name: 'Kenshi Yonezu',        imageUrl: null, hasUpcomingConcert: true,  isFollowing: true  },
-  { id: 3,  name: 'Ado',                  imageUrl: null, hasUpcomingConcert: true,  isFollowing: false },
-  { id: 4,  name: 'King Gnu',             imageUrl: null, hasUpcomingConcert: true,  isFollowing: false },
-  { id: 5,  name: 'Official髭男dism',     imageUrl: null, hasUpcomingConcert: false, isFollowing: false },
-  { id: 6,  name: 'RADWIMPS',             imageUrl: null, hasUpcomingConcert: true,  isFollowing: true  },
-  { id: 7,  name: 'Mrs. GREEN APPLE',     imageUrl: null, hasUpcomingConcert: true,  isFollowing: false },
-  { id: 8,  name: 'Fujii Kaze',           imageUrl: null, hasUpcomingConcert: true,  isFollowing: false },
-  { id: 9,  name: 'ZUTOMAYO',             imageUrl: null, hasUpcomingConcert: true,  isFollowing: false },
-  { id: 10, name: 'Creepy Nuts',          imageUrl: null, hasUpcomingConcert: true,  isFollowing: false },
-  { id: 11, name: 'ONE OK ROCK',          imageUrl: null, hasUpcomingConcert: false, isFollowing: false },
-  { id: 12, name: 'Eve',                  imageUrl: null, hasUpcomingConcert: false, isFollowing: false },
-  { id: 13, name: 'Yorushika',            imageUrl: null, hasUpcomingConcert: false, isFollowing: false },
-  { id: 14, name: 'Aimer',               imageUrl: null, hasUpcomingConcert: false, isFollowing: false },
-  { id: 15, name: 'Aimyon',              imageUrl: null, hasUpcomingConcert: false, isFollowing: false },
-  { id: 16, name: 'mol-74',              imageUrl: null, hasUpcomingConcert: false, isFollowing: false },
-  { id: 17, name: 'syudou',              imageUrl: null, hasUpcomingConcert: false, isFollowing: false },
-  { id: 18, name: 'back number',         imageUrl: null, hasUpcomingConcert: false, isFollowing: false },
-  { id: 19, name: 'SiM',                imageUrl: null, hasUpcomingConcert: false, isFollowing: false },
-  { id: 20, name: 'Vaundy',             imageUrl: null, hasUpcomingConcert: true,  isFollowing: false },
-  { id: 21, name: 'milet',              imageUrl: null, hasUpcomingConcert: false, isFollowing: false },
-  { id: 22, name: 'amazarashi',         imageUrl: null, hasUpcomingConcert: false, isFollowing: false },
-  { id: 23, name: 'BUMP OF CHICKEN',    imageUrl: null, hasUpcomingConcert: false, isFollowing: false },
-  { id: 24, name: 'sumika',             imageUrl: null, hasUpcomingConcert: false, isFollowing: false },
-  { id: 25, name: 'Saucy Dog',          imageUrl: null, hasUpcomingConcert: true,  isFollowing: false },
-  { id: 26, name: 'Ryokuoushoku Shakai',imageUrl: null, hasUpcomingConcert: false, isFollowing: false },
-  { id: 27, name: 'THE ORAL CIGARETTES',imageUrl: null, hasUpcomingConcert: false, isFollowing: false },
-]
 
 const PAGE_SIZE = 25
 
 function ArtistsPage() {
   const [query, setQuery] = useState('')
+  const [debouncedQuery, setDebouncedQuery] = useState('')
   const [currentPage, setCurrentPage] = useState(1)
-  // TODO: React Query 연동 후 useQuery의 isLoading으로 교체
-  const isLoading = false
 
-  const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase()
-    return MOCK_ARTISTS.filter((a) => !q || a.name.toLowerCase().includes(q))
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedQuery(query), 300)
+    return () => clearTimeout(timer)
   }, [query])
 
-  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE))
-  const paginated = filtered.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE)
+  const { data, isLoading } = useQuery({
+    queryKey: ['artists', debouncedQuery, currentPage],
+    queryFn: () => getArtists({ name: debouncedQuery || undefined, page: currentPage - 1, size: PAGE_SIZE }),
+    placeholderData: (prev) => prev,
+  })
+
+  const artists = data?.content ?? []
+  const totalElements = data?.totalElements ?? 0
+  const totalPages = data?.totalPages ?? 1
+
+  function handleQueryChange(e) {
+    setQuery(e.target.value)
+    setCurrentPage(1)
+  }
+
+  function handleQueryClear() {
+    setQuery('')
+    setCurrentPage(1)
+  }
 
   return (
     <div className={styles.page}>
@@ -61,7 +48,7 @@ function ArtistsPage() {
         <div className={styles.pageHeader}>
           <h1 className={styles.pageTitle}>아티스트</h1>
           <p className={styles.pageCount}>
-            {isLoading ? '' : `${filtered.length}명`}
+            {isLoading ? '' : `${totalElements}명`}
           </p>
         </div>
 
@@ -78,13 +65,13 @@ function ArtistsPage() {
             className={styles.searchInput}
             placeholder="아티스트 검색..."
             value={query}
-            onChange={(e) => { setQuery(e.target.value); setCurrentPage(1) }}
+            onChange={handleQueryChange}
             aria-label="아티스트 검색"
           />
           {query && (
             <button
               className={styles.searchClear}
-              onClick={() => { setQuery(''); setCurrentPage(1) }}
+              onClick={handleQueryClear}
               aria-label="검색어 지우기"
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
@@ -102,9 +89,9 @@ function ArtistsPage() {
               <ArtistCardSkeleton key={i} />
             ))}
           </div>
-        ) : filtered.length > 0 ? (
+        ) : artists.length > 0 ? (
           <div className={styles.grid}>
-            {paginated.map((artist) => (
+            {artists.map((artist) => (
               <ArtistCard key={artist.id} artist={artist} />
             ))}
           </div>
