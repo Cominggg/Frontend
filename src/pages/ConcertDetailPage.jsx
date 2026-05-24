@@ -7,6 +7,7 @@ import InquiryModal from '@/components/ui/InquiryModal'
 import useAuthStore from '@/stores/authStore'
 import useLoginModalStore from '@/stores/loginModalStore'
 import { ROUTES } from '@/constants/routes'
+import { formatDate } from '@/utils/date'
 import styles from './ConcertDetailPage.module.css'
 
 // TODO: API 연동 후 제거
@@ -14,7 +15,7 @@ const MOCK_CONCERT_MAP = {
   1: {
     id: 1, thumbnailUrl: null, posterUrls: [], artistName: 'YOASOBI', artistId: 1,
     title: 'YOASOBI ARENA TOUR 2025 "THE MONSTER"',
-    startDate: '2025.08.15', endDate: '2025.08.16',
+    startDate: '2025-08-15', endDate: '2025-08-16',
     venue: 'KSPO DOME, 서울', status: 'UPCOMING',
     price: '전석 165,000원',
     isInCalendar: false,
@@ -26,7 +27,7 @@ const MOCK_CONCERT_MAP = {
   2: {
     id: 2, thumbnailUrl: null, posterUrls: [], artistName: 'Kenshi Yonezu', artistId: 2,
     title: 'Kenshi Yonezu TOUR 2025 "LOST CORNER"',
-    startDate: '2025.04.19', endDate: '2025.04.20',
+    startDate: '2025-04-19', endDate: '2025-04-20',
     venue: '고척스카이돔, 서울', status: 'ENDED',
     price: '전석 154,000원',
     isInCalendar: true,
@@ -34,15 +35,15 @@ const MOCK_CONCERT_MAP = {
       { id: 'yes24', label: 'YES24', url: '#' },
     ],
     setlist: [
-      { order: 1, title: 'Pale Blue' },
-      { order: 2, title: 'KICK BACK' },
-      { order: 3, title: 'Lemon' },
-      { order: 4, title: 'Moonlight' },
-      { order: 5, title: 'M八七' },
-      { order: 6, title: 'POP SONG' },
-      { order: 7, title: 'メフィスト' },
-      { order: 8, title: 'LOST CORNER' },
-      { order: 9, title: '死神' },
+      { order: 1,  title: 'Pale Blue' },
+      { order: 2,  title: 'KICK BACK' },
+      { order: 3,  title: 'Lemon' },
+      { order: 4,  title: 'Moonlight' },
+      { order: 5,  title: 'M八七' },
+      { order: 6,  title: 'POP SONG' },
+      { order: 7,  title: 'メフィスト' },
+      { order: 8,  title: 'LOST CORNER' },
+      { order: 9,  title: '死神' },
       { order: 10, title: 'Flamingo' },
       { order: 11, title: '地球儀' },
       { order: 12, title: 'PLACEBO + 世界の終わり' },
@@ -51,7 +52,7 @@ const MOCK_CONCERT_MAP = {
   3: {
     id: 3, thumbnailUrl: null, posterUrls: [], artistName: 'Ado', artistId: 3,
     title: 'Ado WORLD TOUR "Hibana" in Seoul',
-    startDate: '2025.06.21', endDate: null,
+    startDate: '2025-06-21', endDate: null,
     venue: '고척스카이돔, 서울', status: 'UPCOMING',
     price: 'VIP 242,000원 / 전석 165,000원',
     isInCalendar: false,
@@ -72,7 +73,7 @@ const MOCK_CONCERT_MAP = {
     ],
     artistName: 'ZUTOMAYO', artistId: 8,
     title: 'ZUTOMAYO INTENSE II「坐・ZOMBIE CRAB LABO」in Seoul',
-    startDate: '2026.03.14', endDate: '2026.03.15',
+    startDate: '2026-03-14', endDate: '2026-03-15',
     venue: '고려대학교 화정체육관, 서울', status: 'ENDED',
     price: '전석 138,000원',
     isInCalendar: false,
@@ -88,7 +89,7 @@ function getMockConcert(id) {
   if (num >= 4 && num <= 15) {
     return {
       id: num, thumbnailUrl: null, posterUrls: [], artistName: `아티스트 ${num}`, artistId: num,
-      title: `공연 제목 ${num}`, startDate: '2025.01.01', endDate: null,
+      title: `공연 제목 ${num}`, startDate: '2025-01-01', endDate: null,
       venue: '서울', status: 'UPCOMING',
       price: '미정', ticketLinks: [],
     }
@@ -166,8 +167,8 @@ function ConcertDetailPage() {
   const showThumbnailPlaceholder = !thumbnailUrl || thumbnailFailed
 
   const dateRange = endDate && endDate !== startDate
-    ? `${startDate} ~ ${endDate}`
-    : startDate
+    ? `${formatDate(startDate)} ~ ${formatDate(endDate)}`
+    : formatDate(startDate)
 
   return (
     <>

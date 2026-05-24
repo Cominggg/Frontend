@@ -8,6 +8,7 @@ import useAuthStore from '@/stores/authStore'
 import useLoginModalStore from '@/stores/loginModalStore'
 import { ROUTES } from '@/constants/routes'
 import { getArtistColor } from '@/utils/artistColor'
+import { formatDate } from '@/utils/date'
 import styles from './ArtistDetailPage.module.css'
 
 function formatFollowers(n) {
@@ -22,10 +23,8 @@ function fmtMs(ms) {
 
 function calcDday(dateStr) {
   if (!dateStr) return null
-  const parts = dateStr.trim().split('.')
-  if (parts.length !== 3) return null
-  const [y, m, d] = parts.map(Number)
-  if (!isFinite(y) || !isFinite(m) || !isFinite(d)) return null
+  const [y, m, d] = dateStr.split('-').map(Number)
+  if (!y || !m || !d) return null
   const target = new Date(y, m - 1, d)
   if (isNaN(target.getTime())) return null
   const today = new Date()
@@ -38,8 +37,8 @@ const MOCK_ARTIST_MAP = {
   1: {
     id: 1, name: 'YOASOBI', imageUrl: null,
     hasUpcomingConcert: true,
-    isFollowing: false, followersCount: 24800,
-    debutDate: '2019.09.12',
+    isFollowing: false, followerCount: 24800,
+    debutDate: '2019-09-12',
     links: [
       { id: 'spotify',   label: 'Spotify',     url: '#' },
       { id: 'youtube',   label: 'YouTube',     url: '#' },
@@ -47,54 +46,54 @@ const MOCK_ARTIST_MAP = {
       { id: 'instagram', label: 'Instagram',   url: '#' },
     ],
     concerts: [
-      { id: 104, title: 'YOASOBI WORLD TOUR 2026 in Seoul',         startDate: '2026.07.20', endDate: '2026.07.21', venue: 'KSPO DOME, 서울',               status: 'UPCOMING' },
-      { id: 1,   title: 'YOASOBI ARENA TOUR 2025 "THE MONSTER"',   startDate: '2025.08.15', endDate: '2025.08.16', venue: 'KSPO DOME, 서울',               status: 'ENDED' },
-      { id: 101, title: 'YOASOBI THE BOOK CONCERT 2023',            startDate: '2023.05.27', endDate: '2023.05.28', venue: '올림픽공원 체조경기장, 서울',     status: 'ENDED' },
-      { id: 102, title: 'YOASOBI LIVE 2022 "Into The Night"',       startDate: '2022.10.15', endDate: null,         venue: '예스24 라이브홀, 서울',          status: 'ENDED' },
-      { id: 103, title: 'YOASOBI CONCERT 2021',                     startDate: '2021.09.04', endDate: null,         venue: '올림픽공원 K-아트홀, 서울',       status: 'ENDED' },
+      { id: 104, title: 'YOASOBI WORLD TOUR 2026 in Seoul',         startDate: '2026-07-20', endDate: '2026-07-21', venue: 'KSPO DOME, 서울',               status: 'UPCOMING' },
+      { id: 1,   title: 'YOASOBI ARENA TOUR 2025 "THE MONSTER"',   startDate: '2025-08-15', endDate: '2025-08-16', venue: 'KSPO DOME, 서울',               status: 'ENDED'    },
+      { id: 101, title: 'YOASOBI THE BOOK CONCERT 2023',            startDate: '2023-05-27', endDate: '2023-05-28', venue: '올림픽공원 체조경기장, 서울',     status: 'ENDED'    },
+      { id: 102, title: 'YOASOBI LIVE 2022 "Into The Night"',       startDate: '2022-10-15', endDate: null,         venue: '예스24 라이브홀, 서울',          status: 'ENDED'    },
+      { id: 103, title: 'YOASOBI CONCERT 2021',                     startDate: '2021-09-04', endDate: null,         venue: '올림픽공원 K-아트홀, 서울',       status: 'ENDED'    },
     ],
     releases: [
-      { id: 1, title: 'THE BOOK 4', type: 'ALBUM', releaseDate: '2025.02.15', tracks: [
+      { id: 1, title: 'THE BOOK 4', type: 'ALBUM', releaseDate: '2025-02-15', tracks: [
         { position: 1, title: 'アイドル', length_ms: 208000 },
         { position: 2, title: '勇者', length_ms: 241000 },
         { position: 3, title: '祝福', length_ms: 250000 },
         { position: 4, title: 'セブンティーン', length_ms: 236000 },
       ]},
-      { id: 2, title: 'Idol', type: 'SINGLE', releaseDate: '2023.05.19', tracks: [
+      { id: 2, title: 'Idol', type: 'SINGLE', releaseDate: '2023-05-19', tracks: [
         { position: 1, title: 'アイドル', length_ms: 208000 },
       ]},
-      { id: 3, title: 'THE BOOK 3', type: 'ALBUM', releaseDate: '2023.03.29', tracks: [] },
-      { id: 4, title: 'THE BOOK 2', type: 'ALBUM', releaseDate: '2022.06.29', tracks: [] },
-      { id: 5, title: 'THE BOOK', type: 'ALBUM', releaseDate: '2021.01.06', tracks: [] },
+      { id: 3, title: 'THE BOOK 3', type: 'ALBUM', releaseDate: '2023-03-29', tracks: [] },
+      { id: 4, title: 'THE BOOK 2', type: 'ALBUM', releaseDate: '2022-06-29', tracks: [] },
+      { id: 5, title: 'THE BOOK',   type: 'ALBUM', releaseDate: '2021-01-06', tracks: [] },
     ],
   },
   2: {
     id: 2, name: 'Kenshi Yonezu', imageUrl: null,
     hasUpcomingConcert: false,
-    isFollowing: true, followersCount: 31200,
-    debutDate: '2012.02.29',
+    isFollowing: true, followerCount: 31200,
+    debutDate: '2012-02-29',
     links: [
       { id: 'spotify',   label: 'Spotify',     url: '#' },
       { id: 'youtube',   label: 'YouTube',     url: '#' },
       { id: 'twitter',   label: 'X (Twitter)', url: '#' },
     ],
     concerts: [
-      { id: 2,   title: 'Kenshi Yonezu TOUR 2025 "LOST CORNER"',   startDate: '2025.04.19', endDate: '2025.04.20', venue: '고척스카이돔, 서울',             status: 'ENDED' },
-      { id: 201, title: 'Kenshi Yonezu STADIUM LIVE 2023',          startDate: '2023.11.18', endDate: '2023.11.19', venue: '잠실종합운동장 주경기장, 서울',   status: 'ENDED' },
-      { id: 202, title: 'Kenshi Yonezu HALL TOUR 2022',             startDate: '2022.06.11', endDate: null,         venue: '올림픽공원 체조경기장, 서울',     status: 'ENDED' },
+      { id: 2,   title: 'Kenshi Yonezu TOUR 2025 "LOST CORNER"',   startDate: '2025-04-19', endDate: '2025-04-20', venue: '고척스카이돔, 서울',             status: 'ENDED' },
+      { id: 201, title: 'Kenshi Yonezu STADIUM LIVE 2023',          startDate: '2023-11-18', endDate: '2023-11-19', venue: '잠실종합운동장 주경기장, 서울',   status: 'ENDED' },
+      { id: 202, title: 'Kenshi Yonezu HALL TOUR 2022',             startDate: '2022-06-11', endDate: null,         venue: '올림픽공원 체조경기장, 서울',     status: 'ENDED' },
     ],
     releases: [
-      { id: 1, title: 'LOST CORNER', type: 'ALBUM', releaseDate: '2025.04.05', tracks: [
+      { id: 1, title: 'LOST CORNER', type: 'ALBUM', releaseDate: '2025-04-05', tracks: [
         { position: 1, title: 'LOST CORNER', length_ms: 262000 },
         { position: 2, title: 'LADY', length_ms: 238000 },
         { position: 3, title: 'メガヒットソング', length_ms: 227000 },
         { position: 4, title: 'Azalea', length_ms: 251000 },
       ]},
-      { id: 2, title: 'Spinning Globe', type: 'SINGLE', releaseDate: '2022.12.08', tracks: [
+      { id: 2, title: 'Spinning Globe', type: 'SINGLE', releaseDate: '2022-12-08', tracks: [
         { position: 1, title: 'Spinning Globe', length_ms: 315000 },
       ]},
-      { id: 3, title: 'STRAY SHEEP', type: 'ALBUM', releaseDate: '2020.08.05', tracks: [] },
-      { id: 4, title: 'Pale Blue', type: 'SINGLE', releaseDate: '2021.06.16', tracks: [
+      { id: 3, title: 'STRAY SHEEP', type: 'ALBUM', releaseDate: '2020-08-05', tracks: [] },
+      { id: 4, title: 'Pale Blue',   type: 'SINGLE', releaseDate: '2021-06-16', tracks: [
         { position: 1, title: 'Pale Blue', length_ms: 290000 },
       ]},
     ],
@@ -102,8 +101,8 @@ const MOCK_ARTIST_MAP = {
   3: {
     id: 3, name: 'Ado', imageUrl: null,
     hasUpcomingConcert: true,
-    isFollowing: false, followersCount: 19500,
-    debutDate: '2020.10.02',
+    isFollowing: false, followerCount: 19500,
+    debutDate: '2020-10-02',
     links: [
       { id: 'spotify',   label: 'Spotify',     url: '#' },
       { id: 'youtube',   label: 'YouTube',     url: '#' },
@@ -111,18 +110,18 @@ const MOCK_ARTIST_MAP = {
       { id: 'instagram', label: 'Instagram',   url: '#' },
     ],
     concerts: [
-      { id: 303, title: 'Ado WORLD TOUR 2026 "INAZUMA" in Seoul',   startDate: '2026.08.10', endDate: null,         venue: '고척스카이돔, 서울',             status: 'UPCOMING' },
-      { id: 3,   title: 'Ado WORLD TOUR "Hibana" in Seoul',         startDate: '2025.06.21', endDate: null,         venue: '고척스카이돔, 서울',             status: 'ENDED' },
-      { id: 301, title: 'Ado WORLD TOUR 2024 "Wish"',               startDate: '2024.04.13', endDate: null,         venue: 'KSPO DOME, 서울',               status: 'ENDED' },
-      { id: 302, title: 'Ado LIVE 2023',                             startDate: '2023.08.05', endDate: null,         venue: '올림픽공원 체조경기장, 서울',     status: 'ENDED' },
+      { id: 303, title: 'Ado WORLD TOUR 2026 "INAZUMA" in Seoul',   startDate: '2026-08-10', endDate: null,         venue: '고척스카이돔, 서울',             status: 'UPCOMING' },
+      { id: 3,   title: 'Ado WORLD TOUR "Hibana" in Seoul',         startDate: '2025-06-21', endDate: null,         venue: '고척스카이돔, 서울',             status: 'ENDED'    },
+      { id: 301, title: 'Ado WORLD TOUR 2024 "Wish"',               startDate: '2024-04-13', endDate: null,         venue: 'KSPO DOME, 서울',               status: 'ENDED'    },
+      { id: 302, title: 'Ado LIVE 2023',                             startDate: '2023-08-05', endDate: null,         venue: '올림픽공원 체조경기장, 서울',     status: 'ENDED'    },
     ],
     releases: [
-      { id: 1, title: 'Hibana', type: 'SINGLE', releaseDate: '2025.03.05', tracks: [
+      { id: 1, title: 'Hibana', type: 'SINGLE', releaseDate: '2025-03-05', tracks: [
         { position: 1, title: 'Hibana', length_ms: 224000 },
         { position: 2, title: 'Hibana (Instrumental)', length_ms: 224000 },
       ]},
-      { id: 2, title: 'Uta no Uta', type: 'ALBUM', releaseDate: '2023.04.26', tracks: [] },
-      { id: 3, title: 'Usseewa', type: 'SINGLE', releaseDate: '2020.10.02', tracks: [
+      { id: 2, title: 'Uta no Uta', type: 'ALBUM', releaseDate: '2023-04-26', tracks: [] },
+      { id: 3, title: 'Usseewa',    type: 'SINGLE', releaseDate: '2020-10-02', tracks: [
         { position: 1, title: 'うっせぇわ', length_ms: 207000 },
       ]},
     ],
@@ -145,7 +144,7 @@ function getMockArtist(id) {
 
   return {
     id, name, imageUrl: null, hasUpcomingConcert: false,
-    isFollowing: false, followersCount: 5000,
+    isFollowing: false, followerCount: 5000,
     debutDate: null,
     links: [], concerts: [], releases: [],
   }
@@ -197,7 +196,7 @@ function ArtistDetailPage() {
     )
   }
 
-  const { name, imageUrl, hasUpcomingConcert, followersCount,
+  const { name, imageUrl, hasUpcomingConcert, followerCount,
           debutDate, links, concerts, releases } = artist
   const showPlaceholder = !imageUrl || imgFailed
   const [colorFrom, colorTo] = getArtistColor(name)
@@ -267,12 +266,12 @@ function ArtistDetailPage() {
               {debutDate && (
                 <div className={styles.profileItem}>
                   <dt>데뷔</dt>
-                  <dd>{debutDate}</dd>
+                  <dd>{formatDate(debutDate)}</dd>
                 </div>
               )}
             </dl>
 
-            <p className={styles.followers}>팔로워 {formatFollowers(followersCount)}</p>
+            <p className={styles.followers}>팔로워 {formatFollowers(followerCount)}</p>
             <button
               className={`${styles.followBtn} ${isFollowing ? styles.following : ''}`}
               onClick={handleFollow}
@@ -290,7 +289,7 @@ function ArtistDetailPage() {
               <span className={styles.ddayLabel}>다음 내한 공연</span>
               <div className={styles.ddayInfo}>
                 <span className={styles.ddayTitle}>{nextConcert.title}</span>
-                <span className={styles.ddayDate}>{nextConcert.startDate}{nextConcert.venue ? ` · ${nextConcert.venue}` : ''}</span>
+                <span className={styles.ddayDate}>{formatDate(nextConcert.startDate)}{nextConcert.venue ? ` · ${nextConcert.venue}` : ''}</span>
               </div>
             </div>
             <div className={styles.ddayCount}>

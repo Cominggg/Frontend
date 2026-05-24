@@ -8,18 +8,18 @@ import styles from './ReleasesPage.module.css'
 
 // TODO: API 연동 후 제거
 const MOCK_RELEASES = [
-  { id: 1,  coverUrl: null, artistName: 'Kenshi Yonezu',    title: 'LOST CORNER',    type: 'ALBUM',  releaseDate: '2024.08.28' },
-  { id: 2,  coverUrl: null, artistName: 'Mrs. GREEN APPLE', title: 'Soranji',        type: 'SINGLE', releaseDate: '2025.03.20' },
-  { id: 3,  coverUrl: null, artistName: 'YOASOBI',          title: 'THE BOOK 4',     type: 'ALBUM',  releaseDate: '2025.02.15' },
-  { id: 4,  coverUrl: null, artistName: 'ZUTOMAYO',         title: 'Lose',           type: 'SINGLE', releaseDate: '2025.01.30' },
-  { id: 5,  coverUrl: null, artistName: 'Ado',              title: 'Hibana',         type: 'SINGLE', releaseDate: '2025.03.05' },
-  { id: 6,  coverUrl: null, artistName: 'Official髭男dism', title: 'Subtitle II',    type: 'ALBUM',  releaseDate: '2025.02.28' },
-  { id: 7,  coverUrl: null, artistName: 'King Gnu',         title: 'MIRROR',         type: 'ALBUM',  releaseDate: '2025.01.15' },
-  { id: 8,  coverUrl: null, artistName: 'Eve',              title: 'Heart',          type: 'EP',     releaseDate: '2025.03.12' },
-  { id: 9,  coverUrl: null, artistName: 'Aimer',            title: 'Blanc',          type: 'ALBUM',  releaseDate: '2024.11.27' },
-  { id: 10, coverUrl: null, artistName: 'Fujii Kaze',       title: 'Grace',          type: 'ALBUM',  releaseDate: '2024.09.04' },
-  { id: 11, coverUrl: null, artistName: 'Creepy Nuts',      title: 'Bling-Bang-Bang-Born', type: 'SINGLE', releaseDate: '2024.01.19' },
-  { id: 12, coverUrl: null, artistName: 'ONE OK ROCK',      title: 'Luxury Disease', type: 'ALBUM',  releaseDate: '2022.09.09' },
+  { id: 1,  coverUrl: null, artistName: 'Kenshi Yonezu',    title: 'LOST CORNER',         type: 'ALBUM',  releaseDate: '2024-08-28' },
+  { id: 2,  coverUrl: null, artistName: 'Mrs. GREEN APPLE', title: 'Soranji',             type: 'SINGLE', releaseDate: '2025-03-20' },
+  { id: 3,  coverUrl: null, artistName: 'YOASOBI',          title: 'THE BOOK 4',          type: 'ALBUM',  releaseDate: '2025-02-15' },
+  { id: 4,  coverUrl: null, artistName: 'ZUTOMAYO',         title: 'Lose',                type: 'SINGLE', releaseDate: '2025-01-30' },
+  { id: 5,  coverUrl: null, artistName: 'Ado',              title: 'Hibana',              type: 'SINGLE', releaseDate: '2025-03-05' },
+  { id: 6,  coverUrl: null, artistName: 'Official髭男dism', title: 'Subtitle II',         type: 'ALBUM',  releaseDate: '2025-02-28' },
+  { id: 7,  coverUrl: null, artistName: 'King Gnu',         title: 'MIRROR',              type: 'ALBUM',  releaseDate: '2025-01-15' },
+  { id: 8,  coverUrl: null, artistName: 'Eve',              title: 'Heart',               type: 'EP',     releaseDate: '2025-03-12' },
+  { id: 9,  coverUrl: null, artistName: 'Aimer',            title: 'Blanc',               type: 'ALBUM',  releaseDate: '2024-11-27' },
+  { id: 10, coverUrl: null, artistName: 'Fujii Kaze',       title: 'Grace',               type: 'ALBUM',  releaseDate: '2024-09-04' },
+  { id: 11, coverUrl: null, artistName: 'Creepy Nuts',      title: 'Bling-Bang-Bang-Born',type: 'SINGLE', releaseDate: '2024-01-19' },
+  { id: 12, coverUrl: null, artistName: 'ONE OK ROCK',      title: 'Luxury Disease',      type: 'ALBUM',  releaseDate: '2022-09-09' },
 ]
 
 const MAIN_TYPES = ['ALBUM', 'SINGLE', 'EP']

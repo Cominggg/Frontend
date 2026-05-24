@@ -2,7 +2,14 @@ import { Link, useParams } from 'react-router-dom'
 
 import EmptyState from '@/components/ui/EmptyState'
 import { ROUTES } from '@/constants/routes'
+import { getArtistColor } from '@/utils/artistColor'
+import { formatDate } from '@/utils/date'
 import styles from './ReleaseDetailPage.module.css'
+
+function fmtMs(ms) {
+  const s = Math.round(ms / 1000)
+  return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`
+}
 
 const RELEASE_TYPE_COLOR = {
   ALBUM: 'var(--color-accent)',
@@ -13,140 +20,84 @@ const RELEASE_TYPE_COLOR = {
 // TODO: API 연동 후 제거
 const MOCK_RELEASE_MAP = {
   1: {
-    id: 1,
-    artistName: 'Kenshi Yonezu',
-    artistId: 2,
-    title: 'LOST CORNER',
-    type: 'ALBUM',
-    releaseDate: '2024.08.28',
-    label: 'SME Records',
-    accentFrom: '#0369a1',
-    accentTo: '#7dd3fc',
+    id: 1, artistName: 'Kenshi Yonezu', artistId: 2,
+    title: 'LOST CORNER', type: 'ALBUM', releaseDate: '2024-08-28',
     tracks: [
-      { id: 1, title: 'LOST CORNER', duration: '4:22' },
-      { id: 2, title: 'LADY', duration: '3:58' },
-      { id: 3, title: 'メガヒットソング', duration: '3:47' },
-      { id: 4, title: 'Azalea', duration: '4:11' },
-      { id: 5, title: '地球儀', duration: '4:05' },
-      { id: 6, title: '月を見ていた', duration: '3:53' },
-      { id: 7, title: 'Underworld', duration: '3:34' },
-      { id: 8, title: '毎日', duration: '3:29' },
-      { id: 9, title: 'さよーならまたいつか！', duration: '4:17' },
-      { id: 10, title: 'ハッピーエンド', duration: '3:56' },
-      { id: 11, title: 'Kick Back', duration: '3:24' },
-      { id: 12, title: 'PLACEBO + 野田洋次郎', duration: '4:38' },
+      { position: 1,  title: 'LOST CORNER',        length_ms: 262000 },
+      { position: 2,  title: 'LADY',               length_ms: 238000 },
+      { position: 3,  title: 'メガヒットソング',    length_ms: 227000 },
+      { position: 4,  title: 'Azalea',             length_ms: 251000 },
+      { position: 5,  title: '地球儀',             length_ms: 245000 },
+      { position: 6,  title: '月を見ていた',        length_ms: 233000 },
+      { position: 7,  title: 'Underworld',          length_ms: 214000 },
+      { position: 8,  title: '毎日',               length_ms: 209000 },
+      { position: 9,  title: 'さよーならまたいつか！', length_ms: 257000 },
+      { position: 10, title: 'ハッピーエンド',      length_ms: 236000 },
+      { position: 11, title: 'Kick Back',           length_ms: 204000 },
+      { position: 12, title: 'PLACEBO + 野田洋次郎', length_ms: 278000 },
     ],
   },
   2: {
-    id: 2,
-    artistName: 'Mrs. GREEN APPLE',
-    artistId: 3,
-    title: 'Soranji',
-    type: 'SINGLE',
-    releaseDate: '2025.03.20',
-    label: 'Epic Records Japan',
-    accentFrom: '#15803d',
-    accentTo: '#86efac',
+    id: 2, artistName: 'Mrs. GREEN APPLE', artistId: 3,
+    title: 'Soranji', type: 'SINGLE', releaseDate: '2025-03-20',
     tracks: [
-      { id: 1, title: 'Soranji', duration: '3:52' },
-      { id: 2, title: 'Soranji (Instrumental)', duration: '3:52' },
+      { position: 1, title: 'Soranji',              length_ms: 232000 },
+      { position: 2, title: 'Soranji (Instrumental)', length_ms: 232000 },
     ],
   },
   3: {
-    id: 3,
-    artistName: 'YOASOBI',
-    artistId: 1,
-    title: 'THE BOOK 4',
-    type: 'ALBUM',
-    releaseDate: '2025.02.15',
-    label: 'Sony Music Labels',
-    accentFrom: '#7c3aed',
-    accentTo: '#c4b5fd',
+    id: 3, artistName: 'YOASOBI', artistId: 1,
+    title: 'THE BOOK 4', type: 'ALBUM', releaseDate: '2025-02-15',
     tracks: [
-      { id: 1, title: 'アイドル', duration: '3:28' },
-      { id: 2, title: '勇者', duration: '4:01' },
-      { id: 3, title: '祝福', duration: '4:10' },
-      { id: 4, title: 'セブンティーン', duration: '3:56' },
+      { position: 1, title: 'アイドル',      length_ms: 208000 },
+      { position: 2, title: '勇者',          length_ms: 241000 },
+      { position: 3, title: '祝福',          length_ms: 250000 },
+      { position: 4, title: 'セブンティーン', length_ms: 236000 },
     ],
   },
   4: {
-    id: 4,
-    artistName: 'ZUTOMAYO',
-    artistId: 4,
-    title: 'Lose',
-    type: 'SINGLE',
-    releaseDate: '2025.01.30',
-    label: 'IRORI Records',
-    accentFrom: '#5b21b6',
-    accentTo: '#a78bfa',
+    id: 4, artistName: 'ZUTOMAYO', artistId: 4,
+    title: 'Lose', type: 'SINGLE', releaseDate: '2025-01-30',
     tracks: [
-      { id: 1, title: 'Lose', duration: '4:05' },
-      { id: 2, title: 'Lose (Instrumental)', duration: '4:05' },
+      { position: 1, title: 'Lose',              length_ms: 245000 },
+      { position: 2, title: 'Lose (Instrumental)', length_ms: 245000 },
     ],
   },
   5: {
-    id: 5,
-    artistName: 'Ado',
-    artistId: 5,
-    title: 'Hibana',
-    type: 'SINGLE',
-    releaseDate: '2025.03.05',
-    label: 'Universal Music Japan',
-    accentFrom: '#be123c',
-    accentTo: '#fda4af',
+    id: 5, artistName: 'Ado', artistId: 5,
+    title: 'Hibana', type: 'SINGLE', releaseDate: '2025-03-05',
     tracks: [
-      { id: 1, title: 'Hibana', duration: '3:44' },
-      { id: 2, title: 'Hibana (Instrumental)', duration: '3:44' },
+      { position: 1, title: 'Hibana',              length_ms: 224000 },
+      { position: 2, title: 'Hibana (Instrumental)', length_ms: 224000 },
     ],
   },
   6: {
-    id: 6,
-    artistName: 'Official髭男dism',
-    artistId: 6,
-    title: 'Subtitle II',
-    type: 'ALBUM',
-    releaseDate: '2025.02.28',
-    label: 'Pony Canyon',
-    accentFrom: '#0f766e',
-    accentTo: '#5eead4',
+    id: 6, artistName: 'Official髭男dism', artistId: 6,
+    title: 'Subtitle II', type: 'ALBUM', releaseDate: '2025-02-28',
     tracks: [
-      { id: 1, title: 'Subtitle', duration: '5:05' },
-      { id: 2, title: 'Cry Baby', duration: '4:01' },
-      { id: 3, title: 'Anarchy', duration: '3:55' },
-      { id: 4, title: 'Sorosoro', duration: '4:12' },
+      { position: 1, title: 'Subtitle',  length_ms: 305000 },
+      { position: 2, title: 'Cry Baby', length_ms: 241000 },
+      { position: 3, title: 'Anarchy',  length_ms: 235000 },
+      { position: 4, title: 'Sorosoro', length_ms: 252000 },
     ],
   },
   7: {
-    id: 7,
-    artistName: 'King Gnu',
-    artistId: 7,
-    title: 'MIRROR',
-    type: 'ALBUM',
-    releaseDate: '2025.01.15',
-    label: 'Ariola Japan',
-    accentFrom: '#b45309',
-    accentTo: '#fcd34d',
+    id: 7, artistName: 'King Gnu', artistId: 7,
+    title: 'MIRROR', type: 'ALBUM', releaseDate: '2025-01-15',
     tracks: [
-      { id: 1, title: 'SPECIALZ', duration: '3:58' },
-      { id: 2, title: '白日', duration: '5:26' },
-      { id: 3, title: 'BOY', duration: '4:09' },
-      { id: 4, title: 'Teenager Forever', duration: '3:37' },
+      { position: 1, title: 'SPECIALZ',          length_ms: 238000 },
+      { position: 2, title: '白日',              length_ms: 326000 },
+      { position: 3, title: 'BOY',               length_ms: 249000 },
+      { position: 4, title: 'Teenager Forever',  length_ms: 217000 },
     ],
   },
   8: {
-    id: 8,
-    artistName: 'Eve',
-    artistId: 8,
-    title: 'Heart',
-    type: 'EP',
-    releaseDate: '2025.03.12',
-    label: 'ariola japan',
-    accentFrom: '#9333ea',
-    accentTo: '#d8b4fe',
+    id: 8, artistName: 'Eve', artistId: 8,
+    title: 'Heart', type: 'EP', releaseDate: '2025-03-12',
     tracks: [
-      { id: 1, title: 'Heart', duration: '4:18' },
-      { id: 2, title: 'そのままで', duration: '3:55' },
-      { id: 3, title: 'あの娘', duration: '4:02' },
+      { position: 1, title: 'Heart',    length_ms: 258000 },
+      { position: 2, title: 'そのままで', length_ms: 235000 },
+      { position: 3, title: 'あの娘',   length_ms: 242000 },
     ],
   },
 }
@@ -171,7 +122,8 @@ function ReleaseDetailPage() {
     )
   }
 
-  const { artistName, artistId, title, type, releaseDate, label, accentFrom, accentTo, tracks } = release
+  const { artistName, artistId, title, type, releaseDate, tracks } = release
+  const [accentFrom, accentTo] = getArtistColor(artistName)
   const badgeColor = RELEASE_TYPE_COLOR[type] ?? 'var(--color-text-muted)'
 
   return (
@@ -205,8 +157,7 @@ function ReleaseDetailPage() {
                 >
                   {type}
                 </span>
-                <span>{releaseDate}</span>
-                {label && <span className={styles.labelText}>{label}</span>}
+                <span>{formatDate(releaseDate)}</span>
               </div>
             </div>
           </div>
@@ -221,10 +172,10 @@ function ReleaseDetailPage() {
             <h2 className={styles.sectionHeading}>Tracklist</h2>
             <ol className={styles.trackList}>
               {tracks.map((track) => (
-                <li key={track.id} className={styles.trackItem}>
-                  <span className={styles.trackNum}>{track.id}</span>
+                <li key={track.position} className={styles.trackItem}>
+                  <span className={styles.trackNum}>{track.position}</span>
                   <span className={styles.trackTitle}>{track.title}</span>
-                  <span className={styles.trackDuration}>{track.duration}</span>
+                  <span className={styles.trackDuration}>{fmtMs(track.length_ms)}</span>
                 </li>
               ))}
             </ol>

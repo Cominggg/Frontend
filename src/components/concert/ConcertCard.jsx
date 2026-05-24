@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 
 import Badge from '@/components/ui/Badge'
 import { ROUTES } from '@/constants/routes'
+import { formatDate } from '@/utils/date'
 import styles from './ConcertCard.module.css'
 
 const PLACEHOLDER_PALETTE = [
@@ -30,8 +31,8 @@ function ConcertCard({ concert }) {
   const [colorFrom, colorTo] = getArtistColor(artistName)
 
   const dateRange = endDate && endDate !== startDate
-    ? `${startDate} ~ ${endDate}`
-    : startDate
+    ? `${formatDate(startDate)} ~ ${formatDate(endDate)}`
+    : formatDate(startDate)
 
   return (
     <Link to={ROUTES.CONCERT_DETAIL(id)} className={styles.card}>
