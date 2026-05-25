@@ -72,6 +72,13 @@ function ArtistDetailPage() {
     placeholderData: (prev) => prev,
   })
 
+  // D-day 전용 — 탭·페이지와 무관하게 항상 가장 빠른 예정 공연 1건만 조회
+  const { data: ddayConcertsData } = useQuery({
+    queryKey: ['artist-concerts-dday', artistId],
+    queryFn: () => getArtistConcerts(artistId, { tab: 'upcoming', page: 0, size: 1 }),
+    enabled: !!artist?.hasUpcomingConcert,
+  })
+
   const { data: releasesData, isLoading: releasesLoading } = useQuery({
     queryKey: ['artist-releases', artistId, releasePage],
     queryFn: () => getArtistReleases(artistId, { page: releasePage - 1, size: RELEASE_PAGE_SIZE }),
@@ -143,11 +150,8 @@ function ArtistDetailPage() {
   const releasesTotalElements = releasesData?.totalElements ?? 0
   const releasesTotalPages = releasesData?.totalPages ?? 1
 
-  // D-day: upcoming 탭에서 가장 빠른 공연 기준
-  const upcomingForDday = concertTab === 'upcoming' ? concerts : []
-  const nextConcert = upcomingForDday.length > 0
-    ? [...upcomingForDday].sort((a, b) => a.startDate.localeCompare(b.startDate))[0]
-    : null
+  // D-day: 탭과 무관하게 가장 빠른 예정 공연 기준
+  const nextConcert = ddayConcertsData?.content?.[0] ?? null
   const dday = nextConcert ? calcDday(nextConcert.startDate) : null
   const showDday = dday !== null && dday >= 0
 
