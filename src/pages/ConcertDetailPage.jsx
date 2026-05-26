@@ -1,101 +1,17 @@
 import { useState, useEffect } from 'react'
 import { Link, useParams } from 'react-router-dom'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 
 import Badge from '@/components/ui/Badge'
 import EmptyState from '@/components/ui/EmptyState'
 import InquiryModal from '@/components/ui/InquiryModal'
+import { getConcert, getConcertSetlist } from '@/services/concertApi'
+import { addToCalendar, removeFromCalendar } from '@/services/calendarApi'
 import useAuthStore from '@/stores/authStore'
 import useLoginModalStore from '@/stores/loginModalStore'
 import { ROUTES } from '@/constants/routes'
 import { formatDate } from '@/utils/date'
 import styles from './ConcertDetailPage.module.css'
-
-// TODO: API 연동 후 제거
-const MOCK_CONCERT_MAP = {
-  1: {
-    id: 1, thumbnailUrl: null, posterUrls: [], artistName: 'YOASOBI', artistId: 1,
-    title: 'YOASOBI ARENA TOUR 2025 "THE MONSTER"',
-    startDate: '2025-08-15', endDate: '2025-08-16',
-    venue: 'KSPO DOME, 서울', status: 'UPCOMING',
-    price: '전석 165,000원',
-    isInCalendar: false,
-    ticketLinks: [
-      { id: 'interpark', label: '인터파크', url: '#' },
-      { id: 'melon', label: '멜론티켓', url: '#' },
-    ],
-  },
-  2: {
-    id: 2, thumbnailUrl: null, posterUrls: [], artistName: 'Kenshi Yonezu', artistId: 2,
-    title: 'Kenshi Yonezu TOUR 2025 "LOST CORNER"',
-    startDate: '2025-04-19', endDate: '2025-04-20',
-    venue: '고척스카이돔, 서울', status: 'ENDED',
-    price: '전석 154,000원',
-    isInCalendar: true,
-    ticketLinks: [
-      { id: 'yes24', label: 'YES24', url: '#' },
-    ],
-    setlist: [
-      { order: 1,  title: 'Pale Blue' },
-      { order: 2,  title: 'KICK BACK' },
-      { order: 3,  title: 'Lemon' },
-      { order: 4,  title: 'Moonlight' },
-      { order: 5,  title: 'M八七' },
-      { order: 6,  title: 'POP SONG' },
-      { order: 7,  title: 'メフィスト' },
-      { order: 8,  title: 'LOST CORNER' },
-      { order: 9,  title: '死神' },
-      { order: 10, title: 'Flamingo' },
-      { order: 11, title: '地球儀' },
-      { order: 12, title: 'PLACEBO + 世界の終わり' },
-    ],
-  },
-  3: {
-    id: 3, thumbnailUrl: null, posterUrls: [], artistName: 'Ado', artistId: 3,
-    title: 'Ado WORLD TOUR "Hibana" in Seoul',
-    startDate: '2025-06-21', endDate: null,
-    venue: '고척스카이돔, 서울', status: 'UPCOMING',
-    price: 'VIP 242,000원 / 전석 165,000원',
-    isInCalendar: false,
-    ticketLinks: [
-      { id: 'interpark', label: '인터파크', url: '#' },
-      { id: 'yes24', label: 'YES24', url: '#' },
-    ],
-  },
-  8: {
-    id: 8,
-    thumbnailUrl: 'https://etbr-cms-site.s3.ap-northeast-1.amazonaws.com/zutomayo.net/share/intense2/ZUTOMAYO_SEOUL_2026031415.jpg',
-    posterUrls: [
-      'https://cdnticket.melon.co.kr/resource/image/upload/product/2025/12/20251218120508ea897dee-3f9e-4cde-978d-e67c0bd57c27.png',
-      'https://cdnticket.melon.co.kr/resource/image/upload/product/2025/12/202512181205268a552bab-36d0-4c3e-b06b-93e0875c21ff.png',
-      'https://cdnticket.melon.co.kr/resource/image/upload/product/2025/12/20251218120531f167b29f-ccf0-4d3e-949e-9d667a378def.png',
-      'https://cdnticket.melon.co.kr/resource/image/upload/product/2025/12/202512181205377adc9baa-7269-4f58-a612-b67e55083f1c.png',
-      'https://cdnticket.melon.co.kr/resource/image/upload/product/2025/12/20251218120543d701a3a1-6a1a-48c4-909b-cf5233be71d4.png',
-    ],
-    artistName: 'ZUTOMAYO', artistId: 8,
-    title: 'ZUTOMAYO INTENSE II「坐・ZOMBIE CRAB LABO」in Seoul',
-    startDate: '2026-03-14', endDate: '2026-03-15',
-    venue: '고려대학교 화정체육관, 서울', status: 'ENDED',
-    price: '전석 138,000원',
-    isInCalendar: false,
-    ticketLinks: [
-      { id: 'melon', label: '멜론티켓', url: '#' },
-    ],
-  },
-}
-
-function getMockConcert(id) {
-  if (MOCK_CONCERT_MAP[id]) return MOCK_CONCERT_MAP[id]
-  const num = Number(id)
-  if (num >= 4 && num <= 15) {
-    return {
-      id: num, thumbnailUrl: null, posterUrls: [], artistName: `아티스트 ${num}`, artistId: num,
-      title: `공연 제목 ${num}`, startDate: '2025-01-01', endDate: null,
-      venue: '서울', status: 'UPCOMING',
-      price: '미정', ticketLinks: [],
-    }
-  }
-  return null
-}
 
 function PosterImage({ url, alt }) {
   const [failed, setFailed] = useState(false)
@@ -112,26 +28,52 @@ function PosterImage({ url, alt }) {
 
 function ConcertDetailPage() {
   const { id } = useParams()
-  const concert = getMockConcert(Number(id))
+  const concertId = Number(id)
+  const queryClient = useQueryClient()
+
   const [thumbnailFailed, setThumbnailFailed] = useState(false)
   const [activeTab, setActiveTab] = useState('info')
   const [inquiryType, setInquiryType] = useState(null)
-  const [isInCalendar, setIsInCalendar] = useState(concert?.isInCalendar ?? false)
+
   const user = useAuthStore((s) => s.user)
   const openLoginModal = useLoginModalStore((s) => s.open)
 
   useEffect(() => { setActiveTab('info') }, [id])
-  // id 변경 시 캘린더 상태 리셋 — concert 객체 참조가 아닌 id 기준으로 동기화
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => { setIsInCalendar(concert?.isInCalendar ?? false) }, [id])
 
-  // TODO: React Query 연동 후 isLoading으로 교체
-  const isLoading = false
+  const { data: concert, isLoading, isError } = useQuery({
+    queryKey: ['concert', concertId],
+    queryFn: () => getConcert(concertId),
+    retry: false,
+  })
+
+  const { data: setlistData } = useQuery({
+    queryKey: ['concert-setlist', concertId],
+    queryFn: () => getConcertSetlist(concertId),
+    enabled: concert?.status === 'ENDED',
+  })
+
+  const calendarMutation = useMutation({
+    mutationFn: ({ inCalendar }) => inCalendar ? removeFromCalendar(concertId) : addToCalendar(concertId),
+    onMutate: async ({ inCalendar }) => {
+      await queryClient.cancelQueries({ queryKey: ['concert', concertId] })
+      const prev = queryClient.getQueryData(['concert', concertId])
+      queryClient.setQueryData(['concert', concertId], (old) => ({
+        ...old,
+        isInCalendar: !inCalendar,
+      }))
+      return { prev }
+    },
+    onError: (_err, _vars, ctx) => {
+      queryClient.setQueryData(['concert', concertId], ctx.prev)
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['concert', concertId] })
+    },
+  })
 
   function handleCalendar() {
     if (!user) { openLoginModal(window.location.href); return }
-    // TODO: API 연동 — isInCalendar ? DELETE /api/calendar/{id} : POST /api/calendar/{id}
-    setIsInCalendar((prev) => !prev)
+    calendarMutation.mutate({ inCalendar: concert.isInCalendar })
   }
 
   function handleConcertInquiry() {
@@ -144,9 +86,9 @@ function ConcertDetailPage() {
     setInquiryType('SETLIST')
   }
 
-  if (isLoading) return null // TODO: 스켈레톤으로 교체
+  if (isLoading) return null
 
-  if (!concert) {
+  if (isError || !concert) {
     return (
       <EmptyState
         icon={
@@ -162,8 +104,11 @@ function ConcertDetailPage() {
     )
   }
 
-  const { thumbnailUrl, posterUrls, artistName, artistId, title, startDate, endDate,
-          venue, status, price, ticketLinks, setlist } = concert
+  const { thumbnailUrl, posterUrls, artistName, artistId,
+          title, startDate, endDate, venue, status,
+          price, isInCalendar, ticketLinks } = concert
+
+  const setlist = setlistData?.tracks ?? []
   const showThumbnailPlaceholder = !thumbnailUrl || thumbnailFailed
 
   const dateRange = endDate && endDate !== startDate
@@ -210,9 +155,13 @@ function ConcertDetailPage() {
             {/* 상태 배지 + 아티스트명 */}
             <div className={styles.topMeta}>
               <Badge status={status} />
-              <Link to={ROUTES.ARTIST_DETAIL(artistId)} className={styles.artistLink}>
-                {artistName}
-              </Link>
+              {artistId ? (
+                <Link to={ROUTES.ARTIST_DETAIL(artistId)} className={styles.artistLink}>
+                  {artistName}
+                </Link>
+              ) : (
+                <span className={styles.artistLink}>{artistName}</span>
+              )}
             </div>
 
             <h1 className={styles.title}>{title}</h1>
@@ -259,6 +208,7 @@ function ConcertDetailPage() {
             <button
               className={`${styles.calendarBtn} ${isInCalendar ? styles.calendarBtnActive : ''}`}
               onClick={handleCalendar}
+              disabled={calendarMutation.isPending}
               aria-pressed={isInCalendar}
             >
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -272,7 +222,7 @@ function ConcertDetailPage() {
             </button>
 
             {/* 예매처 링크 */}
-            {ticketLinks.length > 0 && (
+            {ticketLinks && ticketLinks.length > 0 && (
               <div className={styles.ticketSection}>
                 <p className={styles.ticketLabel}>예매처</p>
                 <div className={styles.ticketLinks}>
@@ -306,7 +256,7 @@ function ConcertDetailPage() {
                 </svg>
                 공연 정보 문의
               </button>
-              {concert.status === 'ENDED' && (
+              {status === 'ENDED' && (
                 <button className={styles.inquiryBtn} onClick={handleSetlistInquiry}>
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                     <path d="M9 11l3 3L22 4" />
@@ -341,7 +291,7 @@ function ConcertDetailPage() {
 
           {activeTab === 'setlist' && status === 'ENDED' && (
             <div className={styles.tabPanel}>
-              {setlist && setlist.length > 0 ? (
+              {setlist.length > 0 ? (
                 <ol className={styles.setlistTrackList}>
                   {setlist.map((track) => (
                     <li key={track.order} className={styles.setlistTrack}>
@@ -358,7 +308,7 @@ function ConcertDetailPage() {
 
           {activeTab === 'info' && (
             <div className={styles.tabPanel}>
-              {posterUrls.length > 0 ? (
+              {posterUrls && posterUrls.length > 0 ? (
                 <div className={styles.posterList}>
                   {posterUrls.map((url, i) => (
                     <PosterImage key={i} url={url} alt={`${title} 공연 정보 ${i + 1}`} />
