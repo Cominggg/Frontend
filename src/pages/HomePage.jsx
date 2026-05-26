@@ -334,7 +334,7 @@ function HomePage() {
           </div>
 
           {subZoneTab === 'albums' && (
-            <div className={`${styles.scrollStrip} ${styles.albumStrip}`}>
+            <div className={styles.albumStrip}>
               {releasesLoading
                 ? null
                 : newReleases.map((item) => {
