@@ -1,7 +1,9 @@
 import { useState, useMemo } from 'react'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 
 import CalendarGrid from '@/components/calendar/CalendarGrid'
 import DayConcertList from '@/components/calendar/DayConcertList'
+import { getCalendar, addToCalendar, removeFromCalendar } from '@/services/calendarApi'
 import useAuthStore from '@/stores/authStore'
 import useLoginModalStore from '@/stores/loginModalStore'
 import { isSameDay } from '@/utils/date'
@@ -9,21 +11,6 @@ import styles from './CalendarPage.module.css'
 
 const MONTH_NAMES = ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월']
 const PALETTE = ['#e11d48', '#7c3aed', '#0ea5e9', '#f59e0b', '#10b981', '#8b5cf6', '#3b82f6', '#f97316', '#14b8a6', '#ec4899']
-
-// TODO: Replace with React Query → GET /api/calendar?year=&month=
-const MOCK_EVENTS = [
-  { concertId: 1, artistName: 'YOASOBI',          title: 'YOASOBI ARENA TOUR 2025 "THE MONSTER"',                       startDate: '2025-08-15', endDate: '2025-08-16', status: 'UPCOMING', posterUrl: null,                                                                                                                    venue: 'KSPO DOME, 서울' },
-  { concertId: 2, artistName: 'King Gnu',          title: 'King Gnu LIVE TOUR 2025',                                     startDate: '2025-08-06', endDate: '2025-08-07', status: 'UPCOMING', posterUrl: null,                                                                                                                    venue: '올림픽공원 체조경기장, 서울' },
-  { concertId: 3, artistName: 'Ado',               title: 'Ado WORLD TOUR "Hibana" in Seoul',                            startDate: '2025-08-21', endDate: null,         status: 'UPCOMING', posterUrl: null,                                                                                                                    venue: '고척스카이돔, 서울' },
-  { concertId: 4, artistName: 'RADWIMPS',          title: 'RADWIMPS LIVE TOUR 2025',                                     startDate: '2025-08-12', endDate: null,         status: 'UPCOMING', posterUrl: null,                                                                                                                    venue: '올림픽공원 체조경기장, 서울' },
-  { concertId: 5, artistName: 'Creepy Nuts',       title: 'Creepy Nuts LIVE 2025 "2 Baddies"',                          startDate: '2025-08-30', endDate: null,         status: 'UPCOMING', posterUrl: null,                                                                                                                    venue: '올림픽공원 체조경기장, 서울' },
-  { concertId: 6, artistName: 'Mrs. GREEN APPLE',  title: 'Mrs. GREEN APPLE TOUR 2025',                                 startDate: '2025-08-14', endDate: '2025-08-15', status: 'UPCOMING', posterUrl: null,                                                                                                                    venue: 'KSPO DOME, 서울' },
-  { concertId: 7, artistName: 'Official髭男dism',  title: 'Official髭男dism one-man live tour 2025',                     startDate: '2025-08-28', endDate: '2025-08-30', status: 'UPCOMING', posterUrl: null,                                                                                                                    venue: '인스파이어 아레나, 인천' },
-  { concertId: 8, artistName: 'ZUTOMAYO',          title: 'ZUTOMAYO INTENSE II「坐・ZOMBIE CRAB LABO」in Seoul',         startDate: '2026-03-14', endDate: '2026-03-15', status: 'ENDED',    posterUrl: 'https://etbr-cms-site.s3.ap-northeast-1.amazonaws.com/zutomayo.net/share/intense2/ZUTOMAYO_SEOUL_2026031415.jpg', venue: '고려대학교 화정체육관, 서울' },
-]
-
-// TODO: Initialize from GET /api/calendar/my
-const INITIAL_MY_CALENDAR_IDS = new Set([1, 3])
 
 function ChevronLeft() {
   return (
@@ -47,33 +34,60 @@ function CalendarPage() {
   const [month, setMonth] = useState(today.getMonth())
   const [selectedDate, setSelectedDate] = useState(null)
   const [viewMode, setViewMode] = useState('all') // 'all' | 'my'
-  const [myCalendarIds, setMyCalendarIds] = useState(INITIAL_MY_CALENDAR_IDS)
 
   const user = useAuthStore((s) => s.user)
   const isLoggedIn = !!user
   const openLoginModal = useLoginModalStore((s) => s.open)
+  const queryClient = useQueryClient()
 
-  // 공연별 고정 색상 할당
+  const calendarMonth = month + 1 // API는 1-12, JS Date는 0-11
+
+  const { data: rawEvents = [] } = useQuery({
+    queryKey: ['calendar', year, calendarMonth],
+    queryFn: () => getCalendar({ year, month: calendarMonth }),
+  })
+
   const colorMap = useMemo(() => {
     const map = {}
     let idx = 0
-    MOCK_EVENTS.forEach((ev) => {
+    rawEvents.forEach((ev) => {
       if (!(ev.concertId in map)) map[ev.concertId] = PALETTE[idx++ % PALETTE.length]
     })
     return map
-  }, [])
+  }, [rawEvents])
 
   const events = useMemo(() => {
-    const enriched = MOCK_EVENTS.map((ev) => ({
+    const enriched = rawEvents.map((ev) => ({
       ...ev,
       color: colorMap[ev.concertId],
-      inMyCalendar: myCalendarIds.has(ev.concertId),
+      inMyCalendar: ev.isInCalendar,
     }))
     return viewMode === 'my' ? enriched.filter((ev) => ev.inMyCalendar) : enriched
-  }, [viewMode, myCalendarIds, colorMap])
+  }, [rawEvents, viewMode, colorMap])
 
   const isViewingCurrentMonth =
     year === today.getFullYear() && month === today.getMonth()
+
+  const toggleMutation = useMutation({
+    mutationFn: ({ concertId, inCalendar }) =>
+      inCalendar ? removeFromCalendar(concertId) : addToCalendar(concertId),
+    onMutate: async ({ concertId, inCalendar }) => {
+      await queryClient.cancelQueries({ queryKey: ['calendar', year, calendarMonth] })
+      const prev = queryClient.getQueryData(['calendar', year, calendarMonth])
+      queryClient.setQueryData(['calendar', year, calendarMonth], (old) =>
+        (old ?? []).map((ev) =>
+          ev.concertId === concertId ? { ...ev, isInCalendar: !inCalendar } : ev
+        )
+      )
+      return { prev }
+    },
+    onError: (_err, _vars, ctx) => {
+      queryClient.setQueryData(['calendar', year, calendarMonth], ctx.prev)
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['calendar', year, calendarMonth] })
+    },
+  })
 
   function prevMonth() {
     if (month === 0) { setYear((y) => y - 1); setMonth(11) }
@@ -110,13 +124,7 @@ function CalendarPage() {
       openLoginModal({ redirectUri: '/calendar' })
       return
     }
-    // TODO: call POST /api/calendar/:concertId or DELETE /api/calendar/:concertId
-    setMyCalendarIds((prev) => {
-      const next = new Set(prev)
-      if (next.has(ev.concertId)) next.delete(ev.concertId)
-      else next.add(ev.concertId)
-      return next
-    })
+    toggleMutation.mutate({ concertId: ev.concertId, inCalendar: ev.inMyCalendar })
   }
 
   return (
