@@ -274,27 +274,37 @@ function HomePage() {
               <ul className={styles.upcomingList}>
                 {upcomingLoading
                   ? null
-                  : upcomingConcerts.map((concert) => {
-                      const dday = getDday(concert.startDate, today)
-                      const isUrgent = dday && dday !== 'D-DAY' && parseInt(dday.replace('D-', '')) <= 7
-                      return (
-                        <li key={concert.id}>
-                          <Link to={ROUTES.CONCERT_DETAIL(concert.id)} className={styles.upcomingItem}>
-                            <div className={`${styles.upcomingDday} ${isUrgent ? styles.upcomingDdayUrgent : ''}`}>
-                              {dday ?? '-'}
-                            </div>
-                            <div className={styles.upcomingInfo}>
-                              <p className={styles.upcomingArtist}>{concert.artistName}</p>
-                              <p className={styles.upcomingTitle}>{concert.title}</p>
-                              <p className={styles.upcomingMeta}>
-                                <Icon name="calendar" size={12} />
-                                {formatDate(concert.startDate)} · {concert.venue}
-                              </p>
-                            </div>
-                          </Link>
-                        </li>
-                      )
-                    })}
+                  : upcomingConcerts.length === 0
+                    ? (
+                      <li className={styles.upcomingEmpty}>
+                        <div className={styles.upcomingEmptyIcon} aria-hidden="true">
+                          <Icon name="calendar" size={24} />
+                        </div>
+                        <p className={styles.upcomingEmptyTitle}>예정된 공연이 없어요</p>
+                        <p className={styles.upcomingEmptySub}>가까운 시일 내 내한 공연 정보가 없습니다</p>
+                      </li>
+                    )
+                    : upcomingConcerts.map((concert) => {
+                        const dday = getDday(concert.startDate, today)
+                        const isUrgent = dday && dday !== 'D-DAY' && parseInt(dday.replace('D-', '')) <= 7
+                        return (
+                          <li key={concert.id}>
+                            <Link to={ROUTES.CONCERT_DETAIL(concert.id)} className={styles.upcomingItem}>
+                              <div className={`${styles.upcomingDday} ${isUrgent ? styles.upcomingDdayUrgent : ''}`}>
+                                {dday ?? '-'}
+                              </div>
+                              <div className={styles.upcomingInfo}>
+                                <p className={styles.upcomingArtist}>{concert.artistName}</p>
+                                <p className={styles.upcomingTitle}>{concert.title}</p>
+                                <p className={styles.upcomingMeta}>
+                                  <Icon name="calendar" size={12} />
+                                  {formatDate(concert.startDate)} · {concert.venue}
+                                </p>
+                              </div>
+                            </Link>
+                          </li>
+                        )
+                      })}
               </ul>
             </div>
           </aside>
