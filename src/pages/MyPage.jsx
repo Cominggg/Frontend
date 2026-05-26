@@ -1,55 +1,18 @@
 import { useEffect, useRef, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 
 import Badge from '@/components/ui/Badge'
 import EmptyState from '@/components/ui/EmptyState'
+import { getMe, updateMe, withdraw } from '@/services/authApi'
+import { getFollowingArtists, unfollowArtist } from '@/services/artistApi'
+import { getMyCalendar } from '@/services/calendarApi'
+import { getConcertHistory, getMyInquiries } from '@/services/myApi'
+import useAuthStore from '@/stores/authStore'
 import { ROUTES } from '@/constants/routes'
 import { getArtistColor } from '@/utils/artistColor'
 import { formatDate } from '@/utils/date'
 import styles from './MyPage.module.css'
-
-// TODO: API 연동 후 제거 (AUTH-02)
-const MOCK_USER = { nickname: '라이브덕후', avatarUrl: null }
-
-// TODO: API 연동 후 제거
-const MOCK_FOLLOWED_ARTISTS = [
-  { id: 2, name: 'Kenshi Yonezu', imageUrl: null, hasUpcomingConcert: false },
-  { id: 6, name: 'RADWIMPS',      imageUrl: null, hasUpcomingConcert: true  },
-]
-
-// TODO: API 연동 후 제거 (MY-03)
-const MOCK_UPCOMING_CONCERTS = [
-  { id: 1,  artistName: 'YOASOBI',          title: 'YOASOBI ARENA TOUR 2025 "THE MONSTER"',       startDate: '2025-08-15', endDate: '2025-08-16', venue: 'KSPO DOME, 서울',                  status: 'UPCOMING' },
-  { id: 2,  artistName: 'King Gnu',          title: 'King Gnu Live Tour 2025',                     startDate: '2025-07-05', endDate: '2025-07-06', venue: '올림픽공원 체조경기장, 서울',        status: 'UPCOMING' },
-  { id: 3,  artistName: 'Ado',               title: 'Ado WORLD TOUR "Hibana" in Seoul',            startDate: '2025-06-21', endDate: null,         venue: '고척스카이돔, 서울',                status: 'UPCOMING' },
-  { id: 7,  artistName: 'Mrs. GREEN APPLE',  title: 'Mrs. GREEN APPLE ARENA TOUR 2025',            startDate: '2025-10-04', endDate: '2025-10-05', venue: 'KSPO DOME, 서울',                  status: 'UPCOMING' },
-  { id: 9,  artistName: 'RADWIMPS',          title: 'RADWIMPS LIVE TOUR 2025',                     startDate: '2025-11-22', endDate: null,         venue: '올림픽공원 체조경기장, 서울',        status: 'UPCOMING' },
-  { id: 10, artistName: 'Fujii Kaze',        title: 'Fujii Kaze LOVE ALL SERVE ALL STADIUM LIVE',  startDate: '2025-08-30', endDate: '2025-08-31', venue: '잠실종합운동장 주경기장, 서울',      status: 'UPCOMING' },
-]
-
-// TODO: API 연동 후 제거 (MY-01)
-const MOCK_PAST_CONCERTS = [
-  { id: 1,   artistName: 'YOASOBI',       title: 'YOASOBI ARENA TOUR 2025 "THE MONSTER"',    startDate: '2025-08-15', endDate: '2025-08-16', venue: 'KSPO DOME, 서울',                  status: 'ENDED' },
-  { id: 2,   artistName: 'Kenshi Yonezu', title: 'Kenshi Yonezu TOUR 2025 "LOST CORNER"',    startDate: '2025-04-19', endDate: '2025-04-20', venue: '고척스카이돔, 서울',                status: 'ENDED' },
-  { id: 3,   artistName: 'Ado',           title: 'Ado WORLD TOUR "Hibana" in Seoul',          startDate: '2025-06-21', endDate: null,         venue: '고척스카이돔, 서울',                status: 'ENDED' },
-  { id: 201, artistName: 'Kenshi Yonezu', title: 'Kenshi Yonezu STADIUM LIVE 2023',           startDate: '2023-11-18', endDate: '2023-11-19', venue: '잠실종합운동장 주경기장, 서울',      status: 'ENDED' },
-  { id: 101, artistName: 'YOASOBI',       title: 'YOASOBI THE BOOK CONCERT 2023',             startDate: '2023-05-27', endDate: '2023-05-28', venue: '올림픽공원 체조경기장, 서울',        status: 'ENDED' },
-  { id: 301, artistName: 'Ado',           title: 'Ado WORLD TOUR 2024 "Wish"',                startDate: '2024-04-13', endDate: null,         venue: 'KSPO DOME, 서울',                  status: 'ENDED' },
-  { id: 202, artistName: 'Kenshi Yonezu', title: 'Kenshi Yonezu HALL TOUR 2022',              startDate: '2022-06-11', endDate: null,         venue: '올림픽공원 체조경기장, 서울',        status: 'ENDED' },
-  { id: 102, artistName: 'YOASOBI',       title: 'YOASOBI LIVE 2022 "Into The Night"',        startDate: '2022-10-15', endDate: null,         venue: '예스24 라이브홀, 서울',              status: 'ENDED' },
-  { id: 302, artistName: 'Ado',           title: 'Ado LIVE 2023',                             startDate: '2023-08-05', endDate: null,         venue: '올림픽공원 체조경기장, 서울',        status: 'ENDED' },
-  { id: 103, artistName: 'YOASOBI',       title: 'YOASOBI CONCERT 2021',                      startDate: '2021-09-04', endDate: null,         venue: '올림픽공원 K-아트홀, 서울',          status: 'ENDED' },
-  { id: 401, artistName: 'RADWIMPS',      title: 'RADWIMPS LIVE TOUR 2024',                   startDate: '2024-09-14', endDate: '2024-09-15', venue: '올림픽공원 체조경기장, 서울',        status: 'ENDED' },
-]
-
-// TODO: API 연동 후 제거 (INQ-04)
-const MOCK_INQUIRIES = [
-  { id: 1, type: 'CONCERT', title: 'YOASOBI 2025 공연 예매처 링크가 잘못되어 있습니다',   status: 'RESOLVED',    createdAt: '2025.08.20', resultMessage: '안내해 주신 내용을 확인하여 예매처 링크를 수정하였습니다. 감사합니다.' },
-  { id: 2, type: 'ARTIST',  title: 'Kenshi Yonezu 멤버 정보가 틀립니다',                  status: 'REJECTED',    createdAt: '2025.07.15', rejectReason: '현재 등록된 정보는 공식 프로필 기준으로 정확합니다.' },
-  { id: 3, type: 'SETLIST', title: 'Ado Hibana 공연 셋리스트 일부 누락',                  status: 'IN_PROGRESS', createdAt: '2025.06.30' },
-  { id: 4, type: 'CONCERT', title: 'King Gnu 2025 공연 장소 정보 수정 요청',               status: 'PENDING',     createdAt: '2025.06.10' },
-  { id: 5, type: 'ARTIST',  title: 'RADWIMPS 공식 홈페이지 링크 오류',                    status: 'RESOLVED',    createdAt: '2025.05.22', resultMessage: '공식 홈페이지 링크를 최신 주소로 업데이트하였습니다.' },
-]
 
 const INQ_TYPE_LABELS = { CONCERT: '공연 정보', ARTIST: '아티스트 정보', SETLIST: '셋리스트' }
 const INQ_STATUS_LABELS = { PENDING: '접수', IN_PROGRESS: '처리중', RESOLVED: '완료', REJECTED: '반려' }
@@ -166,7 +129,7 @@ function InquiryRow({ inquiry }) {
             </span>
           </div>
           <p className={styles.inquiryTitle}>{title}</p>
-          <span className={styles.inquiryDate}>{createdAt}</span>
+          <span className={styles.inquiryDate}>{formatDate(createdAt)}</span>
         </div>
         {hasDetail && (
           <svg
@@ -228,9 +191,10 @@ function useModalFocusTrap(isOpen, onClose, modalRef) {
   }, [isOpen, onClose, modalRef])
 }
 
-function ProfileEditModal({ isOpen, onClose }) {
-  const [nickname, setNickname] = useState(MOCK_USER.nickname)
-  const [previewUrl, setPreviewUrl] = useState(MOCK_USER.avatarUrl)
+function ProfileEditModal({ isOpen, onClose, user, onSave }) {
+  const [nickname, setNickname] = useState(user?.nickname ?? '')
+  const [previewUrl, setPreviewUrl] = useState(user?.avatarUrl ?? null)
+  const [fileObj, setFileObj] = useState(null)
   const [fileError, setFileError] = useState(null)
   const fileInputRef = useRef(null)
   const modalRef = useRef(null)
@@ -238,8 +202,8 @@ function ProfileEditModal({ isOpen, onClose }) {
   useModalFocusTrap(isOpen, onClose, modalRef)
 
   useEffect(() => {
-    return () => { if (previewUrl && previewUrl !== MOCK_USER.avatarUrl) URL.revokeObjectURL(previewUrl) }
-  }, [previewUrl])
+    return () => { if (fileObj) URL.revokeObjectURL(previewUrl) }
+  }, [fileObj, previewUrl])
 
   if (!isOpen) return null
 
@@ -257,14 +221,18 @@ function ProfileEditModal({ isOpen, onClose }) {
       return
     }
     setFileError(null)
-    if (previewUrl && previewUrl !== MOCK_USER.avatarUrl) URL.revokeObjectURL(previewUrl)
+    if (fileObj) URL.revokeObjectURL(previewUrl)
+    setFileObj(file)
     setPreviewUrl(URL.createObjectURL(file))
   }
 
   function handleSave(e) {
     e.preventDefault()
     if (!nickname.trim()) return
-    // TODO: API 연동 — PATCH /api/users/me (AUTH-02)
+    const formData = new FormData()
+    formData.append('nickname', nickname.trim())
+    if (fileObj) formData.append('profileImage', fileObj)
+    onSave(formData)
     onClose()
   }
 
@@ -346,17 +314,12 @@ function ProfileEditModal({ isOpen, onClose }) {
   )
 }
 
-function WithdrawalModal({ isOpen, onClose }) {
+function WithdrawalModal({ isOpen, onClose, onWithdraw }) {
   const modalRef = useRef(null)
 
   useModalFocusTrap(isOpen, onClose, modalRef)
 
   if (!isOpen) return null
-
-  function handleConfirm() {
-    // TODO: API 연동 — DELETE /api/users/me (AUTH-03)
-    onClose()
-  }
 
   return (
     <div className={styles.modalOverlay} onClick={onClose} role="dialog" aria-modal="true" aria-labelledby="withdrawal-title">
@@ -382,35 +345,35 @@ function WithdrawalModal({ isOpen, onClose }) {
 
         <div className={styles.modalActions}>
           <button type="button" className={styles.modalCancelBtn} onClick={onClose}>취소</button>
-          <button type="button" className={styles.withdrawalConfirmBtn} onClick={handleConfirm}>탈퇴하기</button>
+          <button type="button" className={styles.withdrawalConfirmBtn} onClick={onWithdraw}>탈퇴하기</button>
         </div>
       </div>
     </div>
   )
 }
 
-function ProfileCard({ onEditClick }) {
+function ProfileCard({ user, onEditClick }) {
   const [imgFailed, setImgFailed] = useState(false)
-  const showPlaceholder = !MOCK_USER.avatarUrl || imgFailed
+  const showPlaceholder = !user?.avatarUrl || imgFailed
 
   return (
     <div className={styles.profileCard}>
       <div className={styles.profileAvatar}>
         {showPlaceholder ? (
           <span className={styles.profileAvatarInitial}>
-            {MOCK_USER.nickname.charAt(0)}
+            {user?.nickname?.charAt(0) ?? '?'}
           </span>
         ) : (
           <img
-            src={MOCK_USER.avatarUrl}
-            alt={MOCK_USER.nickname}
+            src={user.avatarUrl}
+            alt={user.nickname}
             className={styles.profileAvatarImg}
             onError={() => setImgFailed(true)}
           />
         )}
       </div>
       <div className={styles.profileInfo}>
-        <p className={styles.profileNickname}>{MOCK_USER.nickname}</p>
+        <p className={styles.profileNickname}>{user?.nickname ?? ''}</p>
       </div>
       <button className={styles.profileEditBtn} onClick={onEditClick}>
         프로필 수정
@@ -420,34 +383,94 @@ function ProfileCard({ onEditClick }) {
 }
 
 function MyPage() {
+  const navigate = useNavigate()
+  const queryClient = useQueryClient()
+  const clearUser = useAuthStore((s) => s.clearUser)
+
   const [activeTab, setActiveTab] = useState('artists')
   const [profileEditOpen, setProfileEditOpen] = useState(false)
   const [withdrawalOpen, setWithdrawalOpen] = useState(false)
-  const [followedArtists, setFollowedArtists] = useState(MOCK_FOLLOWED_ARTISTS)
   const [upcomingPage, setUpcomingPage] = useState(1)
   const [historyPage, setHistoryPage] = useState(1)
   const [inquiryPage, setInquiryPage] = useState(1)
 
-  function handleUnfollow(artistId) {
-    setFollowedArtists((prev) => prev.filter((a) => a.id !== artistId))
-  }
+  const { data: user } = useQuery({
+    queryKey: ['me'],
+    queryFn: getMe,
+  })
 
-  const totalUpcomingPages = Math.max(1, Math.ceil(MOCK_UPCOMING_CONCERTS.length / MY_PAGE_SIZE))
-  const paginatedUpcoming = MOCK_UPCOMING_CONCERTS.slice(
+  const { data: followingArtists = [] } = useQuery({
+    queryKey: ['following-artists'],
+    queryFn: getFollowingArtists,
+  })
+
+  const todayStr = new Date().toISOString().slice(0, 10)
+
+  const { data: myCalendarData } = useQuery({
+    queryKey: ['my-calendar'],
+    queryFn: () => getMyCalendar({ size: 100 }),
+  })
+  const upcomingConcerts = (myCalendarData?.content ?? []).filter(
+    (c) => c.startDate >= todayStr
+  )
+
+  const { data: historyData } = useQuery({
+    queryKey: ['concert-history', historyPage],
+    queryFn: () => getConcertHistory({ page: historyPage - 1, size: MY_PAGE_SIZE }),
+    placeholderData: (prev) => prev,
+    enabled: activeTab === 'history',
+  })
+
+  const { data: inquiryData } = useQuery({
+    queryKey: ['my-inquiries', inquiryPage],
+    queryFn: () => getMyInquiries({ page: inquiryPage - 1, size: MY_PAGE_SIZE }),
+    placeholderData: (prev) => prev,
+    enabled: activeTab === 'inquiries',
+  })
+
+  const unfollowMutation = useMutation({
+    mutationFn: unfollowArtist,
+    onMutate: async (artistId) => {
+      await queryClient.cancelQueries({ queryKey: ['following-artists'] })
+      const prev = queryClient.getQueryData(['following-artists'])
+      queryClient.setQueryData(['following-artists'], (old) =>
+        (old ?? []).filter((a) => a.id !== artistId)
+      )
+      return { prev }
+    },
+    onError: (_err, _vars, ctx) => {
+      queryClient.setQueryData(['following-artists'], ctx.prev)
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['following-artists'] })
+    },
+  })
+
+  const updateProfileMutation = useMutation({
+    mutationFn: updateMe,
+    onSuccess: (updated) => {
+      queryClient.setQueryData(['me'], updated)
+    },
+  })
+
+  const withdrawMutation = useMutation({
+    mutationFn: withdraw,
+    onSuccess: () => {
+      clearUser()
+      navigate('/')
+    },
+  })
+
+  const historyList = historyData?.content ?? []
+  const totalHistoryPages = historyData?.totalPages ?? 1
+
+  const inquiryList = inquiryData?.content ?? []
+  const totalInquiryPages = inquiryData?.totalPages ?? 1
+
+  const totalUpcomingPages = Math.max(1, Math.ceil(upcomingConcerts.length / MY_PAGE_SIZE))
+  const paginatedUpcoming = upcomingConcerts.slice(
     (upcomingPage - 1) * MY_PAGE_SIZE,
     upcomingPage * MY_PAGE_SIZE
-  )
-
-  const totalHistoryPages = Math.max(1, Math.ceil(MOCK_PAST_CONCERTS.length / MY_PAGE_SIZE))
-  const paginatedHistory = MOCK_PAST_CONCERTS.slice(
-    (historyPage - 1) * MY_PAGE_SIZE,
-    historyPage * MY_PAGE_SIZE
-  )
-
-  const totalInquiryPages = Math.max(1, Math.ceil(MOCK_INQUIRIES.length / MY_PAGE_SIZE))
-  const paginatedInquiries = MOCK_INQUIRIES.slice(
-    (inquiryPage - 1) * MY_PAGE_SIZE,
-    inquiryPage * MY_PAGE_SIZE
   )
 
   return (
@@ -455,8 +478,15 @@ function MyPage() {
       <div className={styles.inner}>
 
         {/* 프로필 카드 (AUTH-02) */}
-        <ProfileCard onEditClick={() => setProfileEditOpen(true)} />
-        {profileEditOpen && <ProfileEditModal isOpen={profileEditOpen} onClose={() => setProfileEditOpen(false)} />}
+        <ProfileCard user={user} onEditClick={() => setProfileEditOpen(true)} />
+        {profileEditOpen && (
+          <ProfileEditModal
+            isOpen={profileEditOpen}
+            onClose={() => setProfileEditOpen(false)}
+            user={user}
+            onSave={(formData) => updateProfileMutation.mutate(formData)}
+          />
+        )}
 
         {/* 탭 */}
         <div className={styles.tabs} role="tablist">
@@ -478,7 +508,7 @@ function MyPage() {
         {/* 관심 아티스트 탭 (MY-02) */}
         {activeTab === 'artists' && (
           <div role="tabpanel" id="tabpanel-artists" aria-labelledby="tab-artists">
-            {followedArtists.length === 0 ? (
+            {followingArtists.length === 0 ? (
               <EmptyState
                 icon={
                   <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
@@ -490,8 +520,12 @@ function MyPage() {
               />
             ) : (
               <div className={styles.artistList}>
-                {followedArtists.map((artist) => (
-                  <ArtistRow key={artist.id} artist={artist} onUnfollow={handleUnfollow} />
+                {followingArtists.map((artist) => (
+                  <ArtistRow
+                    key={artist.id}
+                    artist={artist}
+                    onUnfollow={(id) => unfollowMutation.mutate(id)}
+                  />
                 ))}
               </div>
             )}
@@ -517,7 +551,7 @@ function MyPage() {
               <>
                 <div className={styles.concertList}>
                   {paginatedUpcoming.map((concert) => (
-                    <ConcertRow key={concert.id} concert={concert} />
+                    <ConcertRow key={concert.concertId} concert={{ ...concert, id: concert.concertId }} />
                   ))}
                 </div>
 
@@ -564,7 +598,7 @@ function MyPage() {
         {/* 다녀온 공연 탭 (MY-01) */}
         {activeTab === 'history' && (
           <div role="tabpanel" id="tabpanel-history" aria-labelledby="tab-history">
-            {paginatedHistory.length === 0 ? (
+            {historyList.length === 0 ? (
               <EmptyState
                 icon={
                   <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
@@ -577,7 +611,7 @@ function MyPage() {
             ) : (
               <>
                 <div className={styles.concertList}>
-                  {paginatedHistory.map((concert) => (
+                  {historyList.map((concert) => (
                     <ConcertRow key={concert.id} concert={concert} />
                   ))}
                 </div>
@@ -625,7 +659,7 @@ function MyPage() {
         {/* 내 문의 탭 (INQ-04) */}
         {activeTab === 'inquiries' && (
           <div role="tabpanel" id="tabpanel-inquiries" aria-labelledby="tab-inquiries">
-            {paginatedInquiries.length === 0 ? (
+            {inquiryList.length === 0 ? (
               <EmptyState
                 icon={
                   <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
@@ -639,7 +673,7 @@ function MyPage() {
             ) : (
               <>
                 <div className={styles.inquiryList}>
-                  {paginatedInquiries.map((inquiry) => (
+                  {inquiryList.map((inquiry) => (
                     <InquiryRow key={inquiry.id} inquiry={inquiry} />
                   ))}
                 </div>
@@ -693,7 +727,11 @@ function MyPage() {
             회원 탈퇴
           </button>
         </div>
-        <WithdrawalModal isOpen={withdrawalOpen} onClose={() => setWithdrawalOpen(false)} />
+        <WithdrawalModal
+          isOpen={withdrawalOpen}
+          onClose={() => setWithdrawalOpen(false)}
+          onWithdraw={() => withdrawMutation.mutate()}
+        />
 
       </div>
     </div>
