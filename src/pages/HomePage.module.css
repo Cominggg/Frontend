@@ -3,304 +3,8 @@
 }
 
 /* ===========================
-   캐러셀
+   섹션 공통
    =========================== */
-.carouselSection {
-  padding: 2rem 0 0;
-}
-
-.carouselInner {
-  position: relative;
-  max-width: var(--max-width);
-  margin: 0 auto;
-  padding: 0 2rem;
-}
-
-.carouselViewport {
-  position: relative;
-  overflow: hidden;
-  border-radius: 16px;
-  border: 1px solid var(--color-border);
-}
-
-.carouselTrack {
-  display: flex;
-  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.carouselSlide {
-  flex: 0 0 100%;
-  min-width: 0;
-  position: relative;
-  display: flex;
-  align-items: center;
-  padding: 3.5rem 4rem;
-  min-height: 300px;
-  background: linear-gradient(
-    135deg,
-    color-mix(in srgb, var(--slide-accent) 18%, var(--color-surface)) 0%,
-    color-mix(in srgb, var(--slide-accent) 6%, var(--color-surface)) 45%,
-    var(--color-surface) 72%
-  );
-  overflow: hidden;
-}
-
-.slideContent {
-  position: relative;
-  z-index: 1;
-  max-width: 640px;
-}
-
-/* 타입 배지 */
-.slideBadge {
-  display: inline-flex;
-  align-items: center;
-  padding: 0.25rem 0.75rem;
-  border-radius: 100px;
-  font-size: 0.6875rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--slide-accent);
-  background: color-mix(in srgb, var(--slide-accent) 10%, transparent);
-  border: 1px solid color-mix(in srgb, var(--slide-accent) 22%, transparent);
-  margin-bottom: 0.875rem;
-}
-
-.slideArtist {
-  margin: 0 0 0.375rem;
-  font-size: 0.9375rem;
-  font-weight: 700;
-  color: var(--slide-accent);
-  letter-spacing: 0.02em;
-}
-
-.slideTitle {
-  margin: 0 0 1.25rem;
-  font-size: clamp(1.5rem, 3vw, 2.25rem);
-  font-weight: 800;
-  line-height: 1.25;
-  letter-spacing: -0.025em;
-  color: var(--color-text);
-  text-wrap: balance;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.slideMeta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-}
-
-.slideMetaItem {
-  display: flex;
-  align-items: center;
-  gap: 0.375rem;
-  font-size: 0.875rem;
-  color: var(--color-text-muted);
-}
-
-/* CTA 버튼 */
-.slideActions {
-  display: flex;
-  gap: 0.75rem;
-  flex-wrap: wrap;
-  margin-top: 1.75rem;
-}
-
-.slideBtnPrimary {
-  display: inline-flex;
-  align-items: center;
-  padding: 0.625rem 1.5rem;
-  border-radius: 100px;
-  font-size: 0.875rem;
-  text-decoration: none;
-  font-weight: 600;
-  color: #fff;
-  background: var(--slide-accent);
-  border: none;
-  cursor: pointer;
-  transition: opacity 0.15s, transform 0.15s;
-}
-
-.slideBtnPrimary:hover {
-  opacity: 0.85;
-  transform: translateY(-1px);
-}
-
-.slideBtnSecondary {
-  display: inline-flex;
-  align-items: center;
-  padding: 0.625rem 1.5rem;
-  border-radius: 100px;
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: var(--slide-accent);
-  background: transparent;
-  border: 1.5px solid color-mix(in srgb, var(--slide-accent) 35%, transparent);
-  cursor: pointer;
-  transition: background 0.15s, transform 0.15s;
-}
-
-.slideBtnSecondary:hover {
-  background: color-mix(in srgb, var(--slide-accent) 10%, transparent);
-  transform: translateY(-1px);
-}
-
-/* 배경 데코레이션 (우측 절대 배치) */
-.slideVisual {
-  position: absolute;
-  right: -2rem;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 420px;
-  height: 420px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  pointer-events: none;
-}
-
-.slideOrb {
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  background: radial-gradient(
-    circle at 40% 40%,
-    color-mix(in srgb, var(--slide-accent) 28%, transparent) 0%,
-    color-mix(in srgb, var(--slide-accent) 10%, transparent) 50%,
-    transparent 72%
-  );
-}
-
-.slideOrb::after {
-  content: '';
-  position: absolute;
-  width: 55%;
-  height: 55%;
-  bottom: 8%;
-  right: 8%;
-  border-radius: 50%;
-  background: radial-gradient(
-    circle,
-    color-mix(in srgb, var(--slide-accent) 14%, transparent) 0%,
-    transparent 70%
-  );
-}
-
-.slideInitial {
-  position: relative;
-  z-index: 1;
-  font-size: clamp(10rem, 18vw, 17rem);
-  font-weight: 900;
-  line-height: 1;
-  color: var(--slide-accent);
-  opacity: 0.07;
-  user-select: none;
-  letter-spacing: -0.06em;
-}
-
-/* 내비게이션 버튼 */
-.navBtn {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 2;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
-  background: var(--color-overlay-btn-bg);
-  backdrop-filter: blur(8px);
-  border: 1px solid var(--color-overlay-btn-border);
-  border-radius: 50%;
-  color: var(--color-text);
-  box-shadow: 0 2px 8px var(--color-overlay-btn-shadow);
-  transition: background 0.15s, box-shadow 0.15s, transform 0.15s;
-}
-
-.navBtn:hover {
-  background: var(--color-overlay-btn-bg-hover);
-  box-shadow: 0 4px 16px var(--color-overlay-btn-shadow-hover);
-  transform: translateY(-50%) scale(1.05);
-}
-
-.navPrev {
-  left: 1rem;
-}
-
-.navNext {
-  right: 1rem;
-}
-
-/* 닷 인디케이터 — 슬라이드 하단 오버레이 */
-.carouselDots {
-  position: absolute;
-  bottom: 0.75rem;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0;
-  z-index: 2;
-}
-
-.dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background-color: var(--color-dot-inactive);
-  border: none;
-  padding: 0;
-  transition: background-color 0.2s, width 0.2s, border-radius 0.2s;
-}
-
-.dotActive {
-  width: 24px;
-  border-radius: 4px;
-  background-color: color-mix(in srgb, var(--color-accent) 30%, var(--color-border));
-  position: relative;
-  overflow: hidden;
-}
-
-.dotActive::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: var(--color-accent);
-  border-radius: inherit;
-  transform-origin: left center;
-  animation: dot-progress 5s linear forwards;
-}
-
-@keyframes dot-progress {
-  from { transform: scaleX(0); }
-  to   { transform: scaleX(1); }
-}
-
-.dotsPaused .dotActive::after {
-  animation-play-state: paused;
-}
-
-/* ===========================
-   섹션
-   =========================== */
-.section {
-  padding: 3rem 0 3.5rem;
-}
-
-.sectionInner {
-  max-width: var(--max-width);
-  margin: 0 auto;
-  padding: 0 2rem;
-}
-
 .sectionHeader {
   display: flex;
   align-items: baseline;
@@ -314,11 +18,6 @@
   font-weight: 700;
   color: var(--color-text);
   letter-spacing: -0.01em;
-}
-
-.subZoneRight .sectionTitle {
-  font-size: 1.125rem;
-  font-weight: 600;
 }
 
 .sectionMore {
@@ -336,85 +35,22 @@
   color: var(--color-accent-light);
 }
 
-.sectionTitleGroup {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-
-.statsChip {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.15rem;
-  padding: 0.25rem 0.6rem 0.25rem 0.75rem;
-  border-radius: 100px;
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: var(--color-accent);
-  background: color-mix(in srgb, var(--color-accent) 10%, transparent);
-  border: 1px solid color-mix(in srgb, var(--color-accent) 20%, transparent);
-  text-decoration: none;
-  transition: background 0.15s, border-color 0.15s;
-}
-
-.statsChip:hover {
-  background: color-mix(in srgb, var(--color-accent) 16%, transparent);
-  border-color: color-mix(in srgb, var(--color-accent) 35%, transparent);
-}
-
-/* 그리드 */
-.grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1.25rem;
-}
-
-/* 마지막 섹션 하단 여백 */
-.sectionLast {
-  padding-bottom: 4rem;
-}
-
 /* ===========================
-   수평 스크롤 스트립 (모바일 기본)
+   새 앨범·싱글 그리드
    =========================== */
-.scrollStrip {
-  display: flex;
+.albumStrip {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
   gap: 1rem;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  scrollbar-width: none;
-  padding-bottom: 6px;
 }
 
-.scrollStrip::-webkit-scrollbar {
-  display: none;
-}
-
-/* 태블릿~: 앨범 그리드 전환 */
 @media (min-width: 768px) {
   .albumStrip {
-    display: grid;
     grid-template-columns: repeat(4, 1fr);
-    overflow-x: visible;
-    scroll-snap-type: none;
-    padding-bottom: 0;
-  }
-
-  .albumStrip .albumCard {
-    flex: none;
-    scroll-snap-align: none;
-    width: auto;
-  }
-
-  .albumStrip .albumArt {
-    width: 100%;
-    height: auto;
-    aspect-ratio: 1 / 1;
   }
 }
 
-/* 데스크탑: 8건 1행 */
-@media (min-width: 1280px) {
+@media (min-width: 1101px) {
   .albumStrip {
     grid-template-columns: repeat(8, 1fr);
   }
@@ -484,16 +120,15 @@
    새 앨범·싱글 카드
    =========================== */
 .albumCard {
-  flex: 0 0 160px;
-  scroll-snap-align: start;
+  min-width: 0;
   cursor: pointer;
   text-decoration: none;
   color: inherit;
 }
 
 .albumArt {
-  width: 160px;
-  height: 160px;
+  width: 100%;
+  aspect-ratio: 1 / 1;
   border-radius: 12px;
   background: linear-gradient(145deg, var(--a-from) 0%, var(--a-to) 100%);
   position: relative;
@@ -561,7 +196,7 @@
    mainZone — 인기 공연 + 다가오는 공연 2단
    =========================== */
 .mainZone {
-  padding: 2.5rem 0 0;
+  padding: 3rem 0 0;
 }
 
 .mainZoneInner {
@@ -748,7 +383,49 @@
   white-space: nowrap;
 }
 
-/* 반응형 */
+/* 다가오는 공연 — 빈 상태 */
+.upcomingEmpty {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem;
+  padding: 3rem 1.5rem;
+  list-style: none;
+  text-align: center;
+}
+
+.upcomingEmptyIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--color-accent-dim);
+  color: var(--color-accent);
+  margin-bottom: 0.5rem;
+  opacity: 0.7;
+}
+
+.upcomingEmptyTitle {
+  margin: 0;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.upcomingEmptySub {
+  margin: 0;
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+  line-height: 1.5;
+}
+
+/* ===========================
+   반응형
+   =========================== */
 
 /* 1100px 이하: mainZone 단열 전환 */
 @media (max-width: 1100px) {
@@ -763,31 +440,6 @@
 
 /* 767px 이하: 모바일 */
 @media (max-width: 767px) {
-  .carouselSection {
-    padding: 1.25rem 0 0;
-  }
-
-  .carouselInner {
-    padding: 0 1.25rem;
-  }
-
-  .carouselSlide {
-    padding: 2.25rem 1.75rem;
-    min-height: 260px;
-  }
-
-  .slideVisual {
-    display: none;
-  }
-
-  .slideActions {
-    margin-top: 1.25rem;
-  }
-
-  .navBtn {
-    display: none;
-  }
-
   .mainZone {
     padding: 2rem 0 0;
   }
