@@ -23,16 +23,6 @@ function getDday(dateStr, today) {
   return null
 }
 
-function buildDateStr(startDate, endDate) {
-  const start = formatDate(startDate)
-  if (!endDate || endDate === startDate) return start
-  const [sy, sm] = startDate.split('-')
-  const [ey, em, ed] = endDate.split('-')
-  const endStr = sy === ey && sm === em
-    ? `${em}.${ed}`
-    : formatDate(endDate)
-  return `${start} – ${endStr}`
-}
 
 function HomePage() {
   const [subZoneTab, setSubZoneTab] = useState('albums')
