@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 
 import ConcertCard from '@/components/concert/ConcertCard'
@@ -15,13 +15,31 @@ const STATUS_FILTERS = ['ALL', 'UPCOMING', 'ONGOING', 'ENDED', 'CANCELLED']
 const ITEMS_PER_PAGE = 20
 
 function ConcertsPage() {
-  const [selectedStatus, setSelectedStatus] = useState('ALL')
-  const [followedOnly, setFollowedOnly] = useState(false)
-  const [currentPage, setCurrentPage] = useState(1)
+  const [searchParams, setSearchParams] = useSearchParams()
+
+  const selectedStatus = STATUS_FILTERS.includes(searchParams.get('status'))
+    ? searchParams.get('status')
+    : 'ALL'
+  const followedOnly = searchParams.get('followed') === 'true'
+  const currentPage = Math.max(1, parseInt(searchParams.get('page') || '1', 10))
 
   const user = useAuthStore((s) => s.user)
   const openLoginModal = useLoginModalStore((s) => s.open)
   const effectiveFollowedOnly = followedOnly && !!user
+
+  function updateParams(updates) {
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev)
+      Object.entries(updates).forEach(([k, v]) => {
+        if (v == null || v === false || v === 'ALL' || v === '1' || v === 1) {
+          next.delete(k)
+        } else {
+          next.set(k, String(v))
+        }
+      })
+      return next
+    }, { replace: false })
+  }
 
   const statusParam = selectedStatus === 'ALL' ? undefined : selectedStatus
 
@@ -55,8 +73,7 @@ function ConcertsPage() {
   }
 
   function handleStatusChange(status) {
-    setSelectedStatus(status)
-    setCurrentPage(1)
+    updateParams({ status, page: 1 })
   }
 
   function handleFollowedToggle() {
@@ -64,8 +81,11 @@ function ConcertsPage() {
       openLoginModal(window.location.pathname + window.location.search)
       return
     }
-    setFollowedOnly((prev) => !prev)
-    setCurrentPage(1)
+    updateParams({ followed: followedOnly ? false : true, page: 1 })
+  }
+
+  function handlePageChange(page) {
+    updateParams({ page })
   }
 
   return (
@@ -139,7 +159,7 @@ function ConcertsPage() {
           <Pagination
             currentPage={currentPage}
             totalPages={totalPages}
-            onPageChange={setCurrentPage}
+            onPageChange={handlePageChange}
           />
         )}
 

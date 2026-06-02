@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useParams, useSearchParams } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 
 import ArtistConcertItem from '@/components/artist/ArtistConcertItem'
@@ -49,12 +49,30 @@ function ArtistDetailPage() {
   const artistId = Number(id)
   const queryClient = useQueryClient()
 
+  const [searchParams, setSearchParams] = useSearchParams()
+
+  const VALID_TABS = ['all', 'upcoming', 'past']
+  const concertTab = VALID_TABS.includes(searchParams.get('ct')) ? searchParams.get('ct') : 'all'
+  const concertPage = Math.max(1, parseInt(searchParams.get('cp') || '1', 10))
+  const releasePage = Math.max(1, parseInt(searchParams.get('rp') || '1', 10))
+
   const [imgFailed, setImgFailed] = useState(false)
-  const [concertTab, setConcertTab] = useState('all')
-  const [concertPage, setConcertPage] = useState(1)
-  const [releasePage, setReleasePage] = useState(1)
   const [openReleaseId, setOpenReleaseId] = useState(null)
   const [inquiryOpen, setInquiryOpen] = useState(false)
+
+  function updateParams(updates) {
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev)
+      Object.entries(updates).forEach(([k, v]) => {
+        if (v == null || v === 'all' || v === '1' || v === 1) {
+          next.delete(k)
+        } else {
+          next.set(k, String(v))
+        }
+      })
+      return next
+    }, { replace: false })
+  }
 
   const user = useAuthStore((s) => s.user)
   const openLoginModal = useLoginModalStore((s) => s.open)
@@ -117,8 +135,7 @@ function ArtistDetailPage() {
   }
 
   function handleTabChange(tabValue) {
-    setConcertTab(tabValue)
-    setConcertPage(1)
+    updateParams({ ct: tabValue, cp: 1 })
   }
 
   if (artistLoading) return null
@@ -308,7 +325,7 @@ function ArtistDetailPage() {
                 <Pagination
                   currentPage={releasePage}
                   totalPages={releasesTotalPages}
-                  onPageChange={(p) => { setReleasePage(p); setOpenReleaseId(null) }}
+                  onPageChange={(p) => { updateParams({ rp: p }); setOpenReleaseId(null) }}
                 />
               )}
             </>
@@ -348,7 +365,7 @@ function ArtistDetailPage() {
                 <Pagination
                   currentPage={concertPage}
                   totalPages={concertTotalPages}
-                  onPageChange={setConcertPage}
+                  onPageChange={(p) => updateParams({ cp: p })}
                 />
               )}
             </>

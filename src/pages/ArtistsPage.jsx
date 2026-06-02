@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 
 import ArtistCard from '@/components/artist/ArtistCard'
@@ -11,18 +12,35 @@ import styles from './ArtistsPage.module.css'
 const PAGE_SIZE = 25
 
 function ArtistsPage() {
-  const [query, setQuery] = useState('')
-  const [debouncedQuery, setDebouncedQuery] = useState('')
-  const [currentPage, setCurrentPage] = useState(1)
+  const [searchParams, setSearchParams] = useSearchParams()
+
+  const urlQuery = searchParams.get('q') || ''
+  const currentPage = Math.max(1, parseInt(searchParams.get('page') || '1', 10))
+
+  const [inputValue, setInputValue] = useState(urlQuery)
 
   useEffect(() => {
-    const timer = setTimeout(() => setDebouncedQuery(query), 300)
+    // inputValue가 이미 URL과 동기화된 상태면 타이머 불필요 (마운트·뒤로가기 시 오작동 방지)
+    if (inputValue === (searchParams.get('q') || '')) return
+
+    const timer = setTimeout(() => {
+      setSearchParams((prev) => {
+        const next = new URLSearchParams(prev)
+        if (inputValue) {
+          next.set('q', inputValue)
+        } else {
+          next.delete('q')
+        }
+        next.delete('page')
+        return next
+      }, { replace: true })
+    }, 300)
     return () => clearTimeout(timer)
-  }, [query])
+  }, [inputValue, searchParams, setSearchParams])
 
   const { data, isLoading } = useQuery({
-    queryKey: ['artists', debouncedQuery, currentPage],
-    queryFn: () => getArtists({ name: debouncedQuery || undefined, page: currentPage - 1, size: PAGE_SIZE }),
+    queryKey: ['artists', urlQuery, currentPage],
+    queryFn: () => getArtists({ name: urlQuery || undefined, page: currentPage - 1, size: PAGE_SIZE }),
     placeholderData: (prev) => prev,
   })
 
@@ -31,13 +49,29 @@ function ArtistsPage() {
   const totalPages = data?.totalPages ?? 1
 
   function handleQueryChange(e) {
-    setQuery(e.target.value)
-    setCurrentPage(1)
+    setInputValue(e.target.value)
   }
 
   function handleQueryClear() {
-    setQuery('')
-    setCurrentPage(1)
+    setInputValue('')
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev)
+      next.delete('q')
+      next.delete('page')
+      return next
+    }, { replace: true })
+  }
+
+  function handlePageChange(page) {
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev)
+      if (page <= 1) {
+        next.delete('page')
+      } else {
+        next.set('page', String(page))
+      }
+      return next
+    }, { replace: false })
   }
 
   return (
@@ -64,11 +98,11 @@ function ArtistsPage() {
             type="text"
             className={styles.searchInput}
             placeholder="아티스트 검색..."
-            value={query}
+            value={inputValue}
             onChange={handleQueryChange}
             aria-label="아티스트 검색"
           />
-          {query && (
+          {inputValue && (
             <button
               className={styles.searchClear}
               onClick={handleQueryClear}
@@ -112,7 +146,7 @@ function ArtistsPage() {
           <Pagination
             currentPage={currentPage}
             totalPages={totalPages}
-            onPageChange={setCurrentPage}
+            onPageChange={handlePageChange}
           />
         )}
 
