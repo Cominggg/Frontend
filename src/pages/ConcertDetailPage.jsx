@@ -31,7 +31,7 @@ function ConcertDetailPage() {
   const concertId = Number(id)
   const queryClient = useQueryClient()
 
-  const [thumbnailFailed, setThumbnailFailed] = useState(false)
+  const [posterFailed, setPosterFailed] = useState(false)
   const [activeTab, setActiveTab] = useState('info')
   const [inquiryType, setInquiryType] = useState(null)
 
@@ -104,12 +104,12 @@ function ConcertDetailPage() {
     )
   }
 
-  const { thumbnailUrl, posterUrls, artistName, artistId,
+  const { posterUrl, imageUrls, artistName, artistId,
           title, startDate, endDate, venue, status,
           price, isInCalendar, ticketLinks } = concert
 
   const setlist = setlistData?.tracks ?? []
-  const showThumbnailPlaceholder = !thumbnailUrl || thumbnailFailed
+  const showPosterPlaceholder = !posterUrl || posterFailed
 
   const dateRange = endDate && endDate !== startDate
     ? `${formatDate(startDate)} ~ ${formatDate(endDate)}`
@@ -134,16 +134,16 @@ function ConcertDetailPage() {
           {/* 대표 이미지 */}
           <div>
             <div className={styles.thumbnailWrap}>
-              {showThumbnailPlaceholder ? (
+              {showPosterPlaceholder ? (
                 <div className={styles.thumbnailPlaceholder}>
                   <span className={styles.thumbnailArtistName}>{artistName}</span>
                 </div>
               ) : (
                 <img
-                  src={thumbnailUrl}
+                  src={posterUrl}
                   alt={artistName}
                   className={styles.thumbnail}
-                  onError={() => setThumbnailFailed(true)}
+                  onError={() => setPosterFailed(true)}
                 />
               )}
             </div>
@@ -308,9 +308,9 @@ function ConcertDetailPage() {
 
           {activeTab === 'info' && (
             <div className={styles.tabPanel}>
-              {posterUrls && posterUrls.length > 0 ? (
+              {imageUrls && imageUrls.length > 0 ? (
                 <div className={styles.posterList}>
-                  {posterUrls.map((url, i) => (
+                  {imageUrls.map((url, i) => (
                     <PosterImage key={i} url={url} alt={`${title} 공연 정보 ${i + 1}`} />
                   ))}
                 </div>
