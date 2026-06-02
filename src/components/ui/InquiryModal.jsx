@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 
+import { createInquiry } from '@/services/myApi'
 import { ROUTES } from '@/constants/routes'
 import styles from './InquiryModal.module.css'
 
@@ -12,10 +13,12 @@ const TYPE_LABELS = {
 
 const FOCUSABLE = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
 
-function InquiryModal({ isOpen, onClose, type }) {
+function InquiryModal({ isOpen, onClose, type, targetId }) {
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
   const [submitted, setSubmitted] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [error, setError] = useState(null)
   const modalRef = useRef(null)
 
   useEffect(() => {
@@ -44,11 +47,19 @@ function InquiryModal({ isOpen, onClose, type }) {
 
   const typeLabel = TYPE_LABELS[type] ?? '문의'
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault()
     if (!title.trim() || !content.trim()) return
-    // TODO: API 연동 — POST /api/inquiries { type, targetId, title, content }
-    setSubmitted(true)
+    setIsSubmitting(true)
+    setError(null)
+    try {
+      await createInquiry({ type, targetId, title: title.trim(), content: content.trim() })
+      setSubmitted(true)
+    } catch {
+      setError('문의 제출에 실패했습니다. 잠시 후 다시 시도해 주세요.')
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -114,12 +125,14 @@ function InquiryModal({ isOpen, onClose, type }) {
                 </span>
               </div>
 
+              {error && <p className={styles.errorMsg}>{error}</p>}
+
               <button
                 type="submit"
                 className={styles.submitBtn}
-                disabled={!title.trim() || !content.trim()}
+                disabled={!title.trim() || !content.trim() || isSubmitting}
               >
-                문의 제출
+                {isSubmitting ? '제출 중…' : '문의 제출'}
               </button>
             </form>
           </>
