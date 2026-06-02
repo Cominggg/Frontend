@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 
@@ -22,6 +23,7 @@ const RELEASE_TYPE_COLOR = {
 function ReleaseDetailPage() {
   const { id } = useParams()
   const releaseId = Number(id)
+  const [coverFailed, setCoverFailed] = useState(false)
 
   const { data: release, isLoading, isError } = useQuery({
     queryKey: ['release', releaseId],
@@ -47,7 +49,8 @@ function ReleaseDetailPage() {
     )
   }
 
-  const { artistName, artistId, title, type, releaseDate, tracks } = release
+  const { artistName, artistId, title, type, releaseDate, coverUrl, tracks } = release
+  const showCoverPlaceholder = !coverUrl || coverFailed
   const [accentFrom, accentTo] = getArtistColor(artistName)
   const badgeColor = RELEASE_TYPE_COLOR[type] ?? 'var(--color-text-muted)'
 
@@ -63,12 +66,21 @@ function ReleaseDetailPage() {
           <Link to={ROUTES.ARTISTS} className={styles.backLink}>← 아티스트 목록</Link>
           <div className={styles.heroContent}>
             <div className={styles.coverWrap}>
-              <div
-                className={styles.coverPlaceholder}
-                style={{ '--a-from': accentFrom, '--a-to': accentTo }}
-              >
-                <span className={styles.coverTypeLabel}>{type}</span>
-              </div>
+              {showCoverPlaceholder ? (
+                <div
+                  className={styles.coverPlaceholder}
+                  style={{ '--a-from': accentFrom, '--a-to': accentTo }}
+                >
+                  <span className={styles.coverTypeLabel}>{type}</span>
+                </div>
+              ) : (
+                <img
+                  src={coverUrl}
+                  alt={`${title} 커버`}
+                  className={styles.coverImg}
+                  onError={() => setCoverFailed(true)}
+                />
+              )}
             </div>
             <div className={styles.heroInfo}>
               <Link to={ROUTES.ARTIST_DETAIL(artistId)} className={styles.heroArtist}>
