@@ -8,7 +8,7 @@ import Pagination from '@/components/ui/Pagination'
 import { getReleases } from '@/services/releaseApi'
 import styles from './ReleasesPage.module.css'
 
-const MAIN_TYPES = ['ALBUM', 'SINGLE', 'EP']
+const MAIN_TYPES = ['Album', 'Single', 'EP']
 const TYPE_FILTERS = ['전체', ...MAIN_TYPES, '기타']
 const PAGE_SIZE = 20
 

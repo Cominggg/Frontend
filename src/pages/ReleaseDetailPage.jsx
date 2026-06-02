@@ -14,8 +14,8 @@ function fmtMs(ms) {
 }
 
 const RELEASE_TYPE_COLOR = {
-  ALBUM: 'var(--color-accent)',
-  SINGLE: 'var(--color-badge-single)',
+  Album: 'var(--color-accent)',
+  Single: 'var(--color-badge-single)',
   EP: 'var(--color-badge-ep)',
 }
 
