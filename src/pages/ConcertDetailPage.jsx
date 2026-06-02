@@ -329,6 +329,7 @@ function ConcertDetailPage() {
       isOpen={inquiryType !== null}
       onClose={() => setInquiryType(null)}
       type={inquiryType}
+      targetId={concertId}
     />
     </>
   )

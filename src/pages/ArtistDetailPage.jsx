@@ -139,7 +139,7 @@ function ArtistDetailPage() {
     )
   }
 
-  const { name, imageUrl, hasUpcomingConcert, followersCount, debutDate, links, isFollowing } = artist
+  const { name, imageUrl, hasUpcomingConcert, followersCount, links, isFollowing } = artist
   const showPlaceholder = !imageUrl || imgFailed
   const [colorFrom, colorTo] = getArtistColor(name)
 
@@ -196,15 +196,6 @@ function ArtistDetailPage() {
           <div className={styles.heroInfo}>
             {hasUpcomingConcert && <span className={styles.comingBadge}>COMING</span>}
             <h1 className={styles.artistName}>{name}</h1>
-
-            <dl className={styles.profileList}>
-              {debutDate && (
-                <div className={styles.profileItem}>
-                  <dt>데뷔</dt>
-                  <dd>{formatDate(debutDate)}</dd>
-                </div>
-              )}
-            </dl>
 
             <p className={styles.followers}>팔로워 {formatFollowers(followersCount)}</p>
             <button
@@ -391,6 +382,7 @@ function ArtistDetailPage() {
       isOpen={inquiryOpen}
       onClose={() => setInquiryOpen(false)}
       type="ARTIST"
+      targetId={artistId}
     />
     </>
   )
