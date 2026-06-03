@@ -24,6 +24,36 @@ function getDday(dateStr, today) {
 }
 
 
+function AlbumCard({ item }) {
+  const [imgFailed, setImgFailed] = useState(false)
+  const [accentFrom, accentTo] = getArtistColor(item.artistName)
+  const showImg = item.coverUrl && !imgFailed
+
+  return (
+    <Link to={ROUTES.RELEASE_DETAIL(item.id)} className={styles.albumCard}>
+      <div
+        className={styles.albumArt}
+        style={{ '--a-from': accentFrom, '--a-to': accentTo }}
+      >
+        {showImg && (
+          <img
+            src={item.coverUrl}
+            alt={item.title}
+            className={styles.albumCoverImg}
+            onError={() => setImgFailed(true)}
+          />
+        )}
+        <span className={styles.albumTypeBadge}>{item.type}</span>
+      </div>
+      <div className={styles.albumInfo}>
+        <p className={styles.albumArtist}>{item.artistName}</p>
+        <p className={styles.albumTitle}>{item.title}</p>
+        <p className={styles.albumDate}>{formatDate(item.releaseDate)}</p>
+      </div>
+    </Link>
+  )
+}
+
 function HomePage() {
   const [subZoneTab, setSubZoneTab] = useState('albums')
   const [isDesktop, setIsDesktop] = useState(() => window.innerWidth >= 1101)
@@ -175,24 +205,7 @@ function HomePage() {
             <div className={styles.albumStrip}>
               {releasesLoading
                 ? null
-                : newReleases.map((item) => {
-                    const [accentFrom, accentTo] = getArtistColor(item.artistName)
-                    return (
-                      <Link key={item.id} to={ROUTES.RELEASE_DETAIL(item.id)} className={styles.albumCard}>
-                        <div
-                          className={styles.albumArt}
-                          style={{ '--a-from': accentFrom, '--a-to': accentTo }}
-                        >
-                          <span className={styles.albumTypeBadge}>{item.type}</span>
-                        </div>
-                        <div className={styles.albumInfo}>
-                          <p className={styles.albumArtist}>{item.artistName}</p>
-                          <p className={styles.albumTitle}>{item.title}</p>
-                          <p className={styles.albumDate}>{formatDate(item.releaseDate)}</p>
-                        </div>
-                      </Link>
-                    )
-                  })}
+                : newReleases.map((item) => <AlbumCard key={item.id} item={item} />)}
             </div>
           )}
 
