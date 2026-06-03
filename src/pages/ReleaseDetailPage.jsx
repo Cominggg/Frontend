@@ -17,7 +17,6 @@ function fmtMs(ms) {
 const RELEASE_TYPE_COLOR = {
   Album: 'var(--color-accent)',
   Single: 'var(--color-badge-single)',
-  EP: 'var(--color-badge-ep)',
 }
 
 function ReleaseDetailPage() {
@@ -49,10 +48,11 @@ function ReleaseDetailPage() {
     )
   }
 
-  const { artistName, artistId, title, type, releaseDate, coverUrl, tracks } = release
+  const { artistName, artistId, title, type, releaseDate, coverUrl, tracks, totalTracks } = release
   const showCoverPlaceholder = !coverUrl || coverFailed
   const [accentFrom, accentTo] = getArtistColor(artistName)
   const badgeColor = RELEASE_TYPE_COLOR[type] ?? 'var(--color-text-muted)'
+  const isMultiDisc = tracks?.some((t) => t.discNumber != null && t.discNumber > 1)
 
   return (
     <div className={styles.page}>
@@ -95,6 +95,9 @@ function ReleaseDetailPage() {
                   {type}
                 </span>
                 <span>{formatDate(releaseDate)}</span>
+                {totalTracks != null && (
+                  <span>{totalTracks}곡</span>
+                )}
               </div>
             </div>
           </div>
@@ -108,15 +111,28 @@ function ReleaseDetailPage() {
           <section className={styles.trackSection}>
             <h2 className={styles.sectionHeading}>Tracklist</h2>
             <ol className={styles.trackList}>
-              {tracks.map((track) => (
-                <li key={track.position} className={styles.trackItem}>
-                  <span className={styles.trackNum}>{track.position}</span>
-                  <span className={styles.trackTitle}>{track.title}</span>
-                  <span className={styles.trackDuration}>
-                    {track.lengthMs ? fmtMs(track.lengthMs) : '—'}
-                  </span>
-                </li>
-              ))}
+              {tracks.map((track, idx) => {
+                const showDiscHeader = isMultiDisc && track.discNumber != null && (
+                  idx === 0 || tracks[idx - 1].discNumber !== track.discNumber
+                )
+                return (
+                  <li key={track.position}>
+                    {showDiscHeader && (
+                      <div className={styles.discHeader}>Disc {track.discNumber}</div>
+                    )}
+                    <div className={styles.trackItem}>
+                      <span className={styles.trackNum}>{track.position}</span>
+                      <span className={styles.trackTitle}>
+                        {track.title}
+                        {track.explicit && <span className={styles.explicitBadge}>E</span>}
+                      </span>
+                      <span className={styles.trackDuration}>
+                        {track.lengthMs ? fmtMs(track.lengthMs) : '—'}
+                      </span>
+                    </div>
+                  </li>
+                )
+              })}
             </ol>
           </section>
 

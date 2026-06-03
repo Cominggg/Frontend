@@ -7,7 +7,6 @@ import styles from './ReleaseCard.module.css'
 const RELEASE_TYPE_COLOR = {
   Album: 'var(--color-accent)',
   Single: 'var(--color-badge-single)',
-  EP: 'var(--color-badge-ep)',
 }
 
 const PLACEHOLDER_PALETTE = [

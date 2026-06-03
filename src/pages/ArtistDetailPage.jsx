@@ -290,7 +290,7 @@ function ArtistDetailPage() {
                         disabled={!hasTracks}
                       >
                         <span className={`${styles.releaseBadge} ${styles[`releaseBadge${rel.type.toUpperCase()}`] || ''}`}>
-                          {rel.type.toUpperCase()}
+                          {rel.type}
                         </span>
                         <span className={styles.releaseTitle}>{rel.title}</span>
                         <span className={styles.releaseDate}>{rel.releaseDate}</span>
@@ -311,7 +311,10 @@ function ArtistDetailPage() {
                           {rel.tracks.map((t) => (
                             <li key={t.position} className={styles.trackItem}>
                               <span className={styles.trackPosition}>{t.position}</span>
-                              <span className={styles.trackTitle}>{t.title}</span>
+                              <span className={styles.trackTitle}>
+                                {t.title}
+                                {t.explicit && <span className={styles.explicitBadge}>E</span>}
+                              </span>
                               <span className={styles.trackDuration}>{fmtMs(t.lengthMs)}</span>
                             </li>
                           ))}
