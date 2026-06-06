@@ -82,14 +82,14 @@
 
 .albumEmptyTitle {
   margin: 0;
-  font-size: 0.9375rem;
+  font-size: 1rem;
   font-weight: 700;
   color: var(--color-text);
 }
 
 .albumEmptySub {
   margin: 0;
-  font-size: 0.8125rem;
+  font-size: 0.875rem;
   color: var(--color-text-muted);
   line-height: 1.5;
 }
@@ -122,14 +122,14 @@
 
 .loginTeaserTitle {
   margin: 0 0 0.5rem;
-  font-size: 1.125rem;
+  font-size: 1rem;
   font-weight: 700;
   color: var(--color-text);
 }
 
 .loginTeaserSub {
   margin: 0 0 1.5rem;
-  font-size: 0.9375rem;
+  font-size: 0.875rem;
   color: var(--color-text-muted);
   max-width: 360px;
   line-height: 1.6;
