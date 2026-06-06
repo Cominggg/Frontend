@@ -236,6 +236,7 @@ function HomePage() {
             </div>
           </div>
 
+          <div className={styles.subZoneContent}>
           {subZoneTab === 'albums' && (
             !releasesLoading && newReleases.length === 0 ? (
               <div className={styles.albumEmpty}>
@@ -278,6 +279,7 @@ function HomePage() {
               </div>
             )
           )}
+          </div>
         </div>
       </div>
       {/* thirdZone: 최근 공연 발표 + 최근 셋리스트 업데이트 */}

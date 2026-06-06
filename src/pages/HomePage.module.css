@@ -56,6 +56,11 @@
   }
 }
 
+/* 탭 콘텐츠 래퍼 — 탭 전환 시 높이 점프 방지 */
+.subZoneContent {
+  min-height: 300px;
+}
+
 /* 새 앨범·싱글 — 빈 상태 */
 .albumEmpty {
   display: flex;
@@ -102,7 +107,7 @@
   flex-direction: column;
   align-items: center;
   text-align: center;
-  padding: 3rem 2rem;
+  padding: 3.5rem 1.5rem;
   border: 1.5px dashed var(--color-border);
   border-radius: 16px;
   background: linear-gradient(135deg, var(--color-accent-dim) 0%, transparent 60%);
@@ -112,12 +117,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 56px;
-  height: 56px;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
   background: var(--color-accent-dim);
   color: var(--color-accent);
-  margin-bottom: 1rem;
+  margin-bottom: 0.5rem;
 }
 
 .loginTeaserTitle {
@@ -131,7 +136,7 @@
   margin: 0 0 1.5rem;
   font-size: 0.875rem;
   color: var(--color-text-muted);
-  max-width: 360px;
+  max-width: 420px;
   line-height: 1.6;
 }
 
