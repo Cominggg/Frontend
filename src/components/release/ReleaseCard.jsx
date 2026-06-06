@@ -64,7 +64,7 @@ function ReleaseCard({ release }) {
       <div className={styles.info}>
         <p className={styles.artist}>{artistName}</p>
         <h3 className={styles.title}>{title}</h3>
-        <div className={styles.meta}>
+        <div className={styles.meta} style={!releaseDate ? { visibility: 'hidden' } : undefined}>
           <span className={styles.metaIcon} aria-hidden="true">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />

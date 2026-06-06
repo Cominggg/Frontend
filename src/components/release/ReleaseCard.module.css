@@ -102,8 +102,10 @@
 .info {
   display: flex;
   flex-direction: column;
+  flex: 1;
   gap: 0.35rem;
   padding: 0.875rem 1rem 1rem;
+  justify-content: space-between;
 }
 
 .artist {
