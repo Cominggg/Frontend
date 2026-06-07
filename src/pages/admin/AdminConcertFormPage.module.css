@@ -133,6 +133,148 @@
   margin-left: auto;
 }
 
+/* ── 예매처 링크 편집기 ── */
+.bookingLinks {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.bookingLinkRow {
+  display: grid;
+  grid-template-columns: 1fr 2fr auto;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.bookingRemoveBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  background: none;
+  border: 1.5px solid var(--color-border);
+  border-radius: 6px;
+  color: var(--color-text-muted);
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.bookingRemoveBtn:hover {
+  border-color: var(--color-destructive, #e53e3e);
+  color: var(--color-destructive, #e53e3e);
+}
+
+.bookingAddBtn {
+  align-self: flex-start;
+  padding: 0.4375rem 0.875rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  background: none;
+  border: 1.5px dashed var(--color-border);
+  border-radius: 8px;
+  color: var(--color-text-muted);
+  margin-top: 0.25rem;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.bookingAddBtn:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+/* ── 삭제 버튼 ── */
+.btnDelete {
+  padding: 0.6875rem 1.25rem;
+  border-radius: 10px;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  background: none;
+  border: 1.5px solid var(--color-destructive, #e53e3e);
+  color: var(--color-destructive, #e53e3e);
+  margin-right: auto;
+  transition: background-color 0.15s, color 0.15s;
+}
+
+.btnDelete:hover {
+  background-color: var(--color-destructive, #e53e3e);
+  color: #fff;
+}
+
+/* ── 삭제 확인 모달 ── */
+.deleteOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(4px);
+  padding: 1rem;
+}
+
+.deleteModal {
+  width: 100%;
+  max-width: 420px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+}
+
+.deleteTitle {
+  margin: 0 0 1rem;
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.deleteDesc {
+  margin: 0 0 1.5rem;
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+  line-height: 1.6;
+}
+
+.deleteActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
+
+.btnCancelDelete {
+  padding: 0.5625rem 1.25rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  background: none;
+  border: 1.5px solid var(--color-border);
+  color: var(--color-text);
+  transition: background-color 0.15s;
+}
+
+.btnCancelDelete:hover:not(:disabled) {
+  background-color: var(--color-surface-hover);
+}
+
+.btnConfirmDelete {
+  padding: 0.5625rem 1.25rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  background: var(--color-destructive, #e53e3e);
+  border: none;
+  color: #fff;
+  transition: opacity 0.15s;
+}
+
+.btnConfirmDelete:hover:not(:disabled) { opacity: 0.85; }
+.btnConfirmDelete:disabled,
+.btnCancelDelete:disabled { opacity: 0.4; cursor: default; }
+
 @media (max-width: 767px) {
   .logRow {
     flex-direction: column;
@@ -141,4 +283,12 @@
   }
 
   .logNote { margin-left: 0; }
+
+  .bookingLinkRow {
+    grid-template-columns: 1fr auto;
+  }
+
+  .bookingLinkRow input:last-of-type {
+    grid-column: 1;
+  }
 }
