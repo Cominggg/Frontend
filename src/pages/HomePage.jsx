@@ -6,7 +6,7 @@ import ConcertCard from '@/components/concert/ConcertCard'
 import ConcertCardSkeleton from '@/components/concert/ConcertCardSkeleton'
 import Icon from '@/components/ui/Icon'
 import { ROUTES } from '@/constants/routes'
-import { getPopularConcerts, getConcerts, getFollowingConcerts, getRecentConcerts, getRecentSetlists } from '@/services/concertApi'
+import { getPopularConcerts, getConcerts, getFollowingConcerts, getRecentConcerts } from '@/services/concertApi'
 import { getReleases } from '@/services/releaseApi'
 import useAuthStore from '@/stores/authStore'
 import useLoginModalStore from '@/stores/loginModalStore'
@@ -114,11 +114,7 @@ function HomePage() {
     staleTime: 5 * 60 * 1000,
   })
 
-  const { data: recentSetlists = [] } = useQuery({
-    queryKey: ['recent-setlists-home'],
-    queryFn: getRecentSetlists,
-    staleTime: 5 * 60 * 1000,
-  })
+  const recentSetlists = []
 
   const upcomingConcerts = upcomingData?.content ?? []
   const newReleases = releasesData?.content ?? []

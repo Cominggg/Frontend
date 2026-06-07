@@ -30,12 +30,12 @@ export async function updateConcertState(id, body) {
   return data
 }
 
-export async function getAdminInquiries(params) {
+export async function getInquiries(params) {
   const { data } = await api.get('/admin/inquiries', { params })
   return data
 }
 
-export async function getAdminInquiry(id) {
+export async function getInquiry(id) {
   const { data } = await api.get(`/admin/inquiries/${id}`)
   return data
 }

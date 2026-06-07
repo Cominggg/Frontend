@@ -103,16 +103,16 @@ function Header() {
                 aria-expanded={dropdownOpen}
                 aria-label="사용자 메뉴"
               >
-                {user.profileImage ? (
+                {user.avatarUrl ? (
                   <img
-                    src={user.profileImage}
-                    alt={user.name}
+                    src={user.avatarUrl}
+                    alt={user.nickname}
                     className={styles.avatar}
                     onError={(e) => { e.target.onerror = null; e.target.style.display = 'none' }}
                   />
                 ) : (
                   <span className={styles.avatarInitial} aria-hidden="true">
-                    {user.name.charAt(0)}
+                    {user.nickname?.charAt(0)}
                   </span>
                 )}
               </button>

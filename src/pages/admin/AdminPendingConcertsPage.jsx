@@ -92,7 +92,7 @@ function AddArtistModal({ concertId, onClose, onAdded }) {
   )
 }
 
-function ConcertCard({ concert, onApprove, onReject, onRefresh }) {
+function ConcertCard({ concert, onRefresh }) {
   const [acting, setActing] = useState(null)
   const [showAddArtist, setShowAddArtist] = useState(false)
 
@@ -123,11 +123,11 @@ function ConcertCard({ concert, onApprove, onReject, onRefresh }) {
 
       <div className={styles.candidates}>
         <p className={styles.candidatesLabel}>후보 아티스트</p>
-        {concert.candidates.length === 0 ? (
+        {(concert.candidates ?? []).length === 0 ? (
           <p className={styles.noCandidates}>후보 없음</p>
         ) : (
           <ul className={styles.candidateList}>
-            {concert.candidates.map((c) => (
+            {(concert.candidates ?? []).map((c) => (
               <li key={c.artistId} className={styles.candidateItem}>
                 <span className={styles.candidateName}>{c.name}</span>
                 <span className={`${styles.matchBadge} ${styles[`match_${c.matchedBy}`]}`}>
