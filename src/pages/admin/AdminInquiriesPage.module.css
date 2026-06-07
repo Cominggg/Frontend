@@ -383,3 +383,64 @@
 }
 
 .btnReject:disabled { opacity: 0.4; cursor: default; }
+
+.btnInProgress {
+  padding: 0.5625rem 1.25rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  background: none;
+  border: 1.5px solid var(--color-border);
+  color: var(--color-text);
+  transition: background-color 0.15s, border-color 0.15s;
+}
+
+.btnInProgress:hover:not(:disabled) {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+.btnInProgress:disabled { opacity: 0.4; cursor: default; }
+
+.statusIN_PROGRESS {
+  background: color-mix(in srgb, #0369a1 10%, transparent);
+  color: #0369a1;
+}
+
+.modalError {
+  font-size: 0.875rem;
+  color: var(--color-destructive, #e53e3e);
+  margin: 0;
+}
+
+/* ── 페이지네이션 ── */
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.pageBtn {
+  padding: 0.4375rem 1rem;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  background: none;
+  border: 1.5px solid var(--color-border);
+  color: var(--color-text);
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.pageBtn:hover:not(:disabled) {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+.pageBtn:disabled { opacity: 0.4; cursor: default; }
+
+.pageInfo {
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+}
