@@ -15,4 +15,5 @@ export const ROUTES = {
   ADMIN_CONCERT_NEW: '/admin/concerts/new',
   ADMIN_CONCERT_EDIT: (id) => `/admin/concerts/${id}/edit`,
   ADMIN_INQUIRIES: '/admin/inquiries',
+  ADMIN_PENDING_CONCERTS: '/admin/concerts/pending',
 }
