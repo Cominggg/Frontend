@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useParams, useSearchParams } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 
 import ArtistConcertItem from '@/components/artist/ArtistConcertItem'
@@ -49,12 +49,32 @@ function ArtistDetailPage() {
   const artistId = Number(id)
   const queryClient = useQueryClient()
 
+  const [searchParams, setSearchParams] = useSearchParams()
+
+  const VALID_TABS = ['all', 'upcoming', 'past']
+  const concertTab = VALID_TABS.includes(searchParams.get('ct')) ? searchParams.get('ct') : 'all'
+  const concertPage = Math.max(1, parseInt(searchParams.get('cp') || '1', 10))
+  const releasePage = Math.max(1, parseInt(searchParams.get('rp') || '1', 10))
+
   const [imgFailed, setImgFailed] = useState(false)
-  const [concertTab, setConcertTab] = useState('all')
-  const [concertPage, setConcertPage] = useState(1)
-  const [releasePage, setReleasePage] = useState(1)
   const [openReleaseId, setOpenReleaseId] = useState(null)
   const [inquiryOpen, setInquiryOpen] = useState(false)
+
+  const PARAM_DEFAULTS = { ct: 'all', cp: '1', rp: '1' }
+
+  function updateParams(updates) {
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev)
+      Object.entries(updates).forEach(([k, v]) => {
+        if (v == null || String(v) === (PARAM_DEFAULTS[k] ?? '')) {
+          next.delete(k)
+        } else {
+          next.set(k, String(v))
+        }
+      })
+      return next
+    }, { replace: false })
+  }
 
   const user = useAuthStore((s) => s.user)
   const openLoginModal = useLoginModalStore((s) => s.open)
@@ -117,8 +137,7 @@ function ArtistDetailPage() {
   }
 
   function handleTabChange(tabValue) {
-    setConcertTab(tabValue)
-    setConcertPage(1)
+    updateParams({ ct: tabValue, cp: 1 })
   }
 
   if (artistLoading) return null
@@ -139,7 +158,7 @@ function ArtistDetailPage() {
     )
   }
 
-  const { name, imageUrl, hasUpcomingConcert, followersCount, debutDate, links, isFollowing } = artist
+  const { name, imageUrl, hasUpcomingConcert, followersCount, links, isFollowing } = artist
   const showPlaceholder = !imageUrl || imgFailed
   const [colorFrom, colorTo] = getArtistColor(name)
 
@@ -196,15 +215,6 @@ function ArtistDetailPage() {
           <div className={styles.heroInfo}>
             {hasUpcomingConcert && <span className={styles.comingBadge}>COMING</span>}
             <h1 className={styles.artistName}>{name}</h1>
-
-            <dl className={styles.profileList}>
-              {debutDate && (
-                <div className={styles.profileItem}>
-                  <dt>데뷔</dt>
-                  <dd>{formatDate(debutDate)}</dd>
-                </div>
-              )}
-            </dl>
 
             <p className={styles.followers}>팔로워 {formatFollowers(followersCount)}</p>
             <button
@@ -282,7 +292,7 @@ function ArtistDetailPage() {
                         disabled={!hasTracks}
                       >
                         <span className={`${styles.releaseBadge} ${styles[`releaseBadge${rel.type.toUpperCase()}`] || ''}`}>
-                          {rel.type.toUpperCase()}
+                          {rel.type}
                         </span>
                         <span className={styles.releaseTitle}>{rel.title}</span>
                         <span className={styles.releaseDate}>{rel.releaseDate}</span>
@@ -303,7 +313,10 @@ function ArtistDetailPage() {
                           {rel.tracks.map((t) => (
                             <li key={t.position} className={styles.trackItem}>
                               <span className={styles.trackPosition}>{t.position}</span>
-                              <span className={styles.trackTitle}>{t.title}</span>
+                              <span className={styles.trackTitle}>
+                                {t.title}
+                                {t.explicit && <span className={styles.explicitBadge}>E</span>}
+                              </span>
                               <span className={styles.trackDuration}>{fmtMs(t.lengthMs)}</span>
                             </li>
                           ))}
@@ -317,7 +330,7 @@ function ArtistDetailPage() {
                 <Pagination
                   currentPage={releasePage}
                   totalPages={releasesTotalPages}
-                  onPageChange={(p) => { setReleasePage(p); setOpenReleaseId(null) }}
+                  onPageChange={(p) => { updateParams({ rp: p }); setOpenReleaseId(null) }}
                 />
               )}
             </>
@@ -357,7 +370,7 @@ function ArtistDetailPage() {
                 <Pagination
                   currentPage={concertPage}
                   totalPages={concertTotalPages}
-                  onPageChange={setConcertPage}
+                  onPageChange={(p) => updateParams({ cp: p })}
                 />
               )}
             </>
@@ -391,6 +404,7 @@ function ArtistDetailPage() {
       isOpen={inquiryOpen}
       onClose={() => setInquiryOpen(false)}
       type="ARTIST"
+      targetId={artistId}
     />
     </>
   )

@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 
@@ -14,14 +15,14 @@ function fmtMs(ms) {
 }
 
 const RELEASE_TYPE_COLOR = {
-  ALBUM: 'var(--color-accent)',
-  SINGLE: 'var(--color-badge-single)',
-  EP: 'var(--color-badge-ep)',
+  Album: 'var(--color-accent)',
+  Single: 'var(--color-badge-single)',
 }
 
 function ReleaseDetailPage() {
   const { id } = useParams()
   const releaseId = Number(id)
+  const [coverFailed, setCoverFailed] = useState(false)
 
   const { data: release, isLoading, isError } = useQuery({
     queryKey: ['release', releaseId],
@@ -47,9 +48,11 @@ function ReleaseDetailPage() {
     )
   }
 
-  const { artistName, artistId, title, type, releaseDate, tracks } = release
+  const { artistName, artistId, title, type, releaseDate, coverUrl, tracks, totalTracks } = release
+  const showCoverPlaceholder = !coverUrl || coverFailed
   const [accentFrom, accentTo] = getArtistColor(artistName)
   const badgeColor = RELEASE_TYPE_COLOR[type] ?? 'var(--color-text-muted)'
+  const isMultiDisc = tracks?.some((t) => t.discNumber != null && t.discNumber > 1)
 
   return (
     <div className={styles.page}>
@@ -63,12 +66,21 @@ function ReleaseDetailPage() {
           <Link to={ROUTES.ARTISTS} className={styles.backLink}>← 아티스트 목록</Link>
           <div className={styles.heroContent}>
             <div className={styles.coverWrap}>
-              <div
-                className={styles.coverPlaceholder}
-                style={{ '--a-from': accentFrom, '--a-to': accentTo }}
-              >
-                <span className={styles.coverTypeLabel}>{type}</span>
-              </div>
+              {showCoverPlaceholder ? (
+                <div
+                  className={styles.coverPlaceholder}
+                  style={{ '--a-from': accentFrom, '--a-to': accentTo }}
+                >
+                  <span className={styles.coverTypeLabel}>{type}</span>
+                </div>
+              ) : (
+                <img
+                  src={coverUrl}
+                  alt={`${title} 커버`}
+                  className={styles.coverImg}
+                  onError={() => setCoverFailed(true)}
+                />
+              )}
             </div>
             <div className={styles.heroInfo}>
               <Link to={ROUTES.ARTIST_DETAIL(artistId)} className={styles.heroArtist}>
@@ -83,6 +95,9 @@ function ReleaseDetailPage() {
                   {type}
                 </span>
                 <span>{formatDate(releaseDate)}</span>
+                {totalTracks != null && (
+                  <span>{totalTracks}곡</span>
+                )}
               </div>
             </div>
           </div>
@@ -96,15 +111,28 @@ function ReleaseDetailPage() {
           <section className={styles.trackSection}>
             <h2 className={styles.sectionHeading}>Tracklist</h2>
             <ol className={styles.trackList}>
-              {tracks.map((track) => (
-                <li key={track.position} className={styles.trackItem}>
-                  <span className={styles.trackNum}>{track.position}</span>
-                  <span className={styles.trackTitle}>{track.title}</span>
-                  <span className={styles.trackDuration}>
-                    {track.lengthMs ? fmtMs(track.lengthMs) : '—'}
-                  </span>
-                </li>
-              ))}
+              {tracks.map((track, idx) => {
+                const showDiscHeader = isMultiDisc && track.discNumber != null && (
+                  idx === 0 || tracks[idx - 1].discNumber !== track.discNumber
+                )
+                return (
+                  <li key={track.position}>
+                    {showDiscHeader && (
+                      <div className={styles.discHeader}>Disc {track.discNumber}</div>
+                    )}
+                    <div className={styles.trackItem}>
+                      <span className={styles.trackNum}>{track.position}</span>
+                      <span className={styles.trackTitle}>
+                        {track.title}
+                        {track.explicit && <span className={styles.explicitBadge}>E</span>}
+                      </span>
+                      <span className={styles.trackDuration}>
+                        {track.lengthMs ? fmtMs(track.lengthMs) : '—'}
+                      </span>
+                    </div>
+                  </li>
+                )
+              })}
             </ol>
           </section>
 

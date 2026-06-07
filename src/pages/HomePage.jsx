@@ -6,12 +6,12 @@ import ConcertCard from '@/components/concert/ConcertCard'
 import ConcertCardSkeleton from '@/components/concert/ConcertCardSkeleton'
 import Icon from '@/components/ui/Icon'
 import { ROUTES } from '@/constants/routes'
-import { getPopularConcerts, getConcerts, getFollowingConcerts } from '@/services/concertApi'
+import { getPopularConcerts, getConcerts, getFollowingConcerts, getRecentConcerts, getRecentSetlists } from '@/services/concertApi'
 import { getReleases } from '@/services/releaseApi'
 import useAuthStore from '@/stores/authStore'
 import useLoginModalStore from '@/stores/loginModalStore'
 import { getArtistColor } from '@/utils/artistColor'
-import { formatDate } from '@/utils/date'
+import { formatDate, formatRelativeDate } from '@/utils/date'
 import styles from './HomePage.module.css'
 
 function getDday(dateStr, today) {
@@ -23,6 +23,58 @@ function getDday(dateStr, today) {
   return null
 }
 
+
+function AlbumCard({ item }) {
+  const [imgFailed, setImgFailed] = useState(false)
+  const [accentFrom, accentTo] = getArtistColor(item.artistName)
+  const showImg = item.coverUrl && !imgFailed
+
+  return (
+    <Link to={ROUTES.RELEASE_DETAIL(item.id)} className={styles.albumCard}>
+      <div
+        className={styles.albumArt}
+        style={{ '--a-from': accentFrom, '--a-to': accentTo }}
+      >
+        {showImg && (
+          <img
+            src={item.coverUrl}
+            alt={item.title}
+            className={styles.albumCoverImg}
+            onError={() => setImgFailed(true)}
+          />
+        )}
+        <span className={styles.albumTypeBadge}>{item.type}</span>
+      </div>
+      <div className={styles.albumInfo}>
+        <p className={styles.albumArtist}>{item.artistName}</p>
+        <p className={styles.albumTitle}>{item.title}</p>
+        <p className={styles.albumDate}>{formatDate(item.releaseDate)}</p>
+      </div>
+    </Link>
+  )
+}
+
+function FeedThumb({ posterUrl, artistName }) {
+  const [imgFailed, setImgFailed] = useState(false)
+  const [colorFrom, colorTo] = getArtistColor(artistName)
+  const showImg = posterUrl && !imgFailed
+
+  return (
+    <div
+      className={styles.feedThumb}
+      style={{ '--t-from': colorFrom, '--t-to': colorTo }}
+    >
+      {showImg && (
+        <img
+          src={posterUrl}
+          alt={artistName}
+          className={styles.feedThumbImg}
+          onError={() => setImgFailed(true)}
+        />
+      )}
+    </div>
+  )
+}
 
 function HomePage() {
   const [subZoneTab, setSubZoneTab] = useState('albums')
@@ -56,8 +108,21 @@ function HomePage() {
     enabled: isLoggedIn,
   })
 
+  const { data: recentConcertsData } = useQuery({
+    queryKey: ['recent-concerts-home'],
+    queryFn: getRecentConcerts,
+    staleTime: 5 * 60 * 1000,
+  })
+
+  const { data: recentSetlists = [] } = useQuery({
+    queryKey: ['recent-setlists-home'],
+    queryFn: getRecentSetlists,
+    staleTime: 5 * 60 * 1000,
+  })
+
   const upcomingConcerts = upcomingData?.content ?? []
   const newReleases = releasesData?.content ?? []
+  const recentConcerts = recentConcertsData?.content ?? []
 
   useEffect(() => {
     const mq = window.matchMedia('(min-width: 1101px)')
@@ -171,29 +236,23 @@ function HomePage() {
             </div>
           </div>
 
+          <div className={styles.subZoneContent}>
           {subZoneTab === 'albums' && (
-            <div className={styles.albumStrip}>
-              {releasesLoading
-                ? null
-                : newReleases.map((item) => {
-                    const [accentFrom, accentTo] = getArtistColor(item.artistName)
-                    return (
-                      <Link key={item.id} to={ROUTES.RELEASE_DETAIL(item.id)} className={styles.albumCard}>
-                        <div
-                          className={styles.albumArt}
-                          style={{ '--a-from': accentFrom, '--a-to': accentTo }}
-                        >
-                          <span className={styles.albumTypeBadge}>{item.type}</span>
-                        </div>
-                        <div className={styles.albumInfo}>
-                          <p className={styles.albumArtist}>{item.artistName}</p>
-                          <p className={styles.albumTitle}>{item.title}</p>
-                          <p className={styles.albumDate}>{formatDate(item.releaseDate)}</p>
-                        </div>
-                      </Link>
-                    )
-                  })}
-            </div>
+            !releasesLoading && newReleases.length === 0 ? (
+              <div className={styles.albumEmpty}>
+                <div className={styles.albumEmptyIcon} aria-hidden="true">
+                  <Icon name="music" size={24} />
+                </div>
+                <p className={styles.albumEmptyTitle}>아직 등록된 앨범·싱글이 없어요</p>
+                <p className={styles.albumEmptySub}>새로운 릴리즈 정보가 추가되면 여기에 표시됩니다</p>
+              </div>
+            ) : (
+              <div className={styles.albumStrip}>
+                {releasesLoading
+                  ? null
+                  : newReleases.map((item) => <AlbumCard key={item.id} item={item} />)}
+              </div>
+            )
           )}
 
           {subZoneTab === 'followed' && (
@@ -220,6 +279,78 @@ function HomePage() {
               </div>
             )
           )}
+          </div>
+        </div>
+      </div>
+      {/* thirdZone: 최근 공연 발표 + 최근 셋리스트 업데이트 */}
+      <div className={styles.thirdZone}>
+        <div className={styles.thirdZoneInner}>
+
+          {/* 최근 공연 발표 */}
+          <section>
+            <div className={styles.sectionHeader}>
+              <h2 className={styles.sectionTitle}>최근 공연 발표</h2>
+              <Link to={ROUTES.CONCERTS} className={styles.sectionMore}>
+                전체 보기
+                <Icon name="chevronRight" size={16} />
+              </Link>
+            </div>
+            {recentConcerts.length === 0 ? (
+              <p className={styles.feedEmpty}>등록된 공연이 없습니다</p>
+            ) : (
+              <ul className={styles.feedList}>
+                {recentConcerts.map((concert) => (
+                  <li key={concert.id}>
+                    <Link to={ROUTES.CONCERT_DETAIL(concert.id)} className={styles.feedItem}>
+                      <FeedThumb posterUrl={concert.posterUrl} artistName={concert.artistName} />
+                      <div className={styles.feedInfo}>
+                        <p className={styles.feedArtist}>{concert.artistName}</p>
+                        <p className={styles.feedTitle}>{concert.title}</p>
+                        <p className={styles.feedMeta}>
+                          <Icon name="pin" size={11} />
+                          {concert.venue} · {formatDate(concert.startDate)}
+                        </p>
+                      </div>
+                      <span className={styles.feedAge}>{formatRelativeDate(concert.createdAt)}</span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
+
+          {/* 최근 셋리스트 업데이트 */}
+          <section>
+            <div className={styles.sectionHeader}>
+              <h2 className={styles.sectionTitle}>최근 셋리스트 업데이트</h2>
+            </div>
+            {recentSetlists.length === 0 ? (
+              <p className={styles.feedEmpty}>등록된 셋리스트가 없습니다</p>
+            ) : (
+              <ul className={styles.feedList}>
+                {recentSetlists.map((item) => (
+                  <li key={item.id}>
+                    <Link to={ROUTES.CONCERT_DETAIL(item.id)} className={styles.feedItem}>
+                      <div className={styles.feedTrackBadge}>
+                        <span className={styles.feedTrackNum}>{item.trackCount}</span>
+                        <span className={styles.feedTrackLabel}>곡</span>
+                      </div>
+                      <div className={styles.feedInfo}>
+                        <p className={styles.feedArtist}>{item.artistName}</p>
+                        <p className={styles.feedTitle}>{item.title}</p>
+                        <p className={styles.feedMeta}>
+                          <Icon name="calendar" size={11} />
+                          {formatDate(item.startDate)}
+                        </p>
+                      </div>
+                      <span className={styles.feedAge}>{formatRelativeDate(item.setlistUpdatedAt)}</span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
+
         </div>
       </div>
     </div>

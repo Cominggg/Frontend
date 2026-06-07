@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 
 import ReleaseCard from '@/components/release/ReleaseCard'
@@ -8,13 +8,31 @@ import Pagination from '@/components/ui/Pagination'
 import { getReleases } from '@/services/releaseApi'
 import styles from './ReleasesPage.module.css'
 
-const MAIN_TYPES = ['ALBUM', 'SINGLE', 'EP']
-const TYPE_FILTERS = ['전체', ...MAIN_TYPES, '기타']
+const MAIN_TYPES = ['Album', 'Single']
+const TYPE_FILTERS = ['전체', ...MAIN_TYPES]
 const PAGE_SIZE = 20
 
 function ReleasesPage() {
-  const [selectedType, setSelectedType] = useState('전체')
-  const [page, setPage] = useState(1)
+  const [searchParams, setSearchParams] = useSearchParams()
+
+  const selectedType = TYPE_FILTERS.includes(searchParams.get('type'))
+    ? searchParams.get('type')
+    : '전체'
+  const page = Math.max(1, parseInt(searchParams.get('page') || '1', 10))
+
+  function updateParams(updates) {
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev)
+      Object.entries(updates).forEach(([k, v]) => {
+        if (v == null || v === '전체' || v === '1' || v === 1) {
+          next.delete(k)
+        } else {
+          next.set(k, String(v))
+        }
+      })
+      return next
+    }, { replace: false })
+  }
 
   const typeParam = selectedType === '전체' ? undefined : selectedType
 
@@ -29,8 +47,7 @@ function ReleasesPage() {
   const totalPages = data?.totalPages ?? 1
 
   function handleTypeChange(type) {
-    setSelectedType(type)
-    setPage(1)
+    updateParams({ type, page: 1 })
   }
 
   return (
@@ -91,7 +108,7 @@ function ReleasesPage() {
           <Pagination
             currentPage={page}
             totalPages={totalPages}
-            onPageChange={setPage}
+            onPageChange={(p) => updateParams({ page: p })}
           />
         )}
 

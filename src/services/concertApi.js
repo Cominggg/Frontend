@@ -29,3 +29,13 @@ export async function getConcertSetlist(id) {
   const { data } = await api.get(`/concerts/${id}/setlist`)
   return data
 }
+
+export async function getRecentConcerts() {
+  const { data } = await api.get('/concerts', { params: { sort: 'createdAt,desc', size: 6 } })
+  return data
+}
+
+export async function getRecentSetlists() {
+  const { data } = await api.get('/concerts/setlists/recent', { params: { size: 5 } })
+  return data
+}
