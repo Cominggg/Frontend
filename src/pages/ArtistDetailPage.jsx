@@ -60,11 +60,13 @@ function ArtistDetailPage() {
   const [openReleaseId, setOpenReleaseId] = useState(null)
   const [inquiryOpen, setInquiryOpen] = useState(false)
 
+  const PARAM_DEFAULTS = { ct: 'all', cp: '1', rp: '1' }
+
   function updateParams(updates) {
     setSearchParams((prev) => {
       const next = new URLSearchParams(prev)
       Object.entries(updates).forEach(([k, v]) => {
-        if (v == null || v === 'all' || v === '1' || v === 1) {
+        if (v == null || String(v) === (PARAM_DEFAULTS[k] ?? '')) {
           next.delete(k)
         } else {
           next.set(k, String(v))
