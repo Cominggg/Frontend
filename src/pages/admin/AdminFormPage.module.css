@@ -171,6 +171,42 @@
 .btnSubmit:hover:not(:disabled) { opacity: 0.85; }
 .btnSubmit:disabled { opacity: 0.4; cursor: default; }
 
+/* ── 데이터 수집 트리거 ── */
+.triggerRow {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.btnSecondary {
+  padding: 0.5625rem 1.25rem;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  background: none;
+  border: 1.5px solid var(--color-border);
+  color: var(--color-text);
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.btnSecondary:hover:not(:disabled) {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+.btnSecondary:disabled { opacity: 0.4; cursor: default; }
+
+.triggerMsg {
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+}
+
+.errorMsg {
+  font-size: 0.875rem;
+  color: var(--color-destructive, #e53e3e);
+  padding: 0.625rem 0;
+}
+
 /* ── 반응형 ── */
 @media (max-width: 767px) {
   .fieldGrid {

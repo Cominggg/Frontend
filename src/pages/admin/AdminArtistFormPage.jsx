@@ -1,61 +1,74 @@
-import { useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { Link, useParams, useNavigate } from 'react-router-dom'
 
+import { getArtist } from '@/services/artistApi'
+import { createArtist, updateArtist, triggerArtistReleasesCollect } from '@/services/adminApi'
 import { ROUTES } from '@/constants/routes'
 import styles from './AdminFormPage.module.css'
 
-// TODO: API 연동 후 제거
-const MOCK_ARTIST = {
-  name: 'YOASOBI',
-  mbid: 'a1234567-89ab-cdef-0123-456789abcdef',
-  genres: ['J-Pop', 'Anime'],
-  debutDate: '2019.09.12',
-  members: 'Ayase, ikura',
-  imageUrl: '',
-  spotifyUrl: '',
-  youtubeUrl: '',
-  twitterUrl: '',
-  instagramUrl: '',
-}
-
-const GENRE_OPTIONS = ['J-Pop', 'J-Rock', 'Anime', 'Indie', 'Electronic', 'Hip-Hop', 'R&B', 'Soul', 'Alternative']
-
 function AdminArtistFormPage() {
   const { id } = useParams()
+  const navigate = useNavigate()
   const isEdit = Boolean(id)
 
-  const initial = isEdit ? MOCK_ARTIST : {
-    name: '', mbid: '', genres: [], debutDate: '', members: '',
-    imageUrl: '', spotifyUrl: '', youtubeUrl: '', twitterUrl: '', instagramUrl: '',
-  }
-
-  const [form, setForm] = useState(initial)
+  const [form, setForm] = useState({ name: '', mbid: '', sortName: '', debutDate: '' })
   const [saving, setSaving] = useState(false)
-  const [saved, setSaved] = useState(false)
+  const [error, setError] = useState('')
+  const [triggering, setTriggering] = useState(false)
+  const [triggerMsg, setTriggerMsg] = useState('')
+
+  useEffect(() => {
+    if (!isEdit) return
+    getArtist(id).then((artist) => {
+      setForm({
+        name: artist.name ?? '',
+        mbid: artist.mbid ?? '',
+        sortName: artist.sortName ?? '',
+        debutDate: artist.debutDate ?? '',
+      })
+    }).catch(() => setError('아티스트 정보를 불러오지 못했습니다.'))
+  }, [id, isEdit])
 
   function setField(key, value) {
     setForm((prev) => ({ ...prev, [key]: value }))
-    setSaved(false)
+    setError('')
   }
 
-  function toggleGenre(genre) {
-    setForm((prev) => {
-      const next = prev.genres.includes(genre)
-        ? prev.genres.filter((g) => g !== genre)
-        : [...prev.genres, genre]
-      return { ...prev, genres: next }
-    })
-    setSaved(false)
-  }
-
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault()
     setSaving(true)
-    // TODO: POST /api/admin/artists or PUT /api/admin/artists/:id
-    setTimeout(() => {
+    setError('')
+    try {
+      const body = {
+        name: form.name.trim(),
+        mbid: form.mbid.trim() || undefined,
+        sortName: form.sortName.trim() || undefined,
+        debutDate: form.debutDate.trim() || undefined,
+      }
+      if (isEdit) {
+        await updateArtist(id, body)
+      } else {
+        await createArtist(body)
+      }
+      navigate(ROUTES.ADMIN)
+    } catch {
+      setError('저장에 실패했습니다. 다시 시도해주세요.')
+    } finally {
       setSaving(false)
-      setSaved(true)
-    }, 800)
+    }
+  }
+
+  async function handleTriggerReleases() {
+    setTriggering(true)
+    setTriggerMsg('')
+    try {
+      await triggerArtistReleasesCollect(id)
+      setTriggerMsg('릴리즈 수집 트리거가 전송되었습니다.')
+    } catch {
+      setTriggerMsg('트리거 전송에 실패했습니다.')
+    } finally {
+      setTriggering(false)
+    }
   }
 
   return (
@@ -72,8 +85,6 @@ function AdminArtistFormPage() {
       </div>
 
       <form onSubmit={handleSubmit} className={styles.form}>
-
-        {/* 기본 정보 */}
         <section className={styles.section}>
           <h2 className={styles.sectionTitle}>기본 정보</h2>
           <div className={styles.fieldGrid}>
@@ -89,105 +100,65 @@ function AdminArtistFormPage() {
               />
             </label>
             <label className={styles.field}>
-              <span className={styles.fieldLabel}>MusicBrainz ID (MBID)</span>
+              <span className={styles.fieldLabel}>정렬명 (sortName)</span>
+              <input
+                type="text"
+                className={styles.input}
+                value={form.sortName}
+                onChange={(e) => setField('sortName', e.target.value)}
+                placeholder="예: YOASOBI"
+              />
+            </label>
+            <label className={styles.field}>
+              <span className={styles.fieldLabel}>MusicBrainz ID (MBID) {!isEdit && <span className={styles.required}>*</span>}</span>
               <input
                 type="text"
                 className={styles.input}
                 value={form.mbid}
                 onChange={(e) => setField('mbid', e.target.value)}
                 placeholder="예: a1234567-89ab-cdef-0123-456789abcdef"
+                required={!isEdit}
+                disabled={isEdit}
               />
               <span className={styles.fieldHint}>MusicBrainz에서 조회한 UUID를 입력하세요.</span>
             </label>
             <label className={styles.field}>
               <span className={styles.fieldLabel}>데뷔일</span>
               <input
-                type="text"
+                type="date"
                 className={styles.input}
                 value={form.debutDate}
                 onChange={(e) => setField('debutDate', e.target.value)}
-                placeholder="예: 2019.09.12"
               />
             </label>
-            <label className={styles.field}>
-              <span className={styles.fieldLabel}>멤버 (솔로이면 공백)</span>
-              <input
-                type="text"
-                className={styles.input}
-                value={form.members}
-                onChange={(e) => setField('members', e.target.value)}
-                placeholder="예: Ayase, ikura"
-              />
-              <span className={styles.fieldHint}>쉼표로 구분하여 입력하세요.</span>
-            </label>
           </div>
         </section>
 
-        {/* 장르 */}
-        <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>장르</h2>
-          <div className={styles.genreGrid}>
-            {GENRE_OPTIONS.map((genre) => (
-              <button
-                key={genre}
-                type="button"
-                className={`${styles.genreChip} ${form.genres.includes(genre) ? styles.genreChipActive : ''}`}
-                onClick={() => toggleGenre(genre)}
-              >
-                {genre}
-              </button>
-            ))}
-          </div>
-        </section>
+        {error && <p className={styles.errorMsg}>{error}</p>}
 
-        {/* 이미지 */}
-        <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>이미지</h2>
-          <label className={styles.field}>
-            <span className={styles.fieldLabel}>이미지 URL</span>
-            <input
-              type="url"
-              className={styles.input}
-              value={form.imageUrl}
-              onChange={(e) => setField('imageUrl', e.target.value)}
-              placeholder="https://..."
-            />
-          </label>
-        </section>
-
-        {/* 외부 링크 */}
-        <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>외부 링크 (MusicBrainz url-rels)</h2>
-          <div className={styles.fieldGrid}>
-            {[
-              { key: 'spotifyUrl', label: 'Spotify' },
-              { key: 'youtubeUrl', label: 'YouTube' },
-              { key: 'twitterUrl', label: 'X (Twitter)' },
-              { key: 'instagramUrl', label: 'Instagram' },
-            ].map(({ key, label }) => (
-              <label key={key} className={styles.field}>
-                <span className={styles.fieldLabel}>{label}</span>
-                <input
-                  type="url"
-                  className={styles.input}
-                  value={form[key]}
-                  onChange={(e) => setField(key, e.target.value)}
-                  placeholder="https://..."
-                />
-              </label>
-            ))}
-          </div>
-        </section>
-
-        {/* 저장 */}
         <div className={styles.formFooter}>
-          {saved && <span className={styles.savedMsg}>저장되었습니다.</span>}
           <button type="submit" className={styles.btnSubmit} disabled={saving || !form.name.trim()}>
             {saving ? '저장 중...' : isEdit ? '수정 저장' : '아티스트 등록'}
           </button>
         </div>
-
       </form>
+
+      {isEdit && (
+        <section className={styles.section} style={{ marginTop: '2rem' }}>
+          <h2 className={styles.sectionTitle}>데이터 수집</h2>
+          <div className={styles.triggerRow}>
+            <button
+              type="button"
+              className={styles.btnSecondary}
+              onClick={handleTriggerReleases}
+              disabled={triggering}
+            >
+              {triggering ? '전송 중...' : '릴리즈 수집 트리거'}
+            </button>
+            {triggerMsg && <span className={styles.triggerMsg}>{triggerMsg}</span>}
+          </div>
+        </section>
+      )}
     </div>
   )
 }
