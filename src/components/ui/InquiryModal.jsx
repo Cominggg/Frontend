@@ -55,7 +55,8 @@ function InquiryModal({ isOpen, onClose, type, targetId }) {
     try {
       await createInquiry({ type, targetId, title: title.trim(), content: content.trim() })
       setSubmitted(true)
-    } catch {
+    } catch (err) {
+      console.error(err)
       setError('문의 제출에 실패했습니다. 잠시 후 다시 시도해 주세요.')
     } finally {
       setIsSubmitting(false)
