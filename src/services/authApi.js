@@ -13,3 +13,8 @@ export async function updateMe(formData) {
 export async function withdraw() {
   await api.delete('/auth/withdraw')
 }
+
+export async function devLogin(nickname, role) {
+  const { data } = await api.post('/dev/login', { nickname, role })
+  return data
+}
