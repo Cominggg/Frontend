@@ -118,6 +118,15 @@ function Header() {
               </button>
               {dropdownOpen && (
                 <div className={styles.dropdown}>
+                  {user.role === 'ADMIN' && (
+                    <Link
+                      to={ROUTES.ADMIN}
+                      className={styles.dropdownItem}
+                      onClick={() => setDropdownOpen(false)}
+                    >
+                      관리자 페이지
+                    </Link>
+                  )}
                   <Link
                     to={ROUTES.MY}
                     className={styles.dropdownItem}
@@ -166,6 +175,15 @@ function Header() {
           ))}
           {user ? (
             <>
+              {user.role === 'ADMIN' && (
+                <Link
+                  to={ROUTES.ADMIN}
+                  className={styles.mobileNavLink}
+                  onClick={() => setMenuOpen(false)}
+                >
+                  관리자 페이지
+                </Link>
+              )}
               <Link
                 to={ROUTES.MY}
                 className={styles.mobileNavLink}

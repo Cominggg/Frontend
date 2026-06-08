@@ -158,6 +158,27 @@
   background: var(--color-surface);
 }
 
+/* ── 관리자 수정 버튼 ── */
+.adminEditBtn {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  border: 1.5px solid var(--color-border);
+  color: var(--color-text-muted);
+  background: transparent;
+  text-decoration: none;
+  margin-bottom: 0.5rem;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.adminEditBtn:hover {
+  border-color: var(--color-text-muted);
+  color: var(--color-text);
+}
+
 /* ── 캘린더 버튼 ── */
 .calendarBtn {
   display: inline-flex;

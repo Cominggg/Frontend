@@ -2,32 +2,30 @@ import { useState, useEffect } from 'react'
 import { Link, useParams, useNavigate } from 'react-router-dom'
 
 import { getArtist } from '@/services/artistApi'
-import { createArtist, updateArtist, triggerArtistReleasesCollect } from '@/services/adminApi'
+import { updateArtist, triggerArtistReleasesCollect } from '@/services/adminApi'
 import { ROUTES } from '@/constants/routes'
 import styles from './AdminFormPage.module.css'
 
 function AdminArtistFormPage() {
   const { id } = useParams()
   const navigate = useNavigate()
-  const isEdit = Boolean(id)
 
-  const [form, setForm] = useState({ name: '', mbid: '', sortName: '', debutDate: '' })
+  const [form, setForm] = useState({ name: '', sortName: '', debutDate: '' })
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
   const [triggering, setTriggering] = useState(false)
   const [triggerMsg, setTriggerMsg] = useState('')
 
   useEffect(() => {
-    if (!isEdit) return
+    if (!id) { navigate(ROUTES.ADMIN, { replace: true }); return }
     getArtist(id).then((artist) => {
       setForm({
         name: artist.name ?? '',
-        mbid: artist.mbid ?? '',
         sortName: artist.sortName ?? '',
         debutDate: artist.debutDate ?? '',
       })
     }).catch(() => setError('아티스트 정보를 불러오지 못했습니다.'))
-  }, [id, isEdit])
+  }, [id, navigate])
 
   function setField(key, value) {
     setForm((prev) => ({ ...prev, [key]: value }))
@@ -39,17 +37,11 @@ function AdminArtistFormPage() {
     setSaving(true)
     setError('')
     try {
-      const body = {
-        name: form.name.trim(),
-        mbid: form.mbid.trim() || undefined,
+      await updateArtist(id, {
+        name: form.name.trim() || undefined,
         sortName: form.sortName.trim() || undefined,
-        debutDate: form.debutDate.trim() || undefined,
-      }
-      if (isEdit) {
-        await updateArtist(id, body)
-      } else {
-        await createArtist(body)
-      }
+        debutDate: form.debutDate || undefined,
+      })
       navigate(ROUTES.ADMIN)
     } catch {
       setError('저장에 실패했습니다. 다시 시도해주세요.')
@@ -80,8 +72,8 @@ function AdminArtistFormPage() {
           </svg>
           대시보드
         </Link>
-        <h1 className={styles.pageTitle}>아티스트 {isEdit ? '수정' : '등록'}</h1>
-        <p className={styles.pageDesc}>MusicBrainz 정보와 연동하여 아티스트를 등록합니다.</p>
+        <h1 className={styles.pageTitle}>아티스트 수정</h1>
+        <p className={styles.pageDesc}>아티스트 기본 정보를 수정합니다.</p>
       </div>
 
       <form onSubmit={handleSubmit} className={styles.form}>
@@ -89,14 +81,13 @@ function AdminArtistFormPage() {
           <h2 className={styles.sectionTitle}>기본 정보</h2>
           <div className={styles.fieldGrid}>
             <label className={styles.field}>
-              <span className={styles.fieldLabel}>아티스트명 <span className={styles.required}>*</span></span>
+              <span className={styles.fieldLabel}>아티스트명</span>
               <input
                 type="text"
                 className={styles.input}
                 value={form.name}
                 onChange={(e) => setField('name', e.target.value)}
                 placeholder="예: YOASOBI"
-                required
               />
             </label>
             <label className={styles.field}>
@@ -108,19 +99,6 @@ function AdminArtistFormPage() {
                 onChange={(e) => setField('sortName', e.target.value)}
                 placeholder="예: YOASOBI"
               />
-            </label>
-            <label className={styles.field}>
-              <span className={styles.fieldLabel}>MusicBrainz ID (MBID) {!isEdit && <span className={styles.required}>*</span>}</span>
-              <input
-                type="text"
-                className={styles.input}
-                value={form.mbid}
-                onChange={(e) => setField('mbid', e.target.value)}
-                placeholder="예: a1234567-89ab-cdef-0123-456789abcdef"
-                required={!isEdit}
-                disabled={isEdit}
-              />
-              <span className={styles.fieldHint}>MusicBrainz에서 조회한 UUID를 입력하세요.</span>
             </label>
             <label className={styles.field}>
               <span className={styles.fieldLabel}>데뷔일</span>
@@ -137,28 +115,26 @@ function AdminArtistFormPage() {
         {error && <p className={styles.errorMsg}>{error}</p>}
 
         <div className={styles.formFooter}>
-          <button type="submit" className={styles.btnSubmit} disabled={saving || !form.name.trim()}>
-            {saving ? '저장 중...' : isEdit ? '수정 저장' : '아티스트 등록'}
+          <button type="submit" className={styles.btnSubmit} disabled={saving}>
+            {saving ? '저장 중...' : '수정 저장'}
           </button>
         </div>
       </form>
 
-      {isEdit && (
-        <section className={styles.section} style={{ marginTop: '2rem' }}>
-          <h2 className={styles.sectionTitle}>데이터 수집</h2>
-          <div className={styles.triggerRow}>
-            <button
-              type="button"
-              className={styles.btnSecondary}
-              onClick={handleTriggerReleases}
-              disabled={triggering}
-            >
-              {triggering ? '전송 중...' : '릴리즈 수집 트리거'}
-            </button>
-            {triggerMsg && <span className={styles.triggerMsg}>{triggerMsg}</span>}
-          </div>
-        </section>
-      )}
+      <section className={styles.section} style={{ marginTop: '2rem' }}>
+        <h2 className={styles.sectionTitle}>데이터 수집</h2>
+        <div className={styles.triggerRow}>
+          <button
+            type="button"
+            className={styles.btnSecondary}
+            onClick={handleTriggerReleases}
+            disabled={triggering}
+          >
+            {triggering ? '전송 중...' : '릴리즈 수집 트리거'}
+          </button>
+          {triggerMsg && <span className={styles.triggerMsg}>{triggerMsg}</span>}
+        </div>
+      </section>
     </div>
   )
 }

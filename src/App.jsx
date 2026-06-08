@@ -44,10 +44,8 @@ function App() {
           element={<AdminRoute><AdminLayout /></AdminRoute>}
         >
           <Route index element={<AdminPage />} />
-          <Route path="artists/new" element={<AdminArtistFormPage />} />
           <Route path="artists/:id/edit" element={<AdminArtistFormPage />} />
           <Route path="concerts/pending" element={<AdminPendingConcertsPage />} />
-          <Route path="concerts/new" element={<AdminConcertFormPage />} />
           <Route path="concerts/:id/edit" element={<AdminConcertFormPage />} />
           <Route path="inquiries" element={<AdminInquiriesPage />} />
         </Route>

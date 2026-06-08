@@ -217,14 +217,21 @@ function ArtistDetailPage() {
             <h1 className={styles.artistName}>{name}</h1>
 
             <p className={styles.followers}>팔로워 {formatFollowers(followersCount)}</p>
-            <button
-              className={`${styles.followBtn} ${isFollowing ? styles.following : ''}`}
-              onClick={handleFollow}
-              disabled={followMutation.isPending}
-              aria-label={isFollowing ? `${name} 언팔로우` : `${name} 팔로우`}
-            >
-              {isFollowing ? '팔로잉' : '+ 팔로우'}
-            </button>
+            <div className={styles.heroActions}>
+              <button
+                className={`${styles.followBtn} ${isFollowing ? styles.following : ''}`}
+                onClick={handleFollow}
+                disabled={followMutation.isPending}
+                aria-label={isFollowing ? `${name} 언팔로우` : `${name} 팔로우`}
+              >
+                {isFollowing ? '팔로잉' : '+ 팔로우'}
+              </button>
+              {user?.role === 'ADMIN' && (
+                <Link to={ROUTES.ADMIN_ARTIST_EDIT(artistId)} className={styles.adminEditBtn}>
+                  수정
+                </Link>
+              )}
+            </div>
           </div>
         </section>
 
