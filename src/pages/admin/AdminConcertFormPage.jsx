@@ -8,7 +8,7 @@ import { ROUTES } from '@/constants/routes'
 import styles from './AdminFormPage.module.css'
 import concertStyles from './AdminConcertFormPage.module.css'
 
-const STATUS_OPTIONS = ['UPCOMING', 'ONGOING', 'ENDED', 'CANCELLED']
+const STATUS_OPTIONS = ['UPCOMING', 'ONGOING', 'ENDED', 'CANCELLED', 'EXCLUDED']
 
 const EMPTY_FORM = {
   title: '', cast: '',
@@ -71,7 +71,6 @@ function AdminConcertFormPage() {
   const [error, setError] = useState('')
 
   const [pendingStatus, setPendingStatus] = useState('UPCOMING')
-  const [stateNote, setStateNote] = useState('')
   const [stateChanging, setStateChanging] = useState(false)
   const [stateMsg, setStateMsg] = useState('')
 
@@ -132,9 +131,8 @@ function AdminConcertFormPage() {
     setStateChanging(true)
     setStateMsg('')
     try {
-      await updateConcertState(id, { status: pendingStatus, reason: stateNote.trim() || undefined })
+      await updateConcertState(id, { status: pendingStatus })
       setCurrentStatus(pendingStatus)
-      setStateNote('')
       setStateMsg('상태가 변경되었습니다.')
     } catch {
       setStateMsg('상태 변경에 실패했습니다.')
@@ -281,16 +279,6 @@ function AdminConcertFormPage() {
               </button>
             ))}
           </div>
-          <label className={styles.field}>
-            <span className={styles.fieldLabel}>변경 사유</span>
-            <input
-              type="text"
-              className={styles.input}
-              value={stateNote}
-              onChange={(e) => setStateNote(e.target.value)}
-              placeholder="예: 공연 취소 공지 확인"
-            />
-          </label>
           <div className={styles.triggerRow}>
             <button
               type="button"
