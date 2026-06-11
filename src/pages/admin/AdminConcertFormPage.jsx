@@ -13,7 +13,7 @@ const STATUS_OPTIONS = ['UPCOMING', 'ONGOING', 'ENDED', 'CANCELLED']
 const EMPTY_FORM = {
   title: '', cast: '',
   startDate: '', endDate: '',
-  venueName: '', venueAddress: '',
+  venueName: '',
   posterUrl: '', price: '',
   bookingLinks: [],
 }
@@ -87,7 +87,6 @@ function AdminConcertFormPage() {
         startDate: concert.startDate ?? '',
         endDate: concert.endDate ?? '',
         venueName: typeof concert.venue === 'string' ? concert.venue : (concert.venue?.name ?? concert.venueName ?? ''),
-        venueAddress: concert.venue?.address ?? concert.venueAddress ?? '',
         posterUrl: concert.posterUrl ?? '',
         price: concert.price ?? '',
         bookingLinks: (concert.ticketLinks ?? concert.bookingLinks ?? []).map((l) => ({
@@ -116,7 +115,6 @@ function AdminConcertFormPage() {
         startDate: form.startDate || undefined,
         endDate: form.endDate || undefined,
         venueName: form.venueName.trim() || undefined,
-        venueAddress: form.venueAddress.trim() || undefined,
         posterUrl: form.posterUrl.trim() || undefined,
         price: form.price.trim() || undefined,
         bookingLinks: form.bookingLinks.length > 0 ? form.bookingLinks : undefined,
@@ -231,16 +229,6 @@ function AdminConcertFormPage() {
                 value={form.venueName}
                 onChange={(e) => setField('venueName', e.target.value)}
                 placeholder="예: KSPO DOME"
-              />
-            </label>
-            <label className={styles.field}>
-              <span className={styles.fieldLabel}>공연장 주소</span>
-              <input
-                type="text"
-                className={styles.input}
-                value={form.venueAddress}
-                onChange={(e) => setField('venueAddress', e.target.value)}
-                placeholder="예: 서울특별시 송파구"
               />
             </label>
             <label className={`${styles.field} ${styles.fieldFull}`}>
