@@ -64,11 +64,11 @@ export async function triggerConcertSetlistCollect(concertId) {
 
 // 파이프라인 검색
 export async function searchMbArtists(query) {
-  const { data } = await api.get('/admin/data/search/artists', { params: { query } })
+  const { data } = await api.get('/admin/data/search/artists', { params: { name: query } })
   return data
 }
 
 export async function searchKopisConcerts(query) {
-  const { data } = await api.get('/admin/data/search/concerts', { params: { query } })
+  const { data } = await api.get('/admin/data/search/concerts', { params: { title: query } })
   return data
 }

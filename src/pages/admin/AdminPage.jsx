@@ -32,7 +32,7 @@ const STATIC_CARDS = [
   },
 ]
 
-function PipelineSearchBlock({ title, placeholder, onSearch, onCollect, collectLabel, resultNameKey, resultSubKey }) {
+function PipelineSearchBlock({ title, placeholder, onSearch, onCollect, collectLabel, resultNameKey, resultSubKey, resultTagKeys = [] }) {
   const [query, setQuery] = useState('')
   const [results, setResults] = useState([])
   const [searching, setSearching] = useState(false)
@@ -93,13 +93,27 @@ function PipelineSearchBlock({ title, placeholder, onSearch, onCollect, collectL
             return (
               <li key={key} className={styles.searchResultItem}>
                 <div className={styles.searchResultInfo}>
-                  <span className={styles.searchResultName}>{item[resultNameKey]}</span>
+                  <div className={styles.searchResultNameRow}>
+                    <span className={styles.searchResultName}>{item[resultNameKey]}</span>
+                    {resultTagKeys.length > 0 && (
+                      <div className={styles.searchResultTags}>
+                        {resultTagKeys.map((key) =>
+                          item[key] ? <span key={key} className={styles.searchResultTag}>{item[key]}</span> : null
+                        )}
+                      </div>
+                    )}
+                  </div>
                   {resultSubKey && item[resultSubKey] && (
                     <span className={styles.searchResultSub}>{item[resultSubKey]}</span>
                   )}
                 </div>
                 <div className={styles.searchResultActions}>
                   {msgs[key] && <span className={styles.triggerMsg}>{msgs[key]}</span>}
+                  {item.url && (
+                    <a href={item.url} target="_blank" rel="noopener noreferrer" className={styles.triggerLink}>
+                      바로가기 →
+                    </a>
+                  )}
                   <button
                     type="button"
                     className={styles.collectBtn}
@@ -186,6 +200,7 @@ function AdminPage() {
           collectLabel="수집"
           resultNameKey="name"
           resultSubKey="mbid"
+          resultTagKeys={['type', 'country']}
         />
 
         <PipelineSearchBlock
