@@ -3,6 +3,7 @@ export const CONCERT_STATUS_COLOR = {
   ONGOING:   '#2E7D32',
   ENDED:     '#757575',
   CANCELLED: '#C62828',
+  EXCLUDED:  '#546e7a',
 }
 
 export const CONCERT_STATUS_LABEL = {
@@ -10,4 +11,5 @@ export const CONCERT_STATUS_LABEL = {
   ONGOING:   '공연중',
   ENDED:     '공연완료',
   CANCELLED: '공연취소',
+  EXCLUDED:  '제외',
 }
