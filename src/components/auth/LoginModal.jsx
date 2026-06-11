@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'react'
 import useAuthStore from '@/stores/authStore'
 import useLoginModalStore from '@/stores/loginModalStore'
 import { devLogin, getMe } from '@/services/authApi'
+import Logo from '@/components/ui/Logo'
 import styles from './LoginModal.module.css'
 
 const PROVIDERS = [
@@ -150,7 +151,9 @@ function LoginModal() {
         </button>
 
         <div className={styles.header}>
-          <span className={styles.logo}>COMING</span>
+          <div className={styles.logo}>
+            <Logo size="lg" />
+          </div>
           <p className={styles.subtitle}>로그인하고 내한 공연 정보를 맞춤으로 받아보세요</p>
         </div>
 

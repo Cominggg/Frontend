@@ -6,6 +6,7 @@ import { ROUTES } from '@/constants/routes'
 import useAuthStore from '@/stores/authStore'
 import useLoginModalStore from '@/stores/loginModalStore'
 import useThemeStore from '@/stores/themeStore'
+import Logo from '@/components/ui/Logo'
 import styles from './Header.module.css'
 
 const NAV_LINKS = [
@@ -54,7 +55,7 @@ function Header() {
     <header className={styles.header}>
       <div className={styles.inner}>
         <Link to={ROUTES.HOME} className={styles.logo}>
-          COMING
+          <Logo size="md" />
         </Link>
 
         <nav className={styles.nav}>
