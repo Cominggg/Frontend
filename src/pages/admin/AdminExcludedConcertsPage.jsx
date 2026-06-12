@@ -7,27 +7,24 @@ import { getExcludedConcerts, updateConcertState, removeConcertArtist } from '@/
 import { ROUTES } from '@/constants/routes'
 import styles from './AdminExcludedConcertsPage.module.css'
 
-const RESTORE_OPTIONS = [
-  { value: 'UPCOMING', label: 'UPCOMING' },
-  { value: 'ONGOING', label: 'ONGOING' },
-]
+const STATUS_OPTIONS = ['UPCOMING', 'ONGOING', 'ENDED', 'CANCELLED']
 
 function ExcludedConcertCard({ concert, onRefresh }) {
-  const [restoreStatus, setRestoreStatus] = useState('UPCOMING')
-  const [restoring, setRestoring] = useState(false)
+  const [pendingStatus, setPendingStatus] = useState('UPCOMING')
+  const [stateChanging, setStateChanging] = useState(false)
+  const [stateMsg, setStateMsg] = useState('')
   const [showAddArtist, setShowAddArtist] = useState(false)
-  const [restoreError, setRestoreError] = useState('')
   const [removingId, setRemovingId] = useState(null)
 
-  async function handleRestore() {
-    setRestoring(true)
-    setRestoreError('')
+  async function handleStateChange() {
+    setStateChanging(true)
+    setStateMsg('')
     try {
-      await updateConcertState(concert.id, { status: restoreStatus })
+      await updateConcertState(concert.id, { status: pendingStatus })
       onRefresh()
     } catch {
-      setRestoreError('상태 변경에 실패했습니다.')
-      setRestoring(false)
+      setStateMsg('상태 변경에 실패했습니다.')
+      setStateChanging(false)
     }
   }
 
@@ -94,29 +91,31 @@ function ExcludedConcertCard({ concert, onRefresh }) {
         </button>
       </div>
 
-      <div className={styles.restoreSection}>
+      <div className={styles.stateSection}>
         <p className={styles.sectionLabel}>상태 복원</p>
-        <div className={styles.restoreRow}>
-          <select
-            className={styles.restoreSelect}
-            value={restoreStatus}
-            onChange={(e) => setRestoreStatus(e.target.value)}
-            disabled={restoring}
-          >
-            {RESTORE_OPTIONS.map((opt) => (
-              <option key={opt.value} value={opt.value}>{opt.label}</option>
-            ))}
-          </select>
+        <div className={styles.statusOptions}>
+          {STATUS_OPTIONS.map((s) => (
+            <button
+              key={s}
+              type="button"
+              className={`${styles.statusOption} ${pendingStatus === s ? styles.statusOptionActive : ''}`}
+              onClick={() => setPendingStatus(s)}
+            >
+              {s}
+            </button>
+          ))}
+        </div>
+        <div className={styles.stateRow}>
           <button
             type="button"
-            className={styles.restoreBtn}
-            disabled={restoring}
-            onClick={handleRestore}
+            className={styles.btnStateChange}
+            disabled={stateChanging}
+            onClick={handleStateChange}
           >
-            {restoring ? '처리 중...' : '복원'}
+            {stateChanging ? '변경 중...' : '상태 변경'}
           </button>
+          {stateMsg && <span className={styles.stateMsg}>{stateMsg}</span>}
         </div>
-        {restoreError && <p className={styles.restoreError}>{restoreError}</p>}
       </div>
 
       {showAddArtist && (
