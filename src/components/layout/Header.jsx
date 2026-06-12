@@ -6,6 +6,7 @@ import { ROUTES } from '@/constants/routes'
 import useAuthStore from '@/stores/authStore'
 import useLoginModalStore from '@/stores/loginModalStore'
 import useThemeStore from '@/stores/themeStore'
+import Logo from '@/components/ui/Logo'
 import styles from './Header.module.css'
 
 const NAV_LINKS = [
@@ -54,7 +55,7 @@ function Header() {
     <header className={styles.header}>
       <div className={styles.inner}>
         <Link to={ROUTES.HOME} className={styles.logo}>
-          COMING
+          <Logo size="md" />
         </Link>
 
         <nav className={styles.nav}>
@@ -103,21 +104,30 @@ function Header() {
                 aria-expanded={dropdownOpen}
                 aria-label="사용자 메뉴"
               >
-                {user.profileImage ? (
+                {user.avatarUrl ? (
                   <img
-                    src={user.profileImage}
-                    alt={user.name}
+                    src={user.avatarUrl}
+                    alt={user.nickname}
                     className={styles.avatar}
                     onError={(e) => { e.target.onerror = null; e.target.style.display = 'none' }}
                   />
                 ) : (
                   <span className={styles.avatarInitial} aria-hidden="true">
-                    {user.name.charAt(0)}
+                    {user.nickname?.charAt(0)}
                   </span>
                 )}
               </button>
               {dropdownOpen && (
                 <div className={styles.dropdown}>
+                  {user.role === 'ADMIN' && (
+                    <Link
+                      to={ROUTES.ADMIN}
+                      className={styles.dropdownItem}
+                      onClick={() => setDropdownOpen(false)}
+                    >
+                      관리자 페이지
+                    </Link>
+                  )}
                   <Link
                     to={ROUTES.MY}
                     className={styles.dropdownItem}
@@ -166,6 +176,15 @@ function Header() {
           ))}
           {user ? (
             <>
+              {user.role === 'ADMIN' && (
+                <Link
+                  to={ROUTES.ADMIN}
+                  className={styles.mobileNavLink}
+                  onClick={() => setMenuOpen(false)}
+                >
+                  관리자 페이지
+                </Link>
+              )}
               <Link
                 to={ROUTES.MY}
                 className={styles.mobileNavLink}

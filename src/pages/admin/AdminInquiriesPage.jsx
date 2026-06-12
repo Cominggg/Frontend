@@ -1,123 +1,55 @@
-import { useState } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 
+import { getInquiries, getInquiry, updateInquiryStatus } from '@/services/adminApi'
 import styles from './AdminInquiriesPage.module.css'
 
-// TODO: API 연동 후 제거
-const MOCK_INQUIRIES = [
-  {
-    id: 1,
-    type: 'CONCERT',
-    title: 'YOASOBI 공연 날짜가 잘못되었습니다',
-    content: '2025.08.15 ~ 08.16로 되어 있는데, 실제로는 08.15 단일 공연입니다. 수정 부탁드립니다.',
-    targetId: 1,
-    targetName: 'YOASOBI ARENA TOUR 2025',
-    status: 'PENDING',
-    userEmail: 'user1@example.com',
-    createdAt: '2025.04.12',
-    adminNote: '',
-  },
-  {
-    id: 2,
-    type: 'ARTIST',
-    title: 'Kenshi Yonezu 데뷔일 수정 요청',
-    content: '데뷔일이 2012.02.29로 되어 있으나 2012.02.18이 정확합니다.',
-    targetId: 2,
-    targetName: 'Kenshi Yonezu',
-    status: 'PENDING',
-    userEmail: 'user2@example.com',
-    createdAt: '2025.04.11',
-    adminNote: '',
-  },
-  {
-    id: 3,
-    type: 'SETLIST',
-    title: 'ZUTOMAYO 서울 공연 셋리스트 등록 요청',
-    content: '2026.03.14 공연 셋리스트를 제보합니다. setlist.fm 링크 첨부합니다.',
-    targetId: 8,
-    targetName: 'ZUTOMAYO INTENSE II in Seoul',
-    status: 'RESOLVED',
-    userEmail: 'user3@example.com',
-    createdAt: '2025.04.09',
-    adminNote: '확인 후 셋리스트 등록 완료.',
-  },
-  {
-    id: 4,
-    type: 'CONCERT',
-    title: 'Ado 공연 예매처 링크 오류',
-    content: '인터파크 링크가 404 오류입니다. 수정 부탁드립니다.',
-    targetId: 3,
-    targetName: 'Ado WORLD TOUR "Hibana" in Seoul',
-    status: 'REJECTED',
-    userEmail: 'user4@example.com',
-    createdAt: '2025.04.08',
-    adminNote: '해당 공연은 인터파크 취급 없음. 원래 YES24만 제공됩니다.',
-  },
-  {
-    id: 5,
-    type: 'ARTIST',
-    title: 'RADWIMPS 멤버 정보 오류',
-    content: '멤버 정보가 누락되어 있습니다. 노다 요지로, 무카이 타쿠야, 야마구치 요우키, 미타케 가즈마가 정확합니다.',
-    targetId: 6,
-    targetName: 'RADWIMPS',
-    status: 'PENDING',
-    userEmail: 'user5@example.com',
-    createdAt: '2025.04.07',
-    adminNote: '',
-  },
-  {
-    id: 6,
-    type: 'CONCERT',
-    title: 'King Gnu 공연 장소 수정',
-    content: '올림픽공원 체조경기장이 아니라 KSPO DOME입니다.',
-    targetId: 4,
-    targetName: 'King Gnu LIVE TOUR 2025',
-    status: 'PENDING',
-    userEmail: 'user6@example.com',
-    createdAt: '2025.04.06',
-    adminNote: '',
-  },
-  {
-    id: 7,
-    type: 'CONCERT',
-    title: '공연 가격 정보 미등록',
-    content: 'Mrs. GREEN APPLE 공연 가격이 미정으로 나오는데 이미 공지되었습니다. 전석 143,000원입니다.',
-    targetId: 6,
-    targetName: 'Mrs. GREEN APPLE ARENA TOUR 2025',
-    status: 'PENDING',
-    userEmail: 'user7@example.com',
-    createdAt: '2025.04.05',
-    adminNote: '',
-  },
-]
-
 const TYPE_LABEL = { CONCERT: '공연', ARTIST: '아티스트', SETLIST: '셋리스트' }
-const STATUS_LABEL = { PENDING: '대기 중', RESOLVED: '처리완료', REJECTED: '반려' }
-const STATUS_FILTERS = ['전체', 'PENDING', 'RESOLVED', 'REJECTED']
+const STATUS_LABEL = { PENDING: '대기 중', IN_PROGRESS: '처리 중', RESOLVED: '처리완료', REJECTED: '반려' }
+const STATUS_FILTERS = ['전체', 'PENDING', 'IN_PROGRESS', 'RESOLVED', 'REJECTED']
 const TYPE_FILTERS = ['전체', 'CONCERT', 'ARTIST', 'SETLIST']
 
-function DetailModal({ item, onClose, onResolve, onReject }) {
-  const [note, setNote] = useState(item.adminNote)
+function DetailModal({ id, onClose, onStatusChange }) {
+  const [item, setItem] = useState(null)
+  const [note, setNote] = useState('')
   const [processing, setProcessing] = useState(false)
+  const [error, setError] = useState('')
 
-  function handle(action) {
+  useEffect(() => {
+    getInquiry(id).then((data) => {
+      setItem(data)
+      setNote(data.adminNote ?? '')
+    }).catch(() => setError('문의를 불러오지 못했습니다.'))
+  }, [id])
+
+  async function handleAction(status) {
     setProcessing(true)
-    // TODO: PATCH /api/admin/inquiries/:id/status { status, adminNote: note }
-    setTimeout(() => {
-      action(item.id, note)
+    setError('')
+    try {
+      await updateInquiryStatus(id, { status, adminNote: note.trim() || undefined })
+      onStatusChange(id, status)
       onClose()
-    }, 600)
+    } catch {
+      setError('처리에 실패했습니다.')
+      setProcessing(false)
+    }
   }
+
+  const isPending = item?.status === 'PENDING' || item?.status === 'IN_PROGRESS'
 
   return (
     <div className={styles.modalOverlay} onClick={onClose}>
       <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
         <div className={styles.modalHeader}>
-          <div className={styles.modalTitleRow}>
-            <span className={`${styles.typeBadge} ${styles[`type${item.type}`]}`}>
-              {TYPE_LABEL[item.type]}
-            </span>
-            <h2 className={styles.modalTitle}>{item.title}</h2>
-          </div>
+          {item ? (
+            <div className={styles.modalTitleRow}>
+              <span className={`${styles.typeBadge} ${styles[`type${item.type}`]}`}>
+                {TYPE_LABEL[item.type]}
+              </span>
+              <h2 className={styles.modalTitle}>{item.title}</h2>
+            </div>
+          ) : (
+            <div className={styles.modalTitle}>{error || '불러오는 중...'}</div>
+          )}
           <button className={styles.modalClose} onClick={onClose} aria-label="닫기">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
               <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
@@ -125,45 +57,58 @@ function DetailModal({ item, onClose, onResolve, onReject }) {
           </button>
         </div>
 
-        <dl className={styles.modalMeta}>
-          <div><dt>대상</dt><dd>{item.targetName}</dd></div>
-          <div><dt>제출자</dt><dd>{item.userEmail}</dd></div>
-          <div><dt>제출일</dt><dd>{item.createdAt}</dd></div>
-        </dl>
+        {item && (
+          <>
+            <dl className={styles.modalMeta}>
+              <div><dt>대상 ID</dt><dd>{item.targetId ?? '-'}</dd></div>
+              <div><dt>제출자</dt><dd>{item.userNickname}</dd></div>
+              <div><dt>제출일</dt><dd>{item.createdAt}</dd></div>
+            </dl>
 
-        <div className={styles.contentBox}>
-          <p className={styles.contentText}>{item.content}</p>
-        </div>
+            <div className={styles.contentBox}>
+              <p className={styles.contentText}>{item.content}</p>
+            </div>
 
-        <label className={styles.noteLabel}>
-          처리 메모
-          <textarea
-            className={styles.noteInput}
-            value={note}
-            onChange={(e) => setNote(e.target.value)}
-            placeholder="처리 내용 또는 반려 사유를 입력하세요."
-            rows={3}
-            disabled={item.status !== 'PENDING'}
-          />
-        </label>
+            <label className={styles.noteLabel}>
+              처리 메모
+              <textarea
+                className={styles.noteInput}
+                value={note}
+                onChange={(e) => setNote(e.target.value)}
+                placeholder="처리 내용 또는 반려 사유를 입력하세요."
+                rows={3}
+                disabled={!isPending}
+              />
+            </label>
 
-        {item.status === 'PENDING' && (
-          <div className={styles.modalActions}>
-            <button
-              className={styles.btnReject}
-              disabled={processing}
-              onClick={() => handle(onReject)}
-            >
-              반려
-            </button>
-            <button
-              className={styles.btnResolve}
-              disabled={processing}
-              onClick={() => handle(onResolve)}
-            >
-              처리완료
-            </button>
-          </div>
+            {error && <p className={styles.modalError}>{error}</p>}
+
+            {isPending && (
+              <div className={styles.modalActions}>
+                <button
+                  className={styles.btnReject}
+                  disabled={processing}
+                  onClick={() => handleAction('REJECTED')}
+                >
+                  반려
+                </button>
+                <button
+                  className={styles.btnInProgress}
+                  disabled={processing}
+                  onClick={() => handleAction('IN_PROGRESS')}
+                >
+                  처리 중
+                </button>
+                <button
+                  className={styles.btnResolve}
+                  disabled={processing}
+                  onClick={() => handleAction('RESOLVED')}
+                >
+                  처리완료
+                </button>
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>
@@ -171,31 +116,53 @@ function DetailModal({ item, onClose, onResolve, onReject }) {
 }
 
 function AdminInquiriesPage() {
-  const [items, setItems] = useState(MOCK_INQUIRIES)
+  const [items, setItems] = useState([])
+  const [loading, setLoading] = useState(false)
+  const [totalElements, setTotalElements] = useState(0)
+  const [page, setPage] = useState(0)
   const [statusFilter, setStatusFilter] = useState('전체')
   const [typeFilter, setTypeFilter] = useState('전체')
   const [selectedId, setSelectedId] = useState(null)
-  const selected = selectedId ? items.find((it) => it.id === selectedId) : null
 
-  const filtered = items.filter((it) => {
-    const matchStatus = statusFilter === '전체' || it.status === statusFilter
-    const matchType = typeFilter === '전체' || it.type === typeFilter
-    return matchStatus && matchType
-  })
+  const PAGE_SIZE = 20
 
-  function handleResolve(id, note) {
+  const fetchInquiries = useCallback(async () => {
+    setLoading(true)
+    try {
+      const params = { page, size: PAGE_SIZE }
+      if (statusFilter !== '전체') params.status = statusFilter
+      if (typeFilter !== '전체') params.type = typeFilter
+      const data = await getInquiries(params)
+      setItems(data.content)
+      setTotalElements(data.totalElements)
+    } catch {
+      setItems([])
+    } finally {
+      setLoading(false)
+    }
+  }, [page, statusFilter, typeFilter])
+
+  useEffect(() => {
+    fetchInquiries()
+  }, [fetchInquiries])
+
+  function handleFilterChange(setter) {
+    return (value) => {
+      setter(value)
+      setPage(0)
+    }
+  }
+
+  function handleStatusChange(id, newStatus) {
     setItems((prev) =>
-      prev.map((it) => it.id === id ? { ...it, status: 'RESOLVED', adminNote: note } : it)
+      prev.map((it) => it.id === id ? { ...it, status: newStatus } : it)
     )
   }
 
-  function handleReject(id, note) {
-    setItems((prev) =>
-      prev.map((it) => it.id === id ? { ...it, status: 'REJECTED', adminNote: note } : it)
-    )
-  }
-
-  const pendingCount = items.filter((it) => it.status === 'PENDING').length
+  const pendingCount = totalElements > 0
+    ? items.filter((it) => it.status === 'PENDING').length
+    : 0
+  const totalPages = Math.ceil(totalElements / PAGE_SIZE)
 
   return (
     <div className={styles.page}>
@@ -209,7 +176,6 @@ function AdminInquiriesPage() {
         )}
       </div>
 
-      {/* 필터 */}
       <div className={styles.filters}>
         <div className={styles.filterBar} role="tablist" aria-label="상태 필터">
           {STATUS_FILTERS.map((f) => (
@@ -218,7 +184,7 @@ function AdminInquiriesPage() {
               role="tab"
               aria-selected={statusFilter === f}
               className={`${styles.filterTab} ${statusFilter === f ? styles.filterTabActive : ''}`}
-              onClick={() => setStatusFilter(f)}
+              onClick={() => handleFilterChange(setStatusFilter)(f)}
             >
               {f === '전체' ? '전체' : STATUS_LABEL[f]}
             </button>
@@ -229,7 +195,7 @@ function AdminInquiriesPage() {
             <button
               key={f}
               className={`${styles.typeChip} ${typeFilter === f ? styles.typeChipActive : ''}`}
-              onClick={() => setTypeFilter(f)}
+              onClick={() => handleFilterChange(setTypeFilter)(f)}
             >
               {f === '전체' ? '전체' : TYPE_LABEL[f]}
             </button>
@@ -237,14 +203,13 @@ function AdminInquiriesPage() {
         </div>
       </div>
 
-      {/* 목록 */}
-      {filtered.length === 0 ? (
-        <div className={styles.empty}>
-          <p className={styles.emptyText}>해당 조건의 문의가 없습니다.</p>
-        </div>
+      {loading ? (
+        <div className={styles.empty}><p className={styles.emptyText}>불러오는 중...</p></div>
+      ) : items.length === 0 ? (
+        <div className={styles.empty}><p className={styles.emptyText}>해당 조건의 문의가 없습니다.</p></div>
       ) : (
         <div className={styles.list}>
-          {filtered.map((item) => (
+          {items.map((item) => (
             <button
               key={item.id}
               className={styles.row}
@@ -261,7 +226,7 @@ function AdminInquiriesPage() {
                   <span className={styles.rowDate}>{item.createdAt}</span>
                 </div>
                 <p className={styles.rowTitle}>{item.title}</p>
-                <p className={styles.rowTarget}>{item.targetName}</p>
+                <p className={styles.rowTarget}>{item.userNickname}</p>
               </div>
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={styles.rowChevron} aria-hidden="true">
                 <path d="m9 18 6-6-6-6" />
@@ -271,12 +236,31 @@ function AdminInquiriesPage() {
         </div>
       )}
 
-      {selected && (
+      {totalPages > 1 && (
+        <div className={styles.pagination}>
+          <button
+            className={styles.pageBtn}
+            disabled={page === 0}
+            onClick={() => setPage((p) => p - 1)}
+          >
+            이전
+          </button>
+          <span className={styles.pageInfo}>{page + 1} / {totalPages}</span>
+          <button
+            className={styles.pageBtn}
+            disabled={page >= totalPages - 1}
+            onClick={() => setPage((p) => p + 1)}
+          >
+            다음
+          </button>
+        </div>
+      )}
+
+      {selectedId !== null && (
         <DetailModal
-          item={selected}
+          id={selectedId}
           onClose={() => setSelectedId(null)}
-          onResolve={handleResolve}
-          onReject={handleReject}
+          onStatusChange={handleStatusChange}
         />
       )}
     </div>

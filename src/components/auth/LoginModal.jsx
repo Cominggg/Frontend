@@ -1,6 +1,9 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
+import useAuthStore from '@/stores/authStore'
 import useLoginModalStore from '@/stores/loginModalStore'
+import { devLogin, getMe } from '@/services/authApi'
+import Logo from '@/components/ui/Logo'
 import styles from './LoginModal.module.css'
 
 const PROVIDERS = [
@@ -52,6 +55,61 @@ function handleLogin(provider, redirectUri) {
   window.location.href = url.toString()
 }
 
+function DevLoginSection({ onSuccess }) {
+  const [nickname, setNickname] = useState('')
+  const [role, setRole] = useState('USER')
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+  const setAccessToken = useAuthStore((s) => s.setAccessToken)
+  const setUser = useAuthStore((s) => s.setUser)
+
+  async function handleDevLogin(e) {
+    e.preventDefault()
+    if (!nickname.trim()) return
+    setLoading(true)
+    setError('')
+    try {
+      const { accessToken } = await devLogin(nickname.trim(), role)
+      setAccessToken(accessToken)
+      const user = await getMe()
+      setUser(user)
+      onSuccess()
+    } catch {
+      setError('Dev Login 실패. BE 로컬 서버가 실행 중인지 확인하세요.')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return (
+    <div className={styles.devSection}>
+      <div className={styles.devDivider}><span>Dev Login</span></div>
+      <form className={styles.devForm} onSubmit={handleDevLogin}>
+        <input
+          className={styles.devInput}
+          type="text"
+          placeholder="닉네임"
+          value={nickname}
+          onChange={(e) => setNickname(e.target.value)}
+          maxLength={20}
+        />
+        <select
+          className={styles.devSelect}
+          value={role}
+          onChange={(e) => setRole(e.target.value)}
+        >
+          <option value="USER">USER</option>
+          <option value="ADMIN">ADMIN</option>
+        </select>
+        <button className={styles.devBtn} type="submit" disabled={loading || !nickname.trim()}>
+          {loading ? '로그인 중...' : '로그인'}
+        </button>
+      </form>
+      {error && <p className={styles.devError}>{error}</p>}
+    </div>
+  )
+}
+
 function LoginModal() {
   const { isOpen, close, redirectUri } = useLoginModalStore()
   const modalRef = useRef(null)
@@ -93,7 +151,9 @@ function LoginModal() {
         </button>
 
         <div className={styles.header}>
-          <span className={styles.logo}>COMING</span>
+          <div className={styles.logo}>
+            <Logo size="lg" />
+          </div>
           <p className={styles.subtitle}>로그인하고 내한 공연 정보를 맞춤으로 받아보세요</p>
         </div>
 
@@ -109,6 +169,8 @@ function LoginModal() {
             </button>
           ))}
         </div>
+
+        {import.meta.env.DEV && <DevLoginSection onSuccess={close} />}
       </div>
     </div>
   )

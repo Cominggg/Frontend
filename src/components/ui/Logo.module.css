@@ -1,0 +1,29 @@
+.root {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  text-decoration: none;
+}
+
+.icon {
+  flex-shrink: 0;
+}
+
+.text {
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--color-text);
+  line-height: 1;
+}
+
+/* sm: 헤더용 */
+.sm .icon { width: 28px; height: 28px; }
+.sm .text { font-size: 1.125rem; }
+
+/* md: 헤더 기본 */
+.md .icon { width: 40px; height: 40px; }
+.md .text { font-size: 1.1875rem; }
+
+/* lg: 로그인 모달용 */
+.lg .icon { width: 44px; height: 44px; }
+.lg .text { font-size: 1.5rem; }

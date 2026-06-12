@@ -1,0 +1,350 @@
+.page {
+  max-width: 860px;
+}
+
+.pageHeader {
+  margin-bottom: 2rem;
+}
+
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  text-decoration: none;
+  margin-bottom: 1rem;
+  transition: color 0.15s;
+}
+
+.backLink:hover { color: var(--color-accent); }
+
+.pageTitle {
+  margin: 0 0 0.375rem;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-text);
+  letter-spacing: -0.02em;
+}
+
+.pageDesc {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+  line-height: 1.5;
+}
+
+/* ── 목록 ── */
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+/* ── 공연 카드 ── */
+.card {
+  border: 1.5px solid var(--color-border);
+  border-radius: 14px;
+  background: var(--color-surface);
+  overflow: hidden;
+}
+
+.cardTop {
+  display: flex;
+  gap: 1rem;
+  padding: 1.25rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.poster {
+  width: 64px;
+  height: 64px;
+  object-fit: cover;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+.cardInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.concertTitle {
+  margin: 0 0 0.375rem;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.concertMeta {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+}
+
+/* ── 후보 아티스트 ── */
+.candidates {
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.candidatesLabel {
+  margin: 0 0 0.625rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.candidateList {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.candidateItem {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+}
+
+.candidateName {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.matchBadge {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 100px;
+  letter-spacing: 0.03em;
+}
+
+.match_prfcast {
+  background: color-mix(in srgb, #7c3aed 10%, transparent);
+  color: #7c3aed;
+}
+
+.match_prfnm {
+  background: color-mix(in srgb, #0369a1 10%, transparent);
+  color: #0369a1;
+}
+
+.match_manual {
+  background: color-mix(in srgb, #0f766e 10%, transparent);
+  color: #0f766e;
+}
+
+.noCandidates {
+  margin: 0 0 0.75rem;
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+}
+
+.addArtistBtn {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-accent);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.addArtistBtn:hover { opacity: 0.75; }
+
+/* ── 카드 액션 ── */
+.cardActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  padding: 0.875rem 1.25rem;
+}
+
+.btnReject {
+  padding: 0.5rem 1.25rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  background: none;
+  border: 1.5px solid color-mix(in srgb, var(--color-destructive, #e53e3e) 40%, transparent);
+  color: var(--color-destructive, #e53e3e);
+  transition: background-color 0.15s, border-color 0.15s;
+}
+
+.btnReject:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--color-destructive, #e53e3e) 8%, transparent);
+  border-color: var(--color-destructive, #e53e3e);
+}
+
+.btnReject:disabled { opacity: 0.4; cursor: default; }
+
+.btnApprove {
+  padding: 0.5rem 1.5rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  background: var(--color-accent);
+  border: none;
+  color: #fff;
+  transition: opacity 0.15s;
+}
+
+.btnApprove:hover:not(:disabled) { opacity: 0.85; }
+.btnApprove:disabled { opacity: 0.4; cursor: default; }
+
+/* ── 빈 상태 ── */
+.empty {
+  display: flex;
+  justify-content: center;
+  padding: 4rem 1rem;
+}
+
+.emptyText {
+  font-size: 0.9375rem;
+  color: var(--color-text-muted);
+}
+
+/* ── 아티스트 추가 모달 ── */
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  padding: 1rem;
+}
+
+.addModal {
+  width: 100%;
+  max-width: 440px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.addModalHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.addModalTitle {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.modalCloseBtn {
+  display: flex;
+  align-items: center;
+  background: none;
+  border: none;
+  color: var(--color-text-muted);
+  padding: 4px;
+  border-radius: 6px;
+  transition: color 0.15s;
+}
+
+.modalCloseBtn:hover { color: var(--color-text); }
+
+.searchForm {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.searchInput {
+  flex: 1;
+  padding: 0.5625rem 0.875rem;
+  border: 1.5px solid var(--color-border);
+  border-radius: 8px;
+  background: var(--color-background);
+  color: var(--color-text);
+  font-size: 0.9rem;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.searchInput:focus { border-color: var(--color-accent); }
+
+.searchBtn {
+  padding: 0.5625rem 1rem;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  background: var(--color-accent);
+  border: none;
+  color: #fff;
+  white-space: nowrap;
+  transition: opacity 0.15s;
+}
+
+.searchBtn:hover:not(:disabled) { opacity: 0.85; }
+.searchBtn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+.searchResults {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.searchResultItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.searchResults li + li .searchResultItem {
+  border-top: 1px solid var(--color-border);
+}
+
+.searchResultItem:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--color-accent) 5%, var(--color-surface));
+}
+
+.searchResultName {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.searchResultId {
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+}
+
+.addError,
+.noResults {
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+.addError { color: var(--color-destructive, #e53e3e); }

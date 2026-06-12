@@ -204,6 +204,13 @@ function ConcertDetailPage() {
               )}
             </dl>
 
+            {/* 관리자 수정 버튼 */}
+            {user?.role === 'ADMIN' && (
+              <Link to={ROUTES.ADMIN_CONCERT_EDIT(concertId)} className={styles.adminEditBtn}>
+                관리자 수정
+              </Link>
+            )}
+
             {/* 캘린더 추가·제거 */}
             <button
               className={`${styles.calendarBtn} ${isInCalendar ? styles.calendarBtnActive : ''}`}
