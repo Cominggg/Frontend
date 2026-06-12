@@ -1,0 +1,217 @@
+.page {
+  max-width: 860px;
+}
+
+.pageHeader {
+  margin-bottom: 2rem;
+}
+
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  text-decoration: none;
+  margin-bottom: 1rem;
+  transition: color 0.15s;
+}
+
+.backLink:hover { color: var(--color-accent); }
+
+.pageTitle {
+  margin: 0 0 0.375rem;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-text);
+  letter-spacing: -0.02em;
+}
+
+.pageDesc {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+  line-height: 1.5;
+}
+
+/* ── 목록 ── */
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+/* ── 공연 카드 ── */
+.card {
+  border: 1.5px solid var(--color-border);
+  border-radius: 14px;
+  background: var(--color-surface);
+  overflow: hidden;
+}
+
+.cardTop {
+  display: flex;
+  gap: 1rem;
+  padding: 1.25rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.poster {
+  width: 64px;
+  height: 64px;
+  object-fit: cover;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+.cardInfo {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.concertTitle {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.concertMeta {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+}
+
+.editLink {
+  align-self: flex-start;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--color-accent);
+  text-decoration: none;
+  margin-top: 0.25rem;
+  transition: opacity 0.15s;
+}
+
+.editLink:hover { opacity: 0.75; }
+
+/* ── 아티스트 섹션 ── */
+.artistSection {
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.sectionLabel {
+  margin: 0 0 0.625rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.noArtists {
+  margin: 0 0 0.75rem;
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+}
+
+.artistList {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.artistItem {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+}
+
+.artistName {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.artistId {
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+}
+
+.addArtistBtn {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-accent);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.addArtistBtn:hover { opacity: 0.75; }
+
+/* ── 복원 섹션 ── */
+.restoreSection {
+  padding: 1rem 1.25rem;
+}
+
+.restoreRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.restoreSelect {
+  padding: 0.5rem 0.75rem;
+  border: 1.5px solid var(--color-border);
+  border-radius: 8px;
+  background: var(--color-background);
+  color: var(--color-text);
+  font-size: 0.875rem;
+  outline: none;
+  transition: border-color 0.15s;
+  cursor: pointer;
+}
+
+.restoreSelect:focus { border-color: var(--color-accent); }
+.restoreSelect:disabled { opacity: 0.5; cursor: default; }
+
+.restoreBtn {
+  padding: 0.5rem 1.25rem;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  background: var(--color-accent);
+  border: none;
+  color: #fff;
+  transition: opacity 0.15s;
+}
+
+.restoreBtn:hover:not(:disabled) { opacity: 0.85; }
+.restoreBtn:disabled { opacity: 0.4; cursor: default; }
+
+.restoreError {
+  margin: 0.5rem 0 0;
+  font-size: 0.875rem;
+  color: var(--color-destructive, #e53e3e);
+}
+
+/* ── 빈 상태 ── */
+.empty {
+  display: flex;
+  justify-content: center;
+  padding: 4rem 1rem;
+}
+
+.emptyText {
+  font-size: 0.9375rem;
+  color: var(--color-text-muted);
+}
