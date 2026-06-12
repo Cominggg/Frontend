@@ -4,6 +4,11 @@ export async function updateArtist(id, body) {
   await api.put(`/admin/artists/${id}`, body)
 }
 
+export async function getAdminConcert(id) {
+  const { data } = await api.get(`/admin/concerts/${id}`)
+  return data
+}
+
 export async function updateConcert(id, body) {
   await api.put(`/admin/concerts/${id}`, body)
 }
@@ -55,6 +60,10 @@ export async function rejectConcert(id) {
 
 export async function addConcertArtist(concertId, artistId) {
   await api.post(`/admin/concerts/${concertId}/artists`, { artistId })
+}
+
+export async function removeConcertArtist(concertId, artistId) {
+  await api.delete(`/admin/concerts/${concertId}/artists/${artistId}`)
 }
 
 // 파이프라인 트리거
