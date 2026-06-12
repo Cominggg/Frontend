@@ -24,6 +24,7 @@ function ExcludedConcertCard({ concert, onRefresh }) {
       onRefresh()
     } catch {
       setStateMsg('상태 변경에 실패했습니다.')
+    } finally {
       setStateChanging(false)
     }
   }
@@ -132,16 +133,19 @@ function ExcludedConcertCard({ concert, onRefresh }) {
 function AdminExcludedConcertsPage() {
   const [concerts, setConcerts] = useState([])
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState(false)
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(0)
 
   const fetchExcluded = useCallback(async () => {
     setLoading(true)
+    setError(false)
     try {
       const data = await getExcludedConcerts({ page: page - 1, size: 10 })
       setConcerts(data.content)
       setTotalPages(data.totalPages)
     } catch {
+      setError(true)
       setConcerts([])
     } finally {
       setLoading(false)
@@ -167,6 +171,11 @@ function AdminExcludedConcertsPage() {
 
       {loading ? (
         <div className={styles.empty}><p className={styles.emptyText}>불러오는 중...</p></div>
+      ) : error ? (
+        <div className={styles.empty}>
+          <p className={styles.emptyText}>목록을 불러오지 못했습니다.</p>
+          <button type="button" className={styles.retryBtn} onClick={fetchExcluded}>다시 시도</button>
+        </div>
       ) : concerts.length === 0 ? (
         <div className={styles.empty}><p className={styles.emptyText}>EXCLUDED 상태의 공연이 없습니다.</p></div>
       ) : (

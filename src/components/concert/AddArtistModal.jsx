@@ -1,7 +1,6 @@
 import { useState } from 'react'
 
-import { searchDbArtists } from '@/services/adminApi'
-import { addConcertArtist } from '@/services/adminApi'
+import { searchDbArtists, addConcertArtist } from '@/services/adminApi'
 import styles from './AddArtistModal.module.css'
 
 function AddArtistModal({ concertId, onClose, onAdded }) {
