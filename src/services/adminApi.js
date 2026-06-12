@@ -33,6 +33,18 @@ export async function getPendingConcerts(params) {
   return data
 }
 
+// EXCLUDED 공연 목록
+export async function getExcludedConcerts(params) {
+  const { data } = await api.get('/admin/concerts/excluded', { params })
+  return data
+}
+
+// DB 아티스트 검색 (별칭 포함 부분 일치, EXCLUDED 아티스트 지정용)
+export async function searchDbArtists(name, params) {
+  const { data } = await api.get('/admin/artists', { params: { name, ...params } })
+  return data
+}
+
 export async function approveConcert(id) {
   await api.put(`/admin/concerts/${id}/approve`)
 }
