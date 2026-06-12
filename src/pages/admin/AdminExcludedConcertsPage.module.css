@@ -145,6 +145,22 @@
   color: var(--color-text-muted);
 }
 
+.removeArtistBtn {
+  margin-left: auto;
+  font-size: 1rem;
+  line-height: 1;
+  font-weight: 400;
+  color: var(--color-text-muted);
+  background: none;
+  border: none;
+  padding: 0 0.125rem;
+  cursor: pointer;
+  transition: color 0.15s;
+}
+
+.removeArtistBtn:hover:not(:disabled) { color: var(--color-destructive, #e53e3e); }
+.removeArtistBtn:disabled { opacity: 0.4; cursor: default; }
+
 .addArtistBtn {
   font-size: 0.875rem;
   font-weight: 500;

@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 
 import Pagination from '@/components/ui/Pagination'
 import AddArtistModal from '@/components/concert/AddArtistModal'
-import { getExcludedConcerts, updateConcertState } from '@/services/adminApi'
+import { getExcludedConcerts, updateConcertState, removeConcertArtist } from '@/services/adminApi'
 import { ROUTES } from '@/constants/routes'
 import styles from './AdminExcludedConcertsPage.module.css'
 
@@ -17,6 +17,7 @@ function ExcludedConcertCard({ concert, onRefresh }) {
   const [restoring, setRestoring] = useState(false)
   const [showAddArtist, setShowAddArtist] = useState(false)
   const [restoreError, setRestoreError] = useState('')
+  const [removingId, setRemovingId] = useState(null)
 
   async function handleRestore() {
     setRestoring(true)
@@ -27,6 +28,16 @@ function ExcludedConcertCard({ concert, onRefresh }) {
     } catch {
       setRestoreError('상태 변경에 실패했습니다.')
       setRestoring(false)
+    }
+  }
+
+  async function handleRemoveArtist(artistId) {
+    setRemovingId(artistId)
+    try {
+      await removeConcertArtist(concert.id, artistId)
+      onRefresh()
+    } finally {
+      setRemovingId(null)
     }
   }
 
@@ -61,6 +72,15 @@ function ExcludedConcertCard({ concert, onRefresh }) {
               <li key={a.artistId} className={styles.artistItem}>
                 <span className={styles.artistName}>{a.name}</span>
                 <span className={styles.artistId}>ID: {a.artistId}</span>
+                <button
+                  type="button"
+                  className={styles.removeArtistBtn}
+                  disabled={removingId === a.artistId}
+                  onClick={() => handleRemoveArtist(a.artistId)}
+                  aria-label={`${a.name} 연결 해제`}
+                >
+                  {removingId === a.artistId ? '...' : '×'}
+                </button>
               </li>
             ))}
           </ul>
