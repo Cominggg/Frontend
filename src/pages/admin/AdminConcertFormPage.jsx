@@ -2,8 +2,7 @@ import { useState, useEffect } from 'react'
 import { Link, useParams, useNavigate } from 'react-router-dom'
 
 import Badge from '@/components/ui/Badge'
-import { getConcert } from '@/services/concertApi'
-import { updateConcert, updateConcertState, triggerConcertSetlistCollect } from '@/services/adminApi'
+import { getAdminConcert, updateConcert, updateConcertState, triggerConcertSetlistCollect } from '@/services/adminApi'
 import { ROUTES } from '@/constants/routes'
 import styles from './AdminFormPage.module.css'
 import concertStyles from './AdminConcertFormPage.module.css'
@@ -79,17 +78,17 @@ function AdminConcertFormPage() {
 
   useEffect(() => {
     if (!id) { navigate(ROUTES.ADMIN, { replace: true }); return }
-    getConcert(id).then((concert) => {
+    getAdminConcert(id).then((concert) => {
       setForm({
         title: concert.title ?? '',
         cast: concert.cast ?? '',
         startDate: concert.startDate ?? '',
         endDate: concert.endDate ?? '',
-        venueName: typeof concert.venue === 'string' ? concert.venue : (concert.venue?.name ?? concert.venueName ?? ''),
+        venueName: concert.venueName ?? '',
         posterUrl: concert.posterUrl ?? '',
         price: concert.price ?? '',
-        bookingLinks: (concert.ticketLinks ?? concert.bookingLinks ?? []).map((l) => ({
-          name: l.label ?? l.name ?? '',
+        bookingLinks: (concert.bookingLinks ?? []).map((l) => ({
+          name: l.name ?? '',
           url: l.url ?? '',
         })),
       })

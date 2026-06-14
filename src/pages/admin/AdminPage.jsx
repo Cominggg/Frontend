@@ -19,6 +19,17 @@ const STATIC_CARDS = [
     ),
   },
   {
+    to: ROUTES.ADMIN_EXCLUDED_CONCERTS,
+    label: 'EXCLUDED 공연 관리',
+    desc: '거절 처리된 공연에 아티스트를 직접 연결하거나 상태를 복원합니다.',
+    countKey: null,
+    icon: (
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <circle cx="12" cy="12" r="10" /><path d="M15 9l-6 6M9 9l6 6" />
+      </svg>
+    ),
+  },
+  {
     to: ROUTES.ADMIN_INQUIRIES,
     label: '문의 관리',
     desc: '사용자가 제출한 데이터 문의를 조회하고 처리 상태를 변경합니다.',

@@ -4,6 +4,11 @@ export async function updateArtist(id, body) {
   await api.put(`/admin/artists/${id}`, body)
 }
 
+export async function getAdminConcert(id) {
+  const { data } = await api.get(`/admin/concerts/${id}`)
+  return data
+}
+
 export async function updateConcert(id, body) {
   await api.put(`/admin/concerts/${id}`, body)
 }
@@ -33,6 +38,18 @@ export async function getPendingConcerts(params) {
   return data
 }
 
+// EXCLUDED 공연 목록
+export async function getExcludedConcerts(params) {
+  const { data } = await api.get('/admin/concerts/excluded', { params })
+  return data
+}
+
+// DB 아티스트 검색 (별칭 포함 부분 일치, EXCLUDED 아티스트 지정용)
+export async function searchDbArtists(name, params) {
+  const { data } = await api.get('/admin/artists', { params: { name, ...params } })
+  return data
+}
+
 export async function approveConcert(id) {
   await api.put(`/admin/concerts/${id}/approve`)
 }
@@ -43,6 +60,10 @@ export async function rejectConcert(id) {
 
 export async function addConcertArtist(concertId, artistId) {
   await api.post(`/admin/concerts/${concertId}/artists`, { artistId })
+}
+
+export async function removeConcertArtist(concertId, artistId) {
+  await api.delete(`/admin/concerts/${concertId}/artists/${artistId}`)
 }
 
 // 파이프라인 트리거

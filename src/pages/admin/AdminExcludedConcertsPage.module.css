@@ -68,10 +68,13 @@
 .cardInfo {
   flex: 1;
   min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
 }
 
 .concertTitle {
-  margin: 0 0 0.375rem;
+  margin: 0;
   font-size: 1rem;
   font-weight: 700;
   color: var(--color-text);
@@ -83,13 +86,25 @@
   color: var(--color-text-muted);
 }
 
-/* ── 후보 아티스트 ── */
-.candidates {
+.editLink {
+  align-self: flex-start;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--color-accent);
+  text-decoration: none;
+  margin-top: 0.25rem;
+  transition: opacity 0.15s;
+}
+
+.editLink:hover { opacity: 0.75; }
+
+/* ── 아티스트 섹션 ── */
+.artistSection {
   padding: 1rem 1.25rem;
   border-bottom: 1px solid var(--color-border);
 }
 
-.candidatesLabel {
+.sectionLabel {
   margin: 0 0 0.625rem;
   font-size: 0.8125rem;
   font-weight: 600;
@@ -98,7 +113,13 @@
   letter-spacing: 0.05em;
 }
 
-.candidateList {
+.noArtists {
+  margin: 0 0 0.75rem;
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+}
+
+.artistList {
   list-style: none;
   padding: 0;
   margin: 0 0 0.75rem;
@@ -107,46 +128,38 @@
   gap: 0.375rem;
 }
 
-.candidateItem {
+.artistItem {
   display: flex;
   align-items: center;
   gap: 0.625rem;
 }
 
-.candidateName {
+.artistName {
   font-size: 0.9375rem;
   font-weight: 600;
   color: var(--color-text);
 }
 
-.matchBadge {
-  font-size: 0.6875rem;
-  font-weight: 700;
-  padding: 2px 7px;
-  border-radius: 100px;
-  letter-spacing: 0.03em;
-}
-
-.match_prfcast {
-  background: color-mix(in srgb, #7c3aed 10%, transparent);
-  color: #7c3aed;
-}
-
-.match_prfnm {
-  background: color-mix(in srgb, #0369a1 10%, transparent);
-  color: #0369a1;
-}
-
-.match_manual {
-  background: color-mix(in srgb, #0f766e 10%, transparent);
-  color: #0f766e;
-}
-
-.noCandidates {
-  margin: 0 0 0.75rem;
-  font-size: 0.875rem;
+.artistId {
+  font-size: 0.8125rem;
   color: var(--color-text-muted);
 }
+
+.removeArtistBtn {
+  margin-left: auto;
+  font-size: 1rem;
+  line-height: 1;
+  font-weight: 400;
+  color: var(--color-text-muted);
+  background: none;
+  border: none;
+  padding: 0 0.125rem;
+  cursor: pointer;
+  transition: color 0.15s;
+}
+
+.removeArtistBtn:hover:not(:disabled) { color: var(--color-destructive, #e53e3e); }
+.removeArtistBtn:disabled { opacity: 0.4; cursor: default; }
 
 .addArtistBtn {
   font-size: 0.875rem;
@@ -161,36 +174,56 @@
 
 .addArtistBtn:hover { opacity: 0.75; }
 
-/* ── 카드 액션 ── */
-.cardActions {
+/* ── 상태 복원 섹션 ── */
+.stateSection {
+  padding: 1rem 1.25rem;
+  border-top: 1px solid var(--color-border);
   display: flex;
-  justify-content: flex-end;
-  gap: 0.5rem;
-  padding: 0.875rem 1.25rem;
+  flex-direction: column;
+  gap: 0.375rem;
 }
 
-.btnReject {
+.statusOptions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.statusOption {
+  padding: 0.375rem 0.875rem;
+  border-radius: 100px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  border: 1.5px solid var(--color-border);
+  background: none;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s, background-color 0.15s;
+}
+
+.statusOption:hover {
+  border-color: var(--color-accent-border);
+  color: var(--color-accent);
+}
+
+.statusOptionActive {
+  border-color: var(--color-accent);
+  background: color-mix(in srgb, var(--color-accent) 10%, transparent);
+  color: var(--color-accent);
+  font-weight: 600;
+}
+
+.stateRow {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.btnStateChange {
   padding: 0.5rem 1.25rem;
   border-radius: 8px;
-  font-size: 0.9rem;
-  font-weight: 600;
-  background: none;
-  border: 1.5px solid color-mix(in srgb, var(--color-destructive, #e53e3e) 40%, transparent);
-  color: var(--color-destructive, #e53e3e);
-  transition: background-color 0.15s, border-color 0.15s;
-}
-
-.btnReject:hover:not(:disabled) {
-  background: color-mix(in srgb, var(--color-destructive, #e53e3e) 8%, transparent);
-  border-color: var(--color-destructive, #e53e3e);
-}
-
-.btnReject:disabled { opacity: 0.4; cursor: default; }
-
-.btnApprove {
-  padding: 0.5rem 1.5rem;
-  border-radius: 8px;
-  font-size: 0.9rem;
+  font-size: 0.875rem;
   font-weight: 600;
   background: var(--color-accent);
   border: none;
@@ -198,13 +231,20 @@
   transition: opacity 0.15s;
 }
 
-.btnApprove:hover:not(:disabled) { opacity: 0.85; }
-.btnApprove:disabled { opacity: 0.4; cursor: default; }
+.btnStateChange:hover:not(:disabled) { opacity: 0.85; }
+.btnStateChange:disabled { opacity: 0.4; cursor: default; }
+
+.stateMsg {
+  font-size: 0.875rem;
+  color: var(--color-destructive, #e53e3e);
+}
 
 /* ── 빈 상태 ── */
 .empty {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
   padding: 4rem 1rem;
 }
 
@@ -212,3 +252,17 @@
   font-size: 0.9375rem;
   color: var(--color-text-muted);
 }
+
+.retryBtn {
+  padding: 0.5rem 1.25rem;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  background: var(--color-accent);
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.retryBtn:hover { opacity: 0.85; }

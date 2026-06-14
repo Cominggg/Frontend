@@ -20,6 +20,7 @@ import AdminArtistFormPage from '@/pages/admin/AdminArtistFormPage'
 import AdminConcertFormPage from '@/pages/admin/AdminConcertFormPage'
 import AdminInquiriesPage from '@/pages/admin/AdminInquiriesPage'
 import AdminPendingConcertsPage from '@/pages/admin/AdminPendingConcertsPage'
+import AdminExcludedConcertsPage from '@/pages/admin/AdminExcludedConcertsPage'
 import { ROUTES } from '@/constants/routes'
 
 function App() {
@@ -46,6 +47,7 @@ function App() {
           <Route index element={<AdminPage />} />
           <Route path="artists/:id/edit" element={<AdminArtistFormPage />} />
           <Route path="concerts/pending" element={<AdminPendingConcertsPage />} />
+          <Route path="concerts/excluded" element={<AdminExcludedConcertsPage />} />
           <Route path="concerts/:id/edit" element={<AdminConcertFormPage />} />
           <Route path="inquiries" element={<AdminInquiriesPage />} />
         </Route>
