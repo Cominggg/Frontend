@@ -72,10 +72,10 @@ function ConcertsPage() {
     enabled: !effectiveFollowedOnly && !urlQuery,
   })
 
-  // 검색 모드 — GET /api/concerts/search (status 파라미터 미지원)
+  // 검색 모드 — GET /api/concerts/search
   const { data: searchData, isLoading: searchLoading } = useQuery({
-    queryKey: ['concerts-search', urlQuery, currentPage],
-    queryFn: () => searchConcerts({ q: urlQuery, page: currentPage - 1, size: ITEMS_PER_PAGE }),
+    queryKey: ['concerts-search', urlQuery, statusParam, currentPage],
+    queryFn: () => searchConcerts({ q: urlQuery, status: statusParam, page: currentPage - 1, size: ITEMS_PER_PAGE }),
     placeholderData: (prev) => prev,
     enabled: isSearchMode,
   })

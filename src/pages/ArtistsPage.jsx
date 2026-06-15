@@ -63,7 +63,7 @@ function ArtistsPage() {
 
   let artists, totalElements, totalPages
   if (effectiveFollowedOnly) {
-    const all = (followingData ?? []).map((a) => ({ ...a, isFollowing: true }))
+    const all = followingData ?? []
     const filtered = urlQuery
       ? all.filter((a) => a.name.toLowerCase().includes(urlQuery.toLowerCase()))
       : all
