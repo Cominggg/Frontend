@@ -1,10 +1,12 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 
 import useAuthStore from '@/stores/authStore'
 import useLoginModalStore from '@/stores/loginModalStore'
 import { ROUTES } from '@/constants/routes'
 import { getArtistColor } from '@/utils/artistColor'
+import { followArtist, unfollowArtist } from '@/services/artistApi'
 import styles from './ArtistCard.module.css'
 
 function ArtistCard({ artist }) {
@@ -13,15 +15,30 @@ function ArtistCard({ artist }) {
   const [imgFailed, setImgFailed] = useState(false)
   const user = useAuthStore((s) => s.user)
   const openLoginModal = useLoginModalStore((s) => s.open)
+  const queryClient = useQueryClient()
 
   const showPlaceholder = !imageUrl || imgFailed
   const [colorFrom, colorTo] = getArtistColor(name)
+
+  const followMutation = useMutation({
+    mutationFn: (following) => following ? unfollowArtist(id) : followArtist(id),
+    onMutate: (following) => {
+      setIsFollowing(!following)
+      return { prevFollowing: following }
+    },
+    onError: (_err, _vars, ctx) => {
+      setIsFollowing(ctx.prevFollowing)
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['artists'] })
+    },
+  })
 
   function handleFollow(e) {
     e.preventDefault()
     e.stopPropagation()
     if (!user) { openLoginModal(window.location.href); return }
-    setIsFollowing((prev) => !prev)
+    followMutation.mutate(isFollowing)
   }
 
   return (
