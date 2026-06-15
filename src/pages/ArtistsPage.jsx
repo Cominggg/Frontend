@@ -6,7 +6,7 @@ import ArtistCard from '@/components/artist/ArtistCard'
 import ArtistCardSkeleton from '@/components/artist/ArtistCardSkeleton'
 import EmptyState from '@/components/ui/EmptyState'
 import Pagination from '@/components/ui/Pagination'
-import { getArtists } from '@/services/artistApi'
+import { getArtists, getFollowingArtists } from '@/services/artistApi'
 import useAuthStore from '@/stores/authStore'
 import useLoginModalStore from '@/stores/loginModalStore'
 import styles from './ArtistsPage.module.css'
@@ -44,15 +44,37 @@ function ArtistsPage() {
     return () => clearTimeout(timer)
   }, [inputValue, searchParams, setSearchParams])
 
-  const { data, isLoading } = useQuery({
+  // 전체 아티스트 (팔로우 모드 아닐 때)
+  const { data, isLoading: allLoading } = useQuery({
     queryKey: ['artists', urlQuery, currentPage],
     queryFn: () => getArtists({ name: urlQuery || undefined, page: currentPage - 1, size: PAGE_SIZE }),
     placeholderData: (prev) => prev,
+    enabled: !effectiveFollowedOnly,
   })
 
-  const artists = data?.content ?? []
-  const totalElements = data?.totalElements ?? 0
-  const totalPages = data?.totalPages ?? 1
+  // 팔로우 아티스트 — GET /api/artists/following (페이지네이션 없음 → 클라이언트 처리)
+  const { data: followingData, isLoading: followingLoading } = useQuery({
+    queryKey: ['artists-following'],
+    queryFn: getFollowingArtists,
+    enabled: effectiveFollowedOnly,
+  })
+
+  const isLoading = effectiveFollowedOnly ? followingLoading : allLoading
+
+  let artists, totalElements, totalPages
+  if (effectiveFollowedOnly) {
+    const all = (followingData ?? []).map((a) => ({ ...a, isFollowing: true }))
+    const filtered = urlQuery
+      ? all.filter((a) => a.name.toLowerCase().includes(urlQuery.toLowerCase()))
+      : all
+    totalElements = filtered.length
+    totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE))
+    artists = filtered.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE)
+  } else {
+    artists = data?.content ?? []
+    totalElements = data?.totalElements ?? 0
+    totalPages = data?.totalPages ?? 1
+  }
 
   function handleQueryChange(e) {
     setInputValue(e.target.value)

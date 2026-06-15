@@ -44,8 +44,13 @@ function ReleasesPage() {
   const typeParam = selectedType === '전체' ? undefined : selectedType
 
   const { data, isLoading } = useQuery({
-    queryKey: ['releases', typeParam, page],
-    queryFn: () => getReleases({ type: typeParam, page: page - 1, size: PAGE_SIZE }),
+    queryKey: ['releases', typeParam, effectiveFollowedOnly, page],
+    queryFn: () => getReleases({
+      type: typeParam,
+      following: effectiveFollowedOnly || undefined,
+      page: page - 1,
+      size: PAGE_SIZE,
+    }),
     placeholderData: (prev) => prev,
   })
 

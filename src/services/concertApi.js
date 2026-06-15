@@ -5,6 +5,11 @@ export async function getConcerts(params) {
   return data
 }
 
+export async function searchConcerts(params) {
+  const { data } = await api.get('/concerts/search', { params })
+  return data
+}
+
 export async function getPopularConcerts() {
   const { data } = await api.get('/concerts/popular')
   return data

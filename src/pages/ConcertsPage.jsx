@@ -7,7 +7,7 @@ import ConcertCardSkeleton from '@/components/concert/ConcertCardSkeleton'
 import EmptyState from '@/components/ui/EmptyState'
 import Pagination from '@/components/ui/Pagination'
 import { CONCERT_STATUS_LABEL } from '@/constants/concert'
-import { getConcerts, getFollowingConcerts } from '@/services/concertApi'
+import { getConcerts, searchConcerts, getFollowingConcerts } from '@/services/concertApi'
 import useAuthStore from '@/stores/authStore'
 import useLoginModalStore from '@/stores/loginModalStore'
 import styles from './ConcertsPage.module.css'
@@ -62,22 +62,32 @@ function ConcertsPage() {
   }
 
   const statusParam = selectedStatus === 'ALL' ? undefined : selectedStatus
+  const isSearchMode = !!urlQuery && !effectiveFollowedOnly
 
+  // 전체 공연 (검색·팔로우 모드 아닐 때)
   const { data: allData, isLoading: allLoading } = useQuery({
-    queryKey: ['concerts', urlQuery, statusParam, currentPage],
-    queryFn: () => getConcerts({ q: urlQuery || undefined, status: statusParam, page: currentPage - 1, size: ITEMS_PER_PAGE }),
+    queryKey: ['concerts', statusParam, currentPage],
+    queryFn: () => getConcerts({ status: statusParam, page: currentPage - 1, size: ITEMS_PER_PAGE }),
     placeholderData: (prev) => prev,
-    enabled: !effectiveFollowedOnly,
+    enabled: !effectiveFollowedOnly && !urlQuery,
   })
 
-  // following API는 페이지네이션 없이 전체 반환 → 클라이언트 페이지네이션
+  // 검색 모드 — GET /api/concerts/search (status 파라미터 미지원)
+  const { data: searchData, isLoading: searchLoading } = useQuery({
+    queryKey: ['concerts-search', urlQuery, currentPage],
+    queryFn: () => searchConcerts({ q: urlQuery, page: currentPage - 1, size: ITEMS_PER_PAGE }),
+    placeholderData: (prev) => prev,
+    enabled: isSearchMode,
+  })
+
+  // 팔로우 모드 — GET /api/concerts/following (페이지네이션 없음 → 클라이언트 처리)
   const { data: followingData, isLoading: followingLoading } = useQuery({
-    queryKey: ['concerts-following', urlQuery, statusParam],
-    queryFn: () => getFollowingConcerts({ q: urlQuery || undefined, status: statusParam }),
+    queryKey: ['concerts-following', statusParam],
+    queryFn: () => getFollowingConcerts({ status: statusParam }),
     enabled: effectiveFollowedOnly,
   })
 
-  const isLoading = effectiveFollowedOnly ? followingLoading : allLoading
+  const isLoading = effectiveFollowedOnly ? followingLoading : isSearchMode ? searchLoading : allLoading
 
   let concerts, totalElements, totalPages
   if (effectiveFollowedOnly) {
@@ -86,6 +96,10 @@ function ConcertsPage() {
     totalElements = filtered.length
     totalPages = Math.max(1, Math.ceil(filtered.length / ITEMS_PER_PAGE))
     concerts = filtered.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE)
+  } else if (isSearchMode) {
+    concerts = searchData?.content ?? []
+    totalElements = searchData?.totalElements ?? 0
+    totalPages = searchData?.totalPages ?? 1
   } else {
     concerts = allData?.content ?? []
     totalElements = allData?.totalElements ?? 0
