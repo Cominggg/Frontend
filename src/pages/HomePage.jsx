@@ -6,7 +6,7 @@ import ConcertCard from '@/components/concert/ConcertCard'
 import ConcertCardSkeleton from '@/components/concert/ConcertCardSkeleton'
 import Icon from '@/components/ui/Icon'
 import { ROUTES } from '@/constants/routes'
-import { getPopularConcerts, getConcerts, getFollowingConcerts, getRecentConcerts } from '@/services/concertApi'
+import { getPopularConcerts, getConcerts, getFollowingConcerts, getRecentConcerts, getTicketingConcerts } from '@/services/concertApi'
 import { getReleases } from '@/services/releaseApi'
 import useAuthStore from '@/stores/authStore'
 import useLoginModalStore from '@/stores/loginModalStore'
@@ -14,33 +14,6 @@ import { getArtistColor } from '@/utils/artistColor'
 import { formatDate, formatRelativeDate } from '@/utils/date'
 import styles from './HomePage.module.css'
 
-// TODO: API 연동 후 제거
-const MOCK_TICKETING_CONCERTS = [
-  {
-    id: 1001,
-    artistName: 'YOASOBI',
-    title: 'YOASOBI ASIA TOUR 2026',
-    startDate: '2026-09-13',
-    venue: 'KSPO DOME',
-    ticketOpenAt: '2026-06-25T10:00:00',
-  },
-  {
-    id: 1002,
-    artistName: 'Official髭男dism',
-    title: 'Official髭男dism LIVE TOUR 2026',
-    startDate: '2026-10-04',
-    venue: '올림픽공원 SK핸드볼경기장',
-    ticketOpenAt: '2026-07-01T12:00:00',
-  },
-  {
-    id: 1003,
-    artistName: 'Ado',
-    title: 'Ado WORLD TOUR 2026 in SEOUL',
-    startDate: '2026-11-22',
-    venue: '고척스카이돔',
-    ticketOpenAt: '2026-07-15T10:00:00',
-  },
-]
 
 function getDday(dateStr, today) {
   const [y, m, d] = dateStr.split('-').map(Number)
@@ -140,6 +113,12 @@ function HomePage() {
   const { data: recentConcertsData } = useQuery({
     queryKey: ['recent-concerts-home'],
     queryFn: getRecentConcerts,
+    staleTime: 5 * 60 * 1000,
+  })
+
+  const { data: ticketingConcerts = [], isLoading: ticketingLoading } = useQuery({
+    queryKey: ['ticketing-concerts-home'],
+    queryFn: () => getTicketingConcerts({ size: 6 }),
     staleTime: 5 * 60 * 1000,
   })
 
@@ -243,37 +222,39 @@ function HomePage() {
 
               {upcomingTab === 'ticketing' && (
                 <ul className={styles.upcomingList}>
-                  {MOCK_TICKETING_CONCERTS.length === 0
-                    ? (
-                      <li className={styles.upcomingEmpty}>
-                        <div className={styles.upcomingEmptyIcon} aria-hidden="true">
-                          <Icon name="calendar" size={24} />
-                        </div>
-                        <p className={styles.upcomingEmptyTitle}>예정된 예매가 없어요</p>
-                        <p className={styles.upcomingEmptySub}>가까운 시일 내 티켓 오픈 예정 공연이 없습니다</p>
-                      </li>
-                    )
-                    : MOCK_TICKETING_CONCERTS.map((concert) => {
-                        const dday = getDday(concert.ticketOpenAt.split('T')[0], today)
-                        const isUrgent = dday && dday !== 'D-DAY' && parseInt(dday.replace('D-', '')) <= 7
-                        return (
-                          <li key={concert.id}>
-                            <Link to={ROUTES.CONCERT_DETAIL(concert.id)} className={styles.upcomingItem}>
-                              <div className={`${styles.upcomingDday} ${styles.upcomingDdayTicket} ${isUrgent ? styles.upcomingDdayTicketUrgent : ''}`}>
-                                {dday ?? '-'}
-                              </div>
-                              <div className={styles.upcomingInfo}>
-                                <p className={styles.upcomingArtist}>{concert.artistName}</p>
-                                <p className={styles.upcomingTitle}>{concert.title}</p>
-                                <p className={styles.upcomingMeta}>
-                                  <Icon name="calendar" size={12} />
-                                  {formatDate(concert.startDate)} · {concert.venue}
-                                </p>
-                              </div>
-                            </Link>
-                          </li>
-                        )
-                      })}
+                  {ticketingLoading
+                    ? null
+                    : ticketingConcerts.length === 0
+                      ? (
+                        <li className={styles.upcomingEmpty}>
+                          <div className={styles.upcomingEmptyIcon} aria-hidden="true">
+                            <Icon name="calendar" size={24} />
+                          </div>
+                          <p className={styles.upcomingEmptyTitle}>예정된 예매가 없어요</p>
+                          <p className={styles.upcomingEmptySub}>가까운 시일 내 티켓 오픈 예정 공연이 없습니다</p>
+                        </li>
+                      )
+                      : ticketingConcerts.map((concert) => {
+                          const dday = getDday(concert.ticketOpenAt.split('T')[0], today)
+                          const isUrgent = dday && dday !== 'D-DAY' && parseInt(dday.replace('D-', '')) <= 7
+                          return (
+                            <li key={concert.id}>
+                              <Link to={ROUTES.CONCERT_DETAIL(concert.id)} className={styles.upcomingItem}>
+                                <div className={`${styles.upcomingDday} ${styles.upcomingDdayTicket} ${isUrgent ? styles.upcomingDdayTicketUrgent : ''}`}>
+                                  {dday ?? '-'}
+                                </div>
+                                <div className={styles.upcomingInfo}>
+                                  <p className={styles.upcomingArtist}>{concert.artistName}</p>
+                                  <p className={styles.upcomingTitle}>{concert.title}</p>
+                                  <p className={styles.upcomingMeta}>
+                                    <Icon name="calendar" size={12} />
+                                    {formatDate(concert.startDate)} · {concert.venue}
+                                  </p>
+                                </div>
+                              </Link>
+                            </li>
+                          )
+                        })}
                 </ul>
               )}
             </div>
