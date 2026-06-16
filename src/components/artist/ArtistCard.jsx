@@ -31,6 +31,7 @@ function ArtistCard({ artist }) {
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['artists'] })
+      queryClient.invalidateQueries({ queryKey: ['artists-following'] })
     },
   })
 
