@@ -62,35 +62,41 @@ function ReleasesPage() {
   }
 
   const typeParam = selectedType === '전체' ? undefined : selectedType
-  const isSearchMode = !!urlQuery && !effectiveFollowedOnly
+  const isSearchMode = !!urlQuery
 
-  // 전체 음악 (검색·팔로우 모드 아닐 때)
-  const { data: allData, isLoading: allLoading } = useQuery({
-    queryKey: ['releases', typeParam, page],
-    queryFn: () => getReleases({ type: typeParam, page: page - 1, size: PAGE_SIZE }),
-    placeholderData: (prev) => prev,
-    enabled: !effectiveFollowedOnly && !urlQuery,
-  })
-
-  // 검색 모드 — GET /api/releases/search
+  // 검색 모드 — GET /api/releases/search (type·following 동시 적용 가능)
   const { data: searchData, isLoading: searchLoading } = useQuery({
-    queryKey: ['releases-search', urlQuery, page],
-    queryFn: () => searchReleases({ q: urlQuery, page: page - 1, size: PAGE_SIZE }),
+    queryKey: ['releases-search', urlQuery, typeParam, effectiveFollowedOnly, page],
+    queryFn: () => searchReleases({
+      q: urlQuery,
+      type: typeParam,
+      following: effectiveFollowedOnly || undefined,
+      page: page - 1,
+      size: PAGE_SIZE,
+    }),
     placeholderData: (prev) => prev,
     enabled: isSearchMode,
   })
 
-  // 팔로우 모드 — GET /api/releases?following=true
+  // 전체 음악 (검색 모드 아닐 때)
+  const { data: allData, isLoading: allLoading } = useQuery({
+    queryKey: ['releases', typeParam, page],
+    queryFn: () => getReleases({ type: typeParam, page: page - 1, size: PAGE_SIZE }),
+    placeholderData: (prev) => prev,
+    enabled: !urlQuery && !effectiveFollowedOnly,
+  })
+
+  // 팔로우 모드 — GET /api/releases?following=true (검색 모드 아닐 때)
   const { data: followingData, isLoading: followingLoading } = useQuery({
     queryKey: ['releases', typeParam, true, page],
     queryFn: () => getReleases({ type: typeParam, following: true, page: page - 1, size: PAGE_SIZE }),
     placeholderData: (prev) => prev,
-    enabled: effectiveFollowedOnly,
+    enabled: !urlQuery && effectiveFollowedOnly,
   })
 
-  const isLoading = effectiveFollowedOnly ? followingLoading : isSearchMode ? searchLoading : allLoading
+  const isLoading = isSearchMode ? searchLoading : effectiveFollowedOnly ? followingLoading : allLoading
 
-  const activeData = effectiveFollowedOnly ? followingData : isSearchMode ? searchData : allData
+  const activeData = isSearchMode ? searchData : effectiveFollowedOnly ? followingData : allData
   const releases = activeData?.content ?? []
   const totalElements = activeData?.totalElements ?? 0
   const totalPages = activeData?.totalPages ?? 1
