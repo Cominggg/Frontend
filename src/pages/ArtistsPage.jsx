@@ -6,7 +6,9 @@ import ArtistCard from '@/components/artist/ArtistCard'
 import ArtistCardSkeleton from '@/components/artist/ArtistCardSkeleton'
 import EmptyState from '@/components/ui/EmptyState'
 import Pagination from '@/components/ui/Pagination'
-import { getArtists } from '@/services/artistApi'
+import { getArtists, getFollowingArtists } from '@/services/artistApi'
+import useAuthStore from '@/stores/authStore'
+import useLoginModalStore from '@/stores/loginModalStore'
 import styles from './ArtistsPage.module.css'
 
 const PAGE_SIZE = 25
@@ -15,9 +17,13 @@ function ArtistsPage() {
   const [searchParams, setSearchParams] = useSearchParams()
 
   const urlQuery = searchParams.get('q') || ''
+  const followedOnly = searchParams.get('followed') === 'true'
   const currentPage = Math.max(1, parseInt(searchParams.get('page') || '1', 10))
 
   const [inputValue, setInputValue] = useState(urlQuery)
+  const user = useAuthStore((s) => s.user)
+  const openLoginModal = useLoginModalStore((s) => s.open)
+  const effectiveFollowedOnly = followedOnly && !!user
 
   useEffect(() => {
     // inputValue가 이미 URL과 동기화된 상태면 타이머 불필요 (마운트·뒤로가기 시 오작동 방지)
@@ -38,15 +44,37 @@ function ArtistsPage() {
     return () => clearTimeout(timer)
   }, [inputValue, searchParams, setSearchParams])
 
-  const { data, isLoading } = useQuery({
+  // 전체 아티스트 (팔로우 모드 아닐 때)
+  const { data, isLoading: allLoading } = useQuery({
     queryKey: ['artists', urlQuery, currentPage],
     queryFn: () => getArtists({ name: urlQuery || undefined, page: currentPage - 1, size: PAGE_SIZE }),
     placeholderData: (prev) => prev,
+    enabled: !effectiveFollowedOnly,
   })
 
-  const artists = data?.content ?? []
-  const totalElements = data?.totalElements ?? 0
-  const totalPages = data?.totalPages ?? 1
+  // 팔로우 아티스트 — GET /api/artists/following (페이지네이션 없음 → 클라이언트 처리)
+  const { data: followingData, isLoading: followingLoading } = useQuery({
+    queryKey: ['artists-following'],
+    queryFn: getFollowingArtists,
+    enabled: effectiveFollowedOnly,
+  })
+
+  const isLoading = effectiveFollowedOnly ? followingLoading : allLoading
+
+  let artists, totalElements, totalPages
+  if (effectiveFollowedOnly) {
+    const all = followingData ?? []
+    const filtered = urlQuery
+      ? all.filter((a) => a.name.toLowerCase().includes(urlQuery.toLowerCase()))
+      : all
+    totalElements = filtered.length
+    totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE))
+    artists = filtered.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE)
+  } else {
+    artists = data?.content ?? []
+    totalElements = data?.totalElements ?? 0
+    totalPages = data?.totalPages ?? 1
+  }
 
   function handleQueryChange(e) {
     setInputValue(e.target.value)
@@ -60,6 +88,23 @@ function ArtistsPage() {
       next.delete('page')
       return next
     }, { replace: true })
+  }
+
+  function handleFollowedToggle() {
+    if (!user) {
+      openLoginModal(window.location.pathname + window.location.search)
+      return
+    }
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev)
+      if (followedOnly) {
+        next.delete('followed')
+      } else {
+        next.set('followed', 'true')
+      }
+      next.delete('page')
+      return next
+    }, { replace: false })
   }
 
   function handlePageChange(page) {
@@ -114,6 +159,20 @@ function ArtistsPage() {
               </svg>
             </button>
           )}
+        </div>
+
+        {/* 팔로우 필터 */}
+        <div className={styles.filterRow}>
+          <button
+            className={`${styles.followedToggle} ${effectiveFollowedOnly ? styles.followedToggleActive : ''}`}
+            onClick={handleFollowedToggle}
+            aria-pressed={effectiveFollowedOnly}
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill={effectiveFollowedOnly ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+            </svg>
+            관심 아티스트만
+          </button>
         </div>
 
         {/* 아티스트 그리드 */}

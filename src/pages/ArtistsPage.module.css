@@ -89,6 +89,42 @@
   background: var(--color-border);
 }
 
+/* ── 팔로우 필터 ── */
+.filterRow {
+  margin-bottom: 1.25rem;
+}
+
+.followedToggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.375rem 1rem;
+  border-radius: 100px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border: 1.5px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text-muted);
+  transition: border-color 0.15s, color 0.15s, background-color 0.15s;
+  white-space: nowrap;
+}
+
+.followedToggle:hover {
+  border-color: var(--color-accent-border);
+  color: var(--color-accent);
+}
+
+.followedToggleActive {
+  background: color-mix(in srgb, var(--color-accent) 10%, var(--color-surface));
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+  font-weight: 600;
+}
+
+.followedToggleActive:hover {
+  color: var(--color-accent);
+}
+
 /* ── 그리드 ── */
 .grid {
   display: grid;
