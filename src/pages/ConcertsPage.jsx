@@ -62,7 +62,8 @@ function ConcertsPage() {
   }
 
   const statusParam = selectedStatus === 'ALL' ? undefined : selectedStatus
-  const isSearchMode = !!urlQuery && !effectiveFollowedOnly
+  // 검색어가 있으면 팔로우 필터보다 우선 — BE /concerts/search가 following 파라미터 미지원
+  const isSearchMode = !!urlQuery
 
   // 전체 공연 (검색·팔로우 모드 아닐 때)
   const { data: allData, isLoading: allLoading } = useQuery({
@@ -87,19 +88,19 @@ function ConcertsPage() {
     enabled: effectiveFollowedOnly,
   })
 
-  const isLoading = effectiveFollowedOnly ? followingLoading : isSearchMode ? searchLoading : allLoading
+  const isLoading = isSearchMode ? searchLoading : effectiveFollowedOnly ? followingLoading : allLoading
 
   let concerts, totalElements, totalPages
-  if (effectiveFollowedOnly) {
+  if (isSearchMode) {
+    concerts = searchData?.content ?? []
+    totalElements = searchData?.totalElements ?? 0
+    totalPages = searchData?.totalPages ?? 1
+  } else if (effectiveFollowedOnly) {
     const all = followingData ?? []
     const filtered = statusParam ? all.filter((c) => c.status === statusParam) : all
     totalElements = filtered.length
     totalPages = Math.max(1, Math.ceil(filtered.length / ITEMS_PER_PAGE))
     concerts = filtered.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE)
-  } else if (isSearchMode) {
-    concerts = searchData?.content ?? []
-    totalElements = searchData?.totalElements ?? 0
-    totalPages = searchData?.totalPages ?? 1
   } else {
     concerts = allData?.content ?? []
     totalElements = allData?.totalElements ?? 0
@@ -193,6 +194,8 @@ function ConcertsPage() {
             className={`${styles.followedToggle} ${effectiveFollowedOnly ? styles.followedToggleActive : ''}`}
             onClick={handleFollowedToggle}
             aria-pressed={effectiveFollowedOnly}
+            disabled={isSearchMode}
+            title={isSearchMode ? '검색 중에는 팔로우 필터를 사용할 수 없습니다' : undefined}
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill={effectiveFollowedOnly ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
               <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
