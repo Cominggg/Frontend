@@ -14,6 +14,34 @@ import { getArtistColor } from '@/utils/artistColor'
 import { formatDate, formatRelativeDate } from '@/utils/date'
 import styles from './HomePage.module.css'
 
+// TODO: API 연동 후 제거
+const MOCK_TICKETING_CONCERTS = [
+  {
+    id: 1001,
+    artistName: 'YOASOBI',
+    title: 'YOASOBI ASIA TOUR 2026',
+    startDate: '2026-09-13',
+    venue: 'KSPO DOME',
+    ticketOpenAt: '2026-06-25T10:00:00',
+  },
+  {
+    id: 1002,
+    artistName: 'Official髭男dism',
+    title: 'Official髭男dism LIVE TOUR 2026',
+    startDate: '2026-10-04',
+    venue: '올림픽공원 SK핸드볼경기장',
+    ticketOpenAt: '2026-07-01T12:00:00',
+  },
+  {
+    id: 1003,
+    artistName: 'Ado',
+    title: 'Ado WORLD TOUR 2026 in SEOUL',
+    startDate: '2026-11-22',
+    venue: '고척스카이돔',
+    ticketOpenAt: '2026-07-15T10:00:00',
+  },
+]
+
 function getDday(dateStr, today) {
   const [y, m, d] = dateStr.split('-').map(Number)
   const target = new Date(y, m - 1, d)
@@ -78,6 +106,7 @@ function FeedThumb({ posterUrl, artistName }) {
 
 function HomePage() {
   const [subZoneTab, setSubZoneTab] = useState('albums')
+  const [upcomingTab, setUpcomingTab] = useState('concerts')
   const [isDesktop, setIsDesktop] = useState(() => window.innerWidth >= 1101)
   const user = useAuthStore((s) => s.user)
   const isLoggedIn = !!user
@@ -114,8 +143,6 @@ function HomePage() {
     staleTime: 5 * 60 * 1000,
   })
 
-  const recentSetlists = []
-
   const upcomingConcerts = upcomingData?.content ?? []
   const newReleases = releasesData?.content ?? []
   const recentConcerts = recentConcertsData?.content ?? []
@@ -150,36 +177,89 @@ function HomePage() {
             </div>
           </section>
 
-          {/* 다가오는 공연 (우) */}
+          {/* 다가오는 공연 / 예매 일정 (우) */}
           <aside className={styles.mainZoneRight}>
             <div className={styles.upcomingPanel}>
               <div className={styles.upcomingPanelHeader}>
-                <h2 className={styles.sectionTitle}>다가오는 공연</h2>
-                <Link to={ROUTES.CONCERTS} className={styles.sectionMore}>
-                  전체 보기
-                  <Icon name="chevronRight" size={16} />
-                </Link>
+                <div className={styles.upcomingTabs}>
+                  <button
+                    className={`${styles.upcomingTabBtn} ${upcomingTab === 'concerts' ? styles.upcomingTabBtnActive : ''}`}
+                    onClick={() => setUpcomingTab('concerts')}
+                  >
+                    다가오는 공연
+                  </button>
+                  <button
+                    className={`${styles.upcomingTabBtn} ${upcomingTab === 'ticketing' ? styles.upcomingTabBtnActive : ''}`}
+                    onClick={() => setUpcomingTab('ticketing')}
+                  >
+                    예매 일정
+                  </button>
+                </div>
+                {upcomingTab === 'concerts' && (
+                  <Link to={ROUTES.CONCERTS} className={styles.sectionMore}>
+                    전체 보기
+                    <Icon name="chevronRight" size={16} />
+                  </Link>
+                )}
               </div>
-              <ul className={styles.upcomingList}>
-                {upcomingLoading
-                  ? null
-                  : upcomingConcerts.length === 0
+
+              {upcomingTab === 'concerts' && (
+                <ul className={styles.upcomingList}>
+                  {upcomingLoading
+                    ? null
+                    : upcomingConcerts.length === 0
+                      ? (
+                        <li className={styles.upcomingEmpty}>
+                          <div className={styles.upcomingEmptyIcon} aria-hidden="true">
+                            <Icon name="calendar" size={24} />
+                          </div>
+                          <p className={styles.upcomingEmptyTitle}>예정된 공연이 없어요</p>
+                          <p className={styles.upcomingEmptySub}>가까운 시일 내 내한 공연 정보가 없습니다</p>
+                        </li>
+                      )
+                      : upcomingConcerts.map((concert) => {
+                          const dday = getDday(concert.startDate, today)
+                          const isUrgent = dday && dday !== 'D-DAY' && parseInt(dday.replace('D-', '')) <= 7
+                          return (
+                            <li key={concert.id}>
+                              <Link to={ROUTES.CONCERT_DETAIL(concert.id)} className={styles.upcomingItem}>
+                                <div className={`${styles.upcomingDday} ${isUrgent ? styles.upcomingDdayUrgent : ''}`}>
+                                  {dday ?? '-'}
+                                </div>
+                                <div className={styles.upcomingInfo}>
+                                  <p className={styles.upcomingArtist}>{concert.artistName}</p>
+                                  <p className={styles.upcomingTitle}>{concert.title}</p>
+                                  <p className={styles.upcomingMeta}>
+                                    <Icon name="calendar" size={12} />
+                                    {formatDate(concert.startDate)} · {concert.venue}
+                                  </p>
+                                </div>
+                              </Link>
+                            </li>
+                          )
+                        })}
+                </ul>
+              )}
+
+              {upcomingTab === 'ticketing' && (
+                <ul className={styles.upcomingList}>
+                  {MOCK_TICKETING_CONCERTS.length === 0
                     ? (
                       <li className={styles.upcomingEmpty}>
                         <div className={styles.upcomingEmptyIcon} aria-hidden="true">
                           <Icon name="calendar" size={24} />
                         </div>
-                        <p className={styles.upcomingEmptyTitle}>예정된 공연이 없어요</p>
-                        <p className={styles.upcomingEmptySub}>가까운 시일 내 내한 공연 정보가 없습니다</p>
+                        <p className={styles.upcomingEmptyTitle}>예정된 예매가 없어요</p>
+                        <p className={styles.upcomingEmptySub}>가까운 시일 내 티켓 오픈 예정 공연이 없습니다</p>
                       </li>
                     )
-                    : upcomingConcerts.map((concert) => {
-                        const dday = getDday(concert.startDate, today)
+                    : MOCK_TICKETING_CONCERTS.map((concert) => {
+                        const dday = getDday(concert.ticketOpenAt.split('T')[0], today)
                         const isUrgent = dday && dday !== 'D-DAY' && parseInt(dday.replace('D-', '')) <= 7
                         return (
                           <li key={concert.id}>
                             <Link to={ROUTES.CONCERT_DETAIL(concert.id)} className={styles.upcomingItem}>
-                              <div className={`${styles.upcomingDday} ${isUrgent ? styles.upcomingDdayUrgent : ''}`}>
+                              <div className={`${styles.upcomingDday} ${styles.upcomingDdayTicket} ${isUrgent ? styles.upcomingDdayTicketUrgent : ''}`}>
                                 {dday ?? '-'}
                               </div>
                               <div className={styles.upcomingInfo}>
@@ -194,7 +274,8 @@ function HomePage() {
                           </li>
                         )
                       })}
-              </ul>
+                </ul>
+              )}
             </div>
           </aside>
         </div>
@@ -278,11 +359,9 @@ function HomePage() {
           </div>
         </div>
       </div>
-      {/* thirdZone: 최근 공연 발표 + 최근 셋리스트 업데이트 */}
+      {/* thirdZone: 최근 공연 발표 */}
       <div className={styles.thirdZone}>
         <div className={styles.thirdZoneInner}>
-
-          {/* 최근 공연 발표 */}
           <section>
             <div className={styles.sectionHeader}>
               <h2 className={styles.sectionTitle}>최근 공연 발표</h2>
@@ -314,39 +393,6 @@ function HomePage() {
               </ul>
             )}
           </section>
-
-          {/* 최근 셋리스트 업데이트 */}
-          <section>
-            <div className={styles.sectionHeader}>
-              <h2 className={styles.sectionTitle}>최근 셋리스트 업데이트</h2>
-            </div>
-            {recentSetlists.length === 0 ? (
-              <p className={styles.feedEmpty}>등록된 셋리스트가 없습니다</p>
-            ) : (
-              <ul className={styles.feedList}>
-                {recentSetlists.map((item) => (
-                  <li key={item.id}>
-                    <Link to={ROUTES.CONCERT_DETAIL(item.id)} className={styles.feedItem}>
-                      <div className={styles.feedTrackBadge}>
-                        <span className={styles.feedTrackNum}>{item.trackCount}</span>
-                        <span className={styles.feedTrackLabel}>곡</span>
-                      </div>
-                      <div className={styles.feedInfo}>
-                        <p className={styles.feedArtist}>{item.artistName}</p>
-                        <p className={styles.feedTitle}>{item.title}</p>
-                        <p className={styles.feedMeta}>
-                          <Icon name="calendar" size={11} />
-                          {formatDate(item.startDate)}
-                        </p>
-                      </div>
-                      <span className={styles.feedAge}>{formatRelativeDate(item.setlistUpdatedAt)}</span>
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </section>
-
         </div>
       </div>
     </div>
