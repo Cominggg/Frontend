@@ -31,9 +31,19 @@ function buildWeeks(year, month) {
   return weeks
 }
 
+function getTicketingDate(ticketOpenAt) {
+  if (!ticketOpenAt) return null
+  return ticketOpenAt.split('T')[0]
+}
+
 function getEventsForDay(events, date) {
   const str = toDateStr(date)
-  return events.filter((ev) => ev.startDate <= str && str <= (ev.endDate || ev.startDate))
+  return events.filter((ev) => {
+    if (ev.type === 'TICKETING') {
+      return getTicketingDate(ev.ticketOpenAt) === str
+    }
+    return ev.startDate <= str && str <= (ev.endDate || ev.startDate)
+  })
 }
 
 function CalendarGrid({ year, month, events, selectedDate, onDayClick }) {
@@ -93,11 +103,14 @@ function CalendarGrid({ year, month, events, selectedDate, onDayClick }) {
                 <div className={styles.events}>
                   {visible.map((ev) => (
                     <div
-                      key={ev.id}
-                      className={styles.pill}
+                      key={`${ev.concertId}-${ev.type}`}
+                      className={`${styles.pill} ${ev.type === 'TICKETING' ? styles.pillTicketing : ''}`}
                       style={{ '--pill-color': ev.color }}
                     >
-                      <span className={styles.pillDot} />
+                      {ev.type === 'TICKETING'
+                        ? <span className={styles.pillTicketIcon} aria-hidden="true">🎟</span>
+                        : <span className={styles.pillDot} />
+                      }
                       <span className={styles.pillText}>{ev.artistName}</span>
                     </div>
                   ))}
