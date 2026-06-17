@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Link, useParams, useNavigate } from 'react-router-dom'
 
 import Badge from '@/components/ui/Badge'
+import AppDatePicker from '@/components/ui/AppDatePicker'
 import { getAdminConcert, updateConcert, updateConcertState, triggerConcertSetlistCollect } from '@/services/adminApi'
 import { ROUTES } from '@/constants/routes'
 import styles from './AdminFormPage.module.css'
@@ -203,24 +204,20 @@ function AdminConcertFormPage() {
                 placeholder="예: 전석 165,000원"
               />
             </label>
-            <label className={styles.field}>
+            <div className={styles.field}>
               <span className={styles.fieldLabel}>시작일</span>
-              <input
-                type="date"
-                className={styles.input}
+              <AppDatePicker
                 value={form.startDate}
-                onChange={(e) => setField('startDate', e.target.value)}
+                onChange={(v) => setField('startDate', v)}
               />
-            </label>
-            <label className={styles.field}>
+            </div>
+            <div className={styles.field}>
               <span className={styles.fieldLabel}>종료일</span>
-              <input
-                type="date"
-                className={styles.input}
+              <AppDatePicker
                 value={form.endDate}
-                onChange={(e) => setField('endDate', e.target.value)}
+                onChange={(v) => setField('endDate', v)}
               />
-            </label>
+            </div>
             <label className={styles.field}>
               <span className={styles.fieldLabel}>공연장명</span>
               <input
@@ -231,15 +228,14 @@ function AdminConcertFormPage() {
                 placeholder="예: KSPO DOME"
               />
             </label>
-            <label className={styles.field}>
+            <div className={styles.field}>
               <span className={styles.fieldLabel}>예매 오픈 일시</span>
-              <input
-                type="datetime-local"
-                className={styles.input}
+              <AppDatePicker
                 value={form.ticketOpenAt}
-                onChange={(e) => setField('ticketOpenAt', e.target.value)}
+                onChange={(v) => setField('ticketOpenAt', v)}
+                showTime
               />
-            </label>
+            </div>
             <label className={`${styles.field} ${styles.fieldFull}`}>
               <span className={styles.fieldLabel}>포스터 URL</span>
               <input
