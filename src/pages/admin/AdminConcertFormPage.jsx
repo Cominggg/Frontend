@@ -14,6 +14,7 @@ const EMPTY_FORM = {
   startDate: '', endDate: '',
   venueName: '',
   posterUrl: '', price: '',
+  ticketOpenAt: '',
   bookingLinks: [],
 }
 
@@ -87,6 +88,7 @@ function AdminConcertFormPage() {
         venueName: concert.venueName ?? '',
         posterUrl: concert.posterUrl ?? '',
         price: concert.price ?? '',
+        ticketOpenAt: concert.ticketOpenAt ? concert.ticketOpenAt.slice(0, 16) : '',
         bookingLinks: (concert.bookingLinks ?? []).map((l) => ({
           name: l.name ?? '',
           url: l.url ?? '',
@@ -115,6 +117,7 @@ function AdminConcertFormPage() {
         venueName: form.venueName.trim() || undefined,
         posterUrl: form.posterUrl.trim() || undefined,
         price: form.price.trim() || undefined,
+        ticketOpenAt: form.ticketOpenAt ? `${form.ticketOpenAt}:00` : null,
         bookingLinks: form.bookingLinks.length > 0 ? form.bookingLinks : undefined,
       })
       navigate(ROUTES.ADMIN)
@@ -226,6 +229,15 @@ function AdminConcertFormPage() {
                 value={form.venueName}
                 onChange={(e) => setField('venueName', e.target.value)}
                 placeholder="예: KSPO DOME"
+              />
+            </label>
+            <label className={styles.field}>
+              <span className={styles.fieldLabel}>예매 오픈 일시</span>
+              <input
+                type="datetime-local"
+                className={styles.input}
+                value={form.ticketOpenAt}
+                onChange={(e) => setField('ticketOpenAt', e.target.value)}
               />
             </label>
             <label className={`${styles.field} ${styles.fieldFull}`}>

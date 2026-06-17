@@ -118,7 +118,7 @@ function HomePage() {
 
   const { data: ticketingConcerts = [], isLoading: ticketingLoading } = useQuery({
     queryKey: ['ticketing-concerts-home'],
-    queryFn: () => getTicketingConcerts({ size: 6 }),
+    queryFn: getTicketingConcerts,
     staleTime: 5 * 60 * 1000,
   })
 
