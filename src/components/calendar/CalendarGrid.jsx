@@ -108,7 +108,11 @@ function CalendarGrid({ year, month, events, selectedDate, onDayClick }) {
                       style={{ '--pill-color': ev.color }}
                     >
                       {ev.type === 'TICKETING'
-                        ? <span className={styles.pillTicketIcon} aria-hidden="true">🎟</span>
+                        ? (
+                          <svg className={styles.pillTicketIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
+                            <path d="M2 9a1 1 0 0 1 1-1h18a1 1 0 0 1 1 1v1.5a2.5 2.5 0 0 0 0 5V17a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1v-1.5a2.5 2.5 0 0 0 0-5V9z"/>
+                          </svg>
+                        )
                         : <span className={styles.pillDot} />
                       }
                       <span className={styles.pillText}>{ev.artistName}</span>
