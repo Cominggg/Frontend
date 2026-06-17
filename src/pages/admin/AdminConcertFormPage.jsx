@@ -70,6 +70,7 @@ function AdminConcertFormPage() {
   const [currentStatus, setCurrentStatus] = useState('UPCOMING')
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
+  const [savedMsg, setSavedMsg] = useState('')
 
   const [pendingStatus, setPendingStatus] = useState('UPCOMING')
   const [stateChanging, setStateChanging] = useState(false)
@@ -121,7 +122,8 @@ function AdminConcertFormPage() {
         ticketOpenAt: form.ticketOpenAt ? `${form.ticketOpenAt}:00` : null,
         bookingLinks: form.bookingLinks.length > 0 ? form.bookingLinks : undefined,
       })
-      navigate(ROUTES.ADMIN)
+      setSavedMsg('저장되었습니다.')
+      setTimeout(() => setSavedMsg(''), 3000)
     } catch {
       setError('저장에 실패했습니다. 다시 시도해주세요.')
     } finally {
@@ -260,6 +262,7 @@ function AdminConcertFormPage() {
         {error && <p className={styles.errorMsg}>{error}</p>}
 
         <div className={styles.formFooter}>
+          {savedMsg && <span className={styles.savedMsg}>{savedMsg}</span>}
           <button type="submit" className={styles.btnSubmit} disabled={saving || !form.title.trim()}>
             {saving ? '저장 중...' : '수정 저장'}
           </button>
