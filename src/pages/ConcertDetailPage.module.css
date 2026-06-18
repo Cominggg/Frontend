@@ -19,6 +19,10 @@
   text-decoration: none;
   margin-bottom: 1.75rem;
   transition: color 0.15s;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
 }
 
 .backLink:hover {

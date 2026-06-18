@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useParams, useNavigate } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 
 import Badge from '@/components/ui/Badge'
@@ -28,6 +28,7 @@ function PosterImage({ url, alt }) {
 
 function ConcertDetailPage() {
   const { id } = useParams()
+  const navigate = useNavigate()
   const concertId = Number(id)
   const queryClient = useQueryClient()
 
@@ -121,12 +122,12 @@ function ConcertDetailPage() {
       <div className={styles.inner}>
 
         {/* 뒤로 가기 */}
-        <Link to={ROUTES.CONCERTS} className={styles.backLink}>
+        <button onClick={() => navigate(-1)} className={styles.backLink}>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
             <path d="m15 18-6-6 6-6" />
           </svg>
-          공연 목록
-        </Link>
+          뒤로
+        </button>
 
         {/* 대표 이미지 + 공연 정보 */}
         <div className={styles.layout}>

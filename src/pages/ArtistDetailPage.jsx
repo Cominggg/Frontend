@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link, useParams, useSearchParams } from 'react-router-dom'
+import { Link, useParams, useSearchParams, useNavigate } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 
 import ArtistConcertItem from '@/components/artist/ArtistConcertItem'
@@ -46,6 +46,7 @@ const RELEASE_PAGE_SIZE = 10
 
 function ArtistDetailPage() {
   const { id } = useParams()
+  const navigate = useNavigate()
   const artistId = Number(id)
   const queryClient = useQueryClient()
 
@@ -180,12 +181,12 @@ function ArtistDetailPage() {
       <div className={styles.inner}>
 
         {/* 뒤로 가기 */}
-        <Link to={ROUTES.ARTISTS} className={styles.backLink}>
+        <button onClick={() => navigate(-1)} className={styles.backLink}>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
             <path d="m15 18-6-6 6-6" />
           </svg>
-          아티스트 목록
-        </Link>
+          뒤로
+        </button>
 
         {/* 히어로 */}
         <section
