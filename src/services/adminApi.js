@@ -50,8 +50,8 @@ export async function searchDbArtists(name, params) {
   return data
 }
 
-export async function approveConcert(id) {
-  await api.put(`/admin/concerts/${id}/approve`)
+export async function approveConcert(id, body = {}) {
+  await api.put(`/admin/concerts/${id}/approve`, body)
 }
 
 export async function rejectConcert(id) {
