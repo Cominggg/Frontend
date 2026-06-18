@@ -211,7 +211,10 @@ function HomePage() {
                 <div className={styles.upcomingList}>
                   {Array.from({ length: 4 }).map((_, i) => (
                     <div key={i} className={styles.upcomingSkeletonItem}>
-                      <div className={styles.upcomingSkeletonDate} />
+                      <div className={styles.upcomingSkeletonDateBlock}>
+                        <div className={styles.upcomingSkeletonDateMonth} />
+                        <div className={styles.upcomingSkeletonDateDay} />
+                      </div>
                       <div className={styles.upcomingSkeletonInfo}>
                         <div className={styles.upcomingSkeletonLine} />
                         <div className={`${styles.upcomingSkeletonLine} ${styles.upcomingSkeletonLineLg}`} />
