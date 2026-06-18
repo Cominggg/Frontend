@@ -26,6 +26,11 @@ function ArtistsPage() {
   const effectiveFollowedOnly = followedOnly && !!user
 
   useEffect(() => {
+    document.title = '아티스트 — Coming'
+    return () => { document.title = 'Coming' }
+  }, [])
+
+  useEffect(() => {
     // inputValue가 이미 URL과 동기화된 상태면 타이머 불필요 (마운트·뒤로가기 시 오작동 방지)
     if (inputValue === (searchParams.get('q') || '')) return
 

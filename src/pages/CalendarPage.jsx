@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 
 import CalendarGrid from '@/components/calendar/CalendarGrid'
@@ -34,6 +34,11 @@ function CalendarPage() {
   const [month, setMonth] = useState(today.getMonth())
   const [selectedDate, setSelectedDate] = useState(null)
   const [viewMode, setViewMode] = useState('all') // 'all' | 'my'
+
+  useEffect(() => {
+    document.title = '캘린더 — Coming'
+    return () => { document.title = 'Coming' }
+  }, [])
 
   const user = useAuthStore((s) => s.user)
   const isLoggedIn = !!user

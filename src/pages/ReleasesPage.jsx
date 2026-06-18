@@ -31,6 +31,11 @@ function ReleasesPage() {
   const effectiveFollowedOnly = followedOnly && !!user
 
   useEffect(() => {
+    document.title = '음악 — Coming'
+    return () => { document.title = 'Coming' }
+  }, [])
+
+  useEffect(() => {
     if (inputValue === (searchParams.get('q') || '')) return
     const timer = setTimeout(() => {
       setSearchParams((prev) => {
