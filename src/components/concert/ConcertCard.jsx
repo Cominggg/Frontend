@@ -24,11 +24,26 @@ function getArtistColor(name) {
   return PLACEHOLDER_PALETTE[Math.abs(hash) % PLACEHOLDER_PALETTE.length]
 }
 
+function getTicketDday(ticketOpenAt) {
+  if (!ticketOpenAt) return null
+  const [datePart] = ticketOpenAt.split('T')
+  const [y, m, d] = datePart.split('-').map(Number)
+  const target = new Date(y, m - 1, d)
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+  const diff = Math.ceil((target - today) / (1000 * 60 * 60 * 24))
+  if (diff < 0) return null
+  if (diff === 0) return 'D-DAY'
+  return `D-${diff}`
+}
+
 function ConcertCard({ concert }) {
-  const { id, posterUrl, artistName, title, startDate, endDate, venue, status } = concert
+  const { id, posterUrl, artistName, title, startDate, endDate, venue, status, ticketOpenAt } = concert
   const [imgFailed, setImgFailed] = useState(false)
   const showPlaceholder = !posterUrl || imgFailed
   const [colorFrom, colorTo] = getArtistColor(artistName)
+
+  const ticketDday = getTicketDday(ticketOpenAt)
 
   const dateRange = endDate && endDate !== startDate
     ? `${formatDate(startDate)} ~ ${formatDate(endDate)}`
@@ -55,6 +70,14 @@ function ConcertCard({ concert }) {
         <div className={styles.badgeWrap}>
           <Badge status={status} />
         </div>
+        {ticketDday && (
+          <div className={styles.ticketBadge}>
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v2z" />
+            </svg>
+            예매 {ticketDday}
+          </div>
+        )}
       </div>
 
       <div className={styles.info}>

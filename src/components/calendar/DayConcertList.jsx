@@ -37,9 +37,12 @@ function DayConcertList({ selectedDate, events, onCalendarToggle }) {
   if (!selectedDate) return null
 
   const str = toDateStr(selectedDate)
-  const dayEvents = events.filter(
-    (ev) => ev.startDate <= str && str <= (ev.endDate || ev.startDate),
-  )
+  const dayEvents = events.filter((ev) => {
+    if (ev.type === 'TICKETING') {
+      return ev.ticketOpenAt?.split('T')[0] === str
+    }
+    return ev.startDate <= str && str <= (ev.endDate || ev.startDate)
+  })
 
   return (
     <div className={styles.panel}>
@@ -54,6 +57,7 @@ function DayConcertList({ selectedDate, events, onCalendarToggle }) {
       {dayEvents.length > 0 ? (
         <ul className={styles.list}>
           {dayEvents.map((ev) => {
+            const isTicketing = ev.type === 'TICKETING'
             const statusColor = STATUS_COLORS[ev.status] ?? '#757575'
             const dateRange =
               ev.endDate && ev.endDate !== ev.startDate
@@ -61,9 +65,15 @@ function DayConcertList({ selectedDate, events, onCalendarToggle }) {
                 : ev.startDate
 
             return (
-              <li key={ev.id}>
+              <li key={`${ev.concertId}-${ev.type}`}>
                 <Link to={ROUTES.CONCERT_DETAIL(ev.concertId)} className={styles.item}>
-                  <span className={styles.colorBar} style={{ backgroundColor: ev.color }} />
+                  <span
+                    className={styles.colorBar}
+                    style={{
+                      backgroundColor: isTicketing ? 'transparent' : ev.color,
+                      borderLeft: isTicketing ? `3px dashed ${ev.color}` : undefined,
+                    }}
+                  />
 
                   <div className={styles.poster}>
                     <img
@@ -86,12 +96,16 @@ function DayConcertList({ selectedDate, events, onCalendarToggle }) {
                   </div>
 
                   <div className={styles.actions}>
-                    <span
-                      className={styles.badge}
-                      style={{ color: statusColor, borderColor: statusColor }}
-                    >
-                      {ev.status}
-                    </span>
+                    {isTicketing ? (
+                      <span className={styles.ticketingBadge}>예매 오픈</span>
+                    ) : (
+                      <span
+                        className={styles.badge}
+                        style={{ color: statusColor, borderColor: statusColor }}
+                      >
+                        {ev.status}
+                      </span>
+                    )}
                     <button
                       className={`${styles.calBtn} ${ev.inMyCalendar ? styles.calBtnAdded : ''}`}
                       onClick={(e) => { e.preventDefault(); e.stopPropagation(); onCalendarToggle(ev) }}

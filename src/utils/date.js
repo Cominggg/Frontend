@@ -12,6 +12,15 @@ export function formatDate(isoStr) {
   return isoStr.replace(/-/g, '.')
 }
 
+// ISO datetime → 'YYYY.MM.DD HH:mm'
+export function formatDateTime(isoStr) {
+  if (!isoStr) return ''
+  const [datePart, timePart] = isoStr.split('T')
+  const date = datePart.replace(/-/g, '.')
+  const time = timePart ? timePart.slice(0, 5) : ''
+  return time ? `${date} ${time}` : date
+}
+
 // ISO datetime → 'N일 전', '어제', '오늘'
 export function formatRelativeDate(isoStr) {
   if (!isoStr) return ''

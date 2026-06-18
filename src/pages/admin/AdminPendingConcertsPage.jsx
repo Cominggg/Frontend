@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 
 import Pagination from '@/components/ui/Pagination'
+import AppDatePicker from '@/components/ui/AppDatePicker'
 import AddArtistModal from '@/components/concert/AddArtistModal'
 import { getPendingConcerts, approveConcert, rejectConcert } from '@/services/adminApi'
 import { ROUTES } from '@/constants/routes'
@@ -9,14 +10,97 @@ import styles from './AdminPendingConcertsPage.module.css'
 
 const MATCH_LABEL = { prfcast: '출연진', prfnm: '공연명', manual: '수동' }
 
+const EMPTY_TICKET = { ticketOpenAt: '', bookingLinks: [] }
+
+function BookingLinksEditor({ links, onChange }) {
+  function add() { onChange([...links, { name: '', url: '' }]) }
+  function remove(i) { onChange(links.filter((_, idx) => idx !== i)) }
+  function update(i, key, value) {
+    onChange(links.map((l, idx) => idx === i ? { ...l, [key]: value } : l))
+  }
+
+  return (
+    <div className={styles.bookingLinks}>
+      {links.map((link, i) => (
+        <div key={i} className={styles.bookingLinkRow}>
+          <input
+            type="text"
+            className={styles.linkInput}
+            placeholder="예매처 이름 (예: 인터파크)"
+            value={link.name}
+            onChange={(e) => update(i, 'name', e.target.value)}
+          />
+          <input
+            type="url"
+            className={styles.linkInput}
+            placeholder="https://..."
+            value={link.url}
+            onChange={(e) => update(i, 'url', e.target.value)}
+          />
+          {link.url.trim() && (
+            <a href={link.url} target="_blank" rel="noopener noreferrer" className={styles.linkOpenBtn} aria-label="새 탭에서 열기">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                <polyline points="15 3 21 3 21 9" />
+                <line x1="10" y1="14" x2="21" y2="3" />
+              </svg>
+            </a>
+          )}
+          <button type="button" className={styles.linkRemoveBtn} onClick={() => remove(i)} aria-label="삭제">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+              <path d="M18 6 6 18M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+      ))}
+      <button type="button" className={styles.linkAddBtn} onClick={add}>
+        + 예매처 추가
+      </button>
+    </div>
+  )
+}
+
 function ConcertCard({ concert, onRefresh }) {
   const [acting, setActing] = useState(null)
   const [showAddArtist, setShowAddArtist] = useState(false)
+  const [approveOpen, setApproveOpen] = useState(false)
+  const [ticket, setTicket] = useState(EMPTY_TICKET)
 
-  async function handle(action, label) {
-    setActing(label)
+  function setTicketField(key, value) {
+    setTicket((prev) => ({ ...prev, [key]: value }))
+  }
+
+  function openApproveForm() {
+    setTicket({
+      ticketOpenAt: concert.ticketOpenAt ? concert.ticketOpenAt.slice(0, 16) : '',
+      bookingLinks: concert.bookingLinks ?? [],
+    })
+    setApproveOpen(true)
+  }
+
+  function cancelApprove() {
+    setApproveOpen(false)
+    setTicket(EMPTY_TICKET)
+  }
+
+  async function handleReject() {
+    setActing('reject')
     try {
-      await action(concert.id)
+      await rejectConcert(concert.id)
+      onRefresh()
+    } catch {
+      setActing(null)
+    }
+  }
+
+  async function handleApproveConfirm() {
+    setActing('approve')
+    try {
+      const body = {
+        ticketOpenAt: ticket.ticketOpenAt ? `${ticket.ticketOpenAt}:00` : null,
+        bookingLinks: ticket.bookingLinks.filter((l) => l.url.trim()),
+      }
+      await approveConcert(concert.id, body)
       onRefresh()
     } catch {
       setActing(null)
@@ -63,23 +147,67 @@ function ConcertCard({ concert, onRefresh }) {
         </button>
       </div>
 
+      {approveOpen && (
+        <div className={styles.approveForm}>
+          <p className={styles.approveFormTitle}>티켓 예매 정보 <span className={styles.optional}>(선택)</span></p>
+          <div className={styles.approveFields}>
+            <div className={styles.approveField}>
+              <label className={styles.approveLabel}>예매 오픈 일시</label>
+              <AppDatePicker
+                value={ticket.ticketOpenAt}
+                onChange={(v) => setTicketField('ticketOpenAt', v)}
+                showTime
+                placeholder="날짜 및 시간 선택"
+              />
+            </div>
+            <div className={styles.approveField}>
+              <label className={styles.approveLabel}>예매 링크</label>
+              <BookingLinksEditor
+                links={ticket.bookingLinks}
+                onChange={(v) => setTicketField('bookingLinks', v)}
+              />
+            </div>
+          </div>
+          <div className={styles.approveFormActions}>
+            <button
+              type="button"
+              className={styles.btnCancel}
+              disabled={!!acting}
+              onClick={cancelApprove}
+            >
+              취소
+            </button>
+            <button
+              type="button"
+              className={styles.btnApproveConfirm}
+              disabled={!!acting}
+              onClick={handleApproveConfirm}
+            >
+              {acting === 'approve' ? '처리 중...' : '승인 확정'}
+            </button>
+          </div>
+        </div>
+      )}
+
       <div className={styles.cardActions}>
         <button
           type="button"
           className={styles.btnReject}
           disabled={!!acting}
-          onClick={() => handle(rejectConcert, 'reject')}
+          onClick={handleReject}
         >
           {acting === 'reject' ? '처리 중...' : '거절'}
         </button>
-        <button
-          type="button"
-          className={styles.btnApprove}
-          disabled={!!acting}
-          onClick={() => handle(approveConcert, 'approve')}
-        >
-          {acting === 'approve' ? '처리 중...' : '승인'}
-        </button>
+        {!approveOpen && (
+          <button
+            type="button"
+            className={styles.btnApprove}
+            disabled={!!acting}
+            onClick={openApproveForm}
+          >
+            승인
+          </button>
+        )}
       </div>
 
       {showAddArtist && (

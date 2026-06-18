@@ -44,3 +44,8 @@ export async function getRecentSetlists() {
   const { data } = await api.get('/concerts/setlists/recent', { params: { size: 5 } })
   return data
 }
+
+export async function getTicketingConcerts(params) {
+  const { data } = await api.get('/concerts/ticketing', { params })
+  return data
+}

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Link, useParams, useNavigate } from 'react-router-dom'
 
 import Badge from '@/components/ui/Badge'
+import AppDatePicker from '@/components/ui/AppDatePicker'
 import { getAdminConcert, updateConcert, updateConcertState, triggerConcertSetlistCollect } from '@/services/adminApi'
 import { ROUTES } from '@/constants/routes'
 import styles from './AdminFormPage.module.css'
@@ -14,6 +15,7 @@ const EMPTY_FORM = {
   startDate: '', endDate: '',
   venueName: '',
   posterUrl: '', price: '',
+  ticketOpenAt: '',
   bookingLinks: [],
 }
 
@@ -68,6 +70,7 @@ function AdminConcertFormPage() {
   const [currentStatus, setCurrentStatus] = useState('UPCOMING')
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
+  const [savedMsg, setSavedMsg] = useState('')
 
   const [pendingStatus, setPendingStatus] = useState('UPCOMING')
   const [stateChanging, setStateChanging] = useState(false)
@@ -87,6 +90,7 @@ function AdminConcertFormPage() {
         venueName: concert.venueName ?? '',
         posterUrl: concert.posterUrl ?? '',
         price: concert.price ?? '',
+        ticketOpenAt: concert.ticketOpenAt ? concert.ticketOpenAt.slice(0, 16) : '',
         bookingLinks: (concert.bookingLinks ?? []).map((l) => ({
           name: l.name ?? '',
           url: l.url ?? '',
@@ -115,9 +119,11 @@ function AdminConcertFormPage() {
         venueName: form.venueName.trim() || undefined,
         posterUrl: form.posterUrl.trim() || undefined,
         price: form.price.trim() || undefined,
+        ticketOpenAt: form.ticketOpenAt ? `${form.ticketOpenAt}:00` : null,
         bookingLinks: form.bookingLinks.length > 0 ? form.bookingLinks : undefined,
       })
-      navigate(ROUTES.ADMIN)
+      setSavedMsg('저장되었습니다.')
+      setTimeout(() => setSavedMsg(''), 3000)
     } catch {
       setError('저장에 실패했습니다. 다시 시도해주세요.')
     } finally {
@@ -200,24 +206,20 @@ function AdminConcertFormPage() {
                 placeholder="예: 전석 165,000원"
               />
             </label>
-            <label className={styles.field}>
+            <div className={styles.field}>
               <span className={styles.fieldLabel}>시작일</span>
-              <input
-                type="date"
-                className={styles.input}
+              <AppDatePicker
                 value={form.startDate}
-                onChange={(e) => setField('startDate', e.target.value)}
+                onChange={(v) => setField('startDate', v)}
               />
-            </label>
-            <label className={styles.field}>
+            </div>
+            <div className={styles.field}>
               <span className={styles.fieldLabel}>종료일</span>
-              <input
-                type="date"
-                className={styles.input}
+              <AppDatePicker
                 value={form.endDate}
-                onChange={(e) => setField('endDate', e.target.value)}
+                onChange={(v) => setField('endDate', v)}
               />
-            </label>
+            </div>
             <label className={styles.field}>
               <span className={styles.fieldLabel}>공연장명</span>
               <input
@@ -228,6 +230,14 @@ function AdminConcertFormPage() {
                 placeholder="예: KSPO DOME"
               />
             </label>
+            <div className={styles.field}>
+              <span className={styles.fieldLabel}>예매 오픈 일시</span>
+              <AppDatePicker
+                value={form.ticketOpenAt}
+                onChange={(v) => setField('ticketOpenAt', v)}
+                showTime
+              />
+            </div>
             <label className={`${styles.field} ${styles.fieldFull}`}>
               <span className={styles.fieldLabel}>포스터 URL</span>
               <input
@@ -252,6 +262,7 @@ function AdminConcertFormPage() {
         {error && <p className={styles.errorMsg}>{error}</p>}
 
         <div className={styles.formFooter}>
+          {savedMsg && <span className={styles.savedMsg}>{savedMsg}</span>}
           <button type="submit" className={styles.btnSubmit} disabled={saving || !form.title.trim()}>
             {saving ? '저장 중...' : '수정 저장'}
           </button>
