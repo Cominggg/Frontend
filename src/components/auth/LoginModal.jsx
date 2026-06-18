@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 
-import useAuthStore from '@/stores/authStore'
+import useAuthStore, { SESSION_HINT } from '@/stores/authStore'
 import useLoginModalStore from '@/stores/loginModalStore'
 import { devLogin, getMe } from '@/services/authApi'
 import Logo from '@/components/ui/Logo'
@@ -52,6 +52,7 @@ function handleLogin(provider, redirectUri) {
   if (redirectUri) {
     url.searchParams.set('redirect_uri', redirectUri)
   }
+  localStorage.setItem(SESSION_HINT, '1')
   window.location.href = url.toString()
 }
 
