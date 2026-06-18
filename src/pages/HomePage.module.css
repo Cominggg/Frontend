@@ -1,6 +1,88 @@
+@keyframes shimmer {
+  0% { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+
 .page {
   min-height: calc(100svh - var(--header-height));
 }
+
+/* ── 스켈레톤 공통 ── */
+.ticketCardSkeleton {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  padding: 0.875rem 1rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+}
+
+.ticketSkeletonDday {
+  flex: 0 0 52px;
+  height: 52px;
+  border-radius: 8px;
+  background: linear-gradient(90deg, var(--color-surface) 25%, var(--color-surface-hover) 50%, var(--color-surface) 75%);
+  background-size: 800px 100%;
+  animation: shimmer 1.4s infinite linear;
+}
+
+.ticketSkeletonInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.ticketSkeletonLine {
+  height: 10px;
+  border-radius: 5px;
+  width: 55%;
+  background: linear-gradient(90deg, var(--color-surface) 25%, var(--color-surface-hover) 50%, var(--color-surface) 75%);
+  background-size: 800px 100%;
+  animation: shimmer 1.4s infinite linear;
+}
+
+.ticketSkeletonLineLg { width: 80%; height: 12px; }
+.ticketSkeletonLineSm { width: 40%; height: 9px; }
+
+.upcomingSkeletonItem {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.125rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+}
+
+.upcomingSkeletonDate {
+  flex: 0 0 36px;
+  height: 48px;
+  border-radius: 6px;
+  background: linear-gradient(90deg, var(--color-surface) 25%, var(--color-surface-hover) 50%, var(--color-surface) 75%);
+  background-size: 800px 100%;
+  animation: shimmer 1.4s infinite linear;
+}
+
+.upcomingSkeletonInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.upcomingSkeletonLine {
+  height: 10px;
+  border-radius: 5px;
+  width: 50%;
+  background: linear-gradient(90deg, var(--color-surface) 25%, var(--color-surface-hover) 50%, var(--color-surface) 75%);
+  background-size: 800px 100%;
+  animation: shimmer 1.4s infinite linear;
+}
+
+.upcomingSkeletonLineLg { width: 75%; height: 13px; }
+.upcomingSkeletonLineSm { width: 40%; height: 9px; }
 
 /* ===========================
    섹션 공통

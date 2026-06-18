@@ -92,7 +92,22 @@ function ConcertDetailPage() {
     setInquiryType('SETLIST')
   }
 
-  if (isLoading) return null
+  if (isLoading) return (
+    <div className={styles.page}>
+      <div className={styles.inner}>
+        <div className={styles.layout}>
+          <div className={styles.skeletonThumbnail} />
+          <div className={styles.skeletonInfo}>
+            <div className={`${styles.skeletonLine} ${styles.skeletonXs}`} />
+            <div className={`${styles.skeletonLine} ${styles.skeletonLg}`} />
+            <div className={`${styles.skeletonLine} ${styles.skeletonMd}`} />
+            <div className={`${styles.skeletonLine} ${styles.skeletonMd}`} />
+            <div className={`${styles.skeletonLine} ${styles.skeletonSm}`} />
+          </div>
+        </div>
+      </div>
+    </div>
+  )
 
   if (isError || !concert) {
     return (

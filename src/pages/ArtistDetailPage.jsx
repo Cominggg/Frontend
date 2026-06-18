@@ -146,7 +146,21 @@ function ArtistDetailPage() {
     updateParams({ ct: tabValue, cp: 1 })
   }
 
-  if (artistLoading) return null
+  if (artistLoading) return (
+    <div className={styles.page}>
+      <div className={styles.inner}>
+        <div className={styles.skeletonHero}>
+          <div className={styles.skeletonAvatar} />
+          <div className={styles.skeletonHeroInfo}>
+            <div className={`${styles.skeletonLine} ${styles.skeletonXs}`} />
+            <div className={`${styles.skeletonLine} ${styles.skeletonLg}`} />
+            <div className={`${styles.skeletonLine} ${styles.skeletonSm}`} />
+            <div className={`${styles.skeletonLine} ${styles.skeletonMd}`} />
+          </div>
+        </div>
+      </div>
+    </div>
+  )
 
   if (artistError || !artist) {
     return (
