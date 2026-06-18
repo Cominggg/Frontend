@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link, useParams, useSearchParams, useNavigate } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 
@@ -85,6 +85,11 @@ function ArtistDetailPage() {
     queryFn: () => getArtist(artistId),
     retry: false,
   })
+
+  useEffect(() => {
+    if (artist?.name) document.title = `${artist.name} — Coming`
+    return () => { document.title = 'Coming' }
+  }, [artist?.name])
 
   const { data: concertsData, isLoading: concertsLoading } = useQuery({
     queryKey: ['artist-concerts', artistId, concertTab, concertPage],

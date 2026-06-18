@@ -41,6 +41,11 @@ function ConcertDetailPage() {
 
   useEffect(() => { setActiveTab('info') }, [id])
 
+  useEffect(() => {
+    if (concert?.title) document.title = `${concert.title} — Coming`
+    return () => { document.title = 'Coming' }
+  }, [concert?.title])
+
   const { data: concert, isLoading, isError } = useQuery({
     queryKey: ['concert', concertId],
     queryFn: () => getConcert(concertId),
