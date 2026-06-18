@@ -9,6 +9,7 @@ import Pagination from '@/components/ui/Pagination'
 import { getArtists, getFollowingArtists } from '@/services/artistApi'
 import useAuthStore from '@/stores/authStore'
 import useLoginModalStore from '@/stores/loginModalStore'
+import usePageTitle from '@/hooks/usePageTitle'
 import styles from './ArtistsPage.module.css'
 
 const PAGE_SIZE = 25
@@ -25,10 +26,7 @@ function ArtistsPage() {
   const openLoginModal = useLoginModalStore((s) => s.open)
   const effectiveFollowedOnly = followedOnly && !!user
 
-  useEffect(() => {
-    document.title = '아티스트 — Coming'
-    return () => { document.title = 'Coming' }
-  }, [])
+  usePageTitle('아티스트 — Coming')
 
   useEffect(() => {
     // inputValue가 이미 URL과 동기화된 상태면 타이머 불필요 (마운트·뒤로가기 시 오작동 방지)
