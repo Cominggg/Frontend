@@ -372,6 +372,13 @@
   display: block;
 }
 
+.posterImgFailed {
+  width: 100%;
+  max-width: 680px;
+  aspect-ratio: 4 / 3;
+  background-color: var(--color-bg-subtle, #f3f3f3);
+}
+
 .posterEmpty {
   padding: 3rem 1rem;
   font-size: 0.9375rem;

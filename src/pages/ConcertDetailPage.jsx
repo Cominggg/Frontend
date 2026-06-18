@@ -15,7 +15,7 @@ import styles from './ConcertDetailPage.module.css'
 
 function PosterImage({ url, alt }) {
   const [failed, setFailed] = useState(false)
-  if (failed) return null
+  if (failed) return <div className={styles.posterImgFailed} role="img" aria-label={alt} />
   return (
     <img
       src={url}
