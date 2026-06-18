@@ -1,7 +1,42 @@
+@keyframes shimmer {
+  0% { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+
 .page {
   min-height: calc(100svh - var(--header-height));
   padding: 2rem 1.5rem 4rem;
 }
+
+/* ── 로딩 스켈레톤 ── */
+.skeletonThumbnail {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 16px;
+  background: linear-gradient(90deg, var(--color-surface) 25%, var(--color-surface-hover) 50%, var(--color-surface) 75%);
+  background-size: 800px 100%;
+  animation: shimmer 1.4s infinite linear;
+}
+
+.skeletonInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding-top: 0.5rem;
+}
+
+.skeletonLine {
+  height: 12px;
+  border-radius: 6px;
+  background: linear-gradient(90deg, var(--color-surface) 25%, var(--color-surface-hover) 50%, var(--color-surface) 75%);
+  background-size: 800px 100%;
+  animation: shimmer 1.4s infinite linear;
+}
+
+.skeletonXs { width: 35%; height: 10px; }
+.skeletonSm { width: 55%; }
+.skeletonMd { width: 70%; }
+.skeletonLg { width: 90%; height: 20px; }
 
 .inner {
   max-width: var(--max-width);
@@ -19,6 +54,10 @@
   text-decoration: none;
   margin-bottom: 1.75rem;
   transition: color 0.15s;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
 }
 
 .backLink:hover {
@@ -370,6 +409,13 @@
   max-width: 680px;
   height: auto;
   display: block;
+}
+
+.posterImgFailed {
+  width: 100%;
+  max-width: 680px;
+  aspect-ratio: 4 / 3;
+  background-color: var(--color-bg-subtle, #f3f3f3);
 }
 
 .posterEmpty {

@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query'
 
 import ConcertCard from '@/components/concert/ConcertCard'
 import ConcertCardSkeleton from '@/components/concert/ConcertCardSkeleton'
+import ReleaseCardSkeleton from '@/components/release/ReleaseCardSkeleton'
 import Icon from '@/components/ui/Icon'
 import { ROUTES } from '@/constants/routes'
 import { getPopularConcerts, getConcerts, getFollowingConcerts, getTicketingConcerts } from '@/services/concertApi'
@@ -139,7 +140,20 @@ function HomePage() {
                 </Link>
               )}
             </div>
-            {ticketingLoading ? null : ticketingConcerts.length === 0 ? (
+            {ticketingLoading ? (
+              <div className={styles.ticketingPanelList}>
+                {Array.from({ length: 3 }).map((_, i) => (
+                  <div key={i} className={styles.ticketCardSkeleton}>
+                    <div className={styles.ticketSkeletonDday} />
+                    <div className={styles.ticketSkeletonInfo}>
+                      <div className={styles.ticketSkeletonLine} />
+                      <div className={`${styles.ticketSkeletonLine} ${styles.ticketSkeletonLineLg}`} />
+                      <div className={`${styles.ticketSkeletonLine} ${styles.ticketSkeletonLineSm}`} />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : ticketingConcerts.length === 0 ? (
               <div className={styles.ticketingEmpty}>
                 <div className={styles.ticketingEmptyIcon} aria-hidden="true">
                   <Icon name="calendar" size={20} />
@@ -193,7 +207,23 @@ function HomePage() {
                   <Icon name="chevronRight" size={16} />
                 </Link>
               </div>
-              {upcomingLoading ? null : upcomingConcerts.length === 0 ? (
+              {upcomingLoading ? (
+                <div className={styles.upcomingList}>
+                  {Array.from({ length: 4 }).map((_, i) => (
+                    <div key={i} className={styles.upcomingSkeletonItem}>
+                      <div className={styles.upcomingSkeletonDateBlock}>
+                        <div className={styles.upcomingSkeletonDateMonth} />
+                        <div className={styles.upcomingSkeletonDateDay} />
+                      </div>
+                      <div className={styles.upcomingSkeletonInfo}>
+                        <div className={styles.upcomingSkeletonLine} />
+                        <div className={`${styles.upcomingSkeletonLine} ${styles.upcomingSkeletonLineLg}`} />
+                        <div className={`${styles.upcomingSkeletonLine} ${styles.upcomingSkeletonLineSm}`} />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : upcomingConcerts.length === 0 ? (
                 <div className={styles.upcomingEmpty}>
                   <div className={styles.upcomingEmptyIcon} aria-hidden="true">
                     <Icon name="calendar" size={24} />
@@ -243,7 +273,11 @@ function HomePage() {
                   <Icon name="chevronRight" size={16} />
                 </Link>
               </div>
-              {!releasesLoading && newReleases.length === 0 ? (
+              {releasesLoading ? (
+                <div className={styles.albumStrip}>
+                  {Array.from({ length: 4 }).map((_, i) => <ReleaseCardSkeleton key={i} />)}
+                </div>
+              ) : newReleases.length === 0 ? (
                 <div className={styles.albumEmpty}>
                   <div className={styles.albumEmptyIcon} aria-hidden="true">
                     <Icon name="music" size={24} />
@@ -253,9 +287,7 @@ function HomePage() {
                 </div>
               ) : (
                 <div className={styles.albumStrip}>
-                  {releasesLoading
-                    ? null
-                    : newReleases.map((item) => <AlbumCard key={item.id} item={item} />)}
+                  {newReleases.map((item) => <AlbumCard key={item.id} item={item} />)}
                 </div>
               )}
             </section>
