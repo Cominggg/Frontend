@@ -357,7 +357,7 @@ function ArtistDetailPage() {
               )}
             </>
           ) : (
-            <EmptyState message="등록된 음반 정보가 없습니다." />
+            <EmptyState message="등록된 음반 정보가 없습니다." compact />
           )}
         </section>
 
@@ -398,6 +398,7 @@ function ArtistDetailPage() {
             </>
           ) : (
             <EmptyState
+              compact
               message={
                 concertTab === 'all' ? '등록된 내한 공연 내역이 없습니다.' :
                 concertTab === 'upcoming' ? '예정된 내한 공연이 없습니다.' :

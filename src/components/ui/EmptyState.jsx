@@ -1,9 +1,9 @@
 import { Link } from 'react-router-dom';
 import styles from './EmptyState.module.css';
 
-export default function EmptyState({ icon, message, action }) {
+export default function EmptyState({ icon, message, action, compact }) {
   return (
-    <div className={styles.empty}>
+    <div className={`${styles.empty}${compact ? ` ${styles.compact}` : ''}`}>
       {icon && (
         <span className={styles.icon} aria-hidden="true">
           {icon}
