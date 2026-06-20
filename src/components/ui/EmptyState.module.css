@@ -8,6 +8,10 @@
   text-align: center;
 }
 
+.compact {
+  padding: 2rem 1rem;
+}
+
 .icon {
   opacity: 0.45;
   display: flex;

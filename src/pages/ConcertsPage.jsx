@@ -10,6 +10,7 @@ import { CONCERT_STATUS_LABEL } from '@/constants/concert'
 import { getConcerts, searchConcerts, getFollowingConcerts } from '@/services/concertApi'
 import useAuthStore from '@/stores/authStore'
 import useLoginModalStore from '@/stores/loginModalStore'
+import usePageTitle from '@/hooks/usePageTitle'
 import styles from './ConcertsPage.module.css'
 
 const STATUS_FILTERS = ['ALL', 'UPCOMING', 'ONGOING', 'ENDED', 'CANCELLED']
@@ -29,6 +30,8 @@ function ConcertsPage() {
   const user = useAuthStore((s) => s.user)
   const openLoginModal = useLoginModalStore((s) => s.open)
   const effectiveFollowedOnly = followedOnly && !!user
+
+  usePageTitle('공연 — Coming')
 
   useEffect(() => {
     if (inputValue === (searchParams.get('q') || '')) return

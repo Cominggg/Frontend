@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import axios from 'axios'
 
-import useAuthStore from '@/stores/authStore'
+import useAuthStore, { SESSION_HINT } from '@/stores/authStore'
 import { getMe } from '@/services/authApi'
 import LoginModal from '@/components/auth/LoginModal'
 import Header from './Header'
@@ -12,6 +12,8 @@ function Layout({ children }) {
   const setUser = useAuthStore((s) => s.setUser)
 
   useEffect(() => {
+    if (!localStorage.getItem(SESSION_HINT)) return
+
     async function restoreAuth() {
       try {
         const { data } = await axios.post('/api/auth/refresh', null, { withCredentials: true })
@@ -19,7 +21,7 @@ function Layout({ children }) {
         const user = await getMe()
         setUser(user)
       } catch {
-        // 비로그인 상태 유지
+        localStorage.removeItem(SESSION_HINT)
       }
     }
     restoreAuth()

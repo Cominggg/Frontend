@@ -7,6 +7,7 @@ import { getCalendar, addToCalendar, removeFromCalendar } from '@/services/calen
 import useAuthStore from '@/stores/authStore'
 import useLoginModalStore from '@/stores/loginModalStore'
 import { isSameDay } from '@/utils/date'
+import usePageTitle from '@/hooks/usePageTitle'
 import styles from './CalendarPage.module.css'
 
 const MONTH_NAMES = ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월']
@@ -34,6 +35,8 @@ function CalendarPage() {
   const [month, setMonth] = useState(today.getMonth())
   const [selectedDate, setSelectedDate] = useState(null)
   const [viewMode, setViewMode] = useState('all') // 'all' | 'my'
+
+  usePageTitle('캘린더 — Coming')
 
   const user = useAuthStore((s) => s.user)
   const isLoggedIn = !!user

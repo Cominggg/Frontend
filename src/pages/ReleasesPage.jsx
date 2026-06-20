@@ -9,6 +9,7 @@ import Pagination from '@/components/ui/Pagination'
 import { searchReleases } from '@/services/releaseApi'
 import useAuthStore from '@/stores/authStore'
 import useLoginModalStore from '@/stores/loginModalStore'
+import usePageTitle from '@/hooks/usePageTitle'
 import styles from './ReleasesPage.module.css'
 
 const MAIN_TYPES = ['Album', 'Single']
@@ -29,6 +30,8 @@ function ReleasesPage() {
   const user = useAuthStore((s) => s.user)
   const openLoginModal = useLoginModalStore((s) => s.open)
   const effectiveFollowedOnly = followedOnly && !!user
+
+  usePageTitle('음악 — Coming')
 
   useEffect(() => {
     if (inputValue === (searchParams.get('q') || '')) return
