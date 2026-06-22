@@ -4,6 +4,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 
 import Badge from '@/components/ui/Badge'
 import EmptyState from '@/components/ui/EmptyState'
+import Pagination from '@/components/ui/Pagination'
 import { getMe, updateMe, withdraw } from '@/services/authApi'
 import { getFollowingArtists, unfollowArtist } from '@/services/artistApi'
 import { getMyCalendar } from '@/services/calendarApi'
@@ -394,6 +395,11 @@ function MyPage() {
   const [historyPage, setHistoryPage] = useState(1)
   const [inquiryPage, setInquiryPage] = useState(1)
 
+  useEffect(() => {
+    document.title = '마이페이지 — Coming'
+    return () => { document.title = 'Coming' }
+  }, [])
+
   const { data: user } = useQuery({
     queryKey: ['me'],
     queryFn: getMe,
@@ -555,41 +561,11 @@ function MyPage() {
                   ))}
                 </div>
 
-                {totalUpcomingPages > 1 && (
-                  <div className={styles.pagination}>
-                    <button
-                      className={styles.pageBtn}
-                      onClick={() => setUpcomingPage((p) => Math.max(1, p - 1))}
-                      disabled={upcomingPage === 1}
-                      aria-label="이전 페이지"
-                    >
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                        <path d="m15 18-6-6 6-6" />
-                      </svg>
-                    </button>
-                    {Array.from({ length: totalUpcomingPages }, (_, i) => i + 1).map((p) => (
-                      <button
-                        key={p}
-                        className={`${styles.pageBtn} ${p === upcomingPage ? styles.pageBtnActive : ''}`}
-                        onClick={() => setUpcomingPage(p)}
-                        aria-label={`${p}페이지`}
-                        aria-current={p === upcomingPage ? 'page' : undefined}
-                      >
-                        {p}
-                      </button>
-                    ))}
-                    <button
-                      className={styles.pageBtn}
-                      onClick={() => setUpcomingPage((p) => Math.min(totalUpcomingPages, p + 1))}
-                      disabled={upcomingPage === totalUpcomingPages}
-                      aria-label="다음 페이지"
-                    >
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                        <path d="m9 18 6-6-6-6" />
-                      </svg>
-                    </button>
-                  </div>
-                )}
+                <Pagination
+                  currentPage={upcomingPage}
+                  totalPages={totalUpcomingPages}
+                  onPageChange={setUpcomingPage}
+                />
               </>
             )}
           </div>
@@ -616,41 +592,11 @@ function MyPage() {
                   ))}
                 </div>
 
-                {totalHistoryPages > 1 && (
-                  <div className={styles.pagination}>
-                    <button
-                      className={styles.pageBtn}
-                      onClick={() => setHistoryPage((p) => Math.max(1, p - 1))}
-                      disabled={historyPage === 1}
-                      aria-label="이전 페이지"
-                    >
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                        <path d="m15 18-6-6 6-6" />
-                      </svg>
-                    </button>
-                    {Array.from({ length: totalHistoryPages }, (_, i) => i + 1).map((p) => (
-                      <button
-                        key={p}
-                        className={`${styles.pageBtn} ${p === historyPage ? styles.pageBtnActive : ''}`}
-                        onClick={() => setHistoryPage(p)}
-                        aria-label={`${p}페이지`}
-                        aria-current={p === historyPage ? 'page' : undefined}
-                      >
-                        {p}
-                      </button>
-                    ))}
-                    <button
-                      className={styles.pageBtn}
-                      onClick={() => setHistoryPage((p) => Math.min(totalHistoryPages, p + 1))}
-                      disabled={historyPage === totalHistoryPages}
-                      aria-label="다음 페이지"
-                    >
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                        <path d="m9 18 6-6-6-6" />
-                      </svg>
-                    </button>
-                  </div>
-                )}
+                <Pagination
+                  currentPage={historyPage}
+                  totalPages={totalHistoryPages}
+                  onPageChange={setHistoryPage}
+                />
               </>
             )}
           </div>
@@ -678,41 +624,11 @@ function MyPage() {
                   ))}
                 </div>
 
-                {totalInquiryPages > 1 && (
-                  <div className={styles.pagination}>
-                    <button
-                      className={styles.pageBtn}
-                      onClick={() => setInquiryPage((p) => Math.max(1, p - 1))}
-                      disabled={inquiryPage === 1}
-                      aria-label="이전 페이지"
-                    >
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                        <path d="m15 18-6-6 6-6" />
-                      </svg>
-                    </button>
-                    {Array.from({ length: totalInquiryPages }, (_, i) => i + 1).map((p) => (
-                      <button
-                        key={p}
-                        className={`${styles.pageBtn} ${p === inquiryPage ? styles.pageBtnActive : ''}`}
-                        onClick={() => setInquiryPage(p)}
-                        aria-label={`${p}페이지`}
-                        aria-current={p === inquiryPage ? 'page' : undefined}
-                      >
-                        {p}
-                      </button>
-                    ))}
-                    <button
-                      className={styles.pageBtn}
-                      onClick={() => setInquiryPage((p) => Math.min(totalInquiryPages, p + 1))}
-                      disabled={inquiryPage === totalInquiryPages}
-                      aria-label="다음 페이지"
-                    >
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                        <path d="m9 18 6-6-6-6" />
-                      </svg>
-                    </button>
-                  </div>
-                )}
+                <Pagination
+                  currentPage={inquiryPage}
+                  totalPages={totalInquiryPages}
+                  onPageChange={setInquiryPage}
+                />
               </>
             )}
           </div>
