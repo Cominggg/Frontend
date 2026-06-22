@@ -291,6 +291,17 @@
   border-color: var(--color-accent-border);
 }
 
+/* ── 섹션 타이틀 (단일 탭 대체) ── */
+.sectionTitle {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-text-muted);
+  margin: 0 0 1.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid var(--color-border);
+  letter-spacing: -0.01em;
+}
+
 /* ── 하단 탭 ── */
 .tabSection {
   margin-top: 3rem;
@@ -381,6 +392,8 @@
   border-radius: 16px;
   overflow: hidden;
   box-shadow: 0 8px 40px rgba(0, 0, 0, 0.12);
+  max-width: 680px;
+  margin: 0 auto;
 }
 
 .posterImg {
