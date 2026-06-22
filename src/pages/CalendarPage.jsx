@@ -186,6 +186,22 @@ function CalendarPage() {
           onDayClick={handleDayClick}
         />
 
+        {/* 범례 */}
+        <div className={styles.legend}>
+          <span className={styles.legendItem}>
+            <span className={styles.legendDot} />
+            공연
+          </span>
+          <span className={styles.legendItem}>
+            <span className={styles.legendTicket} aria-hidden="true">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+                <path d="M2 9a1 1 0 0 1 1-1h18a1 1 0 0 1 1 1v1.5a2.5 2.5 0 0 0 0 5V17a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1v-1.5a2.5 2.5 0 0 0 0-5V9z"/>
+              </svg>
+            </span>
+            티케팅 오픈
+          </span>
+        </div>
+
         {/* 선택된 날짜 공연 목록 */}
         <DayConcertList
           selectedDate={selectedDate}

@@ -39,7 +39,7 @@
 
 /* ── 날짜 셀 ── */
 .cell {
-  min-height: 104px;
+  min-height: 112px;
   padding: 8px 6px 6px;
   border-right: 1px solid var(--color-border);
   cursor: pointer;
@@ -92,7 +92,7 @@
   font-size: 0.8125rem;
   font-weight: 500;
   color: var(--color-text);
-  margin-bottom: 4px;
+  margin-bottom: 6px;
   flex-shrink: 0;
 }
 

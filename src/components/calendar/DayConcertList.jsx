@@ -1,16 +1,10 @@
 import { Link } from 'react-router-dom'
 
 import { ROUTES } from '@/constants/routes'
+import { CONCERT_STATUS_COLOR, CONCERT_STATUS_LABEL } from '@/constants/concert'
 import styles from './DayConcertList.module.css'
 
 const WEEKDAY_NAMES = ['일', '월', '화', '수', '목', '금', '토']
-
-const STATUS_COLORS = {
-  UPCOMING:  '#1565C0',
-  ONGOING:   '#2E7D32',
-  ENDED:     '#757575',
-  CANCELLED: '#C62828',
-}
 
 function toDateStr(date) {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
@@ -58,7 +52,8 @@ function DayConcertList({ selectedDate, events, onCalendarToggle }) {
         <ul className={styles.list}>
           {dayEvents.map((ev) => {
             const isTicketing = ev.type === 'TICKETING'
-            const statusColor = STATUS_COLORS[ev.status] ?? '#757575'
+            const statusColor = CONCERT_STATUS_COLOR[ev.status] ?? '#757575'
+            const statusLabel = CONCERT_STATUS_LABEL[ev.status] ?? ev.status
             const dateRange =
               ev.endDate && ev.endDate !== ev.startDate
                 ? `${ev.startDate} ~ ${ev.endDate}`
@@ -103,7 +98,7 @@ function DayConcertList({ selectedDate, events, onCalendarToggle }) {
                         className={styles.badge}
                         style={{ color: statusColor, borderColor: statusColor }}
                       >
-                        {ev.status}
+                        {statusLabel}
                       </span>
                     )}
                     <button
