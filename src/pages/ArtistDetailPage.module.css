@@ -61,8 +61,7 @@
   gap: 2.5rem;
   padding: 2.5rem;
   border-radius: 20px;
-  background: linear-gradient(135deg, var(--hero-from), var(--hero-to)),
-              var(--color-surface);
+  background: color-mix(in srgb, var(--color-accent) 5%, var(--color-surface));
   margin-bottom: 2.5rem;
 }
 
@@ -217,6 +216,14 @@
   border: 1.5px solid color-mix(in srgb, var(--color-accent) 25%, transparent);
   margin-bottom: 2rem;
   overflow: hidden;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.15s, border-color 0.15s;
+}
+
+.ddayBanner:hover {
+  background: color-mix(in srgb, var(--color-accent) 13%, var(--color-surface));
+  border-color: color-mix(in srgb, var(--color-accent) 40%, transparent);
 }
 
 .ddayContent {

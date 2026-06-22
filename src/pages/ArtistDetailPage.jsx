@@ -205,7 +205,6 @@ function ArtistDetailPage() {
         {/* 히어로 */}
         <section
           className={styles.hero}
-          style={{ '--hero-from': colorFrom + '18', '--hero-to': colorTo + '08' }}
         >
           {/* 아바타 */}
           <div className={styles.avatarWrap}>
@@ -231,7 +230,7 @@ function ArtistDetailPage() {
             {hasUpcomingConcert && <span className={styles.comingBadge}>COMING</span>}
             <h1 className={styles.artistName}>{name}</h1>
 
-            <p className={styles.followers}>팔로워 {formatFollowers(followersCount)}</p>
+            {followersCount > 0 && <p className={styles.followers}>팔로워 {formatFollowers(followersCount)}</p>}
             <div className={styles.heroActions}>
               <button
                 className={`${styles.followBtn} ${isFollowing ? styles.following : ''}`}
@@ -247,12 +246,33 @@ function ArtistDetailPage() {
                 </Link>
               )}
             </div>
+
+            {links && links.length > 0 && (
+              <div className={styles.links}>
+                {links.map((link, i) => (
+                  <a
+                    key={`${link.id}-${i}`}
+                    href={link.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={styles.linkBtn}
+                  >
+                    {link.label}
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                      <polyline points="15 3 21 3 21 9" />
+                      <line x1="10" y1="14" x2="21" y2="3" />
+                    </svg>
+                  </a>
+                ))}
+              </div>
+            )}
           </div>
         </section>
 
         {/* D-day 배너 */}
         {showDday && (
-          <div className={styles.ddayBanner}>
+          <Link to={ROUTES.CONCERT_DETAIL(nextConcert.id)} className={styles.ddayBanner}>
             <div className={styles.ddayContent}>
               <span className={styles.ddayLabel}>다음 내한 공연</span>
               <div className={styles.ddayInfo}>
@@ -263,32 +283,7 @@ function ArtistDetailPage() {
             <div className={styles.ddayCount}>
               {dday === 0 ? 'D-DAY' : `D-${dday}`}
             </div>
-          </div>
-        )}
-
-        {/* 외부 링크 */}
-        {links && links.length > 0 && (
-          <section className={styles.section}>
-            <h2 className={styles.sectionTitle}>스트리밍 / 소셜</h2>
-            <div className={styles.links}>
-              {links.map((link, i) => (
-                <a
-                  key={`${link.id}-${i}`}
-                  href={link.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={styles.linkBtn}
-                >
-                  {link.label}
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
-                    <polyline points="15 3 21 3 21 9" />
-                    <line x1="10" y1="14" x2="21" y2="3" />
-                  </svg>
-                </a>
-              ))}
-            </div>
-          </section>
+          </Link>
         )}
 
         {/* 디스코그래피 */}
