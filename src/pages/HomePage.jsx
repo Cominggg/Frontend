@@ -90,9 +90,10 @@ function HomePage() {
   })
 
   const { data: followingConcerts = [], isLoading: followingLoading } = useQuery({
-    queryKey: ['following-concerts-home'],
+    queryKey: ['following-concerts-home', user?.id],
     queryFn: getFollowingConcerts,
     enabled: isLoggedIn,
+    staleTime: 0,
   })
 
   const { data: ticketingConcerts = [], isLoading: ticketingLoading } = useQuery({

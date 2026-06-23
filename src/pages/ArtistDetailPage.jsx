@@ -129,6 +129,7 @@ function ArtistDetailPage() {
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['artist', artistId] })
+      queryClient.invalidateQueries({ queryKey: ['following-concerts-home'] })
     },
   })
 
