@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 
@@ -21,6 +21,7 @@ function ArtistsPage() {
   const followedOnly = searchParams.get('followed') === 'true'
   const currentPage = Math.max(1, parseInt(searchParams.get('page') || '1', 10))
 
+  const listTopRef = useRef(null)
   const [inputValue, setInputValue] = useState(urlQuery)
   const user = useAuthStore((s) => s.user)
   const openLoginModal = useLoginModalStore((s) => s.open)
@@ -120,6 +121,7 @@ function ArtistsPage() {
       }
       return next
     }, { replace: false })
+    listTopRef.current?.scrollIntoView({ behavior: 'instant', block: 'start' })
   }
 
   return (
@@ -165,7 +167,7 @@ function ArtistsPage() {
         </div>
 
         {/* 팔로우 필터 */}
-        <div className={styles.filterRow}>
+        <div ref={listTopRef} className={styles.filterRow}>
           <button
             className={`${styles.followedToggle} ${effectiveFollowedOnly ? styles.followedToggleActive : ''}`}
             onClick={handleFollowedToggle}

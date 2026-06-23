@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 
@@ -26,6 +26,7 @@ function ConcertsPage() {
   const followedOnly = searchParams.get('followed') === 'true'
   const currentPage = Math.max(1, parseInt(searchParams.get('page') || '1', 10))
 
+  const listTopRef = useRef(null)
   const [inputValue, setInputValue] = useState(urlQuery)
   const user = useAuthStore((s) => s.user)
   const openLoginModal = useLoginModalStore((s) => s.open)
@@ -134,6 +135,7 @@ function ConcertsPage() {
 
   function handlePageChange(page) {
     updateParams({ page })
+    listTopRef.current?.scrollIntoView({ behavior: 'instant', block: 'start' })
   }
 
   return (
@@ -179,7 +181,7 @@ function ConcertsPage() {
         </div>
 
         {/* 공연 상태 필터 + 관심 아티스트 토글 */}
-        <div className={styles.filterRow}>
+        <div ref={listTopRef} className={styles.filterRow}>
           <div className={styles.filterBar} role="tablist" aria-label="공연 상태 필터">
             {STATUS_FILTERS.map((s) => (
               <button

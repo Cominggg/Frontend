@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 
@@ -26,6 +26,7 @@ function ReleasesPage() {
   const followedOnly = searchParams.get('followed') === 'true'
   const page = Math.max(1, parseInt(searchParams.get('page') || '1', 10))
 
+  const listTopRef = useRef(null)
   const [inputValue, setInputValue] = useState(urlQuery)
   const user = useAuthStore((s) => s.user)
   const openLoginModal = useLoginModalStore((s) => s.open)
@@ -97,6 +98,11 @@ function ReleasesPage() {
     updateParams({ type, page: 1 })
   }
 
+  function handlePageChange(p) {
+    updateParams({ page: p })
+    listTopRef.current?.scrollIntoView({ behavior: 'instant', block: 'start' })
+  }
+
   function handleFollowedToggle() {
     if (!user) {
       openLoginModal(window.location.pathname + window.location.search)
@@ -157,7 +163,7 @@ function ReleasesPage() {
         </div>
 
         {/* 타입 필터 + 관심 아티스트 토글 */}
-        <div className={styles.filterRow}>
+        <div ref={listTopRef} className={styles.filterRow}>
           <div className={styles.filterBar} role="tablist" aria-label="음반 타입 필터">
             {TYPE_FILTERS.map((t) => (
               <button
@@ -214,7 +220,7 @@ function ReleasesPage() {
           <Pagination
             currentPage={page}
             totalPages={totalPages}
-            onPageChange={(p) => updateParams({ page: p })}
+            onPageChange={handlePageChange}
           />
         )}
 
