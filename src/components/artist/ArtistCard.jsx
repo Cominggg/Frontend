@@ -59,6 +59,8 @@ function ArtistCard({ artist }) {
               src={imageUrl}
               alt={name}
               className={styles.avatar}
+              loading="lazy"
+              decoding="async"
               onError={() => setImgFailed(true)}
             />
           )}

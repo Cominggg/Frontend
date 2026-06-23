@@ -64,6 +64,8 @@ function ConcertCard({ concert }) {
             src={posterUrl}
             alt={title}
             className={styles.poster}
+            loading="lazy"
+            decoding="async"
             onError={() => setImgFailed(true)}
           />
         )}

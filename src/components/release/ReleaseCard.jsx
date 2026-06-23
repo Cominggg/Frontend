@@ -58,6 +58,8 @@ function ReleaseCard({ release }) {
             src={coverUrl}
             alt={title}
             className={styles.cover}
+            loading="lazy"
+            decoding="async"
             onError={() => setImgFailed(true)}
           />
         )}
