@@ -22,7 +22,6 @@ function ArtistsPage() {
   const isComing = searchParams.get('isComing') === 'true'
   const currentPage = Math.max(1, parseInt(searchParams.get('page') || '1', 10))
 
-  const listTopRef = useRef(null)
   const urlQueryRef = useRef(urlQuery)
   urlQueryRef.current = urlQuery
   const [inputValue, setInputValue] = useState(urlQuery)
@@ -120,7 +119,7 @@ function ArtistsPage() {
       }
       return next
     }, { replace: false })
-    listTopRef.current?.scrollIntoView({ behavior: 'instant', block: 'start' })
+    window.scrollTo(0, 0)
   }
 
   return (
@@ -166,7 +165,7 @@ function ArtistsPage() {
         </div>
 
         {/* 필터 행 */}
-        <div ref={listTopRef} className={styles.filterRow}>
+        <div className={styles.filterRow}>
           <div className={styles.filterBar} role="tablist" aria-label="아티스트 필터">
             <button
               role="tab"

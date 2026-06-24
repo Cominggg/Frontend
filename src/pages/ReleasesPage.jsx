@@ -26,7 +26,6 @@ function ReleasesPage() {
   const followedOnly = searchParams.get('followed') === 'true'
   const page = Math.max(1, parseInt(searchParams.get('page') || '1', 10))
 
-  const listTopRef = useRef(null)
   const urlQueryRef = useRef(urlQuery)
   urlQueryRef.current = urlQuery
   const [inputValue, setInputValue] = useState(urlQuery)
@@ -102,7 +101,7 @@ function ReleasesPage() {
 
   function handlePageChange(p) {
     updateParams({ page: p })
-    listTopRef.current?.scrollIntoView({ behavior: 'instant', block: 'start' })
+    window.scrollTo(0, 0)
   }
 
   function handleFollowedToggle() {
@@ -165,7 +164,7 @@ function ReleasesPage() {
         </div>
 
         {/* 타입 필터 + 관심 아티스트 토글 */}
-        <div ref={listTopRef} className={styles.filterRow}>
+        <div className={styles.filterRow}>
           <div className={styles.filterBar} role="tablist" aria-label="음반 타입 필터">
             {TYPE_FILTERS.map((t) => (
               <button

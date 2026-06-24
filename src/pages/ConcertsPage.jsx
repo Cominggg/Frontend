@@ -26,7 +26,6 @@ function ConcertsPage() {
   const followedOnly = searchParams.get('followed') === 'true'
   const currentPage = Math.max(1, parseInt(searchParams.get('page') || '1', 10))
 
-  const listTopRef = useRef(null)
   const urlQueryRef = useRef(urlQuery)
   urlQueryRef.current = urlQuery
   const [inputValue, setInputValue] = useState(urlQuery)
@@ -137,7 +136,7 @@ function ConcertsPage() {
 
   function handlePageChange(page) {
     updateParams({ page })
-    listTopRef.current?.scrollIntoView({ behavior: 'instant', block: 'start' })
+    window.scrollTo(0, 0)
   }
 
   return (
@@ -183,7 +182,7 @@ function ConcertsPage() {
         </div>
 
         {/* 공연 상태 필터 + 관심 아티스트 토글 */}
-        <div ref={listTopRef} className={styles.filterRow}>
+        <div className={styles.filterRow}>
           <div className={styles.filterBar} role="tablist" aria-label="공연 상태 필터">
             {STATUS_FILTERS.map((s) => (
               <button
