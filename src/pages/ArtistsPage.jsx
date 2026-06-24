@@ -23,6 +23,8 @@ function ArtistsPage() {
   const currentPage = Math.max(1, parseInt(searchParams.get('page') || '1', 10))
 
   const listTopRef = useRef(null)
+  const urlQueryRef = useRef(urlQuery)
+  urlQueryRef.current = urlQuery
   const [inputValue, setInputValue] = useState(urlQuery)
   const user = useAuthStore((s) => s.user)
   const openLoginModal = useLoginModalStore((s) => s.open)
@@ -31,8 +33,7 @@ function ArtistsPage() {
   usePageTitle('아티스트 — Coming')
 
   useEffect(() => {
-    // inputValue가 이미 URL과 동기화된 상태면 타이머 불필요 (마운트·뒤로가기 시 오작동 방지)
-    if (inputValue === (searchParams.get('q') || '')) return
+    if (inputValue === urlQueryRef.current) return
 
     const timer = setTimeout(() => {
       setSearchParams((prev) => {
@@ -47,7 +48,7 @@ function ArtistsPage() {
       }, { replace: true })
     }, 300)
     return () => clearTimeout(timer)
-  }, [inputValue, searchParams, setSearchParams])
+  }, [inputValue, setSearchParams])
 
   const { data, isLoading } = useQuery({
     queryKey: ['artists', urlQuery, currentPage, effectiveFollowedOnly, isComing],

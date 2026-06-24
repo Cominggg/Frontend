@@ -27,6 +27,8 @@ function ReleasesPage() {
   const page = Math.max(1, parseInt(searchParams.get('page') || '1', 10))
 
   const listTopRef = useRef(null)
+  const urlQueryRef = useRef(urlQuery)
+  urlQueryRef.current = urlQuery
   const [inputValue, setInputValue] = useState(urlQuery)
   const user = useAuthStore((s) => s.user)
   const openLoginModal = useLoginModalStore((s) => s.open)
@@ -35,7 +37,7 @@ function ReleasesPage() {
   usePageTitle('음악 — Coming')
 
   useEffect(() => {
-    if (inputValue === (searchParams.get('q') || '')) return
+    if (inputValue === urlQueryRef.current) return
     const timer = setTimeout(() => {
       setSearchParams((prev) => {
         const next = new URLSearchParams(prev)
@@ -49,7 +51,7 @@ function ReleasesPage() {
       }, { replace: true })
     }, 300)
     return () => clearTimeout(timer)
-  }, [inputValue, searchParams, setSearchParams])
+  }, [inputValue, setSearchParams])
 
   function updateParams(updates) {
     setSearchParams((prev) => {
