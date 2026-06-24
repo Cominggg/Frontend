@@ -116,7 +116,7 @@ function CalendarPage() {
 
   function handleViewMode(mode) {
     if (mode === 'my' && !isLoggedIn) {
-      openLoginModal({ redirectUri: '/calendar' })
+      openLoginModal('/calendar')
       return
     }
     setViewMode(mode)
@@ -124,7 +124,7 @@ function CalendarPage() {
 
   function handleCalendarToggle(ev) {
     if (!isLoggedIn) {
-      openLoginModal({ redirectUri: '/calendar' })
+      openLoginModal('/calendar')
       return
     }
     toggleMutation.mutate({ concertId: ev.concertId, inCalendar: ev.inMyCalendar })

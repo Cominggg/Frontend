@@ -10,9 +10,13 @@ import styles from './Layout.module.css'
 function Layout({ children }) {
   const setAccessToken = useAuthStore((s) => s.setAccessToken)
   const setUser = useAuthStore((s) => s.setUser)
+  const setInitialized = useAuthStore((s) => s.setInitialized)
 
   useEffect(() => {
-    if (!localStorage.getItem(SESSION_HINT)) return
+    if (!localStorage.getItem(SESSION_HINT)) {
+      setInitialized()
+      return
+    }
 
     async function restoreAuth() {
       try {
@@ -22,10 +26,12 @@ function Layout({ children }) {
         setUser(user)
       } catch {
         localStorage.removeItem(SESSION_HINT)
+      } finally {
+        setInitialized()
       }
     }
     restoreAuth()
-  }, [setAccessToken, setUser])
+  }, [setAccessToken, setUser, setInitialized])
 
   return (
     <div className={styles.root}>
