@@ -181,7 +181,7 @@ function ArtistsPage() {
               className={`${styles.filterTab} ${isComing ? styles.filterTabActive : ''}`}
               onClick={() => handleIsComingChange(true)}
             >
-              내한 예정
+              COMING
             </button>
           </div>
           <button
