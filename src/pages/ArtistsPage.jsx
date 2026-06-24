@@ -19,6 +19,7 @@ function ArtistsPage() {
 
   const urlQuery = searchParams.get('q') || ''
   const followedOnly = searchParams.get('followed') === 'true'
+  const isComing = searchParams.get('isComing') === 'true'
   const currentPage = Math.max(1, parseInt(searchParams.get('page') || '1', 10))
 
   const listTopRef = useRef(null)
@@ -49,10 +50,11 @@ function ArtistsPage() {
   }, [inputValue, searchParams, setSearchParams])
 
   const { data, isLoading } = useQuery({
-    queryKey: ['artists', urlQuery, currentPage, effectiveFollowedOnly],
+    queryKey: ['artists', urlQuery, currentPage, effectiveFollowedOnly, isComing],
     queryFn: () => getArtists({
       name: urlQuery || undefined,
       following: effectiveFollowedOnly || undefined,
+      isComing: isComing || undefined,
       page: currentPage - 1,
       size: PAGE_SIZE,
     }),
@@ -75,6 +77,19 @@ function ArtistsPage() {
       next.delete('page')
       return next
     }, { replace: true })
+  }
+
+  function handleIsComingChange(value) {
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev)
+      if (value) {
+        next.set('isComing', 'true')
+      } else {
+        next.delete('isComing')
+      }
+      next.delete('page')
+      return next
+    }, { replace: false })
   }
 
   function handleFollowedToggle() {
@@ -149,8 +164,26 @@ function ArtistsPage() {
           )}
         </div>
 
-        {/* 팔로우 필터 */}
+        {/* 필터 행 */}
         <div ref={listTopRef} className={styles.filterRow}>
+          <div className={styles.filterBar} role="tablist" aria-label="아티스트 필터">
+            <button
+              role="tab"
+              aria-selected={!isComing}
+              className={`${styles.filterTab} ${!isComing ? styles.filterTabActive : ''}`}
+              onClick={() => handleIsComingChange(false)}
+            >
+              전체
+            </button>
+            <button
+              role="tab"
+              aria-selected={isComing}
+              className={`${styles.filterTab} ${isComing ? styles.filterTabActive : ''}`}
+              onClick={() => handleIsComingChange(true)}
+            >
+              내한 예정
+            </button>
+          </div>
           <button
             className={`${styles.followedToggle} ${effectiveFollowedOnly ? styles.followedToggleActive : ''}`}
             onClick={handleFollowedToggle}
