@@ -1,7 +1,7 @@
 import api from './api'
 
 export async function getConcertHistory(params) {
-  const { data } = await api.get('/my/history', { params })
+  const { data } = await api.get('/me/concerts/history', { params })
   return data
 }
 
@@ -11,11 +11,11 @@ export async function createInquiry(body) {
 }
 
 export async function getMyInquiries(params) {
-  const { data } = await api.get('/inquiries/my', { params })
+  const { data } = await api.get('/me/inquiries', { params })
   return data
 }
 
 export async function getMyInquiry(id) {
-  const { data } = await api.get(`/inquiries/my/${id}`)
+  const { data } = await api.get(`/me/inquiries/${id}`)
   return data
 }
