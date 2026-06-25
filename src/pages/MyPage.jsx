@@ -410,7 +410,7 @@ function MyPage() {
     queryFn: getFollowingArtists,
   })
 
-  const { data: upcomingData } = useQuery({
+  const { data: upcomingData, isLoading: isUpcomingLoading } = useQuery({
     queryKey: ['upcoming-concerts', upcomingPage],
     queryFn: () => getUpcomingConcerts({ page: upcomingPage - 1, size: MY_PAGE_SIZE }),
     placeholderData: (prev) => prev,
@@ -498,7 +498,12 @@ function MyPage() {
               aria-selected={activeTab === tab.id}
               aria-controls={`tabpanel-${tab.id}`}
               className={`${styles.tab} ${activeTab === tab.id ? styles.tabActive : ''}`}
-              onClick={() => setActiveTab(tab.id)}
+              onClick={() => {
+                setActiveTab(tab.id)
+                setUpcomingPage(1)
+                setHistoryPage(1)
+                setInquiryPage(1)
+              }}
             >
               {tab.label}
             </button>
@@ -535,7 +540,7 @@ function MyPage() {
         {/* 예정 공연 탭 (MY-03) */}
         {activeTab === 'upcoming' && (
           <div role="tabpanel" id="tabpanel-upcoming" aria-labelledby="tab-upcoming">
-            {upcomingList.length === 0 ? (
+            {isUpcomingLoading ? null : upcomingList.length === 0 ? (
               <EmptyState
                 icon={
                   <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
