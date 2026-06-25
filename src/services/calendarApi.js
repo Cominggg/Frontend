@@ -5,8 +5,8 @@ export async function getCalendar(params) {
   return data
 }
 
-export async function getMyCalendar(params) {
-  const { data } = await api.get('/calendar/my', { params })
+export async function getUpcomingConcerts(params) {
+  const { data } = await api.get('/me/concerts/upcoming', { params })
   return data
 }
 
