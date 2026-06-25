@@ -90,9 +90,10 @@ function HomePage() {
   })
 
   const { data: followingConcerts = [], isLoading: followingLoading } = useQuery({
-    queryKey: ['following-concerts-home'],
+    queryKey: ['following-concerts-home', user?.id],
     queryFn: getFollowingConcerts,
     enabled: isLoggedIn,
+    staleTime: 0,
   })
 
   const { data: ticketingConcerts = [], isLoading: ticketingLoading } = useQuery({
@@ -140,54 +141,56 @@ function HomePage() {
                 </Link>
               )}
             </div>
-            {ticketingLoading ? (
-              <div className={styles.ticketingPanelList}>
-                {Array.from({ length: 3 }).map((_, i) => (
-                  <div key={i} className={styles.ticketCardSkeleton}>
-                    <div className={styles.ticketSkeletonDday} />
-                    <div className={styles.ticketSkeletonInfo}>
-                      <div className={styles.ticketSkeletonLine} />
-                      <div className={`${styles.ticketSkeletonLine} ${styles.ticketSkeletonLineLg}`} />
-                      <div className={`${styles.ticketSkeletonLine} ${styles.ticketSkeletonLineSm}`} />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : ticketingConcerts.length === 0 ? (
-              <div className={styles.ticketingEmpty}>
-                <div className={styles.ticketingEmptyIcon} aria-hidden="true">
-                  <Icon name="calendar" size={20} />
-                </div>
-                <p className={styles.ticketingEmptyText}>현재 예매 예정인 공연이 없어요</p>
-              </div>
-            ) : (
-              <div className={styles.ticketingPanelList}>
-                {ticketingConcerts.slice(0, 5).map((concert) => {
-                  const dday = getDday(concert.ticketOpenAt.split('T')[0], today)
-                  const urgency = getTicketUrgency(dday)
-                  const timeStr = concert.ticketOpenAt.includes('T')
-                    ? concert.ticketOpenAt.split('T')[1].slice(0, 5)
-                    : null
-                  return (
-                    <Link
-                      key={concert.id}
-                      to={ROUTES.CONCERT_DETAIL(concert.id)}
-                      className={`${styles.ticketCard}${urgency === 'critical' ? ` ${styles.ticketCardCritical}` : urgency === 'soon' ? ` ${styles.ticketCardSoon}` : ''}`}
-                    >
-                      <div className={styles.ticketDday}>{dday ?? '-'}</div>
-                      <div className={styles.ticketInfo}>
-                        <p className={styles.ticketArtist}>{concert.artistName}</p>
-                        <p className={styles.ticketTitle}>{concert.title}</p>
-                        <p className={styles.ticketOpenDate}>
-                          <Icon name="calendar" size={12} />
-                          티켓 오픈 {formatDate(concert.ticketOpenAt.split('T')[0])}{timeStr ? ` ${timeStr}` : ''}
-                        </p>
+            <div className={styles.ticketingPanel}>
+              {ticketingLoading ? (
+                <div className={styles.ticketingPanelList}>
+                  {Array.from({ length: 3 }).map((_, i) => (
+                    <div key={i} className={styles.ticketCardSkeleton}>
+                      <div className={styles.ticketSkeletonDday} />
+                      <div className={styles.ticketSkeletonInfo}>
+                        <div className={styles.ticketSkeletonLine} />
+                        <div className={`${styles.ticketSkeletonLine} ${styles.ticketSkeletonLineLg}`} />
+                        <div className={`${styles.ticketSkeletonLine} ${styles.ticketSkeletonLineSm}`} />
                       </div>
-                    </Link>
-                  )
-                })}
-              </div>
-            )}
+                    </div>
+                  ))}
+                </div>
+              ) : ticketingConcerts.length === 0 ? (
+                <div className={styles.ticketingEmpty}>
+                  <div className={styles.ticketingEmptyIcon} aria-hidden="true">
+                    <Icon name="calendar" size={20} />
+                  </div>
+                  <p className={styles.ticketingEmptyText}>현재 예매 예정인 공연이 없어요</p>
+                </div>
+              ) : (
+                <div className={styles.ticketingPanelList}>
+                  {ticketingConcerts.slice(0, 5).map((concert) => {
+                    const dday = getDday(concert.ticketOpenAt.split('T')[0], today)
+                    const urgency = getTicketUrgency(dday)
+                    const timeStr = concert.ticketOpenAt.includes('T')
+                      ? concert.ticketOpenAt.split('T')[1].slice(0, 5)
+                      : null
+                    return (
+                      <Link
+                        key={concert.id}
+                        to={ROUTES.CONCERT_DETAIL(concert.id)}
+                        className={`${styles.ticketCard}${urgency === 'critical' ? ` ${styles.ticketCardCritical}` : urgency === 'soon' ? ` ${styles.ticketCardSoon}` : ''}`}
+                      >
+                        <div className={styles.ticketDday}>{dday ?? '-'}</div>
+                        <div className={styles.ticketInfo}>
+                          <p className={styles.ticketArtist}>{concert.artistName}</p>
+                          <p className={styles.ticketTitle}>{concert.title}</p>
+                          <p className={styles.ticketOpenDate}>
+                            <Icon name="calendar" size={12} />
+                            티켓 오픈 {formatDate(concert.ticketOpenAt.split('T')[0])}{timeStr ? ` ${timeStr}` : ''}
+                          </p>
+                        </div>
+                      </Link>
+                    )
+                  })}
+                </div>
+              )}
+            </div>
           </section>
 
         </div>

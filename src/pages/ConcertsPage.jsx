@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 
@@ -26,6 +26,8 @@ function ConcertsPage() {
   const followedOnly = searchParams.get('followed') === 'true'
   const currentPage = Math.max(1, parseInt(searchParams.get('page') || '1', 10))
 
+  const urlQueryRef = useRef(urlQuery)
+  urlQueryRef.current = urlQuery
   const [inputValue, setInputValue] = useState(urlQuery)
   const user = useAuthStore((s) => s.user)
   const openLoginModal = useLoginModalStore((s) => s.open)
@@ -34,7 +36,7 @@ function ConcertsPage() {
   usePageTitle('공연 — Coming')
 
   useEffect(() => {
-    if (inputValue === (searchParams.get('q') || '')) return
+    if (inputValue === urlQueryRef.current) return
     const timer = setTimeout(() => {
       setSearchParams((prev) => {
         const next = new URLSearchParams(prev)
@@ -48,7 +50,7 @@ function ConcertsPage() {
       }, { replace: true })
     }, 300)
     return () => clearTimeout(timer)
-  }, [inputValue, searchParams, setSearchParams])
+  }, [inputValue, setSearchParams])
 
   function updateParams(updates) {
     setSearchParams((prev) => {
@@ -134,6 +136,7 @@ function ConcertsPage() {
 
   function handlePageChange(page) {
     updateParams({ page })
+    window.scrollTo(0, 0)
   }
 
   return (

@@ -38,7 +38,7 @@
   width: 64px;
   height: 64px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #9f1239, #fb7185);
+  background: linear-gradient(135deg, var(--color-accent), var(--color-accent-light));
   display: flex;
   align-items: center;
   justify-content: center;
@@ -323,52 +323,6 @@
   color: var(--color-border);
 }
 
-/* ── 페이지네이션 ── */
-.pagination {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.25rem;
-  margin-top: 2rem;
-}
-
-.pageBtn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 36px;
-  height: 36px;
-  padding: 0 0.5rem;
-  border-radius: 8px;
-  font-size: 0.875rem;
-  font-weight: 500;
-  border: 1.5px solid var(--color-border);
-  background: var(--color-surface);
-  color: var(--color-text-muted);
-  transition: border-color 0.15s, color 0.15s, background-color 0.15s;
-}
-
-.pageBtn:hover:not(:disabled) {
-  border-color: var(--color-accent-border);
-  color: var(--color-accent);
-}
-
-.pageBtn:disabled {
-  opacity: 0.35;
-  cursor: default;
-}
-
-.pageBtnActive {
-  background: var(--color-accent);
-  border-color: var(--color-accent);
-  color: #fff;
-  font-weight: 600;
-}
-
-.pageBtnActive:hover {
-  color: #fff;
-}
-
 /* ── 빈 상태 ── */
 .empty {
   display: flex;
@@ -620,7 +574,7 @@
   width: 80px;
   height: 80px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #9f1239, #fb7185);
+  background: linear-gradient(135deg, var(--color-accent), var(--color-accent-light));
   display: flex;
   align-items: center;
   justify-content: center;

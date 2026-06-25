@@ -42,14 +42,3 @@
 .pageBtnActive:hover {
   color: #fff;
 }
-
-.ellipsis {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 36px;
-  height: 36px;
-  font-size: 0.875rem;
-  color: var(--color-text-muted);
-  user-select: none;
-}

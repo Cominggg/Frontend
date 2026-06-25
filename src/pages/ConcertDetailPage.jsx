@@ -306,22 +306,24 @@ function ConcertDetailPage() {
 
         {/* 하단 탭 */}
         <div className={styles.tabSection}>
-          <div className={styles.tabBar}>
-            <button
-              className={`${styles.tabBtn} ${activeTab === 'info' ? styles.tabBtnActive : ''}`}
-              onClick={() => setActiveTab('info')}
-            >
-              공연 정보
-            </button>
-            {status === 'ENDED' && (
+          {status === 'ENDED' ? (
+            <div className={styles.tabBar}>
+              <button
+                className={`${styles.tabBtn} ${activeTab === 'info' ? styles.tabBtnActive : ''}`}
+                onClick={() => setActiveTab('info')}
+              >
+                공연 정보
+              </button>
               <button
                 className={`${styles.tabBtn} ${activeTab === 'setlist' ? styles.tabBtnActive : ''}`}
                 onClick={() => setActiveTab('setlist')}
               >
                 셋리스트
               </button>
-            )}
-          </div>
+            </div>
+          ) : (
+            <h2 className={styles.sectionTitle}>공연 정보</h2>
+          )}
 
           {activeTab === 'setlist' && status === 'ENDED' && (
             <div className={styles.tabPanel}>
@@ -340,7 +342,7 @@ function ConcertDetailPage() {
             </div>
           )}
 
-          {activeTab === 'info' && (
+          {(activeTab === 'info' || status !== 'ENDED') && (
             <div className={styles.tabPanel}>
               {imageUrls && imageUrls.length > 0 ? (
                 <div className={styles.posterList}>

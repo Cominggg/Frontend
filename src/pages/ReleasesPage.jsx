@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 
@@ -26,6 +26,8 @@ function ReleasesPage() {
   const followedOnly = searchParams.get('followed') === 'true'
   const page = Math.max(1, parseInt(searchParams.get('page') || '1', 10))
 
+  const urlQueryRef = useRef(urlQuery)
+  urlQueryRef.current = urlQuery
   const [inputValue, setInputValue] = useState(urlQuery)
   const user = useAuthStore((s) => s.user)
   const openLoginModal = useLoginModalStore((s) => s.open)
@@ -34,7 +36,7 @@ function ReleasesPage() {
   usePageTitle('음악 — Coming')
 
   useEffect(() => {
-    if (inputValue === (searchParams.get('q') || '')) return
+    if (inputValue === urlQueryRef.current) return
     const timer = setTimeout(() => {
       setSearchParams((prev) => {
         const next = new URLSearchParams(prev)
@@ -48,7 +50,7 @@ function ReleasesPage() {
       }, { replace: true })
     }, 300)
     return () => clearTimeout(timer)
-  }, [inputValue, searchParams, setSearchParams])
+  }, [inputValue, setSearchParams])
 
   function updateParams(updates) {
     setSearchParams((prev) => {
@@ -95,6 +97,11 @@ function ReleasesPage() {
 
   function handleTypeChange(type) {
     updateParams({ type, page: 1 })
+  }
+
+  function handlePageChange(p) {
+    updateParams({ page: p })
+    window.scrollTo(0, 0)
   }
 
   function handleFollowedToggle() {
@@ -214,7 +221,7 @@ function ReleasesPage() {
           <Pagination
             currentPage={page}
             totalPages={totalPages}
-            onPageChange={(p) => updateParams({ page: p })}
+            onPageChange={handlePageChange}
           />
         )}
 

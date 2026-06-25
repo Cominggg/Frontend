@@ -32,6 +32,7 @@ function ArtistCard({ artist }) {
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['artists'] })
       queryClient.invalidateQueries({ queryKey: ['artists-following'] })
+      queryClient.invalidateQueries({ queryKey: ['following-concerts-home'] })
     },
   })
 
@@ -58,6 +59,8 @@ function ArtistCard({ artist }) {
               src={imageUrl}
               alt={name}
               className={styles.avatar}
+              loading="lazy"
+              decoding="async"
               onError={() => setImgFailed(true)}
             />
           )}

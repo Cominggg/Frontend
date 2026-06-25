@@ -1,5 +1,48 @@
+@keyframes shimmer {
+  0% { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+
 .page {
   min-height: calc(100svh - var(--header-height));
+}
+
+/* ── 로딩 스켈레톤 ── */
+.heroSkeleton {
+  background: var(--color-surface) !important;
+}
+
+.skeletonBlock {
+  background: linear-gradient(90deg, var(--color-border) 25%, var(--color-surface-hover) 50%, var(--color-border) 75%);
+  background-size: 800px 100%;
+  animation: shimmer 1.4s infinite linear;
+  border-radius: 12px;
+}
+
+.skeletonLine {
+  border-radius: 6px;
+  background: linear-gradient(90deg, var(--color-border) 25%, var(--color-surface-hover) 50%, var(--color-border) 75%);
+  background-size: 800px 100%;
+  animation: shimmer 1.4s infinite linear;
+  height: 12px;
+}
+
+.skeletonXs { width: 30%; height: 10px; }
+.skeletonSm { width: 50%; }
+.skeletonLg { width: 80%; height: 22px; }
+
+.skeletonTrackList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+}
+
+.skeletonTrackRow {
+  height: 38px;
+  border-radius: 8px;
+  background: linear-gradient(90deg, var(--color-surface) 25%, var(--color-surface-hover) 50%, var(--color-surface) 75%);
+  background-size: 800px 100%;
+  animation: shimmer 1.4s infinite linear;
 }
 
 /* ── 히어로 ── */
@@ -11,25 +54,24 @@
 
 .heroBlur {
   position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    135deg,
-    var(--hero-from, var(--color-accent)) 0%,
-    var(--hero-to, var(--color-accent-dark)) 100%
-  );
+  inset: -30px;
+  background-color: var(--color-accent);
+  background-size: cover;
+  background-position: center;
+  filter: blur(28px) saturate(1.4) brightness(0.75);
   z-index: 0;
 }
 
-.heroBlur::after {
-  content: '';
+.heroOverlay {
   position: absolute;
   inset: 0;
-  background: rgba(0, 0, 0, 0.42);
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 1;
 }
 
 .heroInner {
   position: relative;
-  z-index: 1;
+  z-index: 2;
   max-width: var(--max-width);
   margin: 0 auto;
   display: flex;
@@ -42,6 +84,10 @@
   color: rgba(255, 255, 255, 0.7);
   text-decoration: none;
   width: fit-content;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
 }
 
 .backLink:hover {

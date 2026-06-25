@@ -27,12 +27,20 @@ function getArtistColor(name) {
   return PLACEHOLDER_PALETTE[Math.abs(hash) % PLACEHOLDER_PALETTE.length]
 }
 
+function isNewRelease(dateStr) {
+  if (!dateStr) return false
+  const d = new Date(dateStr)
+  if (isNaN(d.getTime())) return false
+  return (Date.now() - d.getTime()) / 86400000 <= 30
+}
+
 function ReleaseCard({ release }) {
   const { id, coverUrl, artistName, title, releaseDate, type } = release
   const [imgFailed, setImgFailed] = useState(false)
   const showPlaceholder = !coverUrl || imgFailed
   const [colorFrom, colorTo] = getArtistColor(artistName)
   const badgeColor = RELEASE_TYPE_COLOR[type] ?? 'var(--color-text-muted)'
+  const isNew = isNewRelease(releaseDate)
 
   return (
     <Link to={ROUTES.RELEASE_DETAIL(id)} className={styles.card}>
@@ -50,6 +58,8 @@ function ReleaseCard({ release }) {
             src={coverUrl}
             alt={title}
             className={styles.cover}
+            loading="lazy"
+            decoding="async"
             onError={() => setImgFailed(true)}
           />
         )}
@@ -59,6 +69,7 @@ function ReleaseCard({ release }) {
         >
           {type}
         </span>
+        {isNew && <span className={styles.newBadge}>NEW</span>}
       </div>
 
       <div className={styles.info}>

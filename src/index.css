@@ -71,14 +71,14 @@
    두 블록 모두 아래 --_dk-* 변수를 참조하여 값 중복 제거
    =========================== */
 :root {
-  --_dk-color-bg: #0f0f1a;
-  --_dk-color-surface: #1a1a2e;
-  --_dk-color-surface-hover: #2a1a22;
-  --_dk-color-border: #2e2e42;
-  --_dk-color-text: #f0f0f5;
+  --_dk-color-bg: #1c1c1e;
+  --_dk-color-surface: #2c2c2e;
+  --_dk-color-surface-hover: #3a3a3c;
+  --_dk-color-border: #48484a;
+  --_dk-color-text: #f0f0f0;
   --_dk-color-text-muted: #9ca3af;
-  --_dk-color-header-bg: rgba(15, 15, 26, 0.85);
-  --_dk-color-mobile-nav-bg: rgba(26, 26, 46, 0.98);
+  --_dk-color-header-bg: rgba(28, 28, 30, 0.85);
+  --_dk-color-mobile-nav-bg: rgba(44, 44, 46, 0.98);
   --_dk-color-accent-border: rgba(225, 29, 72, 0.35);
   --_dk-color-accent-shadow: rgba(225, 29, 72, 0.18);
   --_dk-color-accent-focus-border: rgba(225, 29, 72, 0.55);

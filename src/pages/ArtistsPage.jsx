@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 
@@ -6,7 +6,7 @@ import ArtistCard from '@/components/artist/ArtistCard'
 import ArtistCardSkeleton from '@/components/artist/ArtistCardSkeleton'
 import EmptyState from '@/components/ui/EmptyState'
 import Pagination from '@/components/ui/Pagination'
-import { getArtists, getFollowingArtists } from '@/services/artistApi'
+import { getArtists } from '@/services/artistApi'
 import useAuthStore from '@/stores/authStore'
 import useLoginModalStore from '@/stores/loginModalStore'
 import usePageTitle from '@/hooks/usePageTitle'
@@ -19,8 +19,11 @@ function ArtistsPage() {
 
   const urlQuery = searchParams.get('q') || ''
   const followedOnly = searchParams.get('followed') === 'true'
+  const isComing = searchParams.get('isComing') === 'true'
   const currentPage = Math.max(1, parseInt(searchParams.get('page') || '1', 10))
 
+  const urlQueryRef = useRef(urlQuery)
+  urlQueryRef.current = urlQuery
   const [inputValue, setInputValue] = useState(urlQuery)
   const user = useAuthStore((s) => s.user)
   const openLoginModal = useLoginModalStore((s) => s.open)
@@ -29,8 +32,7 @@ function ArtistsPage() {
   usePageTitle('아티스트 — Coming')
 
   useEffect(() => {
-    // inputValue가 이미 URL과 동기화된 상태면 타이머 불필요 (마운트·뒤로가기 시 오작동 방지)
-    if (inputValue === (searchParams.get('q') || '')) return
+    if (inputValue === urlQueryRef.current) return
 
     const timer = setTimeout(() => {
       setSearchParams((prev) => {
@@ -45,39 +47,23 @@ function ArtistsPage() {
       }, { replace: true })
     }, 300)
     return () => clearTimeout(timer)
-  }, [inputValue, searchParams, setSearchParams])
+  }, [inputValue, setSearchParams])
 
-  // 전체 아티스트 (팔로우 모드 아닐 때)
-  const { data, isLoading: allLoading } = useQuery({
-    queryKey: ['artists', urlQuery, currentPage],
-    queryFn: () => getArtists({ name: urlQuery || undefined, page: currentPage - 1, size: PAGE_SIZE }),
+  const { data, isLoading } = useQuery({
+    queryKey: ['artists', urlQuery, currentPage, effectiveFollowedOnly, isComing],
+    queryFn: () => getArtists({
+      name: urlQuery || undefined,
+      following: effectiveFollowedOnly || undefined,
+      isComing: isComing || undefined,
+      page: currentPage - 1,
+      size: PAGE_SIZE,
+    }),
     placeholderData: (prev) => prev,
-    enabled: !effectiveFollowedOnly,
   })
 
-  // 팔로우 아티스트 — GET /api/artists/following (페이지네이션 없음 → 클라이언트 처리)
-  const { data: followingData, isLoading: followingLoading } = useQuery({
-    queryKey: ['artists-following'],
-    queryFn: getFollowingArtists,
-    enabled: effectiveFollowedOnly,
-  })
-
-  const isLoading = effectiveFollowedOnly ? followingLoading : allLoading
-
-  let artists, totalElements, totalPages
-  if (effectiveFollowedOnly) {
-    const all = followingData ?? []
-    const filtered = urlQuery
-      ? all.filter((a) => a.name.toLowerCase().includes(urlQuery.toLowerCase()))
-      : all
-    totalElements = filtered.length
-    totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE))
-    artists = filtered.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE)
-  } else {
-    artists = data?.content ?? []
-    totalElements = data?.totalElements ?? 0
-    totalPages = data?.totalPages ?? 1
-  }
+  const artists = data?.content ?? []
+  const totalElements = data?.totalElements ?? 0
+  const totalPages = data?.totalPages ?? 1
 
   function handleQueryChange(e) {
     setInputValue(e.target.value)
@@ -91,6 +77,19 @@ function ArtistsPage() {
       next.delete('page')
       return next
     }, { replace: true })
+  }
+
+  function handleIsComingChange(value) {
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev)
+      if (value) {
+        next.set('isComing', 'true')
+      } else {
+        next.delete('isComing')
+      }
+      next.delete('page')
+      return next
+    }, { replace: false })
   }
 
   function handleFollowedToggle() {
@@ -120,6 +119,7 @@ function ArtistsPage() {
       }
       return next
     }, { replace: false })
+    window.scrollTo(0, 0)
   }
 
   return (
@@ -164,8 +164,26 @@ function ArtistsPage() {
           )}
         </div>
 
-        {/* 팔로우 필터 */}
+        {/* 필터 행 */}
         <div className={styles.filterRow}>
+          <div className={styles.filterBar} role="tablist" aria-label="아티스트 필터">
+            <button
+              role="tab"
+              aria-selected={!isComing}
+              className={`${styles.filterTab} ${!isComing ? styles.filterTabActive : ''}`}
+              onClick={() => handleIsComingChange(false)}
+            >
+              전체
+            </button>
+            <button
+              role="tab"
+              aria-selected={isComing}
+              className={`${styles.filterTab} ${isComing ? styles.filterTabActive : ''}`}
+              onClick={() => handleIsComingChange(true)}
+            >
+              COMING
+            </button>
+          </div>
           <button
             className={`${styles.followedToggle} ${effectiveFollowedOnly ? styles.followedToggleActive : ''}`}
             onClick={handleFollowedToggle}

@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { Link, useParams, useNavigate, useLocation } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 
 import EmptyState from '@/components/ui/EmptyState'
@@ -23,6 +23,8 @@ function ReleaseDetailPage() {
   const { id } = useParams()
   const releaseId = Number(id)
   const [coverFailed, setCoverFailed] = useState(false)
+  const navigate = useNavigate()
+  const { key: locationKey } = useLocation()
 
   const { data: release, isLoading, isError } = useQuery({
     queryKey: ['release', releaseId],
@@ -30,7 +32,43 @@ function ReleaseDetailPage() {
     retry: false,
   })
 
-  if (isLoading) return null
+  useEffect(() => {
+    if (release?.title) document.title = `${release.title} — Coming`
+    return () => { document.title = 'Coming' }
+  }, [release?.title])
+
+  function handleBack() {
+    locationKey !== 'default' ? navigate(-1) : navigate(ROUTES.RELEASES)
+  }
+
+  if (isLoading) return (
+    <div className={styles.page}>
+      <section className={`${styles.hero} ${styles.heroSkeleton}`}>
+        <div className={styles.heroInner}>
+          <div className={styles.heroContent}>
+            <div className={`${styles.coverWrap} ${styles.skeletonBlock}`} />
+            <div className={styles.heroInfo}>
+              <div className={`${styles.skeletonLine} ${styles.skeletonXs}`} />
+              <div className={`${styles.skeletonLine} ${styles.skeletonLg}`} />
+              <div className={`${styles.skeletonLine} ${styles.skeletonSm}`} />
+            </div>
+          </div>
+        </div>
+      </section>
+      <div className={styles.body}>
+        <div className={styles.bodyGrid}>
+          <section className={styles.trackSection}>
+            <div className={`${styles.skeletonLine} ${styles.skeletonXs}`} style={{ marginBottom: '0.875rem' }} />
+            <div className={styles.skeletonTrackList}>
+              {[70, 55, 80, 60, 75, 65, 50, 70].map((_, i) => (
+                <div key={i} className={styles.skeletonTrackRow} />
+              ))}
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+  )
 
   if (isError || !release) {
     return (
@@ -57,13 +95,14 @@ function ReleaseDetailPage() {
   return (
     <div className={styles.page}>
       {/* 히어로 섹션 */}
-      <section
-        className={styles.hero}
-        style={{ '--hero-from': accentFrom, '--hero-to': accentTo }}
-      >
-        <div className={styles.heroBlur} />
+      <section className={styles.hero}>
+        <div
+          className={styles.heroBlur}
+          style={!showCoverPlaceholder ? { backgroundImage: `url(${coverUrl})` } : undefined}
+        />
+        <div className={styles.heroOverlay} />
         <div className={styles.heroInner}>
-          <Link to={ROUTES.ARTISTS} className={styles.backLink}>← 아티스트 목록</Link>
+          <button className={styles.backLink} onClick={handleBack}>← 뒤로</button>
           <div className={styles.heroContent}>
             <div className={styles.coverWrap}>
               {showCoverPlaceholder ? (

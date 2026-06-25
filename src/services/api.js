@@ -7,6 +7,8 @@ const api = axios.create({
   withCredentials: true, // Refresh Token HttpOnly Cookie 전송
 })
 
+let refreshPromise = null
+
 // Request interceptor: Access Token 주입 (메모리에서 읽음)
 api.interceptors.request.use((config) => {
   const token = useAuthStore.getState().accessToken
@@ -25,9 +27,12 @@ api.interceptors.response.use(
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true
       try {
-        const { data } = await axios.post('/api/auth/refresh', null, {
-          withCredentials: true,
-        })
+        if (!refreshPromise) {
+          refreshPromise = axios
+            .post('/api/auth/refresh', null, { withCredentials: true })
+            .finally(() => { refreshPromise = null })
+        }
+        const { data } = await refreshPromise
         useAuthStore.getState().setAccessToken(data.accessToken)
         originalRequest.headers.Authorization = `Bearer ${data.accessToken}`
         return api(originalRequest)
