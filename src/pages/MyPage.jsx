@@ -7,7 +7,7 @@ import EmptyState from '@/components/ui/EmptyState'
 import Pagination from '@/components/ui/Pagination'
 import { getMe, updateMe, withdraw } from '@/services/authApi'
 import { getFollowingArtists, unfollowArtist } from '@/services/artistApi'
-import { getMyCalendar } from '@/services/calendarApi'
+import { getUpcomingConcerts } from '@/services/calendarApi'
 import { getConcertHistory, getMyInquiries } from '@/services/myApi'
 import useAuthStore from '@/stores/authStore'
 import { ROUTES } from '@/constants/routes'
@@ -410,15 +410,12 @@ function MyPage() {
     queryFn: getFollowingArtists,
   })
 
-  const todayStr = new Date().toISOString().slice(0, 10)
-
-  const { data: myCalendarData } = useQuery({
-    queryKey: ['my-calendar'],
-    queryFn: () => getMyCalendar({ size: 100 }),
+  const { data: upcomingData } = useQuery({
+    queryKey: ['upcoming-concerts', upcomingPage],
+    queryFn: () => getUpcomingConcerts({ page: upcomingPage - 1, size: MY_PAGE_SIZE }),
+    placeholderData: (prev) => prev,
+    enabled: activeTab === 'upcoming',
   })
-  const upcomingConcerts = (myCalendarData?.content ?? []).filter(
-    (c) => c.startDate >= todayStr
-  )
 
   const { data: historyData } = useQuery({
     queryKey: ['concert-history', historyPage],
@@ -467,17 +464,14 @@ function MyPage() {
     },
   })
 
+  const upcomingList = upcomingData?.content ?? []
+  const totalUpcomingPages = upcomingData?.totalPages ?? 1
+
   const historyList = historyData?.content ?? []
   const totalHistoryPages = historyData?.totalPages ?? 1
 
   const inquiryList = inquiryData?.content ?? []
   const totalInquiryPages = inquiryData?.totalPages ?? 1
-
-  const totalUpcomingPages = Math.max(1, Math.ceil(upcomingConcerts.length / MY_PAGE_SIZE))
-  const paginatedUpcoming = upcomingConcerts.slice(
-    (upcomingPage - 1) * MY_PAGE_SIZE,
-    upcomingPage * MY_PAGE_SIZE
-  )
 
   return (
     <div className={styles.page}>
@@ -541,7 +535,7 @@ function MyPage() {
         {/* 예정 공연 탭 (MY-03) */}
         {activeTab === 'upcoming' && (
           <div role="tabpanel" id="tabpanel-upcoming" aria-labelledby="tab-upcoming">
-            {paginatedUpcoming.length === 0 ? (
+            {upcomingList.length === 0 ? (
               <EmptyState
                 icon={
                   <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
@@ -556,7 +550,7 @@ function MyPage() {
             ) : (
               <>
                 <div className={styles.concertList}>
-                  {paginatedUpcoming.map((concert) => (
+                  {upcomingList.map((concert) => (
                     <ConcertRow key={concert.concertId} concert={{ ...concert, id: concert.concertId }} />
                   ))}
                 </div>
