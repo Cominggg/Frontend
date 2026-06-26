@@ -24,14 +24,14 @@ function AuthCallbackPage() {
         const { data } = await axios.post('/api/auth/refresh', null, { withCredentials: true })
         setAccessToken(data.accessToken)
 
-        const user = await getMe()
-        setUser(user)
-
         const isNewUser = searchParams.get('isNewUser') === 'true'
-        if (isNewUser || user.role === 'PENDING') {
+        if (isNewUser) {
           navigate(ROUTES.SIGNUP, { replace: true })
           return
         }
+
+        const user = await getMe()
+        setUser(user)
 
         const redirectUri = localStorage.getItem(LOGIN_REDIRECT_KEY) || ROUTES.HOME
         localStorage.removeItem(LOGIN_REDIRECT_KEY)

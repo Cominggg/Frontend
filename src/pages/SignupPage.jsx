@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Navigate, useNavigate } from 'react-router-dom'
 
 import useAuthStore from '@/stores/authStore'
 import { register, checkNickname } from '@/services/authApi'
@@ -75,6 +75,8 @@ function TermsModal({ term, onClose }) {
 
 function SignupPage() {
   const navigate = useNavigate()
+  const user = useAuthStore((s) => s.user)
+  const isInitialized = useAuthStore((s) => s.isInitialized)
   const setAccessToken = useAuthStore((s) => s.setAccessToken)
   const setUser = useAuthStore((s) => s.setUser)
 
@@ -196,6 +198,10 @@ function SignupPage() {
   }
 
   const openTerm = TERMS.find((t) => t.id === openTermId)
+
+  if (isInitialized && user && user.role !== 'PENDING') {
+    return <Navigate to={ROUTES.HOME} replace />
+  }
 
   return (
     <div className={styles.page}>

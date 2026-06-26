@@ -1,8 +1,9 @@
 import { useEffect, useRef } from 'react'
-import { useLocation } from 'react-router-dom'
+import { Navigate, useLocation } from 'react-router-dom'
 
 import useAuthStore from '@/stores/authStore'
 import useLoginModalStore from '@/stores/loginModalStore'
+import { ROUTES } from '@/constants/routes'
 
 function PrivateRoute({ children }) {
   const user = useAuthStore((s) => s.user)
@@ -22,6 +23,7 @@ function PrivateRoute({ children }) {
   }, [user, isInitialized, openLoginModal, close])
 
   if (!isInitialized || !user) return null
+  if (user.role === 'PENDING') return <Navigate to={ROUTES.SIGNUP} replace />
 
   return children
 }
