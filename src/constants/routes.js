@@ -1,5 +1,7 @@
 export const ROUTES = {
   HOME: '/',
+  AUTH_CALLBACK: '/auth/callback',
+  SIGNUP: '/signup',
   ARTISTS: '/artists',
   ARTIST_DETAIL: (id) => `/artists/${id}`,
   CONCERTS: '/concerts',
