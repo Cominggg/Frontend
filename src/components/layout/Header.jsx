@@ -105,27 +105,39 @@ function Header() {
                 aria-label="사용자 메뉴"
               >
                 <span className={styles.avatarInitial} aria-hidden="true">
-                  {user.nickname?.charAt(0)}
+                  {user.nickname?.charAt(0) || '?'}
                 </span>
               </button>
               {dropdownOpen && (
                 <div className={styles.dropdown}>
-                  {user.role === 'ADMIN' && (
+                  {user.role === 'PENDING' ? (
                     <Link
-                      to={ROUTES.ADMIN}
+                      to={ROUTES.SIGNUP}
                       className={styles.dropdownItem}
                       onClick={() => setDropdownOpen(false)}
                     >
-                      관리자 페이지
+                      회원가입 완료하기
                     </Link>
+                  ) : (
+                    <>
+                      {user.role === 'ADMIN' && (
+                        <Link
+                          to={ROUTES.ADMIN}
+                          className={styles.dropdownItem}
+                          onClick={() => setDropdownOpen(false)}
+                        >
+                          관리자 페이지
+                        </Link>
+                      )}
+                      <Link
+                        to={ROUTES.ME}
+                        className={styles.dropdownItem}
+                        onClick={() => setDropdownOpen(false)}
+                      >
+                        마이페이지
+                      </Link>
+                    </>
                   )}
-                  <Link
-                    to={ROUTES.ME}
-                    className={styles.dropdownItem}
-                    onClick={() => setDropdownOpen(false)}
-                  >
-                    마이페이지
-                  </Link>
                   <button className={styles.dropdownItem} onClick={() => void handleLogout()}>
                     로그아웃
                   </button>
@@ -167,22 +179,34 @@ function Header() {
           ))}
           {user ? (
             <>
-              {user.role === 'ADMIN' && (
+              {user.role === 'PENDING' ? (
                 <Link
-                  to={ROUTES.ADMIN}
+                  to={ROUTES.SIGNUP}
                   className={styles.mobileNavLink}
                   onClick={() => setMenuOpen(false)}
                 >
-                  관리자 페이지
+                  회원가입 완료하기
                 </Link>
+              ) : (
+                <>
+                  {user.role === 'ADMIN' && (
+                    <Link
+                      to={ROUTES.ADMIN}
+                      className={styles.mobileNavLink}
+                      onClick={() => setMenuOpen(false)}
+                    >
+                      관리자 페이지
+                    </Link>
+                  )}
+                  <Link
+                    to={ROUTES.ME}
+                    className={styles.mobileNavLink}
+                    onClick={() => setMenuOpen(false)}
+                  >
+                    마이페이지
+                  </Link>
+                </>
               )}
-              <Link
-                to={ROUTES.MY}
-                className={styles.mobileNavLink}
-                onClick={() => setMenuOpen(false)}
-              >
-                마이페이지
-              </Link>
               <button
                 className={styles.mobileNavAction}
                 onClick={() => { setMenuOpen(false); void handleLogout() }}
