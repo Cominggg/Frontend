@@ -5,8 +5,10 @@ export async function getMe() {
   return data
 }
 
-export async function updateMe(formData) {
-  const { data } = await api.put('/auth/me', formData)
+export async function updateMe({ nickname }) {
+  const { data } = await api.put('/auth/me', new URLSearchParams({ nickname }), {
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+  })
   return data
 }
 

@@ -104,18 +104,9 @@ function Header() {
                 aria-expanded={dropdownOpen}
                 aria-label="사용자 메뉴"
               >
-                {user.avatarUrl ? (
-                  <img
-                    src={user.avatarUrl}
-                    alt={user.nickname}
-                    className={styles.avatar}
-                    onError={(e) => { e.target.onerror = null; e.target.style.display = 'none' }}
-                  />
-                ) : (
-                  <span className={styles.avatarInitial} aria-hidden="true">
-                    {user.nickname?.charAt(0)}
-                  </span>
-                )}
+                <span className={styles.avatarInitial} aria-hidden="true">
+                  {user.nickname?.charAt(0)}
+                </span>
               </button>
               {dropdownOpen && (
                 <div className={styles.dropdown}>
