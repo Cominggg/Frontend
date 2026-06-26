@@ -16,6 +16,16 @@ export async function withdraw() {
   await api.delete('/auth/withdraw')
 }
 
+export async function register(body) {
+  const { data } = await api.post('/auth/register', body)
+  return data
+}
+
+export async function checkNickname(nickname) {
+  const { data } = await api.get('/auth/check-nickname', { params: { nickname } })
+  return data
+}
+
 export async function devLogin(nickname, role) {
   const { data } = await api.post('/dev/login', { nickname, role })
   return data

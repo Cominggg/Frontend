@@ -6,6 +6,7 @@ import Layout from '@/components/layout/Layout'
 import PrivateRoute from '@/components/layout/PrivateRoute'
 import ScrollToTop from '@/components/layout/ScrollToTop'
 import AuthCallbackPage from '@/pages/AuthCallbackPage'
+import SignupPage from '@/pages/SignupPage'
 import ArtistDetailPage from '@/pages/ArtistDetailPage'
 import ArtistsPage from '@/pages/ArtistsPage'
 import CalendarPage from '@/pages/CalendarPage'
@@ -30,6 +31,7 @@ function App() {
       <ScrollToTop />
       <Routes>
         <Route path={ROUTES.AUTH_CALLBACK} element={<AuthCallbackPage />} />
+        <Route path={ROUTES.SIGNUP} element={<SignupPage />} />
         <Route path={ROUTES.HOME} element={<HomePage />} />
         <Route path={ROUTES.ARTISTS} element={<ArtistsPage />} />
         <Route path="/artists/:id" element={<ArtistDetailPage />} />
