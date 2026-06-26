@@ -37,7 +37,10 @@ function App() {
         <Route path="/releases/:id" element={<ReleaseDetailPage />} />
         <Route path={ROUTES.CALENDAR} element={<CalendarPage />} />
         <Route path={ROUTES.SEARCH} element={<div>통합 검색</div>} />
-        <Route path={ROUTES.MY} element={<PrivateRoute><MyPage /></PrivateRoute>} />
+        <Route path={ROUTES.ME} element={<PrivateRoute><MyPage /></PrivateRoute>} />
+        <Route path={ROUTES.ME_UPCOMING} element={<PrivateRoute><MyPage /></PrivateRoute>} />
+        <Route path={ROUTES.ME_HISTORY} element={<PrivateRoute><MyPage /></PrivateRoute>} />
+        <Route path={ROUTES.ME_INQUIRIES} element={<PrivateRoute><MyPage /></PrivateRoute>} />
 
         {/* 관리자 — 중첩 라우트 */}
         <Route

@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 
 import Badge from '@/components/ui/Badge'
@@ -19,10 +19,10 @@ const INQ_TYPE_LABELS = { CONCERT: '공연 정보', ARTIST: '아티스트 정보
 const INQ_STATUS_LABELS = { PENDING: '접수', IN_PROGRESS: '처리중', RESOLVED: '완료', REJECTED: '반려' }
 
 const TABS = [
-  { id: 'artists',   label: '관심 아티스트' },
-  { id: 'upcoming',  label: '예정 공연' },
-  { id: 'history',   label: '다녀온 공연' },
-  { id: 'inquiries', label: '내 문의' },
+  { id: 'artists',   label: '관심 아티스트', path: ROUTES.ME },
+  { id: 'upcoming',  label: '예정 공연',     path: ROUTES.ME_UPCOMING },
+  { id: 'history',   label: '다녀온 공연',   path: ROUTES.ME_HISTORY },
+  { id: 'inquiries', label: '내 문의',       path: ROUTES.ME_INQUIRIES },
 ]
 
 const MY_PAGE_SIZE = 10
@@ -305,10 +305,15 @@ function ProfileCard({ user, onEditClick }) {
 
 function MyPage() {
   const navigate = useNavigate()
+  const { pathname } = useLocation()
   const queryClient = useQueryClient()
   const clearUser = useAuthStore((s) => s.clearUser)
 
-  const [activeTab, setActiveTab] = useState('artists')
+  const activeTab = useMemo(() => {
+    const tab = TABS.find((t) => t.path === pathname)
+    return tab ? tab.id : 'artists'
+  }, [pathname])
+
   const [profileEditOpen, setProfileEditOpen] = useState(false)
   const [withdrawalOpen, setWithdrawalOpen] = useState(false)
   const [upcomingPage, setUpcomingPage] = useState(1)
@@ -419,10 +424,10 @@ function MyPage() {
               aria-controls={`tabpanel-${tab.id}`}
               className={`${styles.tab} ${activeTab === tab.id ? styles.tabActive : ''}`}
               onClick={() => {
-                setActiveTab(tab.id)
                 setUpcomingPage(1)
                 setHistoryPage(1)
                 setInquiryPage(1)
+                navigate(tab.path)
               }}
             >
               {tab.label}

@@ -120,7 +120,7 @@ function Header() {
                     </Link>
                   )}
                   <Link
-                    to={ROUTES.MY}
+                    to={ROUTES.ME}
                     className={styles.dropdownItem}
                     onClick={() => setDropdownOpen(false)}
                   >
