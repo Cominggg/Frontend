@@ -10,6 +10,7 @@ import styles from './SignupPage.module.css'
 const CURRENT_YEAR = new Date().getFullYear()
 const MIN_AGE = 14
 const MAX_NICKNAME = 20
+const LOGIN_REDIRECT_KEY = 'loginRedirectUri'
 
 const TERMS = [
   {
@@ -177,11 +178,12 @@ function SignupPage() {
         agreedMarketing: consents.agreedMarketing,
       })
       setAccessToken(accessToken)
-      // getMe 재호출로 USER role user 갱신
       const { getMe } = await import('@/services/authApi')
       const user = await getMe()
       setUser(user)
-      navigate(ROUTES.HOME, { replace: true })
+      const redirectUri = localStorage.getItem(LOGIN_REDIRECT_KEY) || ROUTES.HOME
+      localStorage.removeItem(LOGIN_REDIRECT_KEY)
+      navigate(redirectUri, { replace: true })
     } catch (err) {
       const code = err.response?.data?.code
       if (code === 'NICKNAME_DUPLICATE') {
