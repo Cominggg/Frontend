@@ -91,7 +91,7 @@ function InquiryModal({ isOpen, onClose, type, targetId }) {
             <p className={styles.successDesc}>검토 후 마이페이지 &gt; 내 문의 내역에서 처리 결과를 확인하실 수 있습니다.</p>
             <div className={styles.successActions}>
               <button className={styles.confirmBtn} onClick={onClose}>닫기</button>
-              <button className={styles.myInquiryLink} onClick={() => { onClose(); navigate(ROUTES.MY) }}>내 문의 보기</button>
+              <button className={styles.myInquiryLink} onClick={() => { onClose(); navigate(ROUTES.ME_INQUIRIES) }}>내 문의 보기</button>
             </div>
           </div>
         ) : (
