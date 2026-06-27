@@ -5,6 +5,8 @@ import AdminRoute from '@/components/layout/AdminRoute'
 import Layout from '@/components/layout/Layout'
 import PrivateRoute from '@/components/layout/PrivateRoute'
 import ScrollToTop from '@/components/layout/ScrollToTop'
+import AuthCallbackPage from '@/pages/AuthCallbackPage'
+import SignupPage from '@/pages/SignupPage'
 import ArtistDetailPage from '@/pages/ArtistDetailPage'
 import ArtistsPage from '@/pages/ArtistsPage'
 import CalendarPage from '@/pages/CalendarPage'
@@ -28,6 +30,8 @@ function App() {
     <Layout>
       <ScrollToTop />
       <Routes>
+        <Route path={ROUTES.AUTH_CALLBACK} element={<AuthCallbackPage />} />
+        <Route path={ROUTES.SIGNUP} element={<SignupPage />} />
         <Route path={ROUTES.HOME} element={<HomePage />} />
         <Route path={ROUTES.ARTISTS} element={<ArtistsPage />} />
         <Route path="/artists/:id" element={<ArtistDetailPage />} />
@@ -37,7 +41,10 @@ function App() {
         <Route path="/releases/:id" element={<ReleaseDetailPage />} />
         <Route path={ROUTES.CALENDAR} element={<CalendarPage />} />
         <Route path={ROUTES.SEARCH} element={<div>통합 검색</div>} />
-        <Route path={ROUTES.MY} element={<PrivateRoute><MyPage /></PrivateRoute>} />
+        <Route path={ROUTES.ME} element={<PrivateRoute><MyPage /></PrivateRoute>} />
+        <Route path={ROUTES.ME_UPCOMING} element={<PrivateRoute><MyPage /></PrivateRoute>} />
+        <Route path={ROUTES.ME_HISTORY} element={<PrivateRoute><MyPage /></PrivateRoute>} />
+        <Route path={ROUTES.ME_INQUIRIES} element={<PrivateRoute><MyPage /></PrivateRoute>} />
 
         {/* 관리자 — 중첩 라우트 */}
         <Route

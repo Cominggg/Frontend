@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 
 import Badge from '@/components/ui/Badge'
@@ -19,10 +19,10 @@ const INQ_TYPE_LABELS = { CONCERT: '공연 정보', ARTIST: '아티스트 정보
 const INQ_STATUS_LABELS = { PENDING: '접수', IN_PROGRESS: '처리중', RESOLVED: '완료', REJECTED: '반려' }
 
 const TABS = [
-  { id: 'artists',   label: '관심 아티스트' },
-  { id: 'upcoming',  label: '예정 공연' },
-  { id: 'history',   label: '다녀온 공연' },
-  { id: 'inquiries', label: '내 문의' },
+  { id: 'artists',   label: '관심 아티스트', path: ROUTES.ME },
+  { id: 'upcoming',  label: '예정 공연',     path: ROUTES.ME_UPCOMING },
+  { id: 'history',   label: '다녀온 공연',   path: ROUTES.ME_HISTORY },
+  { id: 'inquiries', label: '내 문의',       path: ROUTES.ME_INQUIRIES },
 ]
 
 const MY_PAGE_SIZE = 10
@@ -165,8 +165,6 @@ function InquiryRow({ inquiry }) {
 }
 
 const FOCUSABLE = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp']
-const MAX_FILE_SIZE = 5 * 1024 * 1024
 const MAX_NICKNAME = 20
 
 function useModalFocusTrap(isOpen, onClose, modalRef) {
@@ -194,50 +192,18 @@ function useModalFocusTrap(isOpen, onClose, modalRef) {
 
 function ProfileEditModal({ isOpen, onClose, user, onSave }) {
   const [nickname, setNickname] = useState(user?.nickname ?? '')
-  const [previewUrl, setPreviewUrl] = useState(user?.avatarUrl ?? null)
-  const [fileObj, setFileObj] = useState(null)
-  const [fileError, setFileError] = useState(null)
-  const fileInputRef = useRef(null)
   const modalRef = useRef(null)
 
   useModalFocusTrap(isOpen, onClose, modalRef)
 
-  useEffect(() => {
-    return () => { if (fileObj) URL.revokeObjectURL(previewUrl) }
-  }, [fileObj, previewUrl])
-
   if (!isOpen) return null
-
-  function handleFileChange(e) {
-    const file = e.target.files?.[0]
-    if (!file) return
-    if (!ALLOWED_TYPES.includes(file.type)) {
-      setFileError('jpg, png, webp 파일만 업로드할 수 있습니다.')
-      e.target.value = ''
-      return
-    }
-    if (file.size > MAX_FILE_SIZE) {
-      setFileError('파일 크기는 5MB 이하여야 합니다.')
-      e.target.value = ''
-      return
-    }
-    setFileError(null)
-    if (fileObj) URL.revokeObjectURL(previewUrl)
-    setFileObj(file)
-    setPreviewUrl(URL.createObjectURL(file))
-  }
 
   function handleSave(e) {
     e.preventDefault()
     if (!nickname.trim()) return
-    const formData = new FormData()
-    formData.append('nickname', nickname.trim())
-    if (fileObj) formData.append('profileImage', fileObj)
-    onSave(formData)
+    onSave({ nickname: nickname.trim() })
     onClose()
   }
-
-  const showInitial = !previewUrl
 
   return (
     <div className={styles.modalOverlay} onClick={onClose} role="dialog" aria-modal="true" aria-labelledby="profile-edit-title">
@@ -251,40 +217,6 @@ function ProfileEditModal({ isOpen, onClose, user, onSave }) {
         <h2 id="profile-edit-title" className={styles.modalTitle}>프로필 수정</h2>
 
         <form onSubmit={handleSave}>
-          {/* 아바타 업로드 */}
-          <div className={styles.modalAvatarWrap}>
-            <button
-              type="button"
-              className={styles.modalAvatarBtn}
-              onClick={() => fileInputRef.current?.click()}
-              aria-label="프로필 사진 변경"
-            >
-              <div className={styles.modalAvatar}>
-                {showInitial ? (
-                  <span className={styles.modalAvatarInitial}>{nickname.trim().charAt(0) || '?'}</span>
-                ) : (
-                  <img src={previewUrl} alt="프로필 미리보기" className={styles.modalAvatarImg} />
-                )}
-              </div>
-              <div className={styles.modalAvatarCameraOverlay} aria-hidden="true">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
-                  <circle cx="12" cy="13" r="4" />
-                </svg>
-              </div>
-            </button>
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/jpeg,image/png,image/webp"
-              className={styles.modalFileInput}
-              onChange={handleFileChange}
-              aria-label="프로필 이미지 파일 선택"
-            />
-            {fileError && <p className={styles.modalFileError}>{fileError}</p>}
-            <p className={styles.modalFileHint}>jpg · png · webp, 최대 5MB</p>
-          </div>
-
           {/* 닉네임 입력 */}
           <div className={styles.modalField}>
             <label htmlFor="edit-nickname" className={styles.modalLabel}>닉네임</label>
@@ -354,24 +286,12 @@ function WithdrawalModal({ isOpen, onClose, onWithdraw }) {
 }
 
 function ProfileCard({ user, onEditClick }) {
-  const [imgFailed, setImgFailed] = useState(false)
-  const showPlaceholder = !user?.avatarUrl || imgFailed
-
   return (
     <div className={styles.profileCard}>
       <div className={styles.profileAvatar}>
-        {showPlaceholder ? (
-          <span className={styles.profileAvatarInitial}>
-            {user?.nickname?.charAt(0) ?? '?'}
-          </span>
-        ) : (
-          <img
-            src={user.avatarUrl}
-            alt={user.nickname}
-            className={styles.profileAvatarImg}
-            onError={() => setImgFailed(true)}
-          />
-        )}
+        <span className={styles.profileAvatarInitial}>
+          {user?.nickname?.charAt(0) ?? '?'}
+        </span>
       </div>
       <div className={styles.profileInfo}>
         <p className={styles.profileNickname}>{user?.nickname ?? ''}</p>
@@ -385,10 +305,15 @@ function ProfileCard({ user, onEditClick }) {
 
 function MyPage() {
   const navigate = useNavigate()
+  const { pathname } = useLocation()
   const queryClient = useQueryClient()
   const clearUser = useAuthStore((s) => s.clearUser)
 
-  const [activeTab, setActiveTab] = useState('artists')
+  const activeTab = useMemo(() => {
+    const tab = TABS.find((t) => t.path === pathname)
+    return tab ? tab.id : 'artists'
+  }, [pathname])
+
   const [profileEditOpen, setProfileEditOpen] = useState(false)
   const [withdrawalOpen, setWithdrawalOpen] = useState(false)
   const [upcomingPage, setUpcomingPage] = useState(1)
@@ -484,7 +409,7 @@ function MyPage() {
             isOpen={profileEditOpen}
             onClose={() => setProfileEditOpen(false)}
             user={user}
-            onSave={(formData) => updateProfileMutation.mutate(formData)}
+            onSave={(body) => updateProfileMutation.mutate(body)}
           />
         )}
 
@@ -499,10 +424,10 @@ function MyPage() {
               aria-controls={`tabpanel-${tab.id}`}
               className={`${styles.tab} ${activeTab === tab.id ? styles.tabActive : ''}`}
               onClick={() => {
-                setActiveTab(tab.id)
                 setUpcomingPage(1)
                 setHistoryPage(1)
                 setInquiryPage(1)
+                navigate(tab.path)
               }}
             >
               {tab.label}

@@ -304,7 +304,7 @@ function HomePage() {
         <div className={styles.followZoneInner}>
           <div className={styles.sectionHeader}>
             <h2 className={styles.sectionTitle}>관심 아티스트 공연</h2>
-            {isLoggedIn && (
+            {isLoggedIn && !followingLoading && followingConcerts.length > 0 && (
               <Link to={`${ROUTES.CONCERTS}?followed=true`} className={styles.sectionMore}>
                 전체 보기
                 <Icon name="chevronRight" size={16} />
@@ -312,13 +312,31 @@ function HomePage() {
             )}
           </div>
           {isLoggedIn ? (
-            <div className={styles.gridFive}>
-              {followingLoading
-                ? Array.from({ length: 5 }).map((_, i) => <ConcertCardSkeleton key={i} />)
-                : followingConcerts.slice(0, 5).map((concert) => (
-                    <ConcertCard key={concert.id} concert={concert} />
-                  ))}
-            </div>
+            followingLoading ? (
+              <div className={styles.gridFive}>
+                {Array.from({ length: 5 }).map((_, i) => <ConcertCardSkeleton key={i} />)}
+              </div>
+            ) : followingConcerts.length === 0 ? (
+              <div className={styles.followEmpty}>
+                <div className={styles.followEmptyIcon} aria-hidden="true">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                    <circle cx="9" cy="7" r="4" />
+                    <line x1="19" y1="8" x2="19" y2="14" />
+                    <line x1="22" y1="11" x2="16" y2="11" />
+                  </svg>
+                </div>
+                <p className={styles.followEmptyTitle}>아직 팔로우한 아티스트가 없어요</p>
+                <p className={styles.followEmptySub}>관심 아티스트를 팔로우하면 새 공연 소식을 한눈에 볼 수 있어요</p>
+                <Link to={ROUTES.ARTISTS} className={styles.followEmptyLink}>아티스트 둘러보기</Link>
+              </div>
+            ) : (
+              <div className={styles.gridFive}>
+                {followingConcerts.slice(0, 5).map((concert) => (
+                  <ConcertCard key={concert.id} concert={concert} />
+                ))}
+              </div>
+            )
           ) : (
             <div className={styles.loginTeaser}>
               <div className={styles.loginTeaserIcon} aria-hidden="true">

@@ -47,13 +47,14 @@ const PROVIDERS = [
 
 const FOCUSABLE = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
 
+const LOGIN_REDIRECT_KEY = 'loginRedirectUri'
+
 function handleLogin(provider, redirectUri) {
-  const url = new URL(`/api/auth/login/${provider}`, window.location.origin)
-  if (redirectUri) {
-    url.searchParams.set('redirect_uri', redirectUri)
+  if (redirectUri && redirectUri !== '/') {
+    localStorage.setItem(LOGIN_REDIRECT_KEY, redirectUri)
   }
   localStorage.setItem(SESSION_HINT, '1')
-  window.location.href = url.toString()
+  window.location.href = `/api/auth/login/${provider}`
 }
 
 function DevLoginSection({ onSuccess }) {
