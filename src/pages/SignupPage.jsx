@@ -12,24 +12,25 @@ const MIN_AGE = 14
 const MAX_NICKNAME = 20
 const LOGIN_REDIRECT_KEY = 'loginRedirectUri'
 
+// TODO: 약관 내용 정식 문구로 교체 예정
 const TERMS = [
   {
     id: 'agreedTerms',
     label: '서비스 이용약관 동의',
     required: true,
-    content: `제1조 (목적)\n본 약관은 Coming(이하 "서비스")이 제공하는 서비스의 이용과 관련하여 회사와 이용자의 권리, 의무 및 책임사항을 규정함을 목적으로 합니다.\n\n제2조 (이용약관의 효력 및 변경)\n① 본 약관은 서비스 화면에 게시하거나 기타 방법으로 이용자에게 공지함으로써 효력을 발생합니다.\n② 회사는 합리적인 사유가 발생할 경우 관련 법령에 위배되지 않는 범위에서 본 약관을 변경할 수 있습니다.\n\n제3조 (서비스의 제공)\n회사는 Jpop 아티스트 내한 공연 정보를 통합 제공하는 서비스를 운영합니다.\n\n제4조 (이용자의 의무)\n이용자는 서비스 이용 시 관계 법령, 본 약관, 서비스 이용안내 및 공지사항 등을 준수하여야 합니다.`,
+    content: `제1조 (목적)\n본 약관은 Coming 서비스의 이용 조건 및 회사와 이용자의 권리·의무를 규정합니다.\n\n제2조 (서비스 제공)\nJpop 아티스트 내한 공연 정보를 통합 제공합니다.\n\n제3조 (이용자 의무)\n관계 법령 및 본 약관을 준수하여야 합니다.`,
   },
   {
     id: 'agreedPrivacy',
     label: '개인정보처리방침 동의',
     required: true,
-    content: `1. 수집하는 개인정보 항목\n- 필수: 이메일, 닉네임, 출생연도\n- 소셜 로그인 시 제공자(Google/Kakao)로부터 수신하는 식별 정보\n\n2. 개인정보 수집 및 이용 목적\n- 회원 식별 및 서비스 제공\n- 관심 공연·아티스트 정보 맞춤 제공\n- 법령상 의무 이행\n\n3. 개인정보 보유 및 이용 기간\n- 회원 탈퇴 시까지\n- 단, 관계 법령에 따라 일정 기간 보존이 필요한 경우 해당 기간\n\n4. 개인정보의 제3자 제공\n회사는 이용자의 동의 없이 개인정보를 외부에 제공하지 않습니다.\n\n5. 이용자의 권리\n이용자는 언제든지 개인정보 열람, 수정, 삭제, 처리 정지를 요청할 수 있습니다.`,
+    content: `수집 항목: 이메일, 닉네임, 출생연도\n이용 목적: 회원 식별 및 서비스 제공\n보유 기간: 회원 탈퇴 시까지\n\n이용자는 언제든지 개인정보 열람·수정·삭제를 요청할 수 있습니다.`,
   },
   {
     id: 'agreedMarketing',
     label: '마케팅 수신 동의',
     required: false,
-    content: `마케팅 정보 수신 동의 (선택)\n\n수집 항목: 이메일\n이용 목적: 신규 공연 알림, 이벤트 및 프로모션 안내\n보유 기간: 동의 철회 시까지\n\n동의하지 않으셔도 서비스 이용에 제한이 없습니다.\n수신 동의 후 언제든지 마이페이지에서 철회할 수 있습니다.`,
+    content: `수집 항목: 이메일\n이용 목적: 신규 공연 알림, 이벤트 및 프로모션 안내\n보유 기간: 동의 철회 시까지\n\n동의하지 않아도 서비스 이용에 제한이 없으며, 마이페이지에서 언제든 철회할 수 있습니다.`,
   },
 ]
 
@@ -260,8 +261,10 @@ function SignupPage() {
               min={1900}
               max={CURRENT_YEAR - MIN_AGE}
             />
-            {birthYearError && <p className={styles.fieldError}>{birthYearError}</p>}
-            <p className={styles.fieldHint}>만 {MIN_AGE}세 이상만 가입할 수 있습니다.</p>
+            {birthYearError
+              ? <p className={styles.fieldError}>{birthYearError}</p>
+              : <p className={styles.fieldHint}>만 {MIN_AGE}세 이상만 가입할 수 있습니다.</p>
+            }
           </div>
 
           {/* 약관 동의 */}
