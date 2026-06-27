@@ -43,8 +43,8 @@ function Header() {
   async function handleLogout() {
     try {
       await logout()
-    } catch (error) {
-      console.error('Logout failed:', error)
+    } catch {
+      // 로그아웃 API 실패 시에도 로컬 상태는 초기화하고 홈으로 이동
     } finally {
       setDropdownOpen(false)
       navigate(ROUTES.HOME)

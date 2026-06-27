@@ -130,7 +130,7 @@ function ArtistsPage() {
         <div className={styles.pageHeader}>
           <h1 className={styles.pageTitle}>아티스트</h1>
           <p className={styles.pageCount}>
-            {isLoading ? '' : `${totalElements}명`}
+            {isLoading ? '' : `${totalElements.toLocaleString()}명`}
           </p>
         </div>
 

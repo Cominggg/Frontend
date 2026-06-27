@@ -129,7 +129,7 @@ function ReleasesPage() {
         <div className={styles.pageHeader}>
           <h1 className={styles.pageTitle}>음악</h1>
           <p className={styles.pageCount}>
-            {isLoading ? '' : `${totalElements}건`}
+            {isLoading ? '' : `${totalElements.toLocaleString()}건`}
           </p>
         </div>
 
