@@ -73,6 +73,7 @@ function ArtistCard({ artist }) {
       <button
         className={`${styles.followBtn} ${isFollowing ? styles.following : ''}`}
         onClick={handleFollow}
+        disabled={followMutation.isPending}
         aria-label={isFollowing ? `${name} 언팔로우` : `${name} 팔로우`}
       >
         {isFollowing ? '팔로잉' : '+ 팔로우'}
