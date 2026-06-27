@@ -159,6 +159,8 @@ function ConcertDetailPage() {
                   src={posterUrl}
                   alt={artistName}
                   className={styles.thumbnail}
+                  loading="lazy"
+                  decoding="async"
                   onError={() => setPosterFailed(true)}
                 />
               )}
@@ -226,7 +228,7 @@ function ConcertDetailPage() {
                     </svg>
                     가격
                   </dt>
-                  <dd>{price}</dd>
+                  <dd>{typeof price === 'number' ? `${price.toLocaleString()}원` : price}</dd>
                 </div>
               )}
             </dl>
