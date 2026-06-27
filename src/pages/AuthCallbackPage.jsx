@@ -5,8 +5,8 @@ import axios from 'axios'
 import useAuthStore from '@/stores/authStore'
 import { getMe } from '@/services/authApi'
 import { ROUTES } from '@/constants/routes'
-
-const LOGIN_REDIRECT_KEY = 'loginRedirectUri'
+import { LOGIN_REDIRECT_KEY } from '@/constants/auth'
+import styles from './AuthCallbackPage.module.css'
 
 const AUTH_ERRORS = {
   USER_SUSPENDED: '정지된 계정입니다. 문의하세요.',
@@ -58,12 +58,9 @@ function AuthCallbackPage() {
 
   if (errorMessage) {
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '60vh', gap: '16px' }}>
-        <p style={{ fontSize: '16px', color: 'var(--color-text-secondary, #666)' }}>{errorMessage}</p>
-        <button
-          onClick={() => navigate(ROUTES.HOME, { replace: true })}
-          style={{ padding: '10px 24px', borderRadius: '8px', border: 'none', background: 'var(--color-primary, #6366f1)', color: '#fff', cursor: 'pointer', fontSize: '14px' }}
-        >
+      <div className={styles.errorWrap}>
+        <p className={styles.errorMessage}>{errorMessage}</p>
+        <button className={styles.homeButton} onClick={() => navigate(ROUTES.HOME, { replace: true })}>
           홈으로 이동
         </button>
       </div>

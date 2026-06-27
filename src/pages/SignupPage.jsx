@@ -4,13 +4,13 @@ import { Navigate, useNavigate } from 'react-router-dom'
 import useAuthStore from '@/stores/authStore'
 import { register, checkNickname } from '@/services/authApi'
 import { ROUTES } from '@/constants/routes'
+import { LOGIN_REDIRECT_KEY } from '@/constants/auth'
 import Logo from '@/components/ui/Logo'
 import styles from './SignupPage.module.css'
 
 const CURRENT_YEAR = new Date().getFullYear()
 const MIN_AGE = 14
 const MAX_NICKNAME = 20
-const LOGIN_REDIRECT_KEY = 'loginRedirectUri'
 
 // TODO: 약관 내용 정식 문구로 교체 예정
 const TERMS = [
