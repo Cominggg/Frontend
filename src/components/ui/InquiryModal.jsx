@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 import { createInquiry } from '@/services/myApi'
 import { ROUTES } from '@/constants/routes'
@@ -14,6 +14,7 @@ const TYPE_LABELS = {
 const FOCUSABLE = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
 
 function InquiryModal({ isOpen, onClose, type, targetId }) {
+  const navigate = useNavigate()
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
   const [submitted, setSubmitted] = useState(false)
@@ -56,8 +57,14 @@ function InquiryModal({ isOpen, onClose, type, targetId }) {
       await createInquiry({ type, targetId, title: title.trim(), content: content.trim() })
       setSubmitted(true)
     } catch (err) {
-      console.error(err)
-      setError('문의 제출에 실패했습니다. 잠시 후 다시 시도해 주세요.')
+      const status = err?.response?.status
+      if (status === 409) {
+        setError('이미 해당 공연에 대한 문의 내역이 있습니다. 마이페이지에서 확인해 주세요.')
+      } else if (status === 400) {
+        setError('입력 내용을 다시 확인해 주세요.')
+      } else {
+        setError('문의 제출에 실패했습니다. 잠시 후 다시 시도해 주세요.')
+      }
     } finally {
       setIsSubmitting(false)
     }
@@ -84,7 +91,7 @@ function InquiryModal({ isOpen, onClose, type, targetId }) {
             <p className={styles.successDesc}>검토 후 마이페이지 &gt; 내 문의 내역에서 처리 결과를 확인하실 수 있습니다.</p>
             <div className={styles.successActions}>
               <button className={styles.confirmBtn} onClick={onClose}>닫기</button>
-              <Link to={ROUTES.MY} className={styles.myInquiryLink} onClick={onClose}>내 문의 보기</Link>
+              <button className={styles.myInquiryLink} onClick={() => { onClose(); navigate(ROUTES.MY) }}>내 문의 보기</button>
             </div>
           </div>
         ) : (
