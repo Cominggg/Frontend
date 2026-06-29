@@ -174,6 +174,20 @@ button {
   cursor: pointer;
 }
 
+/* 전역 포커스 링 — 키보드 탭 이동 시 일관된 포커스 표시 */
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* 전역 액티브 피드백 — 클릭 시 눌리는 느낌 */
+button:active,
+a:active {
+  opacity: 0.8;
+  transform: translateY(1px);
+}
+
 #root {
   min-height: 100svh;
 }
