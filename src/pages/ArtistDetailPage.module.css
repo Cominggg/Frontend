@@ -590,12 +590,12 @@
   }
 
   .avatarWrap {
-    width: 140px;
-    height: 140px;
+    width: 120px;
+    height: 120px;
   }
 
   .avatarInitial {
-    font-size: 3rem;
+    font-size: 2.5rem;
   }
 
   .heroInfo {
