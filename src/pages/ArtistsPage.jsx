@@ -90,6 +90,7 @@ function ArtistsPage() {
       next.delete('page')
       return next
     }, { replace: false })
+    window.scrollTo(0, 0)
   }
 
   function handleFollowedToggle() {
@@ -107,6 +108,7 @@ function ArtistsPage() {
       next.delete('page')
       return next
     }, { replace: false })
+    window.scrollTo(0, 0)
   }
 
   function handlePageChange(page) {

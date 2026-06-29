@@ -124,6 +124,7 @@ function ConcertsPage() {
 
   function handleStatusChange(status) {
     updateParams({ status, page: 1 })
+    window.scrollTo(0, 0)
   }
 
   function handleFollowedToggle() {
@@ -132,6 +133,7 @@ function ConcertsPage() {
       return
     }
     updateParams({ followed: followedOnly ? false : true, page: 1 })
+    window.scrollTo(0, 0)
   }
 
   function handlePageChange(page) {
