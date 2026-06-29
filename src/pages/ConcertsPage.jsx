@@ -235,7 +235,19 @@ function ConcertsPage() {
                 <line x1="3" y1="10" x2="21" y2="10" />
               </svg>
             }
-            message="해당 조건의 공연이 없습니다."
+            message={
+              urlQuery && statusParam
+                ? `'${urlQuery}' · ${CONCERT_STATUS_LABEL[statusParam]} 검색 결과가 없습니다.`
+                : urlQuery
+                  ? `'${urlQuery}' 검색 결과가 없습니다.`
+                  : effectiveFollowedOnly && statusParam
+                    ? `관심 아티스트의 ${CONCERT_STATUS_LABEL[statusParam]} 공연이 없습니다.`
+                    : effectiveFollowedOnly
+                      ? '관심 아티스트의 공연이 없습니다.'
+                      : statusParam
+                        ? `${CONCERT_STATUS_LABEL[statusParam]} 공연이 없습니다.`
+                        : '해당 조건의 공연이 없습니다.'
+            }
           />
         )}
 
