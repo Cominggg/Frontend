@@ -220,6 +220,43 @@
   opacity: 0.88;
 }
 
+/* 모바일 반응형 */
+@media (max-width: 480px) {
+  .page {
+    padding: 24px 16px 48px;
+    align-items: flex-start;
+  }
+
+  .logoWrap {
+    margin-bottom: 20px;
+  }
+
+  .title {
+    font-size: 1.25rem;
+  }
+
+  .subtitle {
+    margin-bottom: 24px;
+  }
+
+  .form {
+    gap: 16px;
+  }
+
+  .termsSection {
+    padding: 4px 12px 10px;
+  }
+
+  .submitBtn {
+    padding: 12px;
+    font-size: 0.9375rem;
+  }
+
+  .modalBox {
+    max-height: 90vh;
+  }
+}
+
 /* 약관 전문 모달 */
 .modalOverlay {
   position: fixed;
