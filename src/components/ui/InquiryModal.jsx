@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useQueryClient } from '@tanstack/react-query'
 
 import { checkInquiryExists, createInquiry } from '@/services/myApi'
 import { ROUTES } from '@/constants/routes'
@@ -15,6 +16,7 @@ const FOCUSABLE = 'button, [href], input, select, textarea, [tabindex]:not([tabi
 
 function InquiryModal({ isOpen, onClose, type, targetId }) {
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
   const [submitted, setSubmitted] = useState(false)
@@ -69,6 +71,7 @@ function InquiryModal({ isOpen, onClose, type, targetId }) {
     setError(null)
     try {
       await createInquiry({ type, targetId, title: title.trim(), content: content.trim() })
+      queryClient.invalidateQueries({ queryKey: ['my-inquiries'] })
       setSubmitted(true)
     } catch (err) {
       const status = err?.response?.status
