@@ -24,6 +24,7 @@ function InquiryModal({ isOpen, onClose, type, targetId }) {
   const [error, setError] = useState(null)
   const [checking, setChecking] = useState(false)
   const [alreadyExists, setAlreadyExists] = useState(false)
+  const [checkFailed, setCheckFailed] = useState(false)
   const modalRef = useRef(null)
 
   useEffect(() => {
@@ -31,9 +32,10 @@ function InquiryModal({ isOpen, onClose, type, targetId }) {
     let cancelled = false
     setChecking(true)
     setAlreadyExists(false)
+    setCheckFailed(false)
     checkInquiryExists(type, targetId)
       .then(({ exists }) => { if (!cancelled) setAlreadyExists(exists) })
-      .catch(() => {})
+      .catch(() => { if (!cancelled) setCheckFailed(true) })
       .finally(() => { if (!cancelled) setChecking(false) })
     return () => { cancelled = true }
   }, [isOpen, type, targetId])
@@ -140,6 +142,9 @@ function InquiryModal({ isOpen, onClose, type, targetId }) {
             </div>
 
             <form className={styles.form} onSubmit={handleSubmit} noValidate>
+              {checkFailed && (
+                <p className={styles.checkNote}>문의 내역을 확인하는 중 오류가 발생했습니다. 이미 접수하신 문의가 있다면 마이페이지에서 확인해 주세요.</p>
+              )}
               <div className={styles.field}>
                 <label className={styles.label} htmlFor="inquiry-title">제목</label>
                 <input

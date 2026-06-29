@@ -301,7 +301,13 @@
 
 .skeletonMeta   { height: 12px; width: 30%; }
 .skeletonTitle  { height: 15px; width: 70%; }
-.skeletonDetail { height: 11px; width: 50%; }
+
+.skeletonDetails {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.skeletonDetail { height: 11px; flex: 1; }
 
 .concertRow + .concertRow {
   border-top: 1px solid var(--color-border);

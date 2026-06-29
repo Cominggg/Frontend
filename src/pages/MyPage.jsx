@@ -479,7 +479,10 @@ function MyPage() {
                     <div className={styles.skeletonLeft}>
                       <div className={styles.skeletonMeta} />
                       <div className={styles.skeletonTitle} />
-                      <div className={styles.skeletonDetail} />
+                      <div className={styles.skeletonDetails}>
+                        <div className={styles.skeletonDetail} />
+                        <div className={styles.skeletonDetail} />
+                      </div>
                     </div>
                   </div>
                 ))}
