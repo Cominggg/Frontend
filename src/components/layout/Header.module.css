@@ -234,6 +234,11 @@
 
 /* 반응형 */
 @media (max-width: 767px) {
+  .inner {
+    gap: 0.75rem;
+    padding: 0 1.25rem;
+  }
+
   .nav {
     display: none;
   }
@@ -243,8 +248,10 @@
     display: none;
   }
 
+  /* margin-left: auto는 .actions가 가져가므로 hamburger는 0으로 리셋 */
   .hamburger {
     display: flex;
+    margin-left: 0;
   }
 
   .mobileNav {
