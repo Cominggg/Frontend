@@ -145,9 +145,11 @@
 }
 
 .pillTicketIcon {
+  display: block;
   width: 14px;
   height: 14px;
   flex-shrink: 0;
+  align-self: center;
   color: color-mix(in srgb, var(--pill-color) 80%, #111);
 }
 
