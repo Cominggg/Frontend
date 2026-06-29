@@ -4,25 +4,8 @@ import { Link } from 'react-router-dom'
 import Badge from '@/components/ui/Badge'
 import { ROUTES } from '@/constants/routes'
 import { formatDate } from '@/utils/date'
+import { getArtistColor } from '@/utils/colorPalette'
 import styles from './ConcertCard.module.css'
-
-const PLACEHOLDER_PALETTE = [
-  ['#7c3aed', '#c4b5fd'], // violet
-  ['#0369a1', '#7dd3fc'], // blue
-  ['#be123c', '#fda4af'], // rose
-  ['#15803d', '#86efac'], // green
-  ['#b45309', '#fcd34d'], // amber
-  ['#0f766e', '#5eead4'], // teal
-]
-
-function getArtistColor(name) {
-  const safeName = typeof name === 'string' ? name : ''
-  let hash = 0
-  for (let i = 0; i < safeName.length; i++) {
-    hash = (hash * 31 + safeName.charCodeAt(i)) | 0
-  }
-  return PLACEHOLDER_PALETTE[Math.abs(hash) % PLACEHOLDER_PALETTE.length]
-}
 
 function getTicketDday(ticketOpenAt) {
   if (!ticketOpenAt) return null
