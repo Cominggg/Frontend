@@ -16,6 +16,15 @@ import styles from './ConcertsPage.module.css'
 const STATUS_FILTERS = ['ALL', 'UPCOMING', 'ONGOING', 'ENDED', 'CANCELLED']
 const ITEMS_PER_PAGE = 20
 
+function getConcertEmptyMessage(urlQuery, statusParam, effectiveFollowedOnly) {
+  if (urlQuery && statusParam) return `'${urlQuery}' · ${CONCERT_STATUS_LABEL[statusParam]} 검색 결과가 없습니다.`
+  if (urlQuery) return `'${urlQuery}' 검색 결과가 없습니다.`
+  if (effectiveFollowedOnly && statusParam) return `관심 아티스트의 ${CONCERT_STATUS_LABEL[statusParam]} 공연이 없습니다.`
+  if (effectiveFollowedOnly) return '관심 아티스트의 공연이 없습니다.'
+  if (statusParam) return `${CONCERT_STATUS_LABEL[statusParam]} 공연이 없습니다.`
+  return '해당 조건의 공연이 없습니다.'
+}
+
 function ConcertsPage() {
   const [searchParams, setSearchParams] = useSearchParams()
 
@@ -27,7 +36,7 @@ function ConcertsPage() {
   const currentPage = Math.max(1, parseInt(searchParams.get('page') || '1', 10))
 
   const urlQueryRef = useRef(urlQuery)
-  urlQueryRef.current = urlQuery
+  useEffect(() => { urlQueryRef.current = urlQuery })
   const [inputValue, setInputValue] = useState(urlQuery)
   const user = useAuthStore((s) => s.user)
   const openLoginModal = useLoginModalStore((s) => s.open)
@@ -124,6 +133,7 @@ function ConcertsPage() {
 
   function handleStatusChange(status) {
     updateParams({ status, page: 1 })
+    window.scrollTo(0, 0)
   }
 
   function handleFollowedToggle() {
@@ -132,6 +142,7 @@ function ConcertsPage() {
       return
     }
     updateParams({ followed: followedOnly ? false : true, page: 1 })
+    window.scrollTo(0, 0)
   }
 
   function handlePageChange(page) {
@@ -147,7 +158,7 @@ function ConcertsPage() {
         <div className={styles.pageHeader}>
           <h1 className={styles.pageTitle}>공연</h1>
           <p className={styles.pageCount}>
-            {isLoading ? '' : `${totalElements}건`}
+            {isLoading ? '' : `${totalElements.toLocaleString()}건`}
           </p>
         </div>
 
@@ -233,7 +244,7 @@ function ConcertsPage() {
                 <line x1="3" y1="10" x2="21" y2="10" />
               </svg>
             }
-            message="해당 조건의 공연이 없습니다."
+            message={getConcertEmptyMessage(urlQuery, statusParam, effectiveFollowedOnly)}
           />
         )}
 

@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { useSearchParams } from 'react-router-dom'
+import { ROUTES } from '@/constants/routes'
 import { useQuery } from '@tanstack/react-query'
 
 import ReleaseCard from '@/components/release/ReleaseCard'
@@ -27,7 +28,7 @@ function ReleasesPage() {
   const page = Math.max(1, parseInt(searchParams.get('page') || '1', 10))
 
   const urlQueryRef = useRef(urlQuery)
-  urlQueryRef.current = urlQuery
+  useEffect(() => { urlQueryRef.current = urlQuery })
   const [inputValue, setInputValue] = useState(urlQuery)
   const user = useAuthStore((s) => s.user)
   const openLoginModal = useLoginModalStore((s) => s.open)
@@ -97,6 +98,7 @@ function ReleasesPage() {
 
   function handleTypeChange(type) {
     updateParams({ type, page: 1 })
+    window.scrollTo(0, 0)
   }
 
   function handlePageChange(p) {
@@ -119,6 +121,7 @@ function ReleasesPage() {
       next.delete('page')
       return next
     }, { replace: false })
+    window.scrollTo(0, 0)
   }
 
   return (
@@ -129,7 +132,7 @@ function ReleasesPage() {
         <div className={styles.pageHeader}>
           <h1 className={styles.pageTitle}>음악</h1>
           <p className={styles.pageCount}>
-            {isLoading ? '' : `${totalElements}건`}
+            {isLoading ? '' : `${totalElements.toLocaleString()}건`}
           </p>
         </div>
 
@@ -212,7 +215,20 @@ function ReleasesPage() {
                 <circle cx="18" cy="16" r="3" />
               </svg>
             }
-            message="아직 수집된 음반 정보가 없습니다."
+            message={
+              urlQuery
+                ? `'${urlQuery}'에 해당하는 음반이 없습니다.`
+                : effectiveFollowedOnly
+                  ? '관심 아티스트의 음반이 없습니다.'
+                  : selectedType !== '전체'
+                    ? `${selectedType} 음반이 없습니다.`
+                    : '아직 수집된 음반 정보가 없습니다.'
+            }
+            action={
+              !urlQuery && !effectiveFollowedOnly && selectedType === '전체'
+                ? { to: ROUTES.ARTISTS, label: '아티스트 둘러보기' }
+                : undefined
+            }
           />
         )}
 

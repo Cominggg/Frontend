@@ -113,14 +113,18 @@ function ConcertRow({ concert }) {
 function InquiryRow({ inquiry }) {
   const [expanded, setExpanded] = useState(false)
   const { type, title, status, createdAt, resultMessage, rejectReason } = inquiry
-  const hasDetail = status === 'RESOLVED' || status === 'REJECTED'
+
+  const statusMessage = {
+    PENDING: '접수된 문의입니다. 검토를 기다리고 있습니다.',
+    IN_PROGRESS: '현재 검토가 진행 중입니다.',
+  }
 
   return (
     <div className={styles.inquiryItem}>
       <button
-        className={`${styles.inquiryRowBtn} ${!hasDetail ? styles.inquiryRowBtnStatic : ''}`}
-        onClick={() => hasDetail && setExpanded((p) => !p)}
-        aria-expanded={hasDetail ? expanded : undefined}
+        className={styles.inquiryRowBtn}
+        onClick={() => setExpanded((p) => !p)}
+        aria-expanded={expanded}
       >
         <div className={styles.inquiryRowMain}>
           <div className={styles.inquiryRowMeta}>
@@ -132,19 +136,17 @@ function InquiryRow({ inquiry }) {
           <p className={styles.inquiryTitle}>{title}</p>
           <span className={styles.inquiryDate}>{formatDate(createdAt)}</span>
         </div>
-        {hasDetail && (
-          <svg
-            className={`${styles.inquiryChevron} ${expanded ? styles.inquiryChevronOpen : ''}`}
-            width="16" height="16" viewBox="0 0 24 24" fill="none"
-            stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
-            aria-hidden="true"
-          >
-            <path d="m6 9 6 6 6-6" />
-          </svg>
-        )}
+        <svg
+          className={`${styles.inquiryChevron} ${expanded ? styles.inquiryChevronOpen : ''}`}
+          width="16" height="16" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
+          aria-hidden="true"
+        >
+          <path d="m6 9 6 6 6-6" />
+        </svg>
       </button>
 
-      {hasDetail && expanded && (
+      {expanded && (
         <div className={styles.inquiryDetail}>
           {status === 'RESOLVED' && (
             <>
@@ -157,6 +159,9 @@ function InquiryRow({ inquiry }) {
               <p className={styles.inquiryDetailLabel}>반려 사유</p>
               <p className={styles.inquiryDetailText}>{rejectReason}</p>
             </>
+          )}
+          {(status === 'PENDING' || status === 'IN_PROGRESS') && (
+            <p className={styles.inquiryDetailText}>{statusMessage[status]}</p>
           )}
         </div>
       )}
@@ -371,6 +376,8 @@ function MyPage() {
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['following-artists'] })
+      queryClient.invalidateQueries({ queryKey: ['artists'] })
+      queryClient.invalidateQueries({ queryKey: ['following-concerts-home'] })
     },
   })
 
@@ -465,7 +472,22 @@ function MyPage() {
         {/* 예정 공연 탭 (MY-03) */}
         {activeTab === 'upcoming' && (
           <div role="tabpanel" id="tabpanel-upcoming" aria-labelledby="tab-upcoming">
-            {isUpcomingLoading ? null : upcomingList.length === 0 ? (
+            {isUpcomingLoading ? (
+              <div className={styles.concertList}>
+                {Array.from({ length: 3 }).map((_, i) => (
+                  <div key={i} className={styles.concertRowSkeleton}>
+                    <div className={styles.skeletonLeft}>
+                      <div className={styles.skeletonMeta} />
+                      <div className={styles.skeletonTitle} />
+                      <div className={styles.skeletonDetails}>
+                        <div className={styles.skeletonDetail} />
+                        <div className={styles.skeletonDetail} />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : upcomingList.length === 0 ? (
               <EmptyState
                 icon={
                   <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">

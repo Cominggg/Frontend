@@ -23,7 +23,7 @@ function ArtistsPage() {
   const currentPage = Math.max(1, parseInt(searchParams.get('page') || '1', 10))
 
   const urlQueryRef = useRef(urlQuery)
-  urlQueryRef.current = urlQuery
+  useEffect(() => { urlQueryRef.current = urlQuery })
   const [inputValue, setInputValue] = useState(urlQuery)
   const user = useAuthStore((s) => s.user)
   const openLoginModal = useLoginModalStore((s) => s.open)
@@ -90,6 +90,7 @@ function ArtistsPage() {
       next.delete('page')
       return next
     }, { replace: false })
+    window.scrollTo(0, 0)
   }
 
   function handleFollowedToggle() {
@@ -107,6 +108,7 @@ function ArtistsPage() {
       next.delete('page')
       return next
     }, { replace: false })
+    window.scrollTo(0, 0)
   }
 
   function handlePageChange(page) {
@@ -130,7 +132,7 @@ function ArtistsPage() {
         <div className={styles.pageHeader}>
           <h1 className={styles.pageTitle}>아티스트</h1>
           <p className={styles.pageCount}>
-            {isLoading ? '' : `${totalElements}명`}
+            {isLoading ? '' : `${totalElements.toLocaleString()}명`}
           </p>
         </div>
 

@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 
 import { ROUTES } from '@/constants/routes'
 import { CONCERT_STATUS_COLOR, CONCERT_STATUS_LABEL } from '@/constants/concert'
+import { formatDate } from '@/utils/date'
 import styles from './DayConcertList.module.css'
 
 const WEEKDAY_NAMES = ['일', '월', '화', '수', '목', '금', '토']
@@ -56,8 +57,8 @@ function DayConcertList({ selectedDate, events, onCalendarToggle }) {
             const statusLabel = CONCERT_STATUS_LABEL[ev.status] ?? ev.status
             const dateRange =
               ev.endDate && ev.endDate !== ev.startDate
-                ? `${ev.startDate} ~ ${ev.endDate}`
-                : ev.startDate
+                ? `${formatDate(ev.startDate)} ~ ${formatDate(ev.endDate)}`
+                : formatDate(ev.startDate)
 
             return (
               <li key={`${ev.concertId}-${ev.type}`}>

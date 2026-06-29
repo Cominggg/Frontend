@@ -74,6 +74,8 @@ function ConcertDetailPage() {
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['concert', concertId] })
+      queryClient.invalidateQueries({ queryKey: ['calendar'] })
+      queryClient.invalidateQueries({ queryKey: ['upcoming-concerts'] })
     },
   })
 
@@ -159,6 +161,8 @@ function ConcertDetailPage() {
                   src={posterUrl}
                   alt={artistName}
                   className={styles.thumbnail}
+                  loading="lazy"
+                  decoding="async"
                   onError={() => setPosterFailed(true)}
                 />
               )}
@@ -226,7 +230,7 @@ function ConcertDetailPage() {
                     </svg>
                     가격
                   </dt>
-                  <dd>{price}</dd>
+                  <dd>{typeof price === 'number' ? `${price.toLocaleString()}원` : price}</dd>
                 </div>
               )}
             </dl>
