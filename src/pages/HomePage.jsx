@@ -160,7 +160,7 @@ function HomePage() {
                   <div className={styles.ticketingEmptyIcon} aria-hidden="true">
                     <Icon name="calendar" size={20} />
                   </div>
-                  <p className={styles.ticketingEmptyText}>현재 예매 예정인 공연이 없어요</p>
+                  <p className={styles.ticketingEmptyText}>현재 예매 일정이 없어요</p>
                 </div>
               ) : (
                 <div className={styles.ticketingPanelList}>
