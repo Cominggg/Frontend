@@ -74,6 +74,8 @@ function ConcertDetailPage() {
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['concert', concertId] })
+      queryClient.invalidateQueries({ queryKey: ['calendar'] })
+      queryClient.invalidateQueries({ queryKey: ['upcoming-concerts'] })
     },
   })
 

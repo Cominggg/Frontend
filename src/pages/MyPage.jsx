@@ -376,6 +376,8 @@ function MyPage() {
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['following-artists'] })
+      queryClient.invalidateQueries({ queryKey: ['artists'] })
+      queryClient.invalidateQueries({ queryKey: ['following-concerts-home'] })
     },
   })
 

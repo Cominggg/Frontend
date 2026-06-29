@@ -89,6 +89,7 @@ function CalendarPage() {
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['calendar', year, calendarMonth] })
+      queryClient.invalidateQueries({ queryKey: ['upcoming-concerts'] })
     },
   })
 
