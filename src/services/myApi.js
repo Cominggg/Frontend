@@ -5,6 +5,11 @@ export async function getConcertHistory(params) {
   return data
 }
 
+export async function checkInquiryExists(type, targetId) {
+  const { data } = await api.get('/me/inquiries/exists', { params: { type, targetId } })
+  return data
+}
+
 export async function createInquiry(body) {
   const { data } = await api.post('/inquiries', body)
   return data

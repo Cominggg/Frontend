@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-import { createInquiry } from '@/services/myApi'
+import { checkInquiryExists, createInquiry } from '@/services/myApi'
 import { ROUTES } from '@/constants/routes'
 import styles from './InquiryModal.module.css'
 
@@ -20,7 +20,21 @@ function InquiryModal({ isOpen, onClose, type, targetId }) {
   const [submitted, setSubmitted] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState(null)
+  const [checking, setChecking] = useState(false)
+  const [alreadyExists, setAlreadyExists] = useState(false)
   const modalRef = useRef(null)
+
+  useEffect(() => {
+    if (!isOpen || !type || !targetId) return
+    let cancelled = false
+    setChecking(true)
+    setAlreadyExists(false)
+    checkInquiryExists(type, targetId)
+      .then(({ exists }) => { if (!cancelled) setAlreadyExists(exists) })
+      .catch(() => {})
+      .finally(() => { if (!cancelled) setChecking(false) })
+    return () => { cancelled = true }
+  }, [isOpen, type, targetId])
 
   useEffect(() => {
     if (!isOpen) return
@@ -42,7 +56,7 @@ function InquiryModal({ isOpen, onClose, type, targetId }) {
     }
     document.addEventListener('keydown', handleKeyDown)
     return () => document.removeEventListener('keydown', handleKeyDown)
-  }, [isOpen, onClose, submitted])
+  }, [isOpen, onClose, submitted, checking, alreadyExists])
 
   if (!isOpen) return null
 
@@ -79,7 +93,28 @@ function InquiryModal({ isOpen, onClose, type, targetId }) {
           </svg>
         </button>
 
-        {submitted ? (
+        {checking ? (
+          <div className={styles.checkingState}>
+            <div className={styles.checkingSpinner} aria-hidden="true" />
+            <p className={styles.checkingText}>문의 내역을 확인하는 중입니다…</p>
+          </div>
+        ) : alreadyExists ? (
+          <div className={styles.alreadyState}>
+            <div className={styles.alreadyIcon} aria-hidden="true">
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="10" />
+                <line x1="12" y1="8" x2="12" y2="12" />
+                <line x1="12" y1="16" x2="12.01" y2="16" />
+              </svg>
+            </div>
+            <p className={styles.alreadyTitle}>이미 문의한 내역이 있습니다</p>
+            <p className={styles.alreadyDesc}>동일한 대상에 대해 검토 중인 문의가 있습니다. 마이페이지에서 처리 상태를 확인해 주세요.</p>
+            <div className={styles.successActions}>
+              <button className={styles.confirmBtn} onClick={onClose}>닫기</button>
+              <button className={styles.myInquiryLink} onClick={() => { onClose(); navigate(ROUTES.ME_INQUIRIES) }}>내 문의 보기</button>
+            </div>
+          </div>
+        ) : submitted ? (
           <div className={styles.successState}>
             <div className={styles.successIcon} aria-hidden="true">
               <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
