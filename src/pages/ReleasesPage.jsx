@@ -196,7 +196,7 @@ function ReleasesPage() {
         {/* 그리드 */}
         {isLoading ? (
           <div className={styles.grid}>
-            {Array.from({ length: 10 }).map((_, i) => (
+            {Array.from({ length: 8 }).map((_, i) => (
               <ReleaseCardSkeleton key={i} />
             ))}
           </div>

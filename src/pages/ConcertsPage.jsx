@@ -224,7 +224,7 @@ function ConcertsPage() {
         {/* 공연 그리드 */}
         {isLoading ? (
           <div className={styles.grid}>
-            {Array.from({ length: 10 }).map((_, i) => (
+            {Array.from({ length: 8 }).map((_, i) => (
               <ConcertCardSkeleton key={i} />
             ))}
           </div>
