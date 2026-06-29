@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { useSearchParams } from 'react-router-dom'
+import { ROUTES } from '@/constants/routes'
 import { useQuery } from '@tanstack/react-query'
 
 import ReleaseCard from '@/components/release/ReleaseCard'
@@ -214,7 +215,20 @@ function ReleasesPage() {
                 <circle cx="18" cy="16" r="3" />
               </svg>
             }
-            message="아직 수집된 음반 정보가 없습니다."
+            message={
+              urlQuery
+                ? `'${urlQuery}'에 해당하는 음반이 없습니다.`
+                : effectiveFollowedOnly
+                  ? '관심 아티스트의 음반이 없습니다.'
+                  : selectedType !== '전체'
+                    ? `${selectedType} 음반이 없습니다.`
+                    : '아직 수집된 음반 정보가 없습니다.'
+            }
+            action={
+              !urlQuery && !effectiveFollowedOnly && selectedType === '전체'
+                ? { to: ROUTES.ARTISTS, label: '아티스트 둘러보기' }
+                : undefined
+            }
           />
         )}
 
