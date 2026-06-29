@@ -75,7 +75,7 @@
   font-weight: 600;
   background: var(--color-accent);
   border: none;
-  color: #fff;
+  color: var(--color-on-accent);
   white-space: nowrap;
   transition: opacity 0.15s;
 }

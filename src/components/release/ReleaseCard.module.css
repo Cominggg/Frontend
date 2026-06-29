@@ -92,7 +92,7 @@
   font-size: 0.625rem;
   font-weight: 700;
   letter-spacing: 0.06em;
-  color: #fff;
+  color: var(--color-on-accent);
   padding: 0.2em 0.55em;
   border-radius: 4px;
   background: #059669;
@@ -106,7 +106,7 @@
   font-size: 0.6875rem;
   font-weight: 700;
   letter-spacing: 0.04em;
-  color: #fff;
+  color: var(--color-on-accent);
   padding: 0.2em 0.55em;
   border-radius: 4px;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);

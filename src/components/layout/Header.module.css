@@ -160,7 +160,7 @@
   height: 32px;
   border-radius: 50%;
   background: var(--color-accent);
-  color: #fff;
+  color: var(--color-on-accent);
   font-size: 0.875rem;
   font-weight: 700;
   line-height: 1;

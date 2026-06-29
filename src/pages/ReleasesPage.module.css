@@ -139,13 +139,13 @@
 .filterTabActive {
   background: var(--color-accent);
   border-color: var(--color-accent);
-  color: #fff;
+  color: var(--color-on-accent);
   font-weight: 600;
   box-shadow: 0 2px 8px var(--color-accent-shadow);
 }
 
 .filterTabActive:hover {
-  color: #fff;
+  color: var(--color-on-accent);
 }
 
 /* ── 관심 아티스트 토글 ── */
@@ -172,13 +172,13 @@
 .followedToggleActive {
   background: var(--color-accent);
   border-color: var(--color-accent);
-  color: #fff;
+  color: var(--color-on-accent);
   font-weight: 600;
   box-shadow: 0 2px 8px var(--color-accent-shadow);
 }
 
 .followedToggleActive:hover {
-  color: #fff;
+  color: var(--color-on-accent);
 }
 
 /* ── 그리드 ── */

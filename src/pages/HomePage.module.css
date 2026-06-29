@@ -701,7 +701,7 @@
   border-radius: 100px;
   font-size: 0.9375rem;
   font-weight: 600;
-  color: #fff;
+  color: var(--color-on-accent);
   background: var(--color-accent);
   text-decoration: none;
   transition: opacity 0.15s, transform 0.15s;
@@ -761,7 +761,7 @@
   border-radius: 100px;
   font-size: 0.9375rem;
   font-weight: 600;
-  color: #fff;
+  color: var(--color-on-accent);
   background: var(--color-accent);
   border: none;
   cursor: pointer;

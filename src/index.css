@@ -41,6 +41,9 @@
   --color-badge-single: #0369a1;
   --color-badge-ep: #0f766e;
 
+  /* 강조색 위 텍스트 (버튼·배지 등 어두운 배경 위) */
+  --color-on-accent: #ffffff;
+
   /* 파괴적 액션 */
   --color-destructive: #ef4444;
 

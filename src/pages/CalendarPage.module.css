@@ -52,13 +52,13 @@
 
 .toggleBtnActive {
   background: var(--color-accent);
-  color: #fff;
+  color: var(--color-on-accent);
   font-weight: 600;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.14);
 }
 
 .toggleBtnActive:hover {
-  color: #fff;
+  color: var(--color-on-accent);
 }
 
 /* ── 월 네비게이션 ── */

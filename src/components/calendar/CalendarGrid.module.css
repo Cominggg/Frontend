@@ -98,7 +98,7 @@
 
 .numToday {
   background: var(--color-accent);
-  color: #fff !important;
+  color: var(--color-on-accent) !important;
   font-weight: 700;
 }
 

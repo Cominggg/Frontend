@@ -35,10 +35,10 @@
 .pageBtnActive {
   background: var(--color-accent);
   border-color: var(--color-accent);
-  color: #fff;
+  color: var(--color-on-accent);
   font-weight: 600;
 }
 
 .pageBtnActive:hover {
-  color: #fff;
+  color: var(--color-on-accent);
 }

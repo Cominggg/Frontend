@@ -17,7 +17,7 @@
   border-radius: 8px;
   border: none;
   background: var(--color-accent);
-  color: #fff;
+  color: var(--color-on-accent);
   cursor: pointer;
   font-size: 0.875rem;
 }
