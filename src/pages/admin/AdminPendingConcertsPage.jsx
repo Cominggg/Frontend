@@ -8,8 +8,6 @@ import { getPendingConcerts, approveConcert, rejectConcert } from '@/services/ad
 import { ROUTES } from '@/constants/routes'
 import styles from './AdminPendingConcertsPage.module.css'
 
-const MATCH_LABEL = { prfcast: '출연진', prfnm: '공연명', manual: '수동' }
-
 const EMPTY_TICKET = { ticketOpenAt: '', bookingLinks: [] }
 
 function BookingLinksEditor({ links, onChange }) {
@@ -131,9 +129,6 @@ function ConcertCard({ concert, onRefresh }) {
             {(concert.candidates ?? []).map((c) => (
               <li key={c.artistId} className={styles.candidateItem}>
                 <span className={styles.candidateName}>{c.name}</span>
-                <span className={`${styles.matchBadge} ${styles[`match_${c.matchedBy}`]}`}>
-                  {MATCH_LABEL[c.matchedBy] ?? c.matchedBy}
-                </span>
               </li>
             ))}
           </ul>
