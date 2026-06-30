@@ -364,7 +364,7 @@
   align-items: center;
   gap: 0.875rem;
   padding: 0.75rem 1.125rem;
-  flex: 1;
+  flex: 1; /* releaseRow에서 .releaseSpotifyLink와 너비를 나눠 가지므로 100%가 아닌 flex:1 */
   min-width: 0;
   background: none;
   border: none;
