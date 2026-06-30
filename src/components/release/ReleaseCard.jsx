@@ -1,8 +1,10 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 
+import SpotifyIcon from '@/components/ui/SpotifyIcon'
 import { ROUTES } from '@/constants/routes'
 import { getArtistColor } from '@/utils/colorPalette'
+import { getSpotifyAlbumUrl } from '@/utils/spotify'
 import styles from './ReleaseCard.module.css'
 
 const RELEASE_TYPE_COLOR = {
@@ -18,12 +20,13 @@ function isNewRelease(dateStr) {
 }
 
 function ReleaseCard({ release }) {
-  const { id, coverUrl, artistName, title, releaseDate, type } = release
+  const { id, coverUrl, artistName, title, releaseDate, type, spotifyId } = release
   const [imgFailed, setImgFailed] = useState(false)
   const showPlaceholder = !coverUrl || imgFailed
   const [colorFrom, colorTo] = getArtistColor(artistName)
   const badgeColor = RELEASE_TYPE_COLOR[type] ?? 'var(--color-text-muted)'
   const isNew = isNewRelease(releaseDate)
+  const spotifyUrl = getSpotifyAlbumUrl(spotifyId)
 
   return (
     <Link to={ROUTES.RELEASE_DETAIL(id)} className={styles.card}>
@@ -53,6 +56,18 @@ function ReleaseCard({ release }) {
           {type}
         </span>
         {isNew && <span className={styles.newBadge}>NEW</span>}
+        {spotifyUrl && (
+          <a
+            href={spotifyUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={styles.spotifyBadge}
+            aria-label={`${title} Spotify에서 듣기`}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <SpotifyIcon size={18} />
+          </a>
+        )}
       </div>
 
       <div className={styles.info}>

@@ -3,10 +3,13 @@ import { Link, useParams, useNavigate, useLocation } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 
 import EmptyState from '@/components/ui/EmptyState'
+import SourceCredit from '@/components/ui/SourceCredit'
+import SpotifyIcon from '@/components/ui/SpotifyIcon'
 import { getRelease } from '@/services/releaseApi'
 import { ROUTES } from '@/constants/routes'
 import { getArtistColor } from '@/utils/artistColor'
 import { formatDate } from '@/utils/date'
+import { getSpotifyAlbumUrl, getSpotifyTrackUrl } from '@/utils/spotify'
 import styles from './ReleaseDetailPage.module.css'
 
 function fmtMs(ms) {
@@ -86,11 +89,12 @@ function ReleaseDetailPage() {
     )
   }
 
-  const { artistName, artistId, title, type, releaseDate, coverUrl, tracks, totalTracks } = release
+  const { artistName, artistId, title, type, releaseDate, coverUrl, tracks, totalTracks, spotifyId } = release
   const showCoverPlaceholder = !coverUrl || coverFailed
   const [accentFrom, accentTo] = getArtistColor(artistName)
   const badgeColor = RELEASE_TYPE_COLOR[type] ?? 'var(--color-text-muted)'
   const isMultiDisc = tracks?.some((t) => t.discNumber != null && t.discNumber > 1)
+  const spotifyUrl = getSpotifyAlbumUrl(spotifyId)
 
   return (
     <div className={styles.page}>
@@ -138,6 +142,17 @@ function ReleaseDetailPage() {
                   <span>{totalTracks}곡</span>
                 )}
               </div>
+              {spotifyUrl && (
+                <a
+                  href={spotifyUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={styles.spotifyBtn}
+                >
+                  <SpotifyIcon size={22} />
+                  LISTEN ON SPOTIFY
+                </a>
+              )}
             </div>
           </div>
         </div>
@@ -154,6 +169,7 @@ function ReleaseDetailPage() {
                 const showDiscHeader = isMultiDisc && track.discNumber != null && (
                   idx === 0 || tracks[idx - 1].discNumber !== track.discNumber
                 )
+                const trackSpotifyUrl = getSpotifyTrackUrl(track.spotifyId)
                 return (
                   <li key={track.position}>
                     {showDiscHeader && (
@@ -168,6 +184,17 @@ function ReleaseDetailPage() {
                       <span className={styles.trackDuration}>
                         {track.lengthMs ? fmtMs(track.lengthMs) : '—'}
                       </span>
+                      {trackSpotifyUrl && (
+                        <a
+                          href={trackSpotifyUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={styles.trackSpotifyLink}
+                          aria-label={`${track.title} Spotify에서 듣기`}
+                        >
+                          <SpotifyIcon size={16} />
+                        </a>
+                      )}
                     </div>
                   </li>
                 )
@@ -176,6 +203,11 @@ function ReleaseDetailPage() {
           </section>
 
         </div>
+        <SourceCredit
+          text="데이터 출처: MusicBrainz, Spotify"
+          linkHref="https://creativecommons.org/licenses/by-nc-sa/3.0/"
+          linkText="CC BY-NC-SA 3.0"
+        />
       </div>
     </div>
   )

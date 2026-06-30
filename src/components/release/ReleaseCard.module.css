@@ -113,6 +113,26 @@
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
 }
 
+/* ── Spotify 배지 ── */
+.spotifyBadge {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--color-surface);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+  transition: transform 0.15s;
+}
+
+.spotifyBadge:hover {
+  transform: scale(1.08);
+}
+
 /* 정보 */
 .info {
   display: flex;

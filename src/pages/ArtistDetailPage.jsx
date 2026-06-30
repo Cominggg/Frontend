@@ -19,6 +19,7 @@ import useLoginModalStore from '@/stores/loginModalStore'
 import { ROUTES } from '@/constants/routes'
 import { getArtistColor } from '@/utils/artistColor'
 import { formatDate } from '@/utils/date'
+import { getSpotifyAlbumUrl, getSpotifyTrackUrl } from '@/utils/spotify'
 import styles from './ArtistDetailPage.module.css'
 
 function formatFollowers(n) {
@@ -332,43 +333,71 @@ function ArtistDetailPage() {
                 {releases.map((rel) => {
                   const hasTracks = rel.tracks && rel.tracks.length > 0
                   const isOpen = openReleaseId === rel.id
+                  const releaseSpotifyUrl = getSpotifyAlbumUrl(rel.spotifyId)
                   return (
                     <div key={rel.id} className={styles.releaseGroup}>
-                      <button
-                        className={`${styles.releaseItem} ${hasTracks ? styles.releaseItemToggle : ''}`}
-                        onClick={() => hasTracks && setOpenReleaseId(isOpen ? null : rel.id)}
-                        aria-expanded={hasTracks ? isOpen : undefined}
-                        disabled={!hasTracks}
-                      >
-                        <span className={`${styles.releaseBadge} ${styles[`releaseBadge${rel.type.toUpperCase()}`] || ''}`}>
-                          {rel.type}
-                        </span>
-                        <span className={styles.releaseTitle}>{rel.title}</span>
-                        <span className={styles.releaseDate}>{rel.releaseDate}</span>
-                        {hasTracks && (
-                          <svg
-                            className={`${styles.releaseChevron} ${isOpen ? styles.releaseChevronOpen : ''}`}
-                            width="14" height="14" viewBox="0 0 24 24"
-                            fill="none" stroke="currentColor" strokeWidth="2"
-                            strokeLinecap="round" strokeLinejoin="round"
-                            aria-hidden="true"
+                      <div className={styles.releaseRow}>
+                        <button
+                          className={`${styles.releaseItem} ${hasTracks ? styles.releaseItemToggle : ''}`}
+                          onClick={() => hasTracks && setOpenReleaseId(isOpen ? null : rel.id)}
+                          aria-expanded={hasTracks ? isOpen : undefined}
+                          disabled={!hasTracks}
+                        >
+                          <span className={`${styles.releaseBadge} ${styles[`releaseBadge${rel.type.toUpperCase()}`] || ''}`}>
+                            {rel.type}
+                          </span>
+                          <span className={styles.releaseTitle}>{rel.title}</span>
+                          <span className={styles.releaseDate}>{rel.releaseDate}</span>
+                          {hasTracks && (
+                            <svg
+                              className={`${styles.releaseChevron} ${isOpen ? styles.releaseChevronOpen : ''}`}
+                              width="14" height="14" viewBox="0 0 24 24"
+                              fill="none" stroke="currentColor" strokeWidth="2"
+                              strokeLinecap="round" strokeLinejoin="round"
+                              aria-hidden="true"
+                            >
+                              <polyline points="6 9 12 15 18 9" />
+                            </svg>
+                          )}
+                        </button>
+                        {releaseSpotifyUrl && (
+                          <a
+                            href={releaseSpotifyUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className={styles.releaseSpotifyLink}
+                            aria-label={`${rel.title} Spotify에서 듣기`}
                           >
-                            <polyline points="6 9 12 15 18 9" />
-                          </svg>
+                            <SpotifyIcon size={18} />
+                          </a>
                         )}
-                      </button>
+                      </div>
                       {hasTracks && isOpen && (
                         <ol className={styles.trackList}>
-                          {rel.tracks.map((t) => (
-                            <li key={t.position} className={styles.trackItem}>
-                              <span className={styles.trackPosition}>{t.position}</span>
-                              <span className={styles.trackTitle}>
-                                {t.title}
-                                {t.explicit && <span className={styles.explicitBadge}>E</span>}
-                              </span>
-                              <span className={styles.trackDuration}>{fmtMs(t.lengthMs)}</span>
-                            </li>
-                          ))}
+                          {rel.tracks.map((t) => {
+                            const trackSpotifyUrl = getSpotifyTrackUrl(t.spotifyId)
+                            return (
+                              <li key={t.position} className={styles.trackItem}>
+                                <span className={styles.trackPosition}>{t.position}</span>
+                                <span className={styles.trackTitle}>
+                                  {t.title}
+                                  {t.explicit && <span className={styles.explicitBadge}>E</span>}
+                                </span>
+                                <span className={styles.trackDuration}>{fmtMs(t.lengthMs)}</span>
+                                {trackSpotifyUrl && (
+                                  <a
+                                    href={trackSpotifyUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className={styles.trackSpotifyLink}
+                                    aria-label={`${t.title} Spotify에서 듣기`}
+                                  >
+                                    <SpotifyIcon size={14} />
+                                  </a>
+                                )}
+                              </li>
+                            )
+                          })}
                         </ol>
                       )}
                     </div>
@@ -449,7 +478,7 @@ function ArtistDetailPage() {
 
         {/* 출처 표기 */}
         <SourceCredit
-          text="데이터 출처: MusicBrainz"
+          text="데이터 출처: MusicBrainz, Spotify"
           linkHref="https://creativecommons.org/licenses/by-nc-sa/3.0/"
           linkText="CC BY-NC-SA 3.0"
         />
