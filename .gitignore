@@ -19,6 +19,9 @@ dist-ssr
 *.png
 *.jpg
 *.jpeg
+!public/*.png
+!public/*.jpg
+!public/*.jpeg
 
 # Editor directories and files
 .vscode/*
