@@ -6,6 +6,7 @@ import ConcertCard from '@/components/concert/ConcertCard'
 import ConcertCardSkeleton from '@/components/concert/ConcertCardSkeleton'
 import EmptyState from '@/components/ui/EmptyState'
 import Pagination from '@/components/ui/Pagination'
+import SourceCredit from '@/components/ui/SourceCredit'
 import { CONCERT_STATUS_LABEL } from '@/constants/concert'
 import { getConcerts, searchConcerts, getFollowingConcerts } from '@/services/concertApi'
 import useAuthStore from '@/stores/authStore'
@@ -256,6 +257,9 @@ function ConcertsPage() {
             onPageChange={handlePageChange}
           />
         )}
+
+        {/* 출처 표기 */}
+        <SourceCredit text="데이터 제공: 공연예술통합전산망(KOPIS)" />
 
       </div>
     </div>
