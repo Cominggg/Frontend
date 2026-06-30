@@ -121,13 +121,25 @@ function HomePage() {
                 <Icon name="chevronRight" size={16} />
               </Link>
             </div>
-            <div className={styles.gridThree}>
-              {popularLoading
-                ? Array.from({ length: 3 }).map((_, i) => <ConcertCardSkeleton key={i} />)
-                : popularConcerts.slice(0, 3).map((concert) => (
-                    <ConcertCard key={concert.id} concert={concert} />
-                  ))}
-            </div>
+            {popularLoading ? (
+              <div className={styles.gridThree}>
+                {Array.from({ length: 3 }).map((_, i) => <ConcertCardSkeleton key={i} />)}
+              </div>
+            ) : popularConcerts.length === 0 ? (
+              <div className={styles.popularEmpty}>
+                <div className={styles.popularEmptyIcon} aria-hidden="true">
+                  <Icon name="calendar" size={24} />
+                </div>
+                <p className={styles.popularEmptyTitle}>인기 공연이 없어요</p>
+                <p className={styles.popularEmptySub}>현재 집계된 인기 공연 정보가 없습니다</p>
+              </div>
+            ) : (
+              <div className={styles.gridThree}>
+                {popularConcerts.slice(0, 3).map((concert) => (
+                  <ConcertCard key={concert.id} concert={concert} />
+                ))}
+              </div>
+            )}
           </section>
 
           {/* 오른쪽: 예매 일정 패널 (항상 표시) */}
