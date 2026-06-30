@@ -8,6 +8,7 @@ import EmptyState from '@/components/ui/EmptyState'
 import InquiryModal from '@/components/ui/InquiryModal'
 import Pagination from '@/components/ui/Pagination'
 import SourceCredit from '@/components/ui/SourceCredit'
+import SpotifyIcon from '@/components/ui/SpotifyIcon'
 import { getArtist, getArtistConcerts, getArtistReleases, followArtist, unfollowArtist } from '@/services/artistApi'
 import useAuthStore from '@/stores/authStore'
 import useLoginModalStore from '@/stores/loginModalStore'
@@ -187,6 +188,8 @@ function ArtistDetailPage() {
   }
 
   const { name, imageUrl, hasUpcomingConcert, followersCount, links, isFollowing } = artist
+  const spotifyLink = links?.find((l) => l.id === 'Spotify')
+  const otherLinks = links?.filter((l) => l.id !== 'Spotify')
   const showPlaceholder = !imageUrl || imgFailed
   const [colorFrom, colorTo] = getArtistColor(name)
 
@@ -253,11 +256,22 @@ function ArtistDetailPage() {
                   수정
                 </Link>
               )}
+              {spotifyLink && (
+                <a
+                  href={spotifyLink.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={styles.spotifyBtn}
+                >
+                  <SpotifyIcon size={22} />
+                  LISTEN ON SPOTIFY
+                </a>
+              )}
             </div>
 
-            {links && links.length > 0 && (
+            {otherLinks && otherLinks.length > 0 && (
               <div className={styles.links}>
-                {links.map((link, i) => (
+                {otherLinks.map((link, i) => (
                   <a
                     key={`${link.id}-${i}`}
                     href={link.url}

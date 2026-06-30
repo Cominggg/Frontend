@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 
+import SpotifyIcon from '@/components/ui/SpotifyIcon'
 import useAuthStore from '@/stores/authStore'
 import useLoginModalStore from '@/stores/loginModalStore'
 import { ROUTES } from '@/constants/routes'
@@ -10,7 +11,7 @@ import { followArtist, unfollowArtist } from '@/services/artistApi'
 import styles from './ArtistCard.module.css'
 
 function ArtistCard({ artist }) {
-  const { id, name, imageUrl, hasUpcomingConcert } = artist
+  const { id, name, imageUrl, hasUpcomingConcert, spotifyUrl } = artist
   const [isFollowing, setIsFollowing] = useState(artist.isFollowing)
   const [imgFailed, setImgFailed] = useState(false)
   const user = useAuthStore((s) => s.user)
@@ -45,8 +46,8 @@ function ArtistCard({ artist }) {
 
   return (
     <article className={styles.card}>
-      <Link to={ROUTES.ARTIST_DETAIL(id)} className={styles.cardLink}>
-        <div className={styles.avatarWrap}>
+      <div className={styles.avatarWrap}>
+        <Link to={ROUTES.ARTIST_DETAIL(id)} tabIndex={-1} aria-hidden="true">
           {showPlaceholder ? (
             <div
               className={styles.avatarPlaceholder}
@@ -64,11 +65,22 @@ function ArtistCard({ artist }) {
               onError={() => setImgFailed(true)}
             />
           )}
-          {hasUpcomingConcert && <span className={styles.comingBadge}>COMING</span>}
-        </div>
-        <div className={styles.info}>
-          <p className={styles.name}>{name}</p>
-        </div>
+        </Link>
+        {hasUpcomingConcert && <span className={styles.comingBadge}>COMING</span>}
+        {spotifyUrl && (
+          <a
+            href={spotifyUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={styles.spotifyBadge}
+            aria-label={`${name} Spotify에서 듣기`}
+          >
+            <SpotifyIcon size={22} />
+          </a>
+        )}
+      </div>
+      <Link to={ROUTES.ARTIST_DETAIL(id)} className={styles.info}>
+        <p className={styles.name}>{name}</p>
       </Link>
       <button
         className={`${styles.followBtn} ${isFollowing ? styles.following : ''}`}
