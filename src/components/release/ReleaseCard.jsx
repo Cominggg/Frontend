@@ -57,16 +57,18 @@ function ReleaseCard({ release }) {
         </span>
         {isNew && <span className={styles.newBadge}>NEW</span>}
         {spotifyUrl && (
-          <a
-            href={spotifyUrl}
-            target="_blank"
-            rel="noopener noreferrer"
+          <button
+            type="button"
             className={styles.spotifyBadge}
             aria-label={`${title} Spotify에서 듣기`}
-            onClick={(e) => e.stopPropagation()}
+            onClick={(e) => {
+              e.preventDefault()
+              e.stopPropagation()
+              window.open(spotifyUrl, '_blank', 'noopener,noreferrer')
+            }}
           >
             <SpotifyIcon size={18} />
-          </a>
+          </button>
         )}
       </div>
 

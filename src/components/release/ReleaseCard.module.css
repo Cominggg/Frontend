@@ -120,6 +120,8 @@
   right: 8px;
   width: 30px;
   height: 30px;
+  padding: 0;
+  border: none;
   border-radius: 50%;
   background: var(--color-surface);
   display: flex;
@@ -127,6 +129,7 @@
   justify-content: center;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
   transition: transform 0.15s;
+  cursor: pointer;
 }
 
 .spotifyBadge:hover {
