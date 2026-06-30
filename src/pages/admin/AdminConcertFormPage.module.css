@@ -72,7 +72,7 @@
   font-weight: 600;
   background: var(--color-accent);
   border: none;
-  color: #fff;
+  color: var(--color-on-accent);
   transition: opacity 0.15s;
 }
 
@@ -199,7 +199,7 @@
 
 .btnDelete:hover {
   background-color: var(--color-destructive, #e53e3e);
-  color: #fff;
+  color: var(--color-on-accent);
 }
 
 /* ── 삭제 확인 모달 ── */
@@ -267,7 +267,7 @@
   font-weight: 600;
   background: var(--color-destructive, #e53e3e);
   border: none;
-  color: #fff;
+  color: var(--color-on-accent);
   transition: opacity 0.15s;
 }
 

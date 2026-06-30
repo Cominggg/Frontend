@@ -286,7 +286,7 @@
   font-size: 0.8125rem;
   font-weight: 600;
   background: var(--color-accent);
-  color: #fff;
+  color: var(--color-on-accent);
   border: none;
   transition: opacity 0.15s;
   white-space: nowrap;

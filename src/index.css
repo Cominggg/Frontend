@@ -41,6 +41,9 @@
   --color-badge-single: #0369a1;
   --color-badge-ep: #0f766e;
 
+  /* 강조색 위 텍스트 (버튼·배지 등 어두운 배경 위) */
+  --color-on-accent: #ffffff;
+
   /* 파괴적 액션 */
   --color-destructive: #ef4444;
 
@@ -156,8 +159,13 @@ html[data-theme="light"] {
   box-sizing: border-box;
 }
 
+html {
+  overflow-x: hidden;
+}
+
 body {
   margin: 0;
+  overflow-x: hidden;
   background-color: var(--color-bg);
   color: var(--color-text);
 }
@@ -169,6 +177,20 @@ img {
 
 button {
   cursor: pointer;
+}
+
+/* 전역 포커스 링 — 키보드 탭 이동 시 일관된 포커스 표시 */
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* 전역 액티브 피드백 — 클릭 시 눌리는 느낌 */
+button:active,
+a:active {
+  opacity: 0.8;
+  transform: translateY(1px);
 }
 
 #root {

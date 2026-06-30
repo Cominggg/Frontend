@@ -94,7 +94,7 @@
 
 /* Google */
 .google {
-  background-color: #fff;
+  background-color: var(--color-on-accent);
   color: #3c4043;
   border-color: #dadce0;
 }
@@ -163,7 +163,7 @@
   font-size: 0.875rem;
   font-weight: 600;
   background-color: var(--color-accent-light);
-  color: #fff;
+  color: var(--color-on-accent);
   border: none;
   border-radius: 8px;
   white-space: nowrap;

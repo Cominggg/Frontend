@@ -253,7 +253,7 @@
   font-size: 0.9375rem;
   font-weight: 600;
   text-decoration: none;
-  color: #fff;
+  color: var(--color-on-accent);
   background: var(--color-accent);
   border: none;
   transition: background-color 0.15s, transform 0.15s;

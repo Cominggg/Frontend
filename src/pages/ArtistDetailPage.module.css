@@ -105,7 +105,7 @@
 .comingBadge {
   display: inline-block;
   background: var(--color-accent);
-  color: #fff;
+  color: var(--color-on-accent);
   font-size: 0.6875rem;
   font-weight: 700;
   letter-spacing: 0.07em;
@@ -195,7 +195,7 @@
 
 .followBtn.following {
   background: var(--color-accent);
-  color: #fff;
+  color: var(--color-on-accent);
   border-color: var(--color-accent);
 }
 
@@ -590,12 +590,12 @@
   }
 
   .avatarWrap {
-    width: 140px;
-    height: 140px;
+    width: 120px;
+    height: 120px;
   }
 
   .avatarInitial {
-    font-size: 3rem;
+    font-size: 2.5rem;
   }
 
   .heroInfo {
