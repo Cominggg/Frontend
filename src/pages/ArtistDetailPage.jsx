@@ -3,12 +3,16 @@ import { Link, useParams, useSearchParams } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 
 import ArtistConcertItem from '@/components/artist/ArtistConcertItem'
+import AppleMusicBadge from '@/components/ui/AppleMusicBadge'
 import BackButton from '@/components/ui/BackButton'
 import EmptyState from '@/components/ui/EmptyState'
 import InquiryModal from '@/components/ui/InquiryModal'
+import InstagramIcon from '@/components/ui/InstagramIcon'
 import Pagination from '@/components/ui/Pagination'
 import SourceCredit from '@/components/ui/SourceCredit'
 import SpotifyIcon from '@/components/ui/SpotifyIcon'
+import XIcon from '@/components/ui/XIcon'
+import YouTubeIcon from '@/components/ui/YouTubeIcon'
 import { getArtist, getArtistConcerts, getArtistReleases, followArtist, unfollowArtist } from '@/services/artistApi'
 import useAuthStore from '@/stores/authStore'
 import useLoginModalStore from '@/stores/loginModalStore'
@@ -50,6 +54,8 @@ const CONCERT_TABS = [
 
 const CONCERT_PAGE_SIZE = 10
 const RELEASE_PAGE_SIZE = 10
+
+const LINK_ICON = { Twitter: XIcon, YouTube: YouTubeIcon, Instagram: InstagramIcon }
 
 function ArtistDetailPage() {
   const { id } = useParams()
@@ -189,7 +195,8 @@ function ArtistDetailPage() {
 
   const { name, imageUrl, hasUpcomingConcert, followersCount, links, isFollowing } = artist
   const spotifyLink = links?.find((l) => l.id === 'Spotify')
-  const otherLinks = links?.filter((l) => l.id !== 'Spotify')
+  const appleMusicLink = links?.find((l) => l.id === 'AppleMusic')
+  const otherLinks = links?.filter((l) => l.id !== 'Spotify' && l.id !== 'AppleMusic')
   const showPlaceholder = !imageUrl || imgFailed
   const [colorFrom, colorTo] = getArtistColor(name)
 
@@ -267,26 +274,40 @@ function ArtistDetailPage() {
                   LISTEN ON SPOTIFY
                 </a>
               )}
+              {appleMusicLink && (
+                <a
+                  href={appleMusicLink.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={styles.appleMusicBtn}
+                >
+                  <AppleMusicBadge />
+                </a>
+              )}
             </div>
 
             {otherLinks && otherLinks.length > 0 && (
               <div className={styles.links}>
-                {otherLinks.map((link, i) => (
-                  <a
-                    key={`${link.id}-${i}`}
-                    href={link.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={styles.linkBtn}
-                  >
-                    {link.label}
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
-                      <polyline points="15 3 21 3 21 9" />
-                      <line x1="10" y1="14" x2="21" y2="3" />
-                    </svg>
-                  </a>
-                ))}
+                {otherLinks.map((link, i) => {
+                  const Icon = LINK_ICON[link.id]
+                  return (
+                    <a
+                      key={`${link.id}-${i}`}
+                      href={link.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={styles.linkBtn}
+                    >
+                      {Icon && <Icon size={14} />}
+                      {link.label}
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                        <polyline points="15 3 21 3 21 9" />
+                        <line x1="10" y1="14" x2="21" y2="3" />
+                      </svg>
+                    </a>
+                  )
+                })}
               </div>
             )}
           </div>
