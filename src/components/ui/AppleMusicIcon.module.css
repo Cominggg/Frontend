@@ -1,28 +1,27 @@
-.badgeBlack,
-.badgeWhite {
+.iconBlack,
+.iconWhite {
   display: block;
-  width: auto;
   flex-shrink: 0;
 }
 
-.badgeWhite {
+.iconWhite {
   display: none;
 }
 
 @media (prefers-color-scheme: dark) {
-  :global(:root:not([data-theme="light"])) .badgeBlack {
+  :global(:root:not([data-theme="light"])) .iconBlack {
     display: none;
   }
 
-  :global(:root:not([data-theme="light"])) .badgeWhite {
+  :global(:root:not([data-theme="light"])) .iconWhite {
     display: block;
   }
 }
 
-:global(html[data-theme="dark"]) .badgeBlack {
+:global(html[data-theme="dark"]) .iconBlack {
   display: none;
 }
 
-:global(html[data-theme="dark"]) .badgeWhite {
+:global(html[data-theme="dark"]) .iconWhite {
   display: block;
 }
