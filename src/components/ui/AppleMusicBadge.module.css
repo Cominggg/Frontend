@@ -1,0 +1,28 @@
+.badgeBlack,
+.badgeWhite {
+  display: block;
+  width: auto;
+  flex-shrink: 0;
+}
+
+.badgeWhite {
+  display: none;
+}
+
+@media (prefers-color-scheme: dark) {
+  :global(:root:not([data-theme="light"])) .badgeBlack {
+    display: none;
+  }
+
+  :global(:root:not([data-theme="light"])) .badgeWhite {
+    display: block;
+  }
+}
+
+:global(html[data-theme="dark"]) .badgeBlack {
+  display: none;
+}
+
+:global(html[data-theme="dark"]) .badgeWhite {
+  display: block;
+}
