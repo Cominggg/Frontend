@@ -225,12 +225,6 @@
   background: color-mix(in srgb, var(--color-text) 8%, transparent);
 }
 
-.appleMusicBtn {
-  display: inline-flex;
-  align-items: center;
-  height: 32px;
-}
-
 /* ── D-day 배너 ── */
 .ddayBanner {
   display: flex;

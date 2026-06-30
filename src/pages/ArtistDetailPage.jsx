@@ -3,7 +3,7 @@ import { Link, useParams, useSearchParams } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 
 import ArtistConcertItem from '@/components/artist/ArtistConcertItem'
-import AppleMusicBadge from '@/components/ui/AppleMusicBadge'
+import AppleMusicIcon from '@/components/ui/AppleMusicIcon'
 import BackButton from '@/components/ui/BackButton'
 import EmptyState from '@/components/ui/EmptyState'
 import InquiryModal from '@/components/ui/InquiryModal'
@@ -55,7 +55,7 @@ const CONCERT_TABS = [
 const CONCERT_PAGE_SIZE = 10
 const RELEASE_PAGE_SIZE = 10
 
-const LINK_ICON = { Twitter: XIcon, YouTube: YouTubeIcon, Instagram: InstagramIcon }
+const LINK_ICON = { Twitter: XIcon, YouTube: YouTubeIcon, Instagram: InstagramIcon, AppleMusic: AppleMusicIcon }
 
 function ArtistDetailPage() {
   const { id } = useParams()
@@ -195,8 +195,7 @@ function ArtistDetailPage() {
 
   const { name, imageUrl, hasUpcomingConcert, followersCount, links, isFollowing } = artist
   const spotifyLink = links?.find((l) => l.id === 'Spotify')
-  const appleMusicLink = links?.find((l) => l.id === 'AppleMusic')
-  const otherLinks = links?.filter((l) => l.id !== 'Spotify' && l.id !== 'AppleMusic')
+  const otherLinks = links?.filter((l) => l.id !== 'Spotify')
   const showPlaceholder = !imageUrl || imgFailed
   const [colorFrom, colorTo] = getArtistColor(name)
 
@@ -272,16 +271,6 @@ function ArtistDetailPage() {
                 >
                   <SpotifyIcon size={22} />
                   LISTEN ON SPOTIFY
-                </a>
-              )}
-              {appleMusicLink && (
-                <a
-                  href={appleMusicLink.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={styles.appleMusicBtn}
-                >
-                  <AppleMusicBadge />
                 </a>
               )}
             </div>
