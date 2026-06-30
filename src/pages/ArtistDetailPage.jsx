@@ -7,6 +7,7 @@ import BackButton from '@/components/ui/BackButton'
 import EmptyState from '@/components/ui/EmptyState'
 import InquiryModal from '@/components/ui/InquiryModal'
 import Pagination from '@/components/ui/Pagination'
+import SourceCredit from '@/components/ui/SourceCredit'
 import { getArtist, getArtistConcerts, getArtistReleases, followArtist, unfollowArtist } from '@/services/artistApi'
 import useAuthStore from '@/stores/authStore'
 import useLoginModalStore from '@/stores/loginModalStore'
@@ -421,6 +422,13 @@ function ArtistDetailPage() {
             아티스트 정보 문의
           </button>
         </div>
+
+        {/* 출처 표기 */}
+        <SourceCredit
+          text="데이터 출처: MusicBrainz"
+          linkHref="https://creativecommons.org/licenses/by-nc-sa/3.0/"
+          linkText="CC BY-NC-SA 3.0"
+        />
 
       </div>
     </div>
