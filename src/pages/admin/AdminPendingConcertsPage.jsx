@@ -97,6 +97,8 @@ function ConcertCard({ concert, onRefresh, onCandidateRemoved, onCandidateAdded 
     try {
       await removeConcertArtist(concert.id, artistId)
       onCandidateRemoved(artistId)
+    } catch {
+      // 제거 실패 시 로딩 상태만 복구
     } finally {
       setRemovingId(null)
     }
