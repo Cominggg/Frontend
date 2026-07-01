@@ -23,6 +23,7 @@ const TABS = [
   { id: 'upcoming',  label: '예정 공연',     path: ROUTES.ME_UPCOMING },
   { id: 'history',   label: '다녀온 공연',   path: ROUTES.ME_HISTORY },
   { id: 'inquiries', label: '내 문의',       path: ROUTES.ME_INQUIRIES },
+  { id: 'settings',  label: '설정',          path: ROUTES.ME_SETTINGS },
 ]
 
 const MY_PAGE_SIZE = 10
@@ -621,22 +622,25 @@ function MyPage() {
           </div>
         )}
 
-        {/* 마케팅 수신 동의 설정 */}
-        <MarketingToggle
-          enabled={user?.agreedMarketing ?? false}
-          onToggle={() => marketingMutation.mutate(!(user?.agreedMarketing ?? false))}
-          loading={marketingMutation.isPending}
-        />
+        {/* 설정 탭 */}
+        {activeTab === 'settings' && (
+          <div role="tabpanel" id="tabpanel-settings" aria-labelledby="tab-settings">
+            <MarketingToggle
+              enabled={user?.agreedMarketing ?? false}
+              onToggle={() => marketingMutation.mutate(!(user?.agreedMarketing ?? false))}
+              loading={marketingMutation.isPending}
+            />
+            <div className={styles.withdrawalSection}>
+              <button
+                className={styles.withdrawalBtn}
+                onClick={() => setWithdrawalOpen(true)}
+              >
+                회원 탈퇴
+              </button>
+            </div>
+          </div>
+        )}
 
-        {/* 회원 탈퇴 (AUTH-03) */}
-        <div className={styles.withdrawalSection}>
-          <button
-            className={styles.withdrawalBtn}
-            onClick={() => setWithdrawalOpen(true)}
-          >
-            회원 탈퇴
-          </button>
-        </div>
         <WithdrawalModal
           isOpen={withdrawalOpen}
           onClose={() => setWithdrawalOpen(false)}

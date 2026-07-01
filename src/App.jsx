@@ -49,6 +49,7 @@ function App() {
         <Route path={ROUTES.ME_UPCOMING} element={<PrivateRoute><MyPage /></PrivateRoute>} />
         <Route path={ROUTES.ME_HISTORY} element={<PrivateRoute><MyPage /></PrivateRoute>} />
         <Route path={ROUTES.ME_INQUIRIES} element={<PrivateRoute><MyPage /></PrivateRoute>} />
+        <Route path={ROUTES.ME_SETTINGS} element={<PrivateRoute><MyPage /></PrivateRoute>} />
 
         {/* 관리자 — 중첩 라우트 */}
         <Route
