@@ -10,24 +10,6 @@ import styles from './AdminPendingConcertsPage.module.css'
 
 const EMPTY_TICKET = { ticketOpenAt: '', bookingLinks: [] }
 
-// TODO: API 연동 후 제거
-const MOCK_PENDING_CONCERTS = [
-  {
-    id: 9001,
-    title: 'YOASOBI ASIA TOUR 2025 in Seoul',
-    startDate: '2025-09-13',
-    endDate: '2025-09-14',
-    venueName: '올림픽공원 88잔디마당',
-    posterUrl: 'https://placehold.co/64x64/1a1a2e/ffffff?text=YO',
-    ticketOpenAt: null,
-    bookingLinks: [],
-    candidates: [
-      { artistId: 101, name: 'YOASOBI' },
-      { artistId: 102, name: 'Ayase' },
-    ],
-  },
-]
-
 function BookingLinksEditor({ links, onChange }) {
   function add() { onChange([...links, { name: '', url: '' }]) }
   function remove(i) { onChange(links.filter((_, idx) => idx !== i)) }
@@ -264,10 +246,8 @@ function AdminPendingConcertsPage() {
     setLoading(true)
     try {
       const data = await getPendingConcerts({ page: page - 1, size: 10 })
-      // TODO: API 연동 후 제거
-      const content = data.content.length > 0 ? data.content : MOCK_PENDING_CONCERTS
-      setConcerts(content)
-      setTotalPages(data.totalPages || 1)
+      setConcerts(data.content)
+      setTotalPages(data.totalPages)
     } catch {
       setConcerts([])
     } finally {
