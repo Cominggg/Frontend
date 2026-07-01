@@ -3,16 +3,23 @@ import { Link, useParams, useSearchParams } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 
 import ArtistConcertItem from '@/components/artist/ArtistConcertItem'
+import AppleMusicIcon from '@/components/ui/AppleMusicIcon'
 import BackButton from '@/components/ui/BackButton'
 import EmptyState from '@/components/ui/EmptyState'
 import InquiryModal from '@/components/ui/InquiryModal'
+import InstagramIcon from '@/components/ui/InstagramIcon'
 import Pagination from '@/components/ui/Pagination'
+import SourceCredit from '@/components/ui/SourceCredit'
+import SpotifyIcon from '@/components/ui/SpotifyIcon'
+import XIcon from '@/components/ui/XIcon'
+import YouTubeIcon from '@/components/ui/YouTubeIcon'
 import { getArtist, getArtistConcerts, getArtistReleases, followArtist, unfollowArtist } from '@/services/artistApi'
 import useAuthStore from '@/stores/authStore'
 import useLoginModalStore from '@/stores/loginModalStore'
 import { ROUTES } from '@/constants/routes'
 import { getArtistColor } from '@/utils/artistColor'
 import { formatDate } from '@/utils/date'
+import { getSpotifyAlbumUrl, getSpotifyTrackUrl } from '@/utils/spotify'
 import styles from './ArtistDetailPage.module.css'
 
 function formatFollowers(n) {
@@ -48,6 +55,8 @@ const CONCERT_TABS = [
 
 const CONCERT_PAGE_SIZE = 10
 const RELEASE_PAGE_SIZE = 10
+
+const LINK_ICON = { Twitter: XIcon, YouTube: YouTubeIcon, Instagram: InstagramIcon, AppleMusic: AppleMusicIcon }
 
 function ArtistDetailPage() {
   const { id } = useParams()
@@ -186,6 +195,8 @@ function ArtistDetailPage() {
   }
 
   const { name, imageUrl, hasUpcomingConcert, followersCount, links, isFollowing } = artist
+  const spotifyLink = links?.find((l) => l.id === 'Spotify')
+  const otherLinks = links?.filter((l) => l.id !== 'Spotify')
   const showPlaceholder = !imageUrl || imgFailed
   const [colorFrom, colorTo] = getArtistColor(name)
 
@@ -252,26 +263,41 @@ function ArtistDetailPage() {
                   수정
                 </Link>
               )}
+              {spotifyLink && (
+                <a
+                  href={spotifyLink.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={styles.spotifyBtn}
+                >
+                  <SpotifyIcon size={22} />
+                  LISTEN ON SPOTIFY
+                </a>
+              )}
             </div>
 
-            {links && links.length > 0 && (
+            {otherLinks && otherLinks.length > 0 && (
               <div className={styles.links}>
-                {links.map((link, i) => (
-                  <a
-                    key={`${link.id}-${i}`}
-                    href={link.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={styles.linkBtn}
-                  >
-                    {link.label}
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
-                      <polyline points="15 3 21 3 21 9" />
-                      <line x1="10" y1="14" x2="21" y2="3" />
-                    </svg>
-                  </a>
-                ))}
+                {otherLinks.map((link, i) => {
+                  const Icon = LINK_ICON[link.id]
+                  return (
+                    <a
+                      key={`${link.id}-${i}`}
+                      href={link.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={styles.linkBtn}
+                    >
+                      {Icon && <Icon size={14} />}
+                      {link.label}
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                        <polyline points="15 3 21 3 21 9" />
+                        <line x1="10" y1="14" x2="21" y2="3" />
+                      </svg>
+                    </a>
+                  )
+                })}
               </div>
             )}
           </div>
@@ -307,43 +333,71 @@ function ArtistDetailPage() {
                 {releases.map((rel) => {
                   const hasTracks = rel.tracks && rel.tracks.length > 0
                   const isOpen = openReleaseId === rel.id
+                  const releaseSpotifyUrl = getSpotifyAlbumUrl(rel.spotifyId)
                   return (
                     <div key={rel.id} className={styles.releaseGroup}>
-                      <button
-                        className={`${styles.releaseItem} ${hasTracks ? styles.releaseItemToggle : ''}`}
-                        onClick={() => hasTracks && setOpenReleaseId(isOpen ? null : rel.id)}
-                        aria-expanded={hasTracks ? isOpen : undefined}
-                        disabled={!hasTracks}
-                      >
-                        <span className={`${styles.releaseBadge} ${styles[`releaseBadge${rel.type.toUpperCase()}`] || ''}`}>
-                          {rel.type}
-                        </span>
-                        <span className={styles.releaseTitle}>{rel.title}</span>
-                        <span className={styles.releaseDate}>{rel.releaseDate}</span>
-                        {hasTracks && (
-                          <svg
-                            className={`${styles.releaseChevron} ${isOpen ? styles.releaseChevronOpen : ''}`}
-                            width="14" height="14" viewBox="0 0 24 24"
-                            fill="none" stroke="currentColor" strokeWidth="2"
-                            strokeLinecap="round" strokeLinejoin="round"
-                            aria-hidden="true"
+                      <div className={styles.releaseRow}>
+                        <button
+                          className={`${styles.releaseItem} ${hasTracks ? styles.releaseItemToggle : ''}`}
+                          onClick={() => hasTracks && setOpenReleaseId(isOpen ? null : rel.id)}
+                          aria-expanded={hasTracks ? isOpen : undefined}
+                          disabled={!hasTracks}
+                        >
+                          <span className={`${styles.releaseBadge} ${styles[`releaseBadge${rel.type.toUpperCase()}`] || ''}`}>
+                            {rel.type}
+                          </span>
+                          <span className={styles.releaseTitle}>{rel.title}</span>
+                          <span className={styles.releaseDate}>{rel.releaseDate}</span>
+                          {hasTracks && (
+                            <svg
+                              className={`${styles.releaseChevron} ${isOpen ? styles.releaseChevronOpen : ''}`}
+                              width="14" height="14" viewBox="0 0 24 24"
+                              fill="none" stroke="currentColor" strokeWidth="2"
+                              strokeLinecap="round" strokeLinejoin="round"
+                              aria-hidden="true"
+                            >
+                              <polyline points="6 9 12 15 18 9" />
+                            </svg>
+                          )}
+                        </button>
+                        {releaseSpotifyUrl && (
+                          <a
+                            href={releaseSpotifyUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className={styles.releaseSpotifyLink}
+                            aria-label={`${rel.title} Spotify에서 듣기`}
                           >
-                            <polyline points="6 9 12 15 18 9" />
-                          </svg>
+                            <SpotifyIcon size={18} />
+                          </a>
                         )}
-                      </button>
+                      </div>
                       {hasTracks && isOpen && (
                         <ol className={styles.trackList}>
-                          {rel.tracks.map((t) => (
-                            <li key={t.position} className={styles.trackItem}>
-                              <span className={styles.trackPosition}>{t.position}</span>
-                              <span className={styles.trackTitle}>
-                                {t.title}
-                                {t.explicit && <span className={styles.explicitBadge}>E</span>}
-                              </span>
-                              <span className={styles.trackDuration}>{fmtMs(t.lengthMs)}</span>
-                            </li>
-                          ))}
+                          {rel.tracks.map((t) => {
+                            const trackSpotifyUrl = getSpotifyTrackUrl(t.spotifyId)
+                            return (
+                              <li key={t.position} className={styles.trackItem}>
+                                <span className={styles.trackPosition}>{t.position}</span>
+                                <span className={styles.trackTitle}>
+                                  {t.title}
+                                  {t.explicit && <span className={styles.explicitBadge}>E</span>}
+                                </span>
+                                <span className={styles.trackDuration}>{fmtMs(t.lengthMs)}</span>
+                                {trackSpotifyUrl && (
+                                  <a
+                                    href={trackSpotifyUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className={styles.trackSpotifyLink}
+                                    aria-label={`${t.title} Spotify에서 듣기`}
+                                  >
+                                    <SpotifyIcon size={14} />
+                                  </a>
+                                )}
+                              </li>
+                            )
+                          })}
                         </ol>
                       )}
                     </div>
@@ -421,6 +475,13 @@ function ArtistDetailPage() {
             아티스트 정보 문의
           </button>
         </div>
+
+        {/* 출처 표기 */}
+        <SourceCredit
+          text="데이터 출처: MusicBrainz, Spotify"
+          linkHref="https://creativecommons.org/licenses/by-nc-sa/3.0/"
+          linkText="CC BY-NC-SA 3.0"
+        />
 
       </div>
     </div>

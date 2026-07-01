@@ -132,6 +132,7 @@ function ConcertDetailPage() {
           price, isInCalendar, ticketLinks, ticketOpenAt } = concert
 
   const setlist = setlistData?.tracks ?? []
+  const setlistSourceUrl = setlistData?.sourceUrl
   const showPosterPlaceholder = !posterUrl || posterFailed
 
   const dateRange = endDate && endDate !== startDate
@@ -332,14 +333,26 @@ function ConcertDetailPage() {
           {activeTab === 'setlist' && status === 'ENDED' && (
             <div className={styles.tabPanel}>
               {setlist.length > 0 ? (
-                <ol className={styles.setlistTrackList}>
-                  {setlist.map((track) => (
-                    <li key={track.order} className={styles.setlistTrack}>
-                      <span className={styles.setlistOrder}>{track.order}</span>
-                      <span className={styles.setlistTitle}>{track.title}</span>
-                    </li>
-                  ))}
-                </ol>
+                <>
+                  <ol className={styles.setlistTrackList}>
+                    {setlist.map((track) => (
+                      <li key={track.order} className={styles.setlistTrack}>
+                        <span className={styles.setlistOrder}>{track.order}</span>
+                        <span className={styles.setlistTitle}>{track.title}</span>
+                      </li>
+                    ))}
+                  </ol>
+                  <p className={styles.setlistSource}>
+                    Source:{' '}
+                    <a
+                      href={setlistSourceUrl || 'https://www.setlist.fm/'}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {artistName} setlist on setlist.fm
+                    </a>
+                  </p>
+                </>
               ) : (
                 <p className={styles.setlistEmpty}>아직 등록된 셋리스트가 없습니다.</p>
               )}

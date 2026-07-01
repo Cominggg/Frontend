@@ -384,6 +384,23 @@
   text-align: center;
 }
 
+.setlistSource {
+  margin: 0.75rem 0 0;
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+}
+
+.setlistSource a {
+  color: var(--color-text-muted);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  transition: color 0.15s;
+}
+
+.setlistSource a:hover {
+  color: var(--color-accent);
+}
+
 .posterList {
   display: flex;
   flex-direction: column;
