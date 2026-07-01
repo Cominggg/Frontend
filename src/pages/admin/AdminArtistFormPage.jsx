@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Link, useParams, useNavigate } from 'react-router-dom'
 
 import { getAdminArtist, updateArtist, triggerArtistReleasesCollect } from '@/services/adminApi'
@@ -15,6 +15,7 @@ const EMPTY_ALIASES = { ja: [], en: [], ko: [] }
 
 function AliasTagEditor({ label, values, onChange }) {
   const [input, setInput] = useState('')
+  const composingRef = useRef(false)
 
   function commit() {
     const trimmed = input.trim()
@@ -24,6 +25,7 @@ function AliasTagEditor({ label, values, onChange }) {
   }
 
   function handleKeyDown(e) {
+    if (composingRef.current) return
     if (e.key === 'Enter') { e.preventDefault(); commit() }
   }
 
@@ -51,8 +53,10 @@ function AliasTagEditor({ label, values, onChange }) {
           className={styles.aliasInput}
           value={input}
           onChange={(e) => setInput(e.target.value)}
+          onCompositionStart={() => { composingRef.current = true }}
+          onCompositionEnd={() => { composingRef.current = false }}
           onKeyDown={handleKeyDown}
-          onBlur={commit}
+          onBlur={() => { if (!composingRef.current) commit() }}
           placeholder="입력 후 Enter"
         />
       </div>
