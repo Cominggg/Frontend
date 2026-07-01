@@ -21,6 +21,11 @@ export async function register(body) {
   return data
 }
 
+// TODO: API 연동 후 제거 — BE PATCH /auth/me/marketing 구현 대기
+export async function updateMarketing(agreedMarketing) {
+  await api.patch('/auth/me/marketing', { agreedMarketing })
+}
+
 export async function checkNickname(nickname) {
   const { data } = await api.get('/auth/check-nickname', { params: { nickname } })
   return data
