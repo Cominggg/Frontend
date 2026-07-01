@@ -14,10 +14,13 @@ export const ROUTES = {
   ME_UPCOMING: '/me/concerts/upcoming',
   ME_HISTORY: '/me/concerts/history',
   ME_INQUIRIES: '/me/inquiries',
+  ME_SETTINGS: '/me/settings',
   ADMIN: '/admin',
   ADMIN_ARTIST_EDIT: (id) => `/admin/artists/${id}/edit`,
   ADMIN_CONCERT_EDIT: (id) => `/admin/concerts/${id}/edit`,
   ADMIN_INQUIRIES: '/admin/inquiries',
   ADMIN_PENDING_CONCERTS: '/admin/concerts/pending',
   ADMIN_EXCLUDED_CONCERTS: '/admin/concerts/excluded',
+  TERMS: '/terms',
+  PRIVACY: '/privacy',
 }

@@ -1,16 +1,74 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Link, useParams, useNavigate } from 'react-router-dom'
 
-import { getArtist } from '@/services/artistApi'
-import { updateArtist, triggerArtistReleasesCollect } from '@/services/adminApi'
+import { getAdminArtist, updateArtist, triggerArtistReleasesCollect } from '@/services/adminApi'
 import { ROUTES } from '@/constants/routes'
 import styles from './AdminFormPage.module.css'
+
+const ALIAS_LOCALES = [
+  { key: 'ja', label: 'JA (일본어)' },
+  { key: 'en', label: 'EN (영어)' },
+  { key: 'ko', label: 'KO (한국어)' },
+]
+
+const EMPTY_ALIASES = { ja: [], en: [], ko: [] }
+
+function AliasTagEditor({ label, values, onChange }) {
+  const [input, setInput] = useState('')
+  const composingRef = useRef(false)
+
+  function commit() {
+    const trimmed = input.trim()
+    if (!trimmed || values.includes(trimmed)) { setInput(''); return }
+    onChange([...values, trimmed])
+    setInput('')
+  }
+
+  function handleKeyDown(e) {
+    if (composingRef.current) return
+    if (e.key === 'Enter') { e.preventDefault(); commit() }
+  }
+
+  return (
+    <div className={styles.aliasGroup}>
+      <span className={styles.aliasLocaleLabel}>{label}</span>
+      <div className={styles.aliasTags}>
+        {values.map((tag) => (
+          <span key={tag} className={styles.aliasTag}>
+            {tag}
+            <button
+              type="button"
+              className={styles.aliasTagRemove}
+              onClick={() => onChange(values.filter((v) => v !== tag))}
+              aria-label={`${tag} 삭제`}
+            >
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" aria-hidden="true">
+                <path d="M18 6 6 18M6 6l12 12" />
+              </svg>
+            </button>
+          </span>
+        ))}
+        <input
+          type="text"
+          className={styles.aliasInput}
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          onCompositionStart={() => { composingRef.current = true }}
+          onCompositionEnd={() => { composingRef.current = false }}
+          onKeyDown={handleKeyDown}
+          onBlur={() => { if (!composingRef.current) commit() }}
+          placeholder="입력 후 Enter"
+        />
+      </div>
+    </div>
+  )
+}
 
 function AdminArtistFormPage() {
   const { id } = useParams()
   const navigate = useNavigate()
 
-  const [form, setForm] = useState({ name: '', sortName: '', debutDate: '' })
+  const [form, setForm] = useState({ name: '', aliases: EMPTY_ALIASES })
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
   const [triggering, setTriggering] = useState(false)
@@ -18,18 +76,20 @@ function AdminArtistFormPage() {
 
   useEffect(() => {
     if (!id) { navigate(ROUTES.ADMIN, { replace: true }); return }
-    getArtist(id).then((artist) => {
+    getAdminArtist(id).then((artist) => {
       setForm({
         name: artist.name ?? '',
-        sortName: artist.sortName ?? '',
-        debutDate: artist.debutDate ?? '',
+        aliases: {
+          ja: artist.aliases?.ja ?? [],
+          en: artist.aliases?.en ?? [],
+          ko: artist.aliases?.ko ?? [],
+        },
       })
     }).catch(() => setError('아티스트 정보를 불러오지 못했습니다.'))
   }, [id, navigate])
 
-  function setField(key, value) {
-    setForm((prev) => ({ ...prev, [key]: value }))
-    setError('')
+  function setAliasLocale(locale, next) {
+    setForm((prev) => ({ ...prev, aliases: { ...prev.aliases, [locale]: next } }))
   }
 
   async function handleSubmit(e) {
@@ -39,8 +99,7 @@ function AdminArtistFormPage() {
     try {
       await updateArtist(id, {
         name: form.name.trim() || undefined,
-        sortName: form.sortName.trim() || undefined,
-        debutDate: form.debutDate || undefined,
+        aliases: form.aliases,
       })
       navigate(ROUTES.ADMIN)
     } catch {
@@ -86,29 +145,24 @@ function AdminArtistFormPage() {
                 type="text"
                 className={styles.input}
                 value={form.name}
-                onChange={(e) => setField('name', e.target.value)}
+                onChange={(e) => { setForm((prev) => ({ ...prev, name: e.target.value })); setError('') }}
                 placeholder="예: YOASOBI"
               />
             </label>
-            <label className={styles.field}>
-              <span className={styles.fieldLabel}>정렬명 (sortName)</span>
-              <input
-                type="text"
-                className={styles.input}
-                value={form.sortName}
-                onChange={(e) => setField('sortName', e.target.value)}
-                placeholder="예: YOASOBI"
+          </div>
+        </section>
+
+        <section className={styles.section}>
+          <h2 className={styles.sectionTitle}>Alias</h2>
+          <div className={styles.aliasLocaleGrid}>
+            {ALIAS_LOCALES.map(({ key, label }) => (
+              <AliasTagEditor
+                key={key}
+                label={label}
+                values={form.aliases[key]}
+                onChange={(next) => setAliasLocale(key, next)}
               />
-            </label>
-            <label className={styles.field}>
-              <span className={styles.fieldLabel}>데뷔일</span>
-              <input
-                type="date"
-                className={styles.input}
-                value={form.debutDate}
-                onChange={(e) => setField('debutDate', e.target.value)}
-              />
-            </label>
+            ))}
           </div>
         </section>
 

@@ -12,16 +12,14 @@ function Pagination({ currentPage, totalPages, onPageChange }) {
   if (!totalPages || totalPages < 1) return null
 
   const pages = getGroupPages(currentPage, totalPages)
-  const groupStart = pages[0]
-  const groupEnd = pages[pages.length - 1]
 
   return (
     <div className={styles.pagination} aria-label="페이지 네비게이션">
-      {groupStart > 1 && (
+      {currentPage > 1 && (
         <button
           className={styles.pageBtn}
-          onClick={() => onPageChange(groupStart - 1)}
-          aria-label="이전 그룹"
+          onClick={() => onPageChange(1)}
+          aria-label="첫 페이지"
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
             <path d="m11 17-5-5 5-5" /><path d="m18 17-5-5 5-5" />
@@ -63,11 +61,11 @@ function Pagination({ currentPage, totalPages, onPageChange }) {
         </svg>
       </button>
 
-      {groupEnd < totalPages && (
+      {currentPage < totalPages && (
         <button
           className={styles.pageBtn}
-          onClick={() => onPageChange(groupEnd + 1)}
-          aria-label="다음 그룹"
+          onClick={() => onPageChange(totalPages)}
+          aria-label="마지막 페이지"
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
             <path d="m6 17 5-5-5-5" /><path d="m13 17 5-5-5-5" />

@@ -5,7 +5,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import Badge from '@/components/ui/Badge'
 import EmptyState from '@/components/ui/EmptyState'
 import Pagination from '@/components/ui/Pagination'
-import { getMe, updateMe, withdraw } from '@/services/authApi'
+import { getMe, updateMe, withdraw, updateMarketing } from '@/services/authApi'
 import { getFollowingArtists, unfollowArtist } from '@/services/artistApi'
 import { getUpcomingConcerts } from '@/services/calendarApi'
 import { getConcertHistory, getMyInquiries } from '@/services/myApi'
@@ -23,6 +23,7 @@ const TABS = [
   { id: 'upcoming',  label: '예정 공연',     path: ROUTES.ME_UPCOMING },
   { id: 'history',   label: '다녀온 공연',   path: ROUTES.ME_HISTORY },
   { id: 'inquiries', label: '내 문의',       path: ROUTES.ME_INQUIRIES },
+  { id: 'settings',  label: '설정',          path: ROUTES.ME_SETTINGS },
 ]
 
 const MY_PAGE_SIZE = 10
@@ -290,6 +291,31 @@ function WithdrawalModal({ isOpen, onClose, onWithdraw }) {
   )
 }
 
+function MarketingToggle({ enabled, onToggle, loading }) {
+  return (
+    <div className={styles.settingsSection}>
+      <h2 className={styles.settingsSectionTitle}>알림 설정</h2>
+      <div className={styles.settingRow}>
+        <div className={styles.settingInfo}>
+          <span className={styles.settingLabel}>마케팅 수신 동의</span>
+          <span className={styles.settingDesc}>관심 아티스트 내한 공연 알림 및 서비스 업데이트 소식을 이메일로 받습니다.</span>
+        </div>
+        <button
+          type="button"
+          role="switch"
+          aria-checked={enabled}
+          className={`${styles.toggle} ${enabled ? styles.toggleOn : ''}`}
+          onClick={onToggle}
+          disabled={loading}
+          aria-label="마케팅 수신 동의"
+        >
+          <span className={styles.toggleThumb} />
+        </button>
+      </div>
+    </div>
+  )
+}
+
 function ProfileCard({ user, onEditClick }) {
   return (
     <div className={styles.profileCard}>
@@ -393,6 +419,22 @@ function MyPage() {
     onSuccess: () => {
       clearUser()
       navigate('/')
+    },
+  })
+
+  const marketingMutation = useMutation({
+    mutationFn: updateMarketing,
+    onMutate: async (agreedMarketing) => {
+      await queryClient.cancelQueries({ queryKey: ['me'] })
+      const prev = queryClient.getQueryData(['me'])
+      queryClient.setQueryData(['me'], (old) => old ? { ...old, agreedMarketing } : old)
+      return { prev }
+    },
+    onError: (_err, _vars, ctx) => {
+      queryClient.setQueryData(['me'], ctx.prev)
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['me'] })
     },
   })
 
@@ -580,15 +622,25 @@ function MyPage() {
           </div>
         )}
 
-        {/* 회원 탈퇴 (AUTH-03) */}
-        <div className={styles.withdrawalSection}>
-          <button
-            className={styles.withdrawalBtn}
-            onClick={() => setWithdrawalOpen(true)}
-          >
-            회원 탈퇴
-          </button>
-        </div>
+        {/* 설정 탭 */}
+        {activeTab === 'settings' && (
+          <div role="tabpanel" id="tabpanel-settings" aria-labelledby="tab-settings">
+            <MarketingToggle
+              enabled={user?.agreedMarketing ?? false}
+              onToggle={() => marketingMutation.mutate(!(user?.agreedMarketing ?? false))}
+              loading={marketingMutation.isPending}
+            />
+            <div className={styles.withdrawalSection}>
+              <button
+                className={styles.withdrawalBtn}
+                onClick={() => setWithdrawalOpen(true)}
+              >
+                회원 탈퇴
+              </button>
+            </div>
+          </div>
+        )}
+
         <WithdrawalModal
           isOpen={withdrawalOpen}
           onClose={() => setWithdrawalOpen(false)}
