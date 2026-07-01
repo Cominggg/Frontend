@@ -1,5 +1,10 @@
 import api from './api'
 
+export async function getAdminArtist(id) {
+  const { data } = await api.get(`/admin/artists/${id}`)
+  return data
+}
+
 export async function updateArtist(id, body) {
   await api.put(`/admin/artists/${id}`, body)
 }
