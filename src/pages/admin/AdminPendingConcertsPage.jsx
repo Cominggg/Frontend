@@ -58,7 +58,7 @@ function BookingLinksEditor({ links, onChange }) {
   )
 }
 
-function ConcertCard({ concert, onRefresh }) {
+function ConcertCard({ concert, onRefresh, onCandidateRemoved, onCandidateAdded }) {
   const [acting, setActing] = useState(null)
   const [removingId, setRemovingId] = useState(null)
   const [showAddArtist, setShowAddArtist] = useState(false)
@@ -96,7 +96,9 @@ function ConcertCard({ concert, onRefresh }) {
     setRemovingId(artistId)
     try {
       await removeConcertArtist(concert.id, artistId)
-      onRefresh()
+      onCandidateRemoved(artistId)
+    } catch {
+      // 제거 실패 시 로딩 상태만 복구
     } finally {
       setRemovingId(null)
     }
@@ -147,9 +149,7 @@ function ConcertCard({ concert, onRefresh }) {
                   onClick={() => handleRemoveArtist(c.artistId)}
                   aria-label={`${c.name} 제거`}
                 >
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-                    <path d="M18 6 6 18M6 6l12 12" />
-                  </svg>
+                  {removingId === c.artistId ? '...' : '×'}
                 </button>
               </li>
             ))}
@@ -231,7 +231,7 @@ function ConcertCard({ concert, onRefresh }) {
         <AddArtistModal
           concertId={concert.id}
           onClose={() => setShowAddArtist(false)}
-          onAdded={onRefresh}
+          onAdded={onCandidateAdded}
         />
       )}
     </div>
@@ -261,6 +261,26 @@ function AdminPendingConcertsPage() {
     fetchPending()
   }, [fetchPending])
 
+  function handleCandidateRemoved(concertId, artistId) {
+    setConcerts((prev) =>
+      prev.map((c) =>
+        c.id === concertId
+          ? { ...c, candidates: (c.candidates ?? []).filter((ca) => ca.artistId !== artistId) }
+          : c
+      )
+    )
+  }
+
+  function handleCandidateAdded(concertId, artist) {
+    setConcerts((prev) =>
+      prev.map((c) =>
+        c.id === concertId
+          ? { ...c, candidates: [...(c.candidates ?? []), artist] }
+          : c
+      )
+    )
+  }
+
   return (
     <div className={styles.page}>
       <div className={styles.pageHeader}>
@@ -288,6 +308,8 @@ function AdminPendingConcertsPage() {
                 if (concerts.length === 1 && page > 1) setPage((p) => p - 1)
                 else fetchPending()
               }}
+              onCandidateRemoved={(artistId) => handleCandidateRemoved(concert.id, artistId)}
+              onCandidateAdded={(artist) => handleCandidateAdded(concert.id, artist)}
             />
           ))}
         </div>

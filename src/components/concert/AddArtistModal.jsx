@@ -25,12 +25,12 @@ function AddArtistModal({ concertId, onClose, onAdded }) {
     }
   }
 
-  async function handleAdd(artistId) {
+  async function handleAdd(artistId, artistName) {
     setAdding(true)
     setError('')
     try {
       await addConcertArtist(concertId, artistId)
-      onAdded()
+      onAdded({ artistId, name: artistName })
       onClose()
     } catch (err) {
       const code = err.response?.data?.code
@@ -70,7 +70,7 @@ function AddArtistModal({ concertId, onClose, onAdded }) {
               <li key={a.id}>
                 <button
                   className={styles.searchResultItem}
-                  onClick={() => handleAdd(a.id)}
+                  onClick={() => handleAdd(a.id, a.name)}
                   disabled={adding}
                 >
                   <span className={styles.searchResultName}>{a.name}</span>
