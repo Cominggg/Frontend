@@ -20,4 +20,6 @@ export const ROUTES = {
   ADMIN_INQUIRIES: '/admin/inquiries',
   ADMIN_PENDING_CONCERTS: '/admin/concerts/pending',
   ADMIN_EXCLUDED_CONCERTS: '/admin/concerts/excluded',
+  TERMS: '/terms',
+  PRIVACY: '/privacy',
 }

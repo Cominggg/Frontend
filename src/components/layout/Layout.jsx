@@ -4,6 +4,7 @@ import axios from 'axios'
 import useAuthStore, { SESSION_HINT } from '@/stores/authStore'
 import { getMe } from '@/services/authApi'
 import LoginModal from '@/components/auth/LoginModal'
+import Footer from './Footer'
 import Header from './Header'
 import styles from './Layout.module.css'
 
@@ -37,6 +38,7 @@ function Layout({ children }) {
     <div className={styles.root}>
       <Header />
       <main className={styles.main}>{children}</main>
+      <Footer />
       <LoginModal />
     </div>
   )

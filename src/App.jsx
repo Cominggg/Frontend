@@ -23,6 +23,8 @@ import AdminConcertFormPage from '@/pages/admin/AdminConcertFormPage'
 import AdminInquiriesPage from '@/pages/admin/AdminInquiriesPage'
 import AdminPendingConcertsPage from '@/pages/admin/AdminPendingConcertsPage'
 import AdminExcludedConcertsPage from '@/pages/admin/AdminExcludedConcertsPage'
+import PolicyPage from '@/pages/PolicyPage'
+import { TERMS_CONTENT, PRIVACY_CONTENT } from '@/constants/policy'
 import { ROUTES } from '@/constants/routes'
 
 function App() {
@@ -41,6 +43,8 @@ function App() {
         <Route path="/releases/:id" element={<ReleaseDetailPage />} />
         <Route path={ROUTES.CALENDAR} element={<CalendarPage />} />
         <Route path={ROUTES.SEARCH} element={<div>통합 검색</div>} />
+        <Route path={ROUTES.TERMS} element={<PolicyPage title="서비스 이용약관" content={TERMS_CONTENT} />} />
+        <Route path={ROUTES.PRIVACY} element={<PolicyPage title="개인정보처리방침" content={PRIVACY_CONTENT} />} />
         <Route path={ROUTES.ME} element={<PrivateRoute><MyPage /></PrivateRoute>} />
         <Route path={ROUTES.ME_UPCOMING} element={<PrivateRoute><MyPage /></PrivateRoute>} />
         <Route path={ROUTES.ME_HISTORY} element={<PrivateRoute><MyPage /></PrivateRoute>} />
