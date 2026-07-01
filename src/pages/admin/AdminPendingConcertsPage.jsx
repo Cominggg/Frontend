@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 import Pagination from '@/components/ui/Pagination'
 import AppDatePicker from '@/components/ui/AppDatePicker'
 import AddArtistModal from '@/components/concert/AddArtistModal'
-import { getPendingConcerts, approveConcert, rejectConcert } from '@/services/adminApi'
+import { getPendingConcerts, approveConcert, rejectConcert, removeConcertArtist } from '@/services/adminApi'
 import { ROUTES } from '@/constants/routes'
 import styles from './AdminPendingConcertsPage.module.css'
 
@@ -60,6 +60,7 @@ function BookingLinksEditor({ links, onChange }) {
 
 function ConcertCard({ concert, onRefresh }) {
   const [acting, setActing] = useState(null)
+  const [removingId, setRemovingId] = useState(null)
   const [showAddArtist, setShowAddArtist] = useState(false)
   const [approveOpen, setApproveOpen] = useState(false)
   const [ticket, setTicket] = useState(EMPTY_TICKET)
@@ -88,6 +89,16 @@ function ConcertCard({ concert, onRefresh }) {
       onRefresh()
     } catch {
       setActing(null)
+    }
+  }
+
+  async function handleRemoveArtist(artistId) {
+    setRemovingId(artistId)
+    try {
+      await removeConcertArtist(concert.id, artistId)
+      onRefresh()
+    } finally {
+      setRemovingId(null)
     }
   }
 
@@ -129,6 +140,17 @@ function ConcertCard({ concert, onRefresh }) {
             {(concert.candidates ?? []).map((c) => (
               <li key={c.artistId} className={styles.candidateItem}>
                 <span className={styles.candidateName}>{c.name}</span>
+                <button
+                  type="button"
+                  className={styles.candidateRemoveBtn}
+                  disabled={removingId === c.artistId}
+                  onClick={() => handleRemoveArtist(c.artistId)}
+                  aria-label={`${c.name} 제거`}
+                >
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                    <path d="M18 6 6 18M6 6l12 12" />
+                  </svg>
+                </button>
               </li>
             ))}
           </ul>
