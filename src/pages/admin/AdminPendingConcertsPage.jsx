@@ -10,6 +10,24 @@ import styles from './AdminPendingConcertsPage.module.css'
 
 const EMPTY_TICKET = { ticketOpenAt: '', bookingLinks: [] }
 
+// TODO: API 연동 후 제거
+const MOCK_PENDING_CONCERTS = [
+  {
+    id: 9001,
+    title: 'YOASOBI ASIA TOUR 2025 in Seoul',
+    startDate: '2025-09-13',
+    endDate: '2025-09-14',
+    venueName: '올림픽공원 88잔디마당',
+    posterUrl: 'https://placehold.co/64x64/1a1a2e/ffffff?text=YO',
+    ticketOpenAt: null,
+    bookingLinks: [],
+    candidates: [
+      { artistId: 101, name: 'YOASOBI' },
+      { artistId: 102, name: 'Ayase' },
+    ],
+  },
+]
+
 function BookingLinksEditor({ links, onChange }) {
   function add() { onChange([...links, { name: '', url: '' }]) }
   function remove(i) { onChange(links.filter((_, idx) => idx !== i)) }
@@ -58,7 +76,7 @@ function BookingLinksEditor({ links, onChange }) {
   )
 }
 
-function ConcertCard({ concert, onRefresh }) {
+function ConcertCard({ concert, onRefresh, onCandidateRemoved, onCandidateAdded }) {
   const [acting, setActing] = useState(null)
   const [removingId, setRemovingId] = useState(null)
   const [showAddArtist, setShowAddArtist] = useState(false)
@@ -96,7 +114,7 @@ function ConcertCard({ concert, onRefresh }) {
     setRemovingId(artistId)
     try {
       await removeConcertArtist(concert.id, artistId)
-      onRefresh()
+      onCandidateRemoved(artistId)
     } finally {
       setRemovingId(null)
     }
@@ -147,9 +165,7 @@ function ConcertCard({ concert, onRefresh }) {
                   onClick={() => handleRemoveArtist(c.artistId)}
                   aria-label={`${c.name} 제거`}
                 >
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-                    <path d="M18 6 6 18M6 6l12 12" />
-                  </svg>
+                  {removingId === c.artistId ? '...' : '×'}
                 </button>
               </li>
             ))}
@@ -231,7 +247,7 @@ function ConcertCard({ concert, onRefresh }) {
         <AddArtistModal
           concertId={concert.id}
           onClose={() => setShowAddArtist(false)}
-          onAdded={onRefresh}
+          onAdded={onCandidateAdded}
         />
       )}
     </div>
@@ -248,8 +264,10 @@ function AdminPendingConcertsPage() {
     setLoading(true)
     try {
       const data = await getPendingConcerts({ page: page - 1, size: 10 })
-      setConcerts(data.content)
-      setTotalPages(data.totalPages)
+      // TODO: API 연동 후 제거
+      const content = data.content.length > 0 ? data.content : MOCK_PENDING_CONCERTS
+      setConcerts(content)
+      setTotalPages(data.totalPages || 1)
     } catch {
       setConcerts([])
     } finally {
@@ -260,6 +278,26 @@ function AdminPendingConcertsPage() {
   useEffect(() => {
     fetchPending()
   }, [fetchPending])
+
+  function handleCandidateRemoved(concertId, artistId) {
+    setConcerts((prev) =>
+      prev.map((c) =>
+        c.id === concertId
+          ? { ...c, candidates: (c.candidates ?? []).filter((ca) => ca.artistId !== artistId) }
+          : c
+      )
+    )
+  }
+
+  function handleCandidateAdded(concertId, artist) {
+    setConcerts((prev) =>
+      prev.map((c) =>
+        c.id === concertId
+          ? { ...c, candidates: [...(c.candidates ?? []), artist] }
+          : c
+      )
+    )
+  }
 
   return (
     <div className={styles.page}>
@@ -288,6 +326,8 @@ function AdminPendingConcertsPage() {
                 if (concerts.length === 1 && page > 1) setPage((p) => p - 1)
                 else fetchPending()
               }}
+              onCandidateRemoved={(artistId) => handleCandidateRemoved(concert.id, artistId)}
+              onCandidateAdded={(artist) => handleCandidateAdded(concert.id, artist)}
             />
           ))}
         </div>
