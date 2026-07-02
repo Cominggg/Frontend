@@ -8,6 +8,10 @@ import { ROUTES } from '@/constants/routes'
 import styles from './AdminFormPage.module.css'
 import concertStyles from './AdminConcertFormPage.module.css'
 
+const SETLIST_SKIP_REASONS = {
+  no_setlist_found: 'setlist.fm에 셋리스트 없음',
+}
+
 const STATUS_OPTIONS = ['UPCOMING', 'ONGOING', 'ENDED', 'CANCELLED', 'EXCLUDED']
 
 const EMPTY_FORM = {
@@ -78,6 +82,7 @@ function AdminConcertFormPage() {
 
   const [triggering, setTriggering] = useState(false)
   const [triggerMsg, setTriggerMsg] = useState('')
+  const [setlistResult, setSetlistResult] = useState(null)
 
   useEffect(() => {
     if (!id) { navigate(ROUTES.ADMIN, { replace: true }); return }
@@ -149,11 +154,15 @@ function AdminConcertFormPage() {
   async function handleTriggerSetlist() {
     setTriggering(true)
     setTriggerMsg('')
+    setSetlistResult(null)
     try {
-      await triggerConcertSetlistCollect(id)
-      setTriggerMsg('셋리스트 수집 트리거가 전송되었습니다.')
-    } catch {
-      setTriggerMsg('트리거 전송에 실패했습니다.')
+      const result = await triggerConcertSetlistCollect(id)
+      setSetlistResult(result)
+    } catch (err) {
+      const code = err?.response?.data?.code
+      if (code === 'PIPELINE_NOT_FOUND') setTriggerMsg('setlist.fm에서 셋리스트를 찾을 수 없습니다.')
+      else if (code === 'PIPELINE_CONFLICT') setTriggerMsg('이미 처리 중인 수집 요청입니다.')
+      else setTriggerMsg('수집에 실패했습니다.')
     } finally {
       setTriggering(false)
     }
@@ -313,10 +322,44 @@ function AdminConcertFormPage() {
             onClick={handleTriggerSetlist}
             disabled={triggering}
           >
-            {triggering ? '전송 중...' : '셋리스트 수집 트리거'}
+            {triggering ? '수집 중...' : '셋리스트 수집'}
           </button>
           {triggerMsg && <span className={styles.triggerMsg}>{triggerMsg}</span>}
         </div>
+        {setlistResult && (
+          setlistResult.success ? (
+            <div className={styles.collectResult}>
+              <p className={styles.collectResultTitle}>
+                {setlistResult.tracks?.length ?? 0}곡 수집 완료
+              </p>
+              {setlistResult.attributionUrl && (
+                <a
+                  href={setlistResult.attributionUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={styles.collectResultLink}
+                >
+                  setlist.fm 보기 →
+                </a>
+              )}
+              {setlistResult.tracks && setlistResult.tracks.length > 0 && (
+                <ol className={styles.trackList}>
+                  {setlistResult.tracks.map((t) => (
+                    <li key={t.position} className={styles.trackItem}>
+                      <span className={styles.trackPos}>{t.position}</span>
+                      <span className={styles.trackName}>{t.songName}</span>
+                      {t.info && <span className={styles.trackInfo}>{t.info}</span>}
+                    </li>
+                  ))}
+                </ol>
+              )}
+            </div>
+          ) : (
+            <p className={styles.triggerMsg}>
+              수집 건너뜀 — {SETLIST_SKIP_REASONS[setlistResult.reason] ?? setlistResult.reason}
+            </p>
+          )
+        )}
       </section>
     </div>
   )
