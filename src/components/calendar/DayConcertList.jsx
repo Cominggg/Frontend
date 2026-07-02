@@ -82,7 +82,7 @@ function DayConcertList({ selectedDate, events, onCalendarToggle }) {
                   </div>
 
                   <div className={styles.info}>
-                    <p className={styles.artist}>{ev.artistName}</p>
+                    <p className={styles.artist}>{(ev.artists ?? []).map((a) => a.name).join(' · ')}</p>
                     <p className={styles.concertTitle}>{ev.title}</p>
                     <p className={styles.meta}>
                       {dateRange}

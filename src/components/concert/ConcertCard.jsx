@@ -21,10 +21,12 @@ function getTicketDday(ticketOpenAt) {
 }
 
 function ConcertCard({ concert }) {
-  const { id, posterUrl, artistName, title, startDate, endDate, venue, status, ticketOpenAt } = concert
+  const { id, posterUrl, artists = [], title, startDate, endDate, venue, status, ticketOpenAt } = concert
   const [imgFailed, setImgFailed] = useState(false)
   const showPlaceholder = !posterUrl || imgFailed
-  const [colorFrom, colorTo] = getArtistColor(artistName)
+  const primaryArtistName = artists[0]?.name ?? ''
+  const artistDisplayName = artists.map((a) => a.name).join(' · ')
+  const [colorFrom, colorTo] = getArtistColor(primaryArtistName)
 
   const ticketDday = getTicketDday(ticketOpenAt)
 
@@ -40,7 +42,7 @@ function ConcertCard({ concert }) {
             className={styles.posterPlaceholder}
             style={{ '--p-from': colorFrom, '--p-to': colorTo }}
           >
-            <span className={styles.posterArtistName}>{artistName}</span>
+            <span className={styles.posterArtistName}>{artistDisplayName}</span>
           </div>
         ) : (
           <img
@@ -66,7 +68,7 @@ function ConcertCard({ concert }) {
       </div>
 
       <div className={styles.info}>
-        <p className={styles.artist}>{artistName}</p>
+        <p className={styles.artist}>{artistDisplayName}</p>
         <h3 className={styles.title}>{title}</h3>
         <div className={styles.meta}>
           <span className={styles.metaIcon}>
