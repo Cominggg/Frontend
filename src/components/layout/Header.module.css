@@ -145,6 +145,12 @@
   background-color: var(--color-surface-hover);
 }
 
+.dropdownDivider {
+  margin: 0;
+  border: none;
+  border-top: 1px solid var(--color-border);
+}
+
 .avatar {
   width: 32px;
   height: 32px;

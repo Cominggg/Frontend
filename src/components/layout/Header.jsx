@@ -7,6 +7,7 @@ import useAuthStore from '@/stores/authStore'
 import useLoginModalStore from '@/stores/loginModalStore'
 import useThemeStore from '@/stores/themeStore'
 import Logo from '@/components/ui/Logo'
+import InquiryModal from '@/components/ui/InquiryModal'
 import styles from './Header.module.css'
 
 const NAV_LINKS = [
@@ -24,6 +25,8 @@ function Header() {
   const navigate = useNavigate()
   const [menuOpen, setMenuOpen] = useState(false)
   const [dropdownOpen, setDropdownOpen] = useState(false)
+  const [inquiryType, setInquiryType] = useState(null)
+  const [inquiryModalOpen, setInquiryModalOpen] = useState(false)
   const dropdownRef = useRef(null)
 
   useEffect(() => {
@@ -40,6 +43,13 @@ function Header() {
     openLoginModal(location.pathname + location.search)
   }
 
+  function handleOpenInquiry(type) {
+    setDropdownOpen(false)
+    setMenuOpen(false)
+    setInquiryType(type)
+    setInquiryModalOpen(true)
+  }
+
   async function handleLogout() {
     try {
       await logout()
@@ -52,6 +62,7 @@ function Header() {
   }
 
   return (
+    <>
     <header className={styles.header}>
       <div className={styles.inner}>
         <Link to={ROUTES.HOME} className={styles.logo}>
@@ -138,6 +149,14 @@ function Header() {
                       </Link>
                     </>
                   )}
+                  <hr className={styles.dropdownDivider} />
+                  <button className={styles.dropdownItem} onClick={() => handleOpenInquiry('DATA_REQUEST')}>
+                    데이터 요청
+                  </button>
+                  <button className={styles.dropdownItem} onClick={() => handleOpenInquiry('FEEDBACK')}>
+                    피드백
+                  </button>
+                  <hr className={styles.dropdownDivider} />
                   <button className={styles.dropdownItem} onClick={() => void handleLogout()}>
                     로그아웃
                   </button>
@@ -208,6 +227,18 @@ function Header() {
                 </>
               )}
               <button
+                className={styles.mobileNavLink}
+                onClick={() => handleOpenInquiry('DATA_REQUEST')}
+              >
+                데이터 요청
+              </button>
+              <button
+                className={styles.mobileNavLink}
+                onClick={() => handleOpenInquiry('FEEDBACK')}
+              >
+                피드백
+              </button>
+              <button
                 className={styles.mobileNavAction}
                 onClick={() => { setMenuOpen(false); void handleLogout() }}
               >
@@ -225,6 +256,12 @@ function Header() {
         </nav>
       )}
     </header>
+    <InquiryModal
+      isOpen={inquiryModalOpen}
+      onClose={() => { setInquiryModalOpen(false); setInquiryType(null) }}
+      type={inquiryType}
+    />
+    </>
   )
 }
 
