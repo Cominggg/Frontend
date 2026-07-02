@@ -184,6 +184,61 @@
   color: var(--color-accent);
 }
 
+/* ── 연결 아티스트 ── */
+.artistList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+  min-height: 2rem;
+}
+
+.noArtists {
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+.artistChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.3125rem 0.375rem 0.3125rem 0.75rem;
+  border-radius: 100px;
+  border: 1.5px solid var(--color-border);
+  background: var(--color-surface);
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-text);
+}
+
+.artistRemoveBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border: none;
+  background: none;
+  color: var(--color-text-muted);
+  font-size: 1rem;
+  line-height: 1;
+  border-radius: 50%;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.15s, color 0.15s;
+}
+
+.artistRemoveBtn:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--color-destructive, #e53e3e) 12%, transparent);
+  color: var(--color-destructive, #e53e3e);
+}
+
+.artistRemoveBtn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
 /* ── 삭제 버튼 ── */
 .btnDelete {
   padding: 0.6875rem 1.25rem;

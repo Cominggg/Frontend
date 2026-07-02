@@ -3,7 +3,8 @@ import { Link, useParams, useNavigate } from 'react-router-dom'
 
 import Badge from '@/components/ui/Badge'
 import AppDatePicker from '@/components/ui/AppDatePicker'
-import { getAdminConcert, updateConcert, updateConcertState, triggerConcertSetlistCollect } from '@/services/adminApi'
+import AddArtistModal from '@/components/concert/AddArtistModal'
+import { getAdminConcert, updateConcert, updateConcertState, triggerConcertSetlistCollect, removeConcertArtist } from '@/services/adminApi'
 import { ROUTES } from '@/constants/routes'
 import styles from './AdminFormPage.module.css'
 import concertStyles from './AdminConcertFormPage.module.css'
@@ -80,6 +81,10 @@ function AdminConcertFormPage() {
   const [stateChanging, setStateChanging] = useState(false)
   const [stateMsg, setStateMsg] = useState('')
 
+  const [artists, setArtists] = useState([])
+  const [showAddArtist, setShowAddArtist] = useState(false)
+  const [removingArtistId, setRemovingArtistId] = useState(null)
+
   const [triggering, setTriggering] = useState(false)
   const [triggerMsg, setTriggerMsg] = useState('')
   const [setlistResult, setSetlistResult] = useState(null)
@@ -103,6 +108,7 @@ function AdminConcertFormPage() {
       })
       setCurrentStatus(concert.status ?? 'UPCOMING')
       setPendingStatus(concert.status ?? 'UPCOMING')
+      setArtists(concert.artists ?? [])
     }).catch(() => setError('공연 정보를 불러오지 못했습니다.'))
   }, [id, navigate])
 
@@ -149,6 +155,22 @@ function AdminConcertFormPage() {
     } finally {
       setStateChanging(false)
     }
+  }
+
+  async function handleRemoveArtist(artistId) {
+    setRemovingArtistId(artistId)
+    try {
+      await removeConcertArtist(id, artistId)
+      setArtists((prev) => prev.filter((a) => a.artistId !== artistId))
+    } catch {
+      // 제거 실패 시 목록 유지
+    } finally {
+      setRemovingArtistId(null)
+    }
+  }
+
+  function handleArtistAdded(artist) {
+    setArtists((prev) => [...prev, artist])
   }
 
   async function handleTriggerSetlist() {
@@ -268,6 +290,38 @@ function AdminConcertFormPage() {
           />
         </section>
 
+        <section className={styles.section}>
+          <h2 className={styles.sectionTitle}>연결 아티스트</h2>
+          <div className={concertStyles.artistList}>
+            {artists.length === 0 ? (
+              <p className={concertStyles.noArtists}>연결된 아티스트가 없습니다.</p>
+            ) : (
+              artists.map((a) => (
+                <span key={a.artistId} className={concertStyles.artistChip}>
+                  <span>{a.name}</span>
+                  <button
+                    type="button"
+                    className={concertStyles.artistRemoveBtn}
+                    disabled={removingArtistId === a.artistId}
+                    onClick={() => handleRemoveArtist(a.artistId)}
+                    aria-label={`${a.name} 제거`}
+                  >
+                    {removingArtistId === a.artistId ? '...' : '×'}
+                  </button>
+                </span>
+              ))
+            )}
+          </div>
+          <button
+            type="button"
+            className={concertStyles.bookingAddBtn}
+            style={{ marginTop: '0.625rem' }}
+            onClick={() => setShowAddArtist(true)}
+          >
+            + 아티스트 추가
+          </button>
+        </section>
+
         {error && <p className={styles.errorMsg}>{error}</p>}
 
         <div className={styles.formFooter}>
@@ -311,6 +365,14 @@ function AdminConcertFormPage() {
           </div>
         </div>
       </section>
+
+      {showAddArtist && (
+        <AddArtistModal
+          concertId={id}
+          onClose={() => setShowAddArtist(false)}
+          onAdded={handleArtistAdded}
+        />
+      )}
 
       {/* 데이터 수집 */}
       <section className={styles.section} style={{ marginTop: '2rem' }}>
