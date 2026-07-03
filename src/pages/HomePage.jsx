@@ -271,7 +271,14 @@ function HomePage() {
                           <span className={styles.upcomingDateDay}>{day}</span>
                         </div>
                         <div className={styles.upcomingListInfo}>
-                          <p className={styles.upcomingListArtist}><ArtistAliasName name={concert.artistName} koreanName={concert.artistKoreanName} /></p>
+                          <p className={styles.upcomingListArtist}>
+                            {(concert.artists ?? []).map((a, i) => (
+                              <span key={a.artistId ?? i}>
+                                {i > 0 && ' · '}
+                                <ArtistAliasName name={a.name} koreanName={a.koreanName} />
+                              </span>
+                            ))}
+                          </p>
                           <p className={styles.upcomingListTitle}>{concert.title}</p>
                           <p className={styles.upcomingListMeta}>{concert.venue}</p>
                         </div>
