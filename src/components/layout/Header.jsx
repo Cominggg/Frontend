@@ -149,14 +149,12 @@ function Header() {
                       </Link>
                     </>
                   )}
-                  <hr className={styles.dropdownDivider} />
                   <button className={styles.dropdownItem} onClick={() => handleOpenInquiry('DATA_REQUEST')}>
                     데이터 요청
                   </button>
                   <button className={styles.dropdownItem} onClick={() => handleOpenInquiry('FEEDBACK')}>
                     피드백
                   </button>
-                  <hr className={styles.dropdownDivider} />
                   <button className={styles.dropdownItem} onClick={() => void handleLogout()}>
                     로그아웃
                   </button>
