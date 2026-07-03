@@ -10,6 +10,16 @@ const TYPE_LABELS = {
   CONCERT: '공연 정보 문의',
   ARTIST: '아티스트 정보 문의',
   SETLIST: '셋리스트 문의',
+  DATA_REQUEST: '데이터 요청',
+  FEEDBACK: '피드백',
+}
+
+const TYPE_SUBTITLES = {
+  CONCERT: '잘못된 정보를 발견하셨나요? 문의 내용을 남겨주시면 검토 후 반영하겠습니다.',
+  ARTIST: '잘못된 정보를 발견하셨나요? 문의 내용을 남겨주시면 검토 후 반영하겠습니다.',
+  SETLIST: '잘못된 정보를 발견하셨나요? 문의 내용을 남겨주시면 검토 후 반영하겠습니다.',
+  DATA_REQUEST: '원하는 공연이나 아티스트가 없나요? 요청 내용을 남겨주시면 검토 후 추가를 검토합니다.',
+  FEEDBACK: '서비스에 대한 의견이나 개선 제안을 남겨주세요. 더 나은 서비스를 위해 적극 반영하겠습니다.',
 }
 
 const FOCUSABLE = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
@@ -65,6 +75,7 @@ function InquiryModal({ isOpen, onClose, type, targetId }) {
   if (!isOpen) return null
 
   const typeLabel = TYPE_LABELS[type] ?? '문의'
+  const typeSubtitle = TYPE_SUBTITLES[type] ?? ''
 
   async function handleSubmit(e) {
     e.preventDefault()
@@ -78,7 +89,7 @@ function InquiryModal({ isOpen, onClose, type, targetId }) {
     } catch (err) {
       const status = err?.response?.status
       if (status === 409) {
-        setError('이미 해당 공연에 대한 문의 내역이 있습니다. 마이페이지에서 확인해 주세요.')
+        setError('이미 동일한 문의 내역이 있습니다. 마이페이지에서 확인해 주세요.')
       } else if (status === 400) {
         setError('입력 내용을 다시 확인해 주세요.')
       } else {
@@ -138,7 +149,7 @@ function InquiryModal({ isOpen, onClose, type, targetId }) {
           <>
             <div className={styles.header}>
               <h2 className={styles.modalTitle}>{typeLabel}</h2>
-              <p className={styles.subtitle}>잘못된 정보를 발견하셨나요? 문의 내용을 남겨주시면 검토 후 반영하겠습니다.</p>
+              <p className={styles.subtitle}>{typeSubtitle}</p>
             </div>
 
             <form className={styles.form} onSubmit={handleSubmit} noValidate>

@@ -127,9 +127,10 @@ function ConcertDetailPage() {
     )
   }
 
-  const { posterUrl, imageUrls, artistName, artistId,
+  const { posterUrl, imageUrls, artists = [],
           title, startDate, endDate, venue, status,
           price, isInCalendar, ticketLinks, ticketOpenAt } = concert
+  const artistDisplayName = artists.map((a) => a.name).join(' · ')
 
   const setlist = setlistData?.tracks ?? []
   const setlistSourceUrl = setlistData?.sourceUrl
@@ -155,12 +156,12 @@ function ConcertDetailPage() {
             <div className={styles.thumbnailWrap}>
               {showPosterPlaceholder ? (
                 <div className={styles.thumbnailPlaceholder}>
-                  <span className={styles.thumbnailArtistName}>{artistName}</span>
+                  <span className={styles.thumbnailArtistName}>{artistDisplayName}</span>
                 </div>
               ) : (
                 <img
                   src={posterUrl}
-                  alt={artistName}
+                  alt={artistDisplayName}
                   className={styles.thumbnail}
                   loading="lazy"
                   decoding="async"
@@ -176,13 +177,20 @@ function ConcertDetailPage() {
             {/* 상태 배지 + 아티스트명 */}
             <div className={styles.topMeta}>
               <Badge status={status} />
-              {artistId ? (
-                <Link to={ROUTES.ARTIST_DETAIL(artistId)} className={styles.artistLink}>
-                  {artistName}
-                </Link>
-              ) : (
-                <span className={styles.artistLink}>{artistName}</span>
-              )}
+              <span className={styles.artistLinks}>
+                {artists.map((artist, i) => (
+                  <span key={artist.artistId}>
+                    {i > 0 && <span className={styles.artistSep}> · </span>}
+                    {artist.artistId ? (
+                      <Link to={ROUTES.ARTIST_DETAIL(artist.artistId)} className={styles.artistLink}>
+                        {artist.name}
+                      </Link>
+                    ) : (
+                      <span className={styles.artistLink}>{artist.name}</span>
+                    )}
+                  </span>
+                ))}
+              </span>
             </div>
 
             <h1 className={styles.title}>{title}</h1>
@@ -349,7 +357,7 @@ function ConcertDetailPage() {
                       target="_blank"
                       rel="noopener noreferrer"
                     >
-                      {artistName} setlist on setlist.fm
+                      {artistDisplayName} setlist on setlist.fm
                     </a>
                   </p>
                 </>

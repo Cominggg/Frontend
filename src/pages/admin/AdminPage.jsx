@@ -5,6 +5,11 @@ import { getInquiries, getPendingConcerts, triggerArtistCollect, triggerConcertC
 import { ROUTES } from '@/constants/routes'
 import styles from './AdminPage.module.css'
 
+const CONCERT_SKIP_REASONS = {
+  not_touring: '내한 공연 아님',
+  no_alias_match: '아티스트 매칭 없음',
+}
+
 const STATIC_CARDS = [
   {
     to: ROUTES.ADMIN_PENDING_CONCERTS,
@@ -43,12 +48,17 @@ const STATIC_CARDS = [
   },
 ]
 
-function PipelineSearchBlock({ title, placeholder, onSearch, onCollect, collectLabel, resultNameKey, resultSubKey, resultTagKeys = [] }) {
+// formatResult 반환 형태:
+//   성공: { type: 'success', fields: [{ label, value }], editPath: string | null }
+//   건너뜀: { type: 'skip', msg: string }
+// 에러는 catch에서 { type: 'error', msg: string } 으로 내부 생성
+
+function PipelineSearchBlock({ title, placeholder, onSearch, onCollect, collectLabel, resultNameKey, resultSubKey, resultTagKeys = [], formatResult }) {
   const [query, setQuery] = useState('')
   const [results, setResults] = useState([])
   const [searching, setSearching] = useState(false)
   const [collectingId, setCollectingId] = useState(null)
-  const [msgs, setMsgs] = useState({})
+  const [collectResults, setCollectResults] = useState({})
   const [searchError, setSearchError] = useState('')
 
   async function handleSearch(e) {
@@ -70,15 +80,27 @@ function PipelineSearchBlock({ title, placeholder, onSearch, onCollect, collectL
   async function handleCollect(item) {
     const key = item.id ?? item.mbid ?? item.kopisId
     setCollectingId(key)
-    setMsgs((prev) => ({ ...prev, [key]: '' }))
+    setCollectResults((prev) => { const next = { ...prev }; delete next[key]; return next })
     try {
-      await onCollect(item)
-      setMsgs((prev) => ({ ...prev, [key]: '수집 트리거 전송 완료' }))
-    } catch {
-      setMsgs((prev) => ({ ...prev, [key]: '전송 실패' }))
+      const data = await onCollect(item)
+      const formatted = formatResult
+        ? formatResult(data)
+        : { type: 'success', fields: [], editPath: null }
+      setCollectResults((prev) => ({ ...prev, [key]: formatted }))
+    } catch (err) {
+      const code = err?.response?.data?.code
+      const msg =
+        code === 'PIPELINE_NOT_FOUND' ? '등록되지 않은 ID입니다.'
+        : code === 'PIPELINE_CONFLICT' ? '이미 처리 중인 수집 요청입니다.'
+        : '수집 실패'
+      setCollectResults((prev) => ({ ...prev, [key]: { type: 'error', msg } }))
     } finally {
       setCollectingId(null)
     }
+  }
+
+  function dismissResult(key) {
+    setCollectResults((prev) => { const next = { ...prev }; delete next[key]; return next })
   }
 
   return (
@@ -101,39 +123,84 @@ function PipelineSearchBlock({ title, placeholder, onSearch, onCollect, collectL
         <ul className={styles.searchResults}>
           {results.map((item) => {
             const key = item.id ?? item.mbid ?? item.kopisId
+            const collectResult = collectResults[key]
             return (
               <li key={key} className={styles.searchResultItem}>
-                <div className={styles.searchResultInfo}>
-                  <div className={styles.searchResultNameRow}>
-                    <span className={styles.searchResultName}>{item[resultNameKey]}</span>
-                    {resultTagKeys.length > 0 && (
-                      <div className={styles.searchResultTags}>
-                        {resultTagKeys.map((key) =>
-                          item[key] ? <span key={key} className={styles.searchResultTag}>{item[key]}</span> : null
-                        )}
-                      </div>
+                <div className={styles.searchResultRow}>
+                  <div className={styles.searchResultInfo}>
+                    <div className={styles.searchResultNameRow}>
+                      <span className={styles.searchResultName}>{item[resultNameKey]}</span>
+                      {resultTagKeys.length > 0 && (
+                        <div className={styles.searchResultTags}>
+                          {resultTagKeys.map((tagKey) =>
+                            item[tagKey] ? <span key={tagKey} className={styles.searchResultTag}>{item[tagKey]}</span> : null
+                          )}
+                        </div>
+                      )}
+                    </div>
+                    {resultSubKey && item[resultSubKey] && (
+                      <span className={styles.searchResultSub}>{item[resultSubKey]}</span>
                     )}
                   </div>
-                  {resultSubKey && item[resultSubKey] && (
-                    <span className={styles.searchResultSub}>{item[resultSubKey]}</span>
-                  )}
+                  <div className={styles.searchResultActions}>
+                    {item.url && (
+                      <a href={item.url} target="_blank" rel="noopener noreferrer" className={styles.triggerLink}>
+                        바로가기 →
+                      </a>
+                    )}
+                    <button
+                      type="button"
+                      className={styles.collectBtn}
+                      disabled={collectingId === key}
+                      onClick={() => handleCollect(item)}
+                    >
+                      {collectingId === key ? '전송 중...' : collectLabel}
+                    </button>
+                  </div>
                 </div>
-                <div className={styles.searchResultActions}>
-                  {msgs[key] && <span className={styles.triggerMsg}>{msgs[key]}</span>}
-                  {item.url && (
-                    <a href={item.url} target="_blank" rel="noopener noreferrer" className={styles.triggerLink}>
-                      바로가기 →
-                    </a>
-                  )}
-                  <button
-                    type="button"
-                    className={styles.collectBtn}
-                    disabled={collectingId === key}
-                    onClick={() => handleCollect(item)}
-                  >
-                    {collectingId === key ? '전송 중...' : collectLabel}
-                  </button>
-                </div>
+                {collectResult && (
+                  <div className={`${styles.resultCard} ${
+                    collectResult.type === 'success' ? styles.resultCardSuccess
+                    : collectResult.type === 'skip' ? styles.resultCardSkip
+                    : styles.resultCardError
+                  }`}>
+                    <p className={styles.resultCardTitle}>
+                      {collectResult.type === 'success' ? '수집 완료'
+                      : collectResult.type === 'skip' ? '수집 건너뜀'
+                      : '수집 실패'}
+                    </p>
+                    {collectResult.type === 'success' && collectResult.fields?.length > 0 && (
+                      <dl className={styles.resultFields}>
+                        {collectResult.fields.map(({ label, value }) => (
+                          <div key={label} className={styles.resultField}>
+                            <dt className={styles.resultFieldLabel}>{label}</dt>
+                            <dd className={styles.resultFieldValue}>{value}</dd>
+                          </div>
+                        ))}
+                      </dl>
+                    )}
+                    {(collectResult.type === 'skip' || collectResult.type === 'error') && (
+                      <p className={styles.resultCardMsg}>{collectResult.msg}</p>
+                    )}
+                    <div className={styles.resultCardActions}>
+                      <button
+                        type="button"
+                        className={styles.resultDismissBtn}
+                        onClick={() => dismissResult(key)}
+                      >
+                        확인
+                      </button>
+                      {collectResult.type === 'success' && collectResult.editPath && (
+                        <Link to={collectResult.editPath} className={styles.resultEditBtn}>
+                          수정
+                          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                            <path d="m9 18 6-6-6-6" />
+                          </svg>
+                        </Link>
+                      )}
+                    </div>
+                  </div>
+                )}
               </li>
             )
           })}
@@ -196,8 +263,8 @@ function AdminPage() {
       <section className={styles.pipeline}>
         <h2 className={styles.pipelineTitle}>파이프라인 트리거</h2>
         <p className={styles.pipelineDesc}>
-          MusicBrainz 또는 KOPIS에서 데이터를 검색한 뒤 수집 트리거를 전송합니다.
-          비동기 처리되며 응답은 트리거 성공 여부만 나타냅니다.
+          MusicBrainz 또는 KOPIS에서 데이터를 검색한 뒤 수집합니다.
+          외부 API 호출로 인해 수 초 이상 소요될 수 있습니다.
         </p>
         <p className={styles.pipelineHint}>
           기존 아티스트·공연 수정은 각 상세 페이지의 <strong>관리자 수정</strong> 버튼을 이용하세요.
@@ -212,6 +279,14 @@ function AdminPage() {
           resultNameKey="name"
           resultSubKey="mbid"
           resultTagKeys={['type', 'country']}
+          formatResult={(result) => ({
+            type: 'success',
+            fields: [
+              { label: '아티스트명', value: result.name },
+              { label: 'DB ID', value: String(result.artistId) },
+            ],
+            editPath: ROUTES.ADMIN_ARTIST_EDIT(result.artistId),
+          })}
         />
 
         <PipelineSearchBlock
@@ -222,6 +297,27 @@ function AdminPage() {
           collectLabel="수집"
           resultNameKey="title"
           resultSubKey="kopisId"
+          formatResult={(result) =>
+            result.success
+              ? {
+                  type: 'success',
+                  fields: [
+                    { label: '공연명', value: result.title },
+                    { label: 'DB ID', value: String(result.concertId) },
+                    {
+                      label: '매칭 아티스트',
+                      value: result.matchedArtists?.length
+                        ? result.matchedArtists.map((a) => `${a.name} (ID: ${a.artistId})`).join(', ')
+                        : '없음',
+                    },
+                  ],
+                  editPath: ROUTES.ADMIN_CONCERT_EDIT(result.concertId),
+                }
+              : {
+                  type: 'skip',
+                  msg: CONCERT_SKIP_REASONS[result.reason] ?? result.reason ?? '알 수 없음',
+                }
+          }
         />
       </section>
     </div>

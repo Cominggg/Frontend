@@ -3,10 +3,15 @@ import { Link, useParams, useNavigate } from 'react-router-dom'
 
 import Badge from '@/components/ui/Badge'
 import AppDatePicker from '@/components/ui/AppDatePicker'
-import { getAdminConcert, updateConcert, updateConcertState, triggerConcertSetlistCollect } from '@/services/adminApi'
+import AddArtistModal from '@/components/concert/AddArtistModal'
+import { getAdminConcert, updateConcert, updateConcertState, triggerConcertSetlistCollect, removeConcertArtist } from '@/services/adminApi'
 import { ROUTES } from '@/constants/routes'
 import styles from './AdminFormPage.module.css'
 import concertStyles from './AdminConcertFormPage.module.css'
+
+const SETLIST_SKIP_REASONS = {
+  no_setlist_found: 'setlist.fm에 셋리스트 없음',
+}
 
 const STATUS_OPTIONS = ['UPCOMING', 'ONGOING', 'ENDED', 'CANCELLED', 'EXCLUDED']
 
@@ -76,8 +81,13 @@ function AdminConcertFormPage() {
   const [stateChanging, setStateChanging] = useState(false)
   const [stateMsg, setStateMsg] = useState('')
 
+  const [artists, setArtists] = useState([])
+  const [showAddArtist, setShowAddArtist] = useState(false)
+  const [removingArtistId, setRemovingArtistId] = useState(null)
+
   const [triggering, setTriggering] = useState(false)
   const [triggerMsg, setTriggerMsg] = useState('')
+  const [setlistResult, setSetlistResult] = useState(null)
 
   useEffect(() => {
     if (!id) { navigate(ROUTES.ADMIN, { replace: true }); return }
@@ -98,6 +108,7 @@ function AdminConcertFormPage() {
       })
       setCurrentStatus(concert.status ?? 'UPCOMING')
       setPendingStatus(concert.status ?? 'UPCOMING')
+      setArtists(concert.artists ?? [])
     }).catch(() => setError('공연 정보를 불러오지 못했습니다.'))
   }, [id, navigate])
 
@@ -146,14 +157,34 @@ function AdminConcertFormPage() {
     }
   }
 
+  async function handleRemoveArtist(artistId) {
+    setRemovingArtistId(artistId)
+    try {
+      await removeConcertArtist(id, artistId)
+      setArtists((prev) => prev.filter((a) => a.artistId !== artistId))
+    } catch {
+      setError('아티스트 제거에 실패했습니다. 다시 시도해주세요.')
+    } finally {
+      setRemovingArtistId(null)
+    }
+  }
+
+  function handleArtistAdded(artist) {
+    setArtists((prev) => [...prev, artist])
+  }
+
   async function handleTriggerSetlist() {
     setTriggering(true)
     setTriggerMsg('')
+    setSetlistResult(null)
     try {
-      await triggerConcertSetlistCollect(id)
-      setTriggerMsg('셋리스트 수집 트리거가 전송되었습니다.')
-    } catch {
-      setTriggerMsg('트리거 전송에 실패했습니다.')
+      const result = await triggerConcertSetlistCollect(id)
+      setSetlistResult(result)
+    } catch (err) {
+      const code = err?.response?.data?.code
+      if (code === 'PIPELINE_NOT_FOUND') setTriggerMsg('setlist.fm에서 셋리스트를 찾을 수 없습니다.')
+      else if (code === 'PIPELINE_CONFLICT') setTriggerMsg('이미 처리 중인 수집 요청입니다.')
+      else setTriggerMsg('수집에 실패했습니다.')
     } finally {
       setTriggering(false)
     }
@@ -259,6 +290,38 @@ function AdminConcertFormPage() {
           />
         </section>
 
+        <section className={styles.section}>
+          <h2 className={styles.sectionTitle}>연결 아티스트</h2>
+          <div className={concertStyles.artistList}>
+            {artists.length === 0 ? (
+              <p className={concertStyles.noArtists}>연결된 아티스트가 없습니다.</p>
+            ) : (
+              artists.map((a) => (
+                <span key={a.artistId} className={concertStyles.artistChip}>
+                  <span>{a.name}</span>
+                  <button
+                    type="button"
+                    className={concertStyles.artistRemoveBtn}
+                    disabled={removingArtistId === a.artistId}
+                    onClick={() => handleRemoveArtist(a.artistId)}
+                    aria-label={`${a.name} 제거`}
+                  >
+                    {removingArtistId === a.artistId ? '...' : '×'}
+                  </button>
+                </span>
+              ))
+            )}
+          </div>
+          <button
+            type="button"
+            className={concertStyles.bookingAddBtn}
+            style={{ marginTop: '0.625rem' }}
+            onClick={() => setShowAddArtist(true)}
+          >
+            + 아티스트 추가
+          </button>
+        </section>
+
         {error && <p className={styles.errorMsg}>{error}</p>}
 
         <div className={styles.formFooter}>
@@ -303,6 +366,14 @@ function AdminConcertFormPage() {
         </div>
       </section>
 
+      {showAddArtist && (
+        <AddArtistModal
+          concertId={id}
+          onClose={() => setShowAddArtist(false)}
+          onAdded={handleArtistAdded}
+        />
+      )}
+
       {/* 데이터 수집 */}
       <section className={styles.section} style={{ marginTop: '2rem' }}>
         <h2 className={styles.sectionTitle}>데이터 수집</h2>
@@ -313,10 +384,44 @@ function AdminConcertFormPage() {
             onClick={handleTriggerSetlist}
             disabled={triggering}
           >
-            {triggering ? '전송 중...' : '셋리스트 수집 트리거'}
+            {triggering ? '수집 중...' : '셋리스트 수집'}
           </button>
           {triggerMsg && <span className={styles.triggerMsg}>{triggerMsg}</span>}
         </div>
+        {setlistResult && (
+          setlistResult.success ? (
+            <div className={styles.collectResult}>
+              <p className={styles.collectResultTitle}>
+                {setlistResult.tracks?.length ?? 0}곡 수집 완료
+              </p>
+              {setlistResult.attributionUrl && (
+                <a
+                  href={setlistResult.attributionUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={styles.collectResultLink}
+                >
+                  setlist.fm 보기 →
+                </a>
+              )}
+              {setlistResult.tracks && setlistResult.tracks.length > 0 && (
+                <ol className={styles.trackList}>
+                  {setlistResult.tracks.map((t) => (
+                    <li key={t.position} className={styles.trackItem}>
+                      <span className={styles.trackPos}>{t.position}</span>
+                      <span className={styles.trackName}>{t.songName}</span>
+                      {t.info && <span className={styles.trackInfo}>{t.info}</span>}
+                    </li>
+                  ))}
+                </ol>
+              )}
+            </div>
+          ) : (
+            <p className={styles.triggerMsg}>
+              수집 건너뜀 — {SETLIST_SKIP_REASONS[setlistResult.reason] ?? setlistResult.reason}
+            </p>
+          )
+        )}
       </section>
     </div>
   )

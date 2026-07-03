@@ -73,11 +73,13 @@ export async function removeConcertArtist(concertId, artistId) {
 
 // 파이프라인 트리거
 export async function triggerArtistCollect(mbid) {
-  await api.post('/admin/data/collect/artists', { mbid })
+  const { data } = await api.post('/admin/data/collect/artists', { mbid })
+  return data
 }
 
 export async function triggerConcertCollect(kopisId) {
-  await api.post('/admin/data/collect/concerts', { kopisId })
+  const { data } = await api.post('/admin/data/collect/concerts', { kopisId })
+  return data
 }
 
 export async function triggerArtistReleasesCollect(artistId) {
@@ -85,7 +87,8 @@ export async function triggerArtistReleasesCollect(artistId) {
 }
 
 export async function triggerConcertSetlistCollect(concertId) {
-  await api.post(`/admin/data/collect/concerts/${concertId}/setlist`)
+  const { data } = await api.post(`/admin/data/collect/concerts/${concertId}/setlist`)
+  return data
 }
 
 // 파이프라인 검색
