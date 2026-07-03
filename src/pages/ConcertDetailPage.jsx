@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 
+import ArtistAliasName from '@/components/artist/ArtistAliasName'
 import BackButton from '@/components/ui/BackButton'
 import Badge from '@/components/ui/Badge'
 import EmptyState from '@/components/ui/EmptyState'
@@ -183,10 +184,12 @@ function ConcertDetailPage() {
                     {i > 0 && <span className={styles.artistSep}> · </span>}
                     {artist.artistId ? (
                       <Link to={ROUTES.ARTIST_DETAIL(artist.artistId)} className={styles.artistLink}>
-                        {artist.name}
+                        <ArtistAliasName name={artist.name} koreanName={artist.koreanName} />
                       </Link>
                     ) : (
-                      <span className={styles.artistLink}>{artist.name}</span>
+                      <span className={styles.artistLink}>
+                        <ArtistAliasName name={artist.name} koreanName={artist.koreanName} />
+                      </span>
                     )}
                   </span>
                 ))}

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 
+import ArtistAliasName from '@/components/artist/ArtistAliasName'
 import { searchDbArtists, addConcertArtist } from '@/services/adminApi'
 import styles from './AddArtistModal.module.css'
 
@@ -73,7 +74,7 @@ function AddArtistModal({ concertId, onClose, onAdded }) {
                   onClick={() => handleAdd(a.id, a.name)}
                   disabled={adding}
                 >
-                  <span className={styles.searchResultName}>{a.name}</span>
+                  <span className={styles.searchResultName}><ArtistAliasName name={a.name} koreanName={a.koreanName} /></span>
                   <span className={styles.searchResultId}>ID: {a.id}</span>
                 </button>
               </li>
