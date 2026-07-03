@@ -163,7 +163,7 @@ function AdminConcertFormPage() {
       await removeConcertArtist(id, artistId)
       setArtists((prev) => prev.filter((a) => a.artistId !== artistId))
     } catch {
-      // 제거 실패 시 목록 유지
+      setError('아티스트 제거에 실패했습니다. 다시 시도해주세요.')
     } finally {
       setRemovingArtistId(null)
     }
