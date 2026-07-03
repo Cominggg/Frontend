@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 
+import ArtistAliasName from '@/components/artist/ArtistAliasName'
 import { isSameDay } from '@/utils/date'
 import styles from './CalendarGrid.module.css'
 
@@ -115,7 +116,7 @@ function CalendarGrid({ year, month, events, selectedDate, onDayClick }) {
                         )
                         : <span className={styles.pillDot} />
                       }
-                      <span className={styles.pillText}>{ev.artistName}</span>
+                      <span className={styles.pillText}><ArtistAliasName name={ev.artistName} koreanName={ev.artistKoreanName} /></span>
                     </div>
                   ))}
                   {hiddenCount > 0 && (

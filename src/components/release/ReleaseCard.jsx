@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 
+import ArtistAliasName from '@/components/artist/ArtistAliasName'
 import SpotifyIcon from '@/components/ui/SpotifyIcon'
 import { ROUTES } from '@/constants/routes'
 import { getArtistColor } from '@/utils/colorPalette'
@@ -20,7 +21,7 @@ function isNewRelease(dateStr) {
 }
 
 function ReleaseCard({ release }) {
-  const { id, coverUrl, artistName, title, releaseDate, type, spotifyId } = release
+  const { id, coverUrl, artistName, artistKoreanName, title, releaseDate, type, spotifyId } = release
   const [imgFailed, setImgFailed] = useState(false)
   const showPlaceholder = !coverUrl || imgFailed
   const [colorFrom, colorTo] = getArtistColor(artistName)
@@ -73,7 +74,7 @@ function ReleaseCard({ release }) {
       </div>
 
       <div className={styles.info}>
-        <p className={styles.artist}>{artistName}</p>
+        <p className={styles.artist}><ArtistAliasName name={artistName} koreanName={artistKoreanName} /></p>
         <h3 className={styles.title}>{title}</h3>
         <div className={styles.meta} style={!releaseDate ? { visibility: 'hidden' } : undefined}>
           <span className={styles.metaIcon} aria-hidden="true">

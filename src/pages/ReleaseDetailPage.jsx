@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Link, useParams, useNavigate, useLocation } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 
+import ArtistAliasName from '@/components/artist/ArtistAliasName'
 import EmptyState from '@/components/ui/EmptyState'
 import SourceCredit from '@/components/ui/SourceCredit'
 import SpotifyIcon from '@/components/ui/SpotifyIcon'
@@ -89,7 +90,7 @@ function ReleaseDetailPage() {
     )
   }
 
-  const { artistName, artistId, title, type, releaseDate, coverUrl, tracks, totalTracks, spotifyId } = release
+  const { artistName, artistKoreanName, artistId, title, type, releaseDate, coverUrl, tracks, totalTracks, spotifyId } = release
   const showCoverPlaceholder = !coverUrl || coverFailed
   const [accentFrom, accentTo] = getArtistColor(artistName)
   const badgeColor = RELEASE_TYPE_COLOR[type] ?? 'var(--color-text-muted)'
@@ -127,7 +128,7 @@ function ReleaseDetailPage() {
             </div>
             <div className={styles.heroInfo}>
               <Link to={ROUTES.ARTIST_DETAIL(artistId)} className={styles.heroArtist}>
-                {artistName}
+                <ArtistAliasName name={artistName} koreanName={artistKoreanName} />
               </Link>
               <h1 className={styles.heroTitle}>{title}</h1>
               <div className={styles.heroMeta}>
