@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link, useParams, useNavigate } from 'react-router-dom'
 
+import ArtistAliasName from '@/components/artist/ArtistAliasName'
 import Badge from '@/components/ui/Badge'
 import AppDatePicker from '@/components/ui/AppDatePicker'
 import AddArtistModal from '@/components/concert/AddArtistModal'
@@ -298,13 +299,13 @@ function AdminConcertFormPage() {
             ) : (
               artists.map((a) => (
                 <span key={a.artistId} className={concertStyles.artistChip}>
-                  <span>{a.name}</span>
+                  <ArtistAliasName name={a.name} koreanName={a.koreanName} />
                   <button
                     type="button"
                     className={concertStyles.artistRemoveBtn}
                     disabled={removingArtistId === a.artistId}
                     onClick={() => handleRemoveArtist(a.artistId)}
-                    aria-label={`${a.name} 제거`}
+                    aria-label={`${a.koreanName ?? a.name} 제거`}
                   >
                     {removingArtistId === a.artistId ? '...' : '×'}
                   </button>

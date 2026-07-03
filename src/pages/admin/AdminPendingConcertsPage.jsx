@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 
+import ArtistAliasName from '@/components/artist/ArtistAliasName'
 import Pagination from '@/components/ui/Pagination'
 import AppDatePicker from '@/components/ui/AppDatePicker'
 import AddArtistModal from '@/components/concert/AddArtistModal'
@@ -141,13 +142,13 @@ function ConcertCard({ concert, onRefresh, onCandidateRemoved, onCandidateAdded 
           <ul className={styles.candidateList}>
             {(concert.candidates ?? []).map((c) => (
               <li key={c.artistId} className={styles.candidateItem}>
-                <span className={styles.candidateName}>{c.name}</span>
+                <span className={styles.candidateName}><ArtistAliasName name={c.name} koreanName={c.koreanName} /></span>
                 <button
                   type="button"
                   className={styles.candidateRemoveBtn}
                   disabled={removingId === c.artistId}
                   onClick={() => handleRemoveArtist(c.artistId)}
-                  aria-label={`${c.name} 제거`}
+                  aria-label={`${c.koreanName ?? c.name} 제거`}
                 >
                   {removingId === c.artistId ? '...' : '×'}
                 </button>
