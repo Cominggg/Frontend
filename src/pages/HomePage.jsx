@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 
+import ArtistAliasName from '@/components/artist/ArtistAliasName'
 import ConcertCard from '@/components/concert/ConcertCard'
 import ConcertCardSkeleton from '@/components/concert/ConcertCardSkeleton'
 import ReleaseCardSkeleton from '@/components/release/ReleaseCardSkeleton'
@@ -57,7 +58,7 @@ function AlbumCard({ item }) {
         <span className={styles.albumTypeBadge}>{item.type}</span>
       </div>
       <div className={styles.albumInfo}>
-        <p className={styles.albumArtist}>{item.artistName}</p>
+        <p className={styles.albumArtist}><ArtistAliasName name={item.artistName} koreanName={item.artistKoreanName} /></p>
         <p className={styles.albumTitle}>{item.title}</p>
         <p className={styles.albumDate}>{formatDate(item.releaseDate)}</p>
       </div>
@@ -190,7 +191,14 @@ function HomePage() {
                       >
                         <div className={styles.ticketDday}>{dday ?? '-'}</div>
                         <div className={styles.ticketInfo}>
-                          <p className={styles.ticketArtist}>{concert.artistName}</p>
+                          <p className={styles.ticketArtist}>
+                            {(concert.artists ?? []).map((a, i) => (
+                              <span key={a.artistId ?? i}>
+                                {i > 0 && ' · '}
+                                <ArtistAliasName name={a.name} koreanName={a.koreanName} />
+                              </span>
+                            ))}
+                          </p>
                           <p className={styles.ticketTitle}>{concert.title}</p>
                           <p className={styles.ticketOpenDate}>
                             <Icon name="calendar" size={12} />
@@ -263,7 +271,14 @@ function HomePage() {
                           <span className={styles.upcomingDateDay}>{day}</span>
                         </div>
                         <div className={styles.upcomingListInfo}>
-                          <p className={styles.upcomingListArtist}>{concert.artistName}</p>
+                          <p className={styles.upcomingListArtist}>
+                            {(concert.artists ?? []).map((a, i) => (
+                              <span key={a.artistId ?? i}>
+                                {i > 0 && ' · '}
+                                <ArtistAliasName name={a.name} koreanName={a.koreanName} />
+                              </span>
+                            ))}
+                          </p>
                           <p className={styles.upcomingListTitle}>{concert.title}</p>
                           <p className={styles.upcomingListMeta}>{concert.venue}</p>
                         </div>

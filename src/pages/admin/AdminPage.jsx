@@ -307,7 +307,10 @@ function AdminPage() {
                     {
                       label: '매칭 아티스트',
                       value: result.matchedArtists?.length
-                        ? result.matchedArtists.map((a) => `${a.name} (ID: ${a.artistId})`).join(', ')
+                        ? result.matchedArtists.map((a) => {
+                            const display = a.koreanName ? `${a.name} (${a.koreanName})` : a.name
+                            return `${display} (ID: ${a.artistId})`
+                          }).join(', ')
                         : '없음',
                     },
                   ],

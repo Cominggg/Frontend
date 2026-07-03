@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Link, useParams, useSearchParams } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 
+import ArtistAliasName from '@/components/artist/ArtistAliasName'
 import ArtistConcertItem from '@/components/artist/ArtistConcertItem'
 import AppleMusicIcon from '@/components/ui/AppleMusicIcon'
 import BackButton from '@/components/ui/BackButton'
@@ -194,7 +195,7 @@ function ArtistDetailPage() {
     )
   }
 
-  const { name, imageUrl, hasUpcomingConcert, followersCount, links, isFollowing } = artist
+  const { name, koreanName, imageUrl, hasUpcomingConcert, followersCount, links, isFollowing } = artist
   const spotifyLink = links?.find((l) => l.id === 'Spotify')
   const otherLinks = links?.filter((l) => l.id !== 'Spotify')
   const showPlaceholder = !imageUrl || imgFailed
@@ -246,7 +247,7 @@ function ArtistDetailPage() {
           {/* 정보 */}
           <div className={styles.heroInfo}>
             {hasUpcomingConcert && <span className={styles.comingBadge}>COMING</span>}
-            <h1 className={styles.artistName}>{name}</h1>
+            <h1 className={styles.artistName}><ArtistAliasName name={name} koreanName={koreanName} /></h1>
 
             {followersCount > 0 && <p className={styles.followers}>팔로워 {formatFollowers(followersCount)}</p>}
             <div className={styles.heroActions}>

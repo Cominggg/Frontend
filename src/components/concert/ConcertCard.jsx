@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 
+import ArtistAliasName from '@/components/artist/ArtistAliasName'
 import Badge from '@/components/ui/Badge'
 import { ROUTES } from '@/constants/routes'
 import { formatDate } from '@/utils/date'
@@ -68,7 +69,14 @@ function ConcertCard({ concert }) {
       </div>
 
       <div className={styles.info}>
-        <p className={styles.artist}>{artistDisplayName}</p>
+        <p className={styles.artist}>
+          {artists.map((a, i) => (
+            <span key={a.artistId ?? i}>
+              {i > 0 && ' · '}
+              <ArtistAliasName name={a.name} koreanName={a.koreanName} />
+            </span>
+          ))}
+        </p>
         <h3 className={styles.title}>{title}</h3>
         <div className={styles.meta}>
           <span className={styles.metaIcon}>

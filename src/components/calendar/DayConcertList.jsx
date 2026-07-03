@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 
+import ArtistAliasName from '@/components/artist/ArtistAliasName'
 import { ROUTES } from '@/constants/routes'
 import { CONCERT_STATUS_COLOR, CONCERT_STATUS_LABEL } from '@/constants/concert'
 import { formatDate } from '@/utils/date'
@@ -82,7 +83,14 @@ function DayConcertList({ selectedDate, events, onCalendarToggle }) {
                   </div>
 
                   <div className={styles.info}>
-                    <p className={styles.artist}>{(ev.artists ?? []).map((a) => a.name).join(' · ')}</p>
+                    <p className={styles.artist}>
+                      {(ev.artists ?? []).map((a, i) => (
+                        <span key={a.artistId ?? i}>
+                          {i > 0 && ' · '}
+                          <ArtistAliasName name={a.name} koreanName={a.koreanName} />
+                        </span>
+                      ))}
+                    </p>
                     <p className={styles.concertTitle}>{ev.title}</p>
                     <p className={styles.meta}>
                       {dateRange}

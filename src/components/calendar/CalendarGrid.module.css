@@ -39,6 +39,7 @@
 
 /* ── 날짜 셀 ── */
 .cell {
+  min-width: 0;
   min-height: 112px;
   padding: 8px 6px 6px;
   border-right: 1px solid var(--color-border);
