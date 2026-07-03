@@ -73,7 +73,7 @@ function ArtistRow({ artist, onUnfollow }) {
 }
 
 function ConcertRow({ concert }) {
-  const { id, artistName, artistKoreanName, title, startDate, endDate, venue, status } = concert
+  const { id, artists, title, startDate, endDate, venue, status } = concert
   const dateRange = endDate && endDate !== startDate
     ? `${formatDate(startDate)} ~ ${formatDate(endDate)}`
     : formatDate(startDate)
@@ -82,7 +82,14 @@ function ConcertRow({ concert }) {
     <Link to={ROUTES.CONCERT_DETAIL(id)} className={styles.concertRow}>
       <div className={styles.concertRowLeft}>
         <div className={styles.concertRowMeta}>
-          <span className={styles.concertRowArtist}><ArtistAliasName name={artistName} koreanName={artistKoreanName} /></span>
+          <span className={styles.concertRowArtist}>
+            {(artists ?? []).map((a, i) => (
+              <span key={a.id ?? i}>
+                {i > 0 && ' · '}
+                <ArtistAliasName name={a.name} koreanName={a.koreanName} />
+              </span>
+            ))}
+          </span>
           <Badge status={status} />
         </div>
         <p className={styles.concertRowTitle}>{title}</p>

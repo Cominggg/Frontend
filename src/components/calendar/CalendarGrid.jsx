@@ -116,7 +116,14 @@ function CalendarGrid({ year, month, events, selectedDate, onDayClick }) {
                         )
                         : <span className={styles.pillDot} />
                       }
-                      <span className={styles.pillText}><ArtistAliasName name={ev.artistName} koreanName={ev.artistKoreanName} /></span>
+                      <span className={styles.pillText}>
+                        {(ev.artists ?? []).map((a, i) => (
+                          <span key={a.id ?? i}>
+                            {i > 0 && ' · '}
+                            <ArtistAliasName name={a.name} koreanName={a.koreanName} />
+                          </span>
+                        ))}
+                      </span>
                     </div>
                   ))}
                   {hiddenCount > 0 && (
