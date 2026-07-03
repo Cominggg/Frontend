@@ -191,7 +191,14 @@ function HomePage() {
                       >
                         <div className={styles.ticketDday}>{dday ?? '-'}</div>
                         <div className={styles.ticketInfo}>
-                          <p className={styles.ticketArtist}><ArtistAliasName name={concert.artistName} koreanName={concert.artistKoreanName} /></p>
+                          <p className={styles.ticketArtist}>
+                            {(concert.artists ?? []).map((a, i) => (
+                              <span key={a.artistId ?? i}>
+                                {i > 0 && ' · '}
+                                <ArtistAliasName name={a.name} koreanName={a.koreanName} />
+                              </span>
+                            ))}
+                          </p>
                           <p className={styles.ticketTitle}>{concert.title}</p>
                           <p className={styles.ticketOpenDate}>
                             <Icon name="calendar" size={12} />
