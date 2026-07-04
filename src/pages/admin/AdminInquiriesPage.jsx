@@ -3,10 +3,10 @@ import { useState, useEffect, useCallback } from 'react'
 import { getInquiries, getInquiry, updateInquiryStatus } from '@/services/adminApi'
 import styles from './AdminInquiriesPage.module.css'
 
-const TYPE_LABEL = { CONCERT: '공연', ARTIST: '아티스트', SETLIST: '셋리스트' }
+const TYPE_LABEL = { CONCERT: '공연', ARTIST: '아티스트', SETLIST: '셋리스트', REQUEST_DATA: '데이터 요청', FEEDBACK: '피드백' }
 const STATUS_LABEL = { PENDING: '대기 중', IN_PROGRESS: '처리 중', RESOLVED: '처리완료', REJECTED: '반려' }
 const STATUS_FILTERS = ['전체', 'PENDING', 'IN_PROGRESS', 'RESOLVED', 'REJECTED']
-const TYPE_FILTERS = ['전체', 'CONCERT', 'ARTIST', 'SETLIST']
+const TYPE_FILTERS = ['전체', 'CONCERT', 'ARTIST', 'SETLIST', 'REQUEST_DATA', 'FEEDBACK']
 
 function DetailModal({ id, onClose, onStatusChange }) {
   const [item, setItem] = useState(null)
