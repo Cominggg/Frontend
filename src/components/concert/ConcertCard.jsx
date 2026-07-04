@@ -96,7 +96,7 @@ function ConcertCard({ concert }) {
               <circle cx="12" cy="10" r="3" />
             </svg>
           </span>
-          {venue}
+          <span className={styles.metaText}>{venue}</span>
         </div>
       </div>
     </Link>
