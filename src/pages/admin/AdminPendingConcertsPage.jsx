@@ -59,7 +59,7 @@ function BookingLinksEditor({ links, onChange }) {
   )
 }
 
-function ConcertCard({ concert, onRefresh, onCandidateRemoved, onCandidateAdded }) {
+function ConcertCard({ concert, onRemoved, onCandidateRemoved, onCandidateAdded }) {
   const [acting, setActing] = useState(null)
   const [removingId, setRemovingId] = useState(null)
   const [showAddArtist, setShowAddArtist] = useState(false)
@@ -87,7 +87,7 @@ function ConcertCard({ concert, onRefresh, onCandidateRemoved, onCandidateAdded 
     setActing('reject')
     try {
       await rejectConcert(concert.id)
-      onRefresh()
+      onRemoved()
     } catch {
       setActing(null)
     }
@@ -113,7 +113,7 @@ function ConcertCard({ concert, onRefresh, onCandidateRemoved, onCandidateAdded 
         bookingLinks: ticket.bookingLinks.filter((l) => l.url.trim()),
       }
       await approveConcert(concert.id, body)
-      onRefresh()
+      onRemoved()
     } catch {
       setActing(null)
     }
@@ -263,6 +263,14 @@ function AdminPendingConcertsPage() {
     fetchPending()
   }, [fetchPending])
 
+  function handleConcertRemoved(concertId) {
+    setConcerts((prev) => {
+      const next = prev.filter((c) => c.id !== concertId)
+      if (next.length === 0 && page > 1) setPage((p) => p - 1)
+      return next
+    })
+  }
+
   function handleCandidateRemoved(concertId, artistId) {
     setConcerts((prev) =>
       prev.map((c) =>
@@ -306,10 +314,7 @@ function AdminPendingConcertsPage() {
             <ConcertCard
               key={concert.id}
               concert={concert}
-              onRefresh={() => {
-                if (concerts.length === 1 && page > 1) setPage((p) => p - 1)
-                else fetchPending()
-              }}
+              onRemoved={() => handleConcertRemoved(concert.id)}
               onCandidateRemoved={(artistId) => handleCandidateRemoved(concert.id, artistId)}
               onCandidateAdded={(artist) => handleCandidateAdded(concert.id, artist)}
             />
