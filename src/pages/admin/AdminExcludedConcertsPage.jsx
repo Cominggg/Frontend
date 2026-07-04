@@ -159,7 +159,10 @@ function AdminExcludedConcertsPage() {
   function handleConcertRemoved(concertId) {
     setConcerts((prev) => {
       const next = prev.filter((c) => c.id !== concertId)
-      if (next.length === 0 && page > 1) setPage((p) => p - 1)
+      if (next.length === 0) {
+        if (page > 1) setPage((p) => p - 1)
+        setTotalPages((t) => Math.max(0, t - 1))
+      }
       return next
     })
   }
