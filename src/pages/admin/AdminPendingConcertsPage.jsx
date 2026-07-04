@@ -5,7 +5,7 @@ import ArtistAliasName from '@/components/artist/ArtistAliasName'
 import Pagination from '@/components/ui/Pagination'
 import AppDatePicker from '@/components/ui/AppDatePicker'
 import AddArtistModal from '@/components/concert/AddArtistModal'
-import { getPendingConcerts, approveConcert, rejectConcert, removeConcertArtist } from '@/services/adminApi'
+import { getPendingConcerts, approveConcert, rejectConcert, removeConcertCandidate, addConcertCandidate } from '@/services/adminApi'
 import { ROUTES } from '@/constants/routes'
 import styles from './AdminPendingConcertsPage.module.css'
 
@@ -96,7 +96,7 @@ function ConcertCard({ concert, onRefresh, onCandidateRemoved, onCandidateAdded 
   async function handleRemoveArtist(artistId) {
     setRemovingId(artistId)
     try {
-      await removeConcertArtist(concert.id, artistId)
+      await removeConcertCandidate(concert.id, artistId)
       onCandidateRemoved(artistId)
     } catch {
       // 제거 실패 시 로딩 상태만 복구
@@ -233,6 +233,7 @@ function ConcertCard({ concert, onRefresh, onCandidateRemoved, onCandidateAdded 
           concertId={concert.id}
           onClose={() => setShowAddArtist(false)}
           onAdded={onCandidateAdded}
+          addFn={addConcertCandidate}
         />
       )}
     </div>
