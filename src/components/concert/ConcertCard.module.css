@@ -97,6 +97,9 @@
   font-weight: 600;
   letter-spacing: 0.04em;
   color: var(--color-accent-light);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .title {
@@ -126,6 +129,14 @@
   align-items: center;
   flex-shrink: 0;
   color: var(--color-text-muted);
+}
+
+.metaText {
+  min-width: 0;
+  flex: 1;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .ticketBadge {
