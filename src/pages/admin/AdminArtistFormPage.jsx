@@ -171,10 +171,10 @@ function AdminArtistFormPage() {
         {error && <p className={styles.errorMsg}>{error}</p>}
 
         <div className={styles.formFooter}>
+          {savedMsg && <span className={styles.savedMsg}>{savedMsg}</span>}
           <button type="submit" className={styles.btnSubmit} disabled={saving}>
             {saving ? '저장 중...' : '수정 저장'}
           </button>
-          {savedMsg && <span className={styles.savedMsg}>{savedMsg}</span>}
         </div>
       </form>
 
