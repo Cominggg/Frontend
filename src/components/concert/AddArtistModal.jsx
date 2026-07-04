@@ -4,7 +4,7 @@ import ArtistAliasName from '@/components/artist/ArtistAliasName'
 import { searchDbArtists, addConcertArtist } from '@/services/adminApi'
 import styles from './AddArtistModal.module.css'
 
-function AddArtistModal({ concertId, onClose, onAdded }) {
+function AddArtistModal({ concertId, onClose, onAdded, addFn = addConcertArtist }) {
   const [query, setQuery] = useState('')
   const [results, setResults] = useState([])
   const [searching, setSearching] = useState(false)
@@ -30,7 +30,7 @@ function AddArtistModal({ concertId, onClose, onAdded }) {
     setAdding(true)
     setError('')
     try {
-      await addConcertArtist(concertId, artistId)
+      await addFn(concertId, artistId)
       onAdded({ artistId, name: artistName })
       onClose()
     } catch (err) {

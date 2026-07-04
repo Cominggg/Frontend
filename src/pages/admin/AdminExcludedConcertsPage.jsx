@@ -9,7 +9,7 @@ import styles from './AdminExcludedConcertsPage.module.css'
 
 const STATUS_OPTIONS = ['UPCOMING', 'ONGOING', 'ENDED', 'CANCELLED']
 
-function ExcludedConcertCard({ concert, onRefresh }) {
+function ExcludedConcertCard({ concert, onRefresh, onRemoved }) {
   const [pendingStatus, setPendingStatus] = useState('UPCOMING')
   const [stateChanging, setStateChanging] = useState(false)
   const [stateMsg, setStateMsg] = useState('')
@@ -21,7 +21,7 @@ function ExcludedConcertCard({ concert, onRefresh }) {
     setStateMsg('')
     try {
       await updateConcertState(concert.id, { status: pendingStatus })
-      onRefresh()
+      onRemoved()
     } catch {
       setStateMsg('상태 변경에 실패했습니다.')
     } finally {
@@ -156,6 +156,17 @@ function AdminExcludedConcertsPage() {
     fetchExcluded()
   }, [fetchExcluded])
 
+  function handleConcertRemoved(concertId) {
+    setConcerts((prev) => {
+      const next = prev.filter((c) => c.id !== concertId)
+      if (next.length === 0) {
+        if (page > 1) setPage((p) => p - 1)
+        setTotalPages((t) => Math.max(0, t - 1))
+      }
+      return next
+    })
+  }
+
   return (
     <div className={styles.page}>
       <div className={styles.pageHeader}>
@@ -184,10 +195,8 @@ function AdminExcludedConcertsPage() {
             <ExcludedConcertCard
               key={concert.id}
               concert={concert}
-              onRefresh={() => {
-                if (concerts.length === 1 && page > 1) setPage((p) => p - 1)
-                else fetchExcluded()
-              }}
+              onRefresh={fetchExcluded}
+              onRemoved={() => handleConcertRemoved(concert.id)}
             />
           ))}
         </div>

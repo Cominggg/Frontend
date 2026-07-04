@@ -71,6 +71,14 @@ export async function removeConcertArtist(concertId, artistId) {
   await api.delete(`/admin/concerts/${concertId}/artists/${artistId}`)
 }
 
+export async function addConcertCandidate(concertId, artistId) {
+  await api.post(`/admin/concerts/${concertId}/candidates`, { artistId })
+}
+
+export async function removeConcertCandidate(concertId, artistId) {
+  await api.delete(`/admin/concerts/${concertId}/candidates/${artistId}`)
+}
+
 // 파이프라인 트리거
 export async function triggerArtistCollect(mbid) {
   const { data } = await api.post('/admin/data/collect/artists', { mbid })
