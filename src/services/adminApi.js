@@ -64,11 +64,11 @@ export async function rejectConcert(id) {
 }
 
 export async function addConcertArtist(concertId, artistId) {
-  await api.post(`/admin/concerts/${concertId}/artists`, { artistId })
+  await api.post(`/admin/concerts/${concertId}/candidates`, { artistId })
 }
 
 export async function removeConcertArtist(concertId, artistId) {
-  await api.delete(`/admin/concerts/${concertId}/artists/${artistId}`)
+  await api.delete(`/admin/concerts/${concertId}/candidates/${artistId}`)
 }
 
 // 파이프라인 트리거
