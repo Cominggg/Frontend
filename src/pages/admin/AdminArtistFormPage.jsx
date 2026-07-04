@@ -71,6 +71,7 @@ function AdminArtistFormPage() {
   const [form, setForm] = useState({ name: '', aliases: EMPTY_ALIASES })
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
+  const [savedMsg, setSavedMsg] = useState('')
   const [triggering, setTriggering] = useState(false)
   const [triggerMsg, setTriggerMsg] = useState('')
 
@@ -101,7 +102,8 @@ function AdminArtistFormPage() {
         name: form.name.trim() || undefined,
         aliases: form.aliases,
       })
-      navigate(ROUTES.ADMIN)
+      setSavedMsg('수정되었습니다.')
+      setTimeout(() => setSavedMsg(''), 3000)
     } catch {
       setError('저장에 실패했습니다. 다시 시도해주세요.')
     } finally {
@@ -172,6 +174,7 @@ function AdminArtistFormPage() {
           <button type="submit" className={styles.btnSubmit} disabled={saving}>
             {saving ? '저장 중...' : '수정 저장'}
           </button>
+          {savedMsg && <span className={styles.savedMsg}>{savedMsg}</span>}
         </div>
       </form>
 
