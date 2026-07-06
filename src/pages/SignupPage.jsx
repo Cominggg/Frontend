@@ -167,8 +167,9 @@ function SignupPage() {
       const { getMe } = await import('@/services/authApi')
       const user = await getMe()
       setUser(user)
-      const redirectUri = localStorage.getItem(LOGIN_REDIRECT_KEY) || ROUTES.HOME
+      const raw = localStorage.getItem(LOGIN_REDIRECT_KEY)
       localStorage.removeItem(LOGIN_REDIRECT_KEY)
+      const redirectUri = raw && raw.startsWith('/') ? raw : ROUTES.HOME
       navigate(redirectUri, { replace: true })
     } catch (err) {
       const code = err.response?.data?.code

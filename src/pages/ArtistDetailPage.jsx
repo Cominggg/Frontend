@@ -150,12 +150,12 @@ function ArtistDetailPage() {
   })
 
   function handleFollow() {
-    if (!user) { openLoginModal(window.location.href); return }
+    if (!user) { openLoginModal(window.location.pathname + window.location.search); return }
     followMutation.mutate({ following: artist.isFollowing })
   }
 
   function handleArtistInquiry() {
-    if (!user) { openLoginModal(window.location.href); return }
+    if (!user) { openLoginModal(window.location.pathname + window.location.search); return }
     setInquiryOpen(true)
   }
 

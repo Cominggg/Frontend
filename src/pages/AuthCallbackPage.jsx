@@ -45,8 +45,9 @@ function AuthCallbackPage() {
           return
         }
 
-        const redirectUri = localStorage.getItem(LOGIN_REDIRECT_KEY) || ROUTES.HOME
+        const raw = localStorage.getItem(LOGIN_REDIRECT_KEY)
         localStorage.removeItem(LOGIN_REDIRECT_KEY)
+        const redirectUri = raw && raw.startsWith('/') ? raw : ROUTES.HOME
         navigate(redirectUri, { replace: true })
       } catch {
         navigate(ROUTES.HOME, { replace: true })
