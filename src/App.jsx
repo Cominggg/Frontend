@@ -1,5 +1,7 @@
+import { useEffect } from 'react'
 import { Routes, Route } from 'react-router-dom'
 
+import useAuthStore, { SESSION_HINT } from '@/stores/authStore'
 import AdminLayout from '@/components/layout/AdminLayout'
 import AdminRoute from '@/components/layout/AdminRoute'
 import Layout from '@/components/layout/Layout'
@@ -28,6 +30,18 @@ import { TERMS_CONTENT, PRIVACY_CONTENT } from '@/constants/policy'
 import { ROUTES } from '@/constants/routes'
 
 function App() {
+  const clearUser = useAuthStore((s) => s.clearUser)
+
+  useEffect(() => {
+    function handleStorage(e) {
+      if (e.key === SESSION_HINT && e.newValue === null) {
+        clearUser()
+      }
+    }
+    window.addEventListener('storage', handleStorage)
+    return () => window.removeEventListener('storage', handleStorage)
+  }, [clearUser])
+
   return (
     <Layout>
       <ScrollToTop />
