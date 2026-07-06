@@ -81,17 +81,17 @@ function ConcertDetailPage() {
   })
 
   function handleCalendar() {
-    if (!user) { openLoginModal(window.location.href); return }
+    if (!user) { openLoginModal(window.location.pathname + window.location.search); return }
     calendarMutation.mutate({ inCalendar: concert.isInCalendar })
   }
 
   function handleConcertInquiry() {
-    if (!user) { openLoginModal(window.location.href); return }
+    if (!user) { openLoginModal(window.location.pathname + window.location.search); return }
     setInquiryType('CONCERT')
   }
 
   function handleSetlistInquiry() {
-    if (!user) { openLoginModal(window.location.href); return }
+    if (!user) { openLoginModal(window.location.pathname + window.location.search); return }
     setInquiryType('SETLIST')
   }
 

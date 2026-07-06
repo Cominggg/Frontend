@@ -41,7 +41,7 @@ function ArtistCard({ artist }) {
   function handleFollow(e) {
     e.preventDefault()
     e.stopPropagation()
-    if (!user) { openLoginModal(window.location.href); return }
+    if (!user) { openLoginModal(window.location.pathname + window.location.search); return }
     followMutation.mutate(isFollowing)
   }
 
