@@ -1,4 +1,5 @@
 import { Component } from 'react'
+import styles from './ErrorBoundary.module.css'
 
 class ErrorBoundary extends Component {
   constructor(props) {
@@ -17,12 +18,9 @@ class ErrorBoundary extends Component {
   render() {
     if (this.state.hasError) {
       return (
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', gap: '16px', fontFamily: 'sans-serif' }}>
-          <p style={{ margin: 0, color: '#555' }}>페이지를 불러오는 중 오류가 발생했습니다.</p>
-          <button
-            onClick={() => window.location.reload()}
-            style={{ padding: '8px 20px', cursor: 'pointer', border: '1px solid #ddd', borderRadius: '6px', background: '#fff' }}
-          >
+        <div className={styles.wrap}>
+          <p className={styles.message}>페이지를 불러오는 중 오류가 발생했습니다.</p>
+          <button className={styles.reloadBtn} onClick={() => window.location.reload()}>
             새로고침
           </button>
         </div>
