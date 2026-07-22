@@ -12,6 +12,18 @@ const CONCERT_SKIP_REASONS = {
 
 const STATIC_CARDS = [
   {
+    to: ROUTES.ADMIN_CONCERT_NEW,
+    label: '공연 직접 등록',
+    desc: '파이프라인 없이 어드민이 직접 공연 정보를 입력하고 아티스트를 연결합니다.',
+    countKey: null,
+    icon: (
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+      </svg>
+    ),
+  },
+  {
     to: ROUTES.ADMIN_PENDING_CONCERTS,
     label: 'PENDING 공연 검토',
     desc: '파이프라인이 수집·매칭한 PENDING 공연을 검토하고 승인 또는 거절합니다.',
