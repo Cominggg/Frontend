@@ -133,6 +133,28 @@
   margin-left: auto;
 }
 
+/* ── 공연 정보 이미지 편집기 ── */
+.imageUrls {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.imageUrlRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.imagePreview {
+  width: 48px;
+  height: 48px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1.5px solid var(--color-border);
+  flex-shrink: 0;
+}
+
 /* ── 예매처 링크 편집기 ── */
 .bookingLinks {
   display: flex;
