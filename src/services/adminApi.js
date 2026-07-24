@@ -14,6 +14,11 @@ export async function getAdminConcert(id) {
   return data
 }
 
+export async function createConcert(body) {
+  const { data } = await api.post('/admin/concerts', body)
+  return data
+}
+
 export async function updateConcert(id, body) {
   await api.put(`/admin/concerts/${id}`, body)
 }

@@ -5,6 +5,7 @@ import ArtistAliasName from '@/components/artist/ArtistAliasName'
 import Badge from '@/components/ui/Badge'
 import AppDatePicker from '@/components/ui/AppDatePicker'
 import AddArtistModal from '@/components/concert/AddArtistModal'
+import { ImageUrlsEditor, BookingLinksEditor } from './AdminConcertEditors'
 import { getAdminConcert, updateConcert, updateConcertState, triggerConcertSetlistCollect, removeConcertArtist } from '@/services/adminApi'
 import { ROUTES } from '@/constants/routes'
 import styles from './AdminFormPage.module.css'
@@ -23,50 +24,9 @@ const EMPTY_FORM = {
   posterUrl: '', price: '',
   ticketOpenAt: '',
   bookingLinks: [],
+  imageUrls: [],
 }
 
-function BookingLinksEditor({ links, onChange }) {
-  function add() {
-    onChange([...links, { name: '', url: '' }])
-  }
-  function remove(i) {
-    onChange(links.filter((_, idx) => idx !== i))
-  }
-  function update(i, key, value) {
-    onChange(links.map((l, idx) => idx === i ? { ...l, [key]: value } : l))
-  }
-
-  return (
-    <div className={concertStyles.bookingLinks}>
-      {links.map((link, i) => (
-        <div key={i} className={concertStyles.bookingLinkRow}>
-          <input
-            type="text"
-            className={styles.input}
-            placeholder="예매처 이름 (예: 인터파크)"
-            value={link.name}
-            onChange={(e) => update(i, 'name', e.target.value)}
-          />
-          <input
-            type="url"
-            className={styles.input}
-            placeholder="https://..."
-            value={link.url}
-            onChange={(e) => update(i, 'url', e.target.value)}
-          />
-          <button type="button" className={concertStyles.bookingRemoveBtn} onClick={() => remove(i)} aria-label="삭제">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-              <path d="M18 6 6 18M6 6l12 12" />
-            </svg>
-          </button>
-        </div>
-      ))}
-      <button type="button" className={concertStyles.bookingAddBtn} onClick={add}>
-        + 예매처 추가
-      </button>
-    </div>
-  )
-}
 
 function AdminConcertFormPage() {
   const { id } = useParams()
@@ -106,6 +66,7 @@ function AdminConcertFormPage() {
           name: l.name ?? '',
           url: l.url ?? '',
         })),
+        imageUrls: concert.imageUrls ?? [],
       })
       setCurrentStatus(concert.status ?? 'UPCOMING')
       setPendingStatus(concert.status ?? 'UPCOMING')
@@ -133,6 +94,7 @@ function AdminConcertFormPage() {
         price: form.price.trim() || undefined,
         ticketOpenAt: form.ticketOpenAt ? `${form.ticketOpenAt}:00` : null,
         bookingLinks: form.bookingLinks.length > 0 ? form.bookingLinks : undefined,
+        imageUrls: form.imageUrls,
       })
       setSavedMsg('저장되었습니다.')
       setTimeout(() => setSavedMsg(''), 3000)
@@ -209,7 +171,7 @@ function AdminConcertFormPage() {
           <h2 className={styles.sectionTitle}>기본 정보</h2>
           <div className={styles.fieldGrid}>
             <label className={`${styles.field} ${styles.fieldFull}`}>
-              <span className={styles.fieldLabel}>공연명</span>
+              <span className={styles.fieldLabel}>공연명 <span className={styles.required}>*</span></span>
               <input
                 type="text"
                 className={styles.input}
@@ -239,21 +201,21 @@ function AdminConcertFormPage() {
               />
             </label>
             <div className={styles.field}>
-              <span className={styles.fieldLabel}>시작일</span>
+              <span className={styles.fieldLabel}>시작일 <span className={styles.required}>*</span></span>
               <AppDatePicker
                 value={form.startDate}
                 onChange={(v) => setField('startDate', v)}
               />
             </div>
             <div className={styles.field}>
-              <span className={styles.fieldLabel}>종료일</span>
+              <span className={styles.fieldLabel}>종료일 <span className={styles.required}>*</span></span>
               <AppDatePicker
                 value={form.endDate}
                 onChange={(v) => setField('endDate', v)}
               />
             </div>
             <label className={styles.field}>
-              <span className={styles.fieldLabel}>공연장명</span>
+              <span className={styles.fieldLabel}>공연장명 <span className={styles.required}>*</span></span>
               <input
                 type="text"
                 className={styles.input}
@@ -288,6 +250,14 @@ function AdminConcertFormPage() {
           <BookingLinksEditor
             links={form.bookingLinks}
             onChange={(links) => setField('bookingLinks', links)}
+          />
+        </section>
+
+        <section className={styles.section}>
+          <h2 className={styles.sectionTitle}>공연 정보 이미지</h2>
+          <ImageUrlsEditor
+            urls={form.imageUrls}
+            onChange={(urls) => setField('imageUrls', urls)}
           />
         </section>
 
