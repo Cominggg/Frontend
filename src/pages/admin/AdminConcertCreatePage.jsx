@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import ArtistAliasName from '@/components/artist/ArtistAliasName'
 import AppDatePicker from '@/components/ui/AppDatePicker'
 import AddArtistModal from '@/components/concert/AddArtistModal'
+import { ImageUrlsEditor, BookingLinksEditor } from './AdminConcertEditors'
 import { createConcert, addConcertArtist } from '@/services/adminApi'
 import { ROUTES } from '@/constants/routes'
 import styles from './AdminFormPage.module.css'
@@ -17,89 +18,6 @@ const EMPTY_FORM = {
   ticketOpenAt: '',
   bookingLinks: [],
   imageUrls: [],
-}
-
-function ImagePreview({ url }) {
-  const [failed, setFailed] = useState(false)
-  if (failed) return null
-  return (
-    <img
-      src={url}
-      alt=""
-      className={concertStyles.imagePreview}
-      onError={() => setFailed(true)}
-    />
-  )
-}
-
-function ImageUrlsEditor({ urls, onChange }) {
-  function add() { onChange([...urls, '']) }
-  function remove(i) { onChange(urls.filter((_, idx) => idx !== i)) }
-  function update(i, value) { onChange(urls.map((u, idx) => idx === i ? value : u)) }
-
-  return (
-    <div className={concertStyles.imageUrls}>
-      {urls.map((url, i) => (
-        <div key={i} className={concertStyles.imageUrlRow}>
-          {url && <ImagePreview url={url} />}
-          <input
-            type="url"
-            className={styles.input}
-            placeholder="https://..."
-            value={url}
-            onChange={(e) => update(i, e.target.value)}
-          />
-          <button type="button" className={concertStyles.bookingRemoveBtn} onClick={() => remove(i)} aria-label="삭제">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-              <path d="M18 6 6 18M6 6l12 12" />
-            </svg>
-          </button>
-        </div>
-      ))}
-      <button type="button" className={concertStyles.bookingAddBtn} onClick={add}>
-        + 이미지 URL 추가
-      </button>
-    </div>
-  )
-}
-
-function BookingLinksEditor({ links, onChange }) {
-  function add() { onChange([...links, { name: '', url: '' }]) }
-  function remove(i) { onChange(links.filter((_, idx) => idx !== i)) }
-  function update(i, key, value) {
-    onChange(links.map((l, idx) => idx === i ? { ...l, [key]: value } : l))
-  }
-
-  return (
-    <div className={concertStyles.bookingLinks}>
-      {links.map((link, i) => (
-        <div key={i} className={concertStyles.bookingLinkRow}>
-          <input
-            type="text"
-            className={styles.input}
-            placeholder="예매처 이름 (예: 인터파크)"
-            value={link.name}
-            onChange={(e) => update(i, 'name', e.target.value)}
-          />
-          <input
-            type="url"
-            className={styles.input}
-            placeholder="https://..."
-            value={link.url}
-            onChange={(e) => update(i, 'url', e.target.value)}
-          />
-          <button type="button" className={concertStyles.bookingRemoveBtn} onClick={() => remove(i)} aria-label="삭제">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-              <path d="M18 6 6 18M6 6l12 12" />
-            </svg>
-          </button>
-        </div>
-      ))}
-      <button type="button" className={concertStyles.bookingAddBtn} onClick={add}>
-        + 예매처 추가
-      </button>
-    </div>
-  )
 }
 
 function AdminConcertCreatePage() {
@@ -141,13 +59,9 @@ function AdminConcertCreatePage() {
         imageUrls: validImageUrls.length > 0 ? validImageUrls : undefined,
       })
 
-      for (const artist of pendingArtists) {
-        try {
-          await addConcertArtist(concertId, artist.artistId)
-        } catch {
-          // 중복 또는 오류 시 무시 — 수정 페이지에서 재시도 가능
-        }
-      }
+      await Promise.allSettled(
+        pendingArtists.map((artist) => addConcertArtist(concertId, artist.artistId))
+      )
 
       navigate(ROUTES.ADMIN_CONCERT_EDIT(concertId))
     } catch {
