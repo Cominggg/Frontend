@@ -304,12 +304,12 @@
 }
 
 .ticketCardSoon {
-  border-left-color: #ea580c;
+  border-left-color: var(--ticketing-upcoming);
 }
 
 .ticketCardCritical {
-  border-left-color: #ea580c;
-  background: rgba(234, 88, 12, 0.025);
+  border-left-color: var(--ticketing-upcoming);
+  background: color-mix(in srgb, var(--ticketing-upcoming) 2.5%, transparent);
 }
 
 .ticketDday {
@@ -330,8 +330,8 @@
 
 .ticketCardSoon .ticketDday,
 .ticketCardCritical .ticketDday {
-  background: rgba(234, 88, 12, 0.1);
-  color: #ea580c;
+  background: color-mix(in srgb, var(--ticketing-upcoming) 10%, transparent);
+  color: var(--ticketing-upcoming);
 }
 
 .ticketInfo {
@@ -432,7 +432,7 @@
 }
 
 .upcomingListItemUrgent {
-  border-left: 3px solid #ea580c;
+  border-left: 3px solid var(--ticketing-upcoming);
 }
 
 .upcomingDateBlock {
@@ -508,8 +508,8 @@
 }
 
 .upcomingListDdayUrgent {
-  background: rgba(234, 88, 12, 0.12);
-  color: #ea580c;
+  background: color-mix(in srgb, var(--ticketing-upcoming) 12%, transparent);
+  color: var(--ticketing-upcoming);
 }
 
 /* 다가오는 공연 — 빈 상태 */

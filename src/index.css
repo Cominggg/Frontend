@@ -16,6 +16,11 @@
   --calendar-sunday: #ef4444;
   --calendar-saturday: #3b82f6;
 
+  /* 티켓팅 상태 색상 */
+  --ticketing-upcoming: #ea580c;
+  --ticketing-available: #10b981;
+  --ticketing-available-hover: #059669;
+
   /* 레이아웃 */
   --max-width: 1280px;
   --header-height: 64px;
