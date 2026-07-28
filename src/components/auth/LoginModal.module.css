@@ -95,14 +95,14 @@
 /* Google */
 .google {
   background-color: var(--color-on-accent);
-  color: #3c4043;
-  border-color: #dadce0;
+  color: var(--oauth-google-text);
+  border-color: var(--oauth-google-border);
 }
 
 /* Kakao */
 .kakao {
-  background-color: #fee500;
-  color: #3c1e1e;
+  background-color: var(--oauth-kakao-bg);
+  color: var(--oauth-kakao-text);
 }
 
 /* Dev Login */
@@ -182,5 +182,5 @@
 .devError {
   margin-top: 0.5rem;
   font-size: 0.8125rem;
-  color: #e53e3e;
+  color: var(--color-destructive);
 }

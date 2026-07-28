@@ -21,6 +21,12 @@
   --ticketing-available: #10b981;
   --ticketing-available-hover: #059669;
 
+  /* OAuth 브랜드 색상 (항상 고정, 다크 모드 미적용) */
+  --oauth-google-text: #3c4043;
+  --oauth-google-border: #dadce0;
+  --oauth-kakao-bg: #fee500;
+  --oauth-kakao-text: #3c1e1e;
+
   /* 레이아웃 */
   --max-width: 1280px;
   --header-height: 64px;
