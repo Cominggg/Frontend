@@ -9,7 +9,7 @@
   align-items: center;
   gap: 0;
   padding: 1.25rem 1rem 1rem;
-  border-radius: 16px;
+  border-radius: var(--radius-xl);
   background: var(--color-surface);
 }
 
@@ -26,7 +26,7 @@
   );
   background-size: 800px 100%;
   animation: shimmer 1.4s infinite linear;
-  border-radius: 100px;
+  border-radius: var(--radius-full);
 }
 
 .avatar {

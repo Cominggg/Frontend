@@ -17,7 +17,7 @@
   max-width: 480px;
   background-color: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-radius: 16px;
+  border-radius: var(--radius-xl);
   padding: 2.5rem 2rem 2rem;
   box-shadow: var(--shadow-modal);
 }
@@ -33,7 +33,7 @@
   height: 32px;
   background: transparent;
   border: none;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   color: var(--color-text-muted);
   transition: background-color 0.15s, color 0.15s;
 }
@@ -84,7 +84,7 @@
   padding: 0.625rem 0.75rem;
   background-color: var(--color-surface-raised, var(--color-surface));
   border: 1px solid var(--color-border);
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   font-size: 0.9375rem;
   color: var(--color-text);
   transition: border-color 0.15s;
@@ -105,7 +105,7 @@
   padding: 0.625rem 0.75rem;
   background-color: var(--color-surface-raised, var(--color-surface));
   border: 1px solid var(--color-border);
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   font-size: 0.9375rem;
   color: var(--color-text);
   resize: vertical;
@@ -149,7 +149,7 @@
   font-size: 0.9375rem;
   font-weight: 600;
   border: none;
-  border-radius: 10px;
+  border-radius: var(--radius-lg);
   transition: opacity 0.15s;
   margin-top: 0.25rem;
 }
@@ -256,7 +256,7 @@
   font-size: 0.9375rem;
   font-weight: 600;
   border: none;
-  border-radius: 10px;
+  border-radius: var(--radius-lg);
   transition: opacity 0.15s;
 }
 
@@ -272,7 +272,7 @@
 
 .myInquiryLink {
   padding: 0.625rem 1.25rem;
-  border-radius: 10px;
+  border-radius: var(--radius-lg);
   border: 1.5px solid var(--color-accent-border);
   color: var(--color-accent);
   font-size: 0.9375rem;
@@ -291,7 +291,7 @@
   padding: 0.5rem 0.75rem;
   background: var(--color-surface-alt, rgba(0, 0, 0, 0.03));
   border: 1px solid var(--color-border);
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   line-height: 1.5;
   margin: 0;
 }

@@ -29,7 +29,7 @@
   padding: 1.25rem 1.5rem;
   background: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-radius: 16px;
+  border-radius: var(--radius-xl);
   margin-bottom: 1.75rem;
 }
 
@@ -80,7 +80,7 @@
   font-weight: 500;
   color: var(--color-text-muted);
   border: 1.5px solid var(--color-border);
-  border-radius: 100px;
+  border-radius: var(--radius-full);
   background: none;
   transition: color 0.15s, border-color 0.15s;
 }
@@ -132,7 +132,7 @@
   display: flex;
   flex-direction: column;
   border: 1px solid var(--color-border);
-  border-radius: 14px;
+  border-radius: var(--radius-xl);
   overflow: hidden;
   background: var(--color-surface);
 }
@@ -210,7 +210,7 @@
   font-weight: 700;
   letter-spacing: 0.07em;
   padding: 2px 7px;
-  border-radius: 100px;
+  border-radius: var(--radius-full);
   line-height: 1.5;
 }
 
@@ -225,14 +225,14 @@
   color: var(--color-text-muted);
   background: var(--color-border);
   padding: 2px 8px;
-  border-radius: 100px;
+  border-radius: var(--radius-full);
   line-height: 1.5;
 }
 
 .unfollowBtn {
   flex-shrink: 0;
   padding: 0.375rem 0.875rem;
-  border-radius: 100px;
+  border-radius: var(--radius-full);
   font-size: 0.8125rem;
   font-weight: 500;
   color: var(--color-text-muted);
@@ -252,7 +252,7 @@
   display: flex;
   flex-direction: column;
   border: 1px solid var(--color-border);
-  border-radius: 14px;
+  border-radius: var(--radius-xl);
   overflow: hidden;
   background: var(--color-surface);
 }
@@ -293,7 +293,7 @@
 .skeletonMeta,
 .skeletonTitle,
 .skeletonDetail {
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   background: linear-gradient(90deg, var(--color-border) 25%, var(--color-surface-alt, #f0f0f0) 50%, var(--color-border) 75%);
   background-size: 200% 100%;
   animation: shimmer 1.4s infinite;
@@ -392,7 +392,7 @@
   color: var(--color-accent);
   text-decoration: none;
   padding: 0.5rem 1.25rem;
-  border-radius: 100px;
+  border-radius: var(--radius-full);
   border: 1.5px solid var(--color-accent-border);
   transition: background-color 0.15s;
 }
@@ -406,7 +406,7 @@
   display: flex;
   flex-direction: column;
   border: 1px solid var(--color-border);
-  border-radius: 14px;
+  border-radius: var(--radius-xl);
   overflow: hidden;
   background: var(--color-surface);
 }
@@ -468,7 +468,7 @@
   font-size: 0.75rem;
   font-weight: 600;
   padding: 2px 8px;
-  border-radius: 100px;
+  border-radius: var(--radius-full);
   line-height: 1.5;
 }
 
@@ -563,7 +563,7 @@
   max-width: 420px;
   background-color: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-radius: 16px;
+  border-radius: var(--radius-xl);
   padding: 2.25rem 2rem 2rem;
   box-shadow: var(--shadow-modal);
 }
@@ -579,7 +579,7 @@
   height: 32px;
   background: transparent;
   border: none;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   color: var(--color-text-muted);
   transition: background-color 0.15s, color 0.15s;
 }
@@ -695,7 +695,7 @@
   color: var(--color-text);
   background: var(--color-surface);
   border: 1.5px solid var(--color-border);
-  border-radius: 10px;
+  border-radius: var(--radius-lg);
   outline: none;
   transition: border-color 0.15s;
   box-sizing: border-box;
@@ -731,7 +731,7 @@
   font-weight: 500;
   color: var(--color-text-muted);
   border: 1.5px solid var(--color-border);
-  border-radius: 10px;
+  border-radius: var(--radius-lg);
   background: none;
   transition: color 0.15s, border-color 0.15s;
 }
@@ -749,7 +749,7 @@
   color: var(--color-on-accent);
   background: var(--color-accent);
   border: none;
-  border-radius: 10px;
+  border-radius: var(--radius-lg);
   transition: opacity 0.15s;
 }
 
@@ -768,7 +768,7 @@
   padding: 1.25rem 1.5rem;
   background: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-radius: 16px;
+  border-radius: var(--radius-xl);
 }
 
 .settingsSectionTitle {
@@ -809,7 +809,7 @@
   position: relative;
   width: 44px;
   height: 26px;
-  border-radius: 100px;
+  border-radius: var(--radius-full);
   border: none;
   background: var(--color-border);
   cursor: pointer;
@@ -894,7 +894,7 @@
   color: var(--color-on-accent);
   background: var(--color-destructive);
   border: none;
-  border-radius: 10px;
+  border-radius: var(--radius-lg);
   transition: opacity 0.15s;
 }
 

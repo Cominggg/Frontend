@@ -31,14 +31,14 @@
   gap: 3px;
   padding: 3px;
   background: var(--color-border);
-  border-radius: 10px;
+  border-radius: var(--radius-lg);
 }
 
 .toggleBtn {
   padding: 6px 18px;
   border: none;
   background: transparent;
-  border-radius: 7px;
+  border-radius: var(--radius-sm);
   font-size: 0.875rem;
   font-weight: 500;
   color: var(--color-text-muted);
@@ -83,7 +83,7 @@
   height: 34px;
   border: 1.5px solid var(--color-border);
   background: var(--color-surface);
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   color: var(--color-text);
   transition: background 0.15s, border-color 0.15s;
 }
@@ -99,7 +99,7 @@
   height: 34px;
   border: 1.5px solid var(--color-border);
   background: var(--color-surface);
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   font-size: 0.8125rem;
   font-weight: 500;
   color: var(--color-text-muted);

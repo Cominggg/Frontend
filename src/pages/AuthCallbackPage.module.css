@@ -14,7 +14,7 @@
 
 .homeButton {
   padding: 10px 24px;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   border: none;
   background: var(--color-accent);
   color: var(--color-on-accent);

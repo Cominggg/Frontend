@@ -17,7 +17,7 @@
   max-width: 400px;
   background-color: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-radius: 16px;
+  border-radius: var(--radius-xl);
   padding: 2.5rem 2rem 2rem;
   box-shadow: var(--shadow-modal);
 }
@@ -33,7 +33,7 @@
   height: 32px;
   background: transparent;
   border: none;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   color: var(--color-text-muted);
   transition: background-color 0.15s, color 0.15s;
 }
@@ -76,7 +76,7 @@
   padding: 0.75rem 1rem;
   font-size: 0.9375rem;
   font-weight: 600;
-  border-radius: 10px;
+  border-radius: var(--radius-lg);
   border: 1px solid transparent;
   transition: opacity 0.15s, box-shadow 0.15s;
 }
@@ -138,7 +138,7 @@
   font-size: 0.875rem;
   background-color: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   color: var(--color-text);
   min-width: 0;
 }
@@ -153,7 +153,7 @@
   font-size: 0.875rem;
   background-color: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   color: var(--color-text);
   cursor: pointer;
 }
@@ -165,7 +165,7 @@
   background-color: var(--color-accent-light);
   color: var(--color-on-accent);
   border: none;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   white-space: nowrap;
   transition: opacity 0.15s;
 }

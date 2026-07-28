@@ -14,7 +14,7 @@
   width: 100%;
   padding: 0.625rem 2.25rem 0.625rem 0.875rem;
   border: 1.5px solid var(--color-border);
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   background: var(--color-bg);
   color: var(--color-text);
   font-size: 0.9375rem;
@@ -74,7 +74,7 @@
   font-size: 0.875rem;
   background-color: var(--color-surface) !important;
   border: 1.5px solid var(--color-border) !important;
-  border-radius: 10px;
+  border-radius: var(--radius-lg);
   box-shadow: var(--shadow-md);
 }
 
@@ -122,7 +122,7 @@
   height: 2.125rem;
   line-height: 2.125rem;
   margin: 0.125rem;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   color: var(--color-text);
   font-size: 0.875rem;
   transition: background-color 0.1s, color 0.1s;
