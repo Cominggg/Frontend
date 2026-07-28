@@ -551,7 +551,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: rgba(0, 0, 0, 0.55);
+  background-color: var(--overlay);
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
   padding: 1rem;
@@ -565,7 +565,7 @@
   border: 1px solid var(--color-border);
   border-radius: 16px;
   padding: 2.25rem 2rem 2rem;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--shadow-modal);
 }
 
 .modalCloseBtn {
@@ -641,7 +641,7 @@
   position: absolute;
   inset: 0;
   border-radius: 50%;
-  background: rgba(0, 0, 0, 0.45);
+  background: var(--overlay-soft);
   display: flex;
   align-items: center;
   justify-content: center;

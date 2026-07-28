@@ -37,6 +37,13 @@
   --admin-status-resolved: #2e7d32;
   --admin-status-in-progress: #0369a1;
 
+  /* 오버레이 및 섀도우 */
+  --overlay: rgba(0, 0, 0, 0.55);
+  --overlay-soft: rgba(0, 0, 0, 0.45);
+  --shadow-modal: 0 20px 60px rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.14);
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.12);
+
   /* 레이아웃 */
   --max-width: 1280px;
   --header-height: 64px;
