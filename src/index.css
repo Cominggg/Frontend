@@ -27,6 +27,16 @@
   --oauth-kakao-bg: #fee500;
   --oauth-kakao-text: #3c1e1e;
 
+  /* Admin 문의 타입 색상 */
+  --admin-type-concert: #1565c0;
+  --admin-type-artist: #7c3aed;
+  --admin-type-setlist: #0f766e;
+
+  /* Admin 문의 상태 색상 */
+  --admin-status-pending: #b45309;
+  --admin-status-resolved: #2e7d32;
+  --admin-status-in-progress: #0369a1;
+
   /* 레이아웃 */
   --max-width: 1280px;
   --header-height: 64px;
