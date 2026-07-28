@@ -23,8 +23,8 @@
   letter-spacing: 0.04em;
 }
 
-.headerCell.sun { color: #f87171; }
-.headerCell.sat { color: #60a5fa; }
+.headerCell.sun { color: var(--calendar-sunday); }
+.headerCell.sat { color: var(--calendar-saturday); }
 
 /* ── 주 행 ── */
 .weekRow {
@@ -79,8 +79,8 @@
 }
 
 /* 날짜 숫자 색상 — sunday/saturday */
-.sun .num { color: #ef4444; }
-.sat .num { color: #3b82f6; }
+.sun .num { color: var(--calendar-sunday); }
+.sat .num { color: var(--calendar-saturday); }
 
 /* ── 날짜 숫자 ── */
 .num {
