@@ -258,7 +258,7 @@ function HomePage() {
                 <div className={styles.upcomingList}>
                   {upcomingConcerts.map((concert) => {
                     const dday = getDday(concert.startDate, today)
-                    const isUrgent = dday && dday !== 'D-DAY' && parseInt(dday.replace('D-', '')) <= 7
+                    const isUrgent = dday && (dday === 'D-DAY' || parseInt(dday.replace('D-', '')) <= 7)
                     const [, month, day] = concert.startDate.split('-').map(Number)
                     return (
                       <Link
