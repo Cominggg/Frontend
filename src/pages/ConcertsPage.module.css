@@ -65,6 +65,10 @@
   transition: border-color 0.15s;
 }
 
+.searchInput:focus {
+  border-color: var(--color-accent);
+}
+
 .searchInput::placeholder {
   color: var(--color-text-muted);
 }

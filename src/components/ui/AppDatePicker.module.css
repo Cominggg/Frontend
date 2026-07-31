@@ -59,7 +59,7 @@
 
 /* ── 팝업 포지셔닝 ── */
 .wrapper :global(.react-datepicker-popper) {
-  z-index: 100;
+  z-index: 201;
   padding-top: 4px;
 }
 
