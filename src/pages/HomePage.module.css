@@ -143,13 +143,6 @@
   gap: 1.25rem;
 }
 
-/* 관심 아티스트 공연용 4열 그리드 */
-.gridFour {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1.25rem;
-}
-
 /* 관심 아티스트 공연용 5열 그리드 */
 .gridFive {
   display: grid;
