@@ -45,6 +45,16 @@
   line-height: 1;
 }
 
+@media (prefers-color-scheme: dark) {
+  :global(:root:not([data-theme="light"])) .avatarPlaceholder {
+    filter: brightness(0.72) saturate(0.8);
+  }
+}
+
+:global(html[data-theme="dark"]) .avatarPlaceholder {
+  filter: brightness(0.72) saturate(0.8);
+}
+
 /* ── Coming 배지 ── */
 .comingBadge {
   position: absolute;
