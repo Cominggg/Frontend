@@ -4,7 +4,7 @@
   align-items: center;
   gap: 0.875rem;
   padding: 1.25rem 1rem 1rem;
-  border-radius: var(--radius-xl);
+  border-radius: var(--radius-lg);
   background: var(--color-surface);
   transition: background-color 0.15s;
   text-align: center;
