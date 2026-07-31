@@ -106,6 +106,9 @@ function HomePage() {
   const upcomingConcerts = upcomingData?.content ?? []
   const newReleases = releasesData?.content ?? []
 
+  const ticketCardUrgencyClass = { critical: styles.ticketCardCritical, soon: styles.ticketCardSoon }
+  const ddayUrgencyClass = { soon: styles.upcomingListDdaySoon, critical: styles.upcomingListDdayCritical }
+
   return (
     <div className={styles.page}>
 
@@ -187,7 +190,7 @@ function HomePage() {
                       <Link
                         key={concert.id}
                         to={ROUTES.CONCERT_DETAIL(concert.id)}
-                        className={`${styles.ticketCard}${urgency === 'critical' ? ` ${styles.ticketCardCritical}` : urgency === 'soon' ? ` ${styles.ticketCardSoon}` : ''}`}
+                        className={[styles.ticketCard, ticketCardUrgencyClass[urgency]].filter(Boolean).join(' ')}
                       >
                         <div className={styles.ticketDday}>{dday ?? '-'}</div>
                         <div className={styles.ticketInfo}>
@@ -258,13 +261,13 @@ function HomePage() {
                 <div className={styles.upcomingList}>
                   {upcomingConcerts.map((concert) => {
                     const dday = getDday(concert.startDate, today)
-                    const isUrgent = dday && dday !== 'D-DAY' && parseInt(dday.replace('D-', '')) <= 7
+                    const urgency = getTicketUrgency(dday)
                     const [, month, day] = concert.startDate.split('-').map(Number)
                     return (
                       <Link
                         key={concert.id}
                         to={ROUTES.CONCERT_DETAIL(concert.id)}
-                        className={`${styles.upcomingListItem}${isUrgent ? ` ${styles.upcomingListItemUrgent}` : ''}`}
+                        className={styles.upcomingListItem}
                       >
                         <div className={styles.upcomingDateBlock}>
                           <span className={styles.upcomingDateMonth}>{month}월</span>
@@ -283,7 +286,7 @@ function HomePage() {
                           <p className={styles.upcomingListMeta}>{concert.venue}</p>
                         </div>
                         {dday && (
-                          <span className={`${styles.upcomingListDday}${isUrgent ? ` ${styles.upcomingListDdayUrgent}` : ''}`}>
+                          <span className={[styles.upcomingListDday, ddayUrgencyClass[urgency]].filter(Boolean).join(' ')}>
                             {dday}
                           </span>
                         )}

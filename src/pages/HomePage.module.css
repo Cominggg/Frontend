@@ -143,13 +143,6 @@
   gap: 1.25rem;
 }
 
-/* 관심 아티스트 공연용 4열 그리드 */
-.gridFour {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1.25rem;
-}
-
 /* 관심 아티스트 공연용 5열 그리드 */
 .gridFive {
   display: grid;
@@ -268,8 +261,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
   background: var(--color-accent-dim);
   color: var(--color-accent);
@@ -291,7 +284,6 @@
   padding: 0.875rem 1rem;
   background: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-left: 3px solid var(--color-border);
   border-radius: var(--radius-lg);
   text-decoration: none;
   color: inherit;
@@ -303,13 +295,8 @@
   transform: translateY(-1px);
 }
 
-.ticketCardSoon {
-  border-left-color: var(--ticketing-upcoming);
-}
-
 .ticketCardCritical {
-  border-left-color: var(--ticketing-upcoming);
-  background: color-mix(in srgb, var(--ticketing-upcoming) 2.5%, transparent);
+  background: color-mix(in srgb, var(--ticketing-upcoming) 6%, var(--color-surface));
 }
 
 .ticketDday {
@@ -328,10 +315,15 @@
   line-height: 1.2;
 }
 
-.ticketCardSoon .ticketDday,
-.ticketCardCritical .ticketDday {
-  background: color-mix(in srgb, var(--ticketing-upcoming) 10%, transparent);
+.ticketCardSoon .ticketDday {
+  background: transparent;
   color: var(--ticketing-upcoming);
+  box-shadow: 0 0 0 1.5px color-mix(in srgb, var(--ticketing-upcoming) 45%, transparent);
+}
+
+.ticketCardCritical .ticketDday {
+  background: var(--ticketing-upcoming);
+  color: #fff;
 }
 
 .ticketInfo {
@@ -431,9 +423,6 @@
   transform: translateY(-1px);
 }
 
-.upcomingListItemUrgent {
-  border-left: 3px solid var(--ticketing-upcoming);
-}
 
 .upcomingDateBlock {
   flex: 0 0 44px;
@@ -507,9 +496,16 @@
   color: var(--color-accent);
 }
 
-.upcomingListDdayUrgent {
-  background: color-mix(in srgb, var(--ticketing-upcoming) 12%, transparent);
+.upcomingListDdaySoon {
+  background: transparent;
   color: var(--ticketing-upcoming);
+  box-shadow: 0 0 0 1.5px color-mix(in srgb, var(--ticketing-upcoming) 45%, transparent);
+}
+
+.upcomingListDdayCritical {
+  background: var(--ticketing-upcoming);
+  color: #fff;
+  box-shadow: none;
 }
 
 /* 다가오는 공연 — 빈 상태 */

@@ -222,9 +222,16 @@ function ArtistDetailPage() {
         <BackButton fallback={ROUTES.ARTISTS} />
 
         {/* 히어로 */}
-        <section
-          className={styles.hero}
-        >
+        <section className={styles.hero}>
+          <div
+            className={styles.heroBlur}
+            style={showPlaceholder
+              ? { background: `linear-gradient(135deg, ${colorFrom}, ${colorTo})` }
+              : { backgroundImage: `url(${imageUrl})` }
+            }
+          />
+          <div className={styles.heroOverlay} />
+          <div className={styles.heroContent}>
           {/* 아바타 */}
           <div className={styles.avatarWrap}>
             {showPlaceholder ? (
@@ -301,6 +308,7 @@ function ArtistDetailPage() {
                 })}
               </div>
             )}
+          </div>
           </div>
         </section>
 

@@ -37,6 +37,7 @@ src/
 ## 핵심 규칙
 - `no-unused-vars` rule ignores names matching `^[A-Z_]`
 - 스타일: CSS Modules 사용 (`Page.jsx` + `Page.module.css` 페어)
+- 반응형 breakpoint: `767px`(모바일), `900px`, `1279px` — `480px`은 비표준이므로 사용 금지
 - 목 데이터: 각 페이지 상단에 `const MOCK_*_MAP = {...}` 인라인 선언, `// TODO: API 연동 후 제거` 주석 표기
 - 소셜 로그인: Google / Kakao만 지원 (Naver 없음)
 - 비로그인 보호 기능 접근 시: 페이지 이동이 아닌 **로그인 모달** 표시 (redirect_uri로 현재 URL 유지)
