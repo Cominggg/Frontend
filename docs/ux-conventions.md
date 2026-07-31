@@ -48,12 +48,81 @@
 - React `onError` 핸들러로 처리
 
 ## 공연 상태 배지 색상
-| 상태 | 색상 | 헥스 |
-|------|------|------|
-| 공연예정 | Blue | `#1565C0` |
-| 공연중 | Green | `#2E7D32` |
-| 공연완료 | Gray | `#757575` |
-| 공연취소 | Red | `#C62828` |
+| 상태 | 토큰 |
+|------|------|
+| 공연예정 | `var(--status-upcoming)` |
+| 공연중 | `var(--status-ongoing)` |
+| 공연완료 | `var(--status-done)` |
+| 공연취소 | `var(--status-canceled)` |
+
+## 디자인 토큰 레퍼런스
+
+모든 색상·크기·간격은 `src/index.css` `:root`에 정의된 CSS 변수를 사용한다. 하드코딩 금지.
+
+### 색상 — 기본 팔레트
+| 토큰 | 용도 |
+|------|------|
+| `--color-bg` | 페이지 배경 |
+| `--color-surface` | 카드·모달 배경 |
+| `--color-surface-hover` | 호버 배경, 스켈레톤 |
+| `--color-border` | 구분선·테두리 |
+| `--color-accent` | 브랜드 강조색 (기본) |
+| `--color-accent-light` | 밝은 강조색 |
+| `--color-accent-dark` | 어두운 강조색 |
+| `--color-accent-dim` | 강조색 반투명 배경 (8%) |
+| `--color-text` | 기본 본문 텍스트 |
+| `--color-text-muted` | 보조 텍스트·플레이스홀더 |
+| `--color-on-accent` | 강조색 배경 위 텍스트 |
+| `--color-destructive` | 삭제·오류 등 파괴적 액션 |
+
+### 색상 — 도메인 토큰
+| 토큰 | 용도 |
+|------|------|
+| `--calendar-sunday` | 캘린더 일요일 색상 |
+| `--calendar-saturday` | 캘린더 토요일 색상 |
+| `--ticketing-upcoming` | 티켓팅 오픈 예정 (주황) |
+| `--ticketing-available` | 티켓팅 가능 (초록) |
+| `--ticketing-available-hover` | 티켓팅 가능 호버 |
+| `--oauth-google-text` | Google 버튼 텍스트 |
+| `--oauth-google-border` | Google 버튼 테두리 |
+| `--oauth-kakao-bg` | Kakao 버튼 배경 |
+| `--oauth-kakao-text` | Kakao 버튼 텍스트 |
+| `--admin-type-concert` | Admin 문의 타입 — CONCERT |
+| `--admin-type-artist` | Admin 문의 타입 — ARTIST |
+| `--admin-type-setlist` | Admin 문의 타입 — SETLIST |
+| `--admin-status-pending` | Admin 문의 상태 — PENDING |
+| `--admin-status-resolved` | Admin 문의 상태 — RESOLVED |
+| `--admin-status-in-progress` | Admin 문의 상태 — IN_PROGRESS |
+
+### 오버레이 및 섀도우
+| 토큰 | 값 | 용도 |
+|------|----|------|
+| `--overlay` | `rgba(0,0,0,0.55)` | 모달 백드롭 |
+| `--overlay-soft` | `rgba(0,0,0,0.45)` | 이미지 위 오버레이 |
+| `--shadow-modal` | `0 20px 60px rgba(0,0,0,0.2)` | 모달 그림자 |
+| `--shadow-md` | `0 8px 24px rgba(0,0,0,0.14)` | 중간 그림자 |
+| `--shadow-sm` | `0 2px 8px rgba(0,0,0,0.12)` | 작은 그림자 |
+
+### border-radius 스케일
+| 토큰 | 값 | 주요 용도 |
+|------|----|-----------|
+| `--radius-xs` | 4px | 칩·뱃지·포커스 링 |
+| `--radius-sm` | 6px | 버튼·작은 카드 |
+| `--radius-md` | 8px | 입력폼·중형 요소 |
+| `--radius-lg` | 12px | 카드 |
+| `--radius-xl` | 16px | 대형 카드·모달 |
+| `--radius-full` | 9999px | 필·태그·아바타 |
+
+### 레이아웃
+| 토큰 | 값 |
+|------|----|
+| `--max-width` | 1280px |
+| `--header-height` | 64px |
+| `--bp-tablet` | 1279px |
+| `--bp-mobile` | 767px |
+
+> **다크 모드**: `--color-*` 기본 팔레트는 `@media (prefers-color-scheme: dark)` 및 `html[data-theme="dark"]`에서 자동 오버라이드됨.  
+> 도메인 토큰(calendar·ticketing·oauth·admin) 및 overlay·shadow 토큰은 다크 모드 오버라이드 없이 고정값 사용.
 
 ## 매칭 신뢰도 노출 정책
 - **HIGH 매칭**: 관리자 승인 없이 즉시 프론트 노출

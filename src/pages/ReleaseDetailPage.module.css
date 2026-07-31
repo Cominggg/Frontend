@@ -16,11 +16,11 @@
   background: linear-gradient(90deg, var(--color-border) 25%, var(--color-surface-hover) 50%, var(--color-border) 75%);
   background-size: 800px 100%;
   animation: shimmer 1.4s infinite linear;
-  border-radius: 12px;
+  border-radius: var(--radius-lg);
 }
 
 .skeletonLine {
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   background: linear-gradient(90deg, var(--color-border) 25%, var(--color-surface-hover) 50%, var(--color-border) 75%);
   background-size: 800px 100%;
   animation: shimmer 1.4s infinite linear;
@@ -39,7 +39,7 @@
 
 .skeletonTrackRow {
   height: 38px;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   background: linear-gradient(90deg, var(--color-surface) 25%, var(--color-surface-hover) 50%, var(--color-surface) 75%);
   background-size: 800px 100%;
   animation: shimmer 1.4s infinite linear;
@@ -65,7 +65,7 @@
 .heroOverlay {
   position: absolute;
   inset: 0;
-  background: rgba(0, 0, 0, 0.45);
+  background: var(--overlay-soft);
   z-index: 1;
 }
 
@@ -105,7 +105,7 @@
   flex-shrink: 0;
   width: 300px;
   height: 300px;
-  border-radius: 12px;
+  border-radius: var(--radius-lg);
   overflow: hidden;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
 }
@@ -135,7 +135,7 @@
   background: rgba(0, 0, 0, 0.28);
   backdrop-filter: blur(4px);
   padding: 0.2rem 0.5rem;
-  border-radius: 4px;
+  border-radius: var(--radius-xs);
 }
 
 /* 히어로 텍스트 */
@@ -183,7 +183,7 @@
   font-weight: 700;
   letter-spacing: 0.03em;
   color: var(--color-on-accent);
-  border-radius: 4px;
+  border-radius: var(--radius-xs);
   line-height: 1.4;
   white-space: nowrap;
 }
@@ -195,7 +195,7 @@
   gap: 0.5rem;
   width: fit-content;
   padding: 0.5rem 1.125rem;
-  border-radius: 100px;
+  border-radius: var(--radius-full);
   font-size: 0.8125rem;
   font-weight: 700;
   letter-spacing: 0.02em;
@@ -251,7 +251,7 @@
   gap: 0.75rem;
   align-items: center;
   padding: 0.625rem 0.75rem;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   transition: background-color 0.15s;
 }
 

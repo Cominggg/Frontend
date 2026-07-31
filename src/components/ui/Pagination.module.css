@@ -14,7 +14,7 @@
   min-width: 36px;
   height: 36px;
   padding: 0 0.5rem;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   font-size: 0.875rem;
   font-weight: 500;
   border: 1.5px solid var(--color-border);

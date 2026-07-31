@@ -28,7 +28,7 @@
   color: var(--color-accent);
   text-decoration: none;
   padding: 0.5rem 1.25rem;
-  border-radius: 100px;
+  border-radius: var(--radius-full);
   border: 1.5px solid var(--color-accent-border);
   transition: background-color 0.15s;
 }

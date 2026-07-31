@@ -45,7 +45,7 @@
 /* ── 공연 카드 ── */
 .card {
   border: 1.5px solid var(--color-border);
-  border-radius: 14px;
+  border-radius: var(--radius-xl);
   background: var(--color-surface);
   overflow: hidden;
 }
@@ -61,7 +61,7 @@
   width: 64px;
   height: 64px;
   object-fit: cover;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   flex-shrink: 0;
 }
 
@@ -164,7 +164,7 @@
 
 .btnReject {
   padding: 0.5rem 1.25rem;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   font-size: 0.9rem;
   font-weight: 600;
   background: none;
@@ -182,7 +182,7 @@
 
 .btnApprove {
   padding: 0.5rem 1.5rem;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   font-size: 0.9rem;
   font-weight: 600;
   background: var(--color-accent);
@@ -251,7 +251,7 @@
   flex: 1;
   padding: 0.45rem 0.75rem;
   border: 1.5px solid var(--color-border);
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   font-size: 0.875rem;
   background: var(--color-bg);
   color: var(--color-text);
@@ -267,7 +267,7 @@
   justify-content: center;
   width: 28px;
   height: 28px;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   color: var(--color-text-muted);
   flex-shrink: 0;
   transition: color 0.15s, background 0.15s;
@@ -284,7 +284,7 @@
   justify-content: center;
   width: 28px;
   height: 28px;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   border: none;
   background: none;
   color: var(--color-text-muted);
@@ -321,7 +321,7 @@
 
 .btnCancel {
   padding: 0.45rem 1rem;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   font-size: 0.875rem;
   font-weight: 600;
   background: none;
@@ -340,7 +340,7 @@
 
 .btnApproveConfirm {
   padding: 0.45rem 1.25rem;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   font-size: 0.875rem;
   font-weight: 700;
   background: var(--color-accent);
