@@ -268,8 +268,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
   background: var(--color-accent-dim);
   color: var(--color-accent);
@@ -291,7 +291,6 @@
   padding: 0.875rem 1rem;
   background: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-left: 3px solid var(--color-border);
   border-radius: var(--radius-lg);
   text-decoration: none;
   color: inherit;
@@ -304,12 +303,12 @@
 }
 
 .ticketCardSoon {
-  border-left-color: var(--ticketing-upcoming);
+  box-shadow: inset 3px 0 0 var(--ticketing-upcoming);
 }
 
 .ticketCardCritical {
-  border-left-color: var(--ticketing-upcoming);
-  background: color-mix(in srgb, var(--ticketing-upcoming) 2.5%, transparent);
+  box-shadow: inset 3px 0 0 var(--ticketing-upcoming);
+  background: color-mix(in srgb, var(--ticketing-upcoming) 6%, var(--color-surface));
 }
 
 .ticketDday {
@@ -432,7 +431,8 @@
 }
 
 .upcomingListItemUrgent {
-  border-left: 3px solid var(--ticketing-upcoming);
+  box-shadow: inset 3px 0 0 var(--ticketing-upcoming);
+  background: color-mix(in srgb, var(--ticketing-upcoming) 5%, var(--color-surface));
 }
 
 .upcomingDateBlock {
