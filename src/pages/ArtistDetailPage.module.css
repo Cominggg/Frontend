@@ -56,13 +56,37 @@
 
 /* ── 히어로 ── */
 .hero {
+  position: relative;
+  overflow: hidden;
+  padding: 2.5rem;
+  border-radius: 20px;
+  background: var(--color-surface);
+  margin-bottom: 2.5rem;
+}
+
+.heroBlur {
+  position: absolute;
+  inset: -30px;
+  background-color: var(--color-surface);
+  background-size: cover;
+  background-position: center;
+  filter: blur(32px) saturate(1.6) brightness(0.95);
+  z-index: 0;
+}
+
+.heroOverlay {
+  position: absolute;
+  inset: 0;
+  background: color-mix(in srgb, var(--color-surface) 80%, transparent);
+  z-index: 1;
+}
+
+.heroContent {
+  position: relative;
+  z-index: 2;
   display: flex;
   align-items: center;
   gap: 2.5rem;
-  padding: 2.5rem;
-  border-radius: 20px;
-  background: color-mix(in srgb, var(--color-accent) 5%, var(--color-surface));
-  margin-bottom: 2.5rem;
 }
 
 /* ── 아바타 ── */
