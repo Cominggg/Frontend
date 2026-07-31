@@ -295,12 +295,7 @@
   transform: translateY(-1px);
 }
 
-.ticketCardSoon {
-  box-shadow: inset 3px 0 0 var(--ticketing-upcoming);
-}
-
 .ticketCardCritical {
-  box-shadow: inset 3px 0 0 var(--ticketing-upcoming);
   background: color-mix(in srgb, var(--ticketing-upcoming) 6%, var(--color-surface));
 }
 
@@ -320,10 +315,15 @@
   line-height: 1.2;
 }
 
-.ticketCardSoon .ticketDday,
-.ticketCardCritical .ticketDday {
-  background: color-mix(in srgb, var(--ticketing-upcoming) 10%, transparent);
+.ticketCardSoon .ticketDday {
+  background: transparent;
   color: var(--ticketing-upcoming);
+  box-shadow: 0 0 0 1.5px color-mix(in srgb, var(--ticketing-upcoming) 45%, transparent);
+}
+
+.ticketCardCritical .ticketDday {
+  background: var(--ticketing-upcoming);
+  color: #fff;
 }
 
 .ticketInfo {
@@ -423,10 +423,6 @@
   transform: translateY(-1px);
 }
 
-.upcomingListItemUrgent {
-  box-shadow: inset 3px 0 0 var(--ticketing-upcoming);
-  background: color-mix(in srgb, var(--ticketing-upcoming) 5%, var(--color-surface));
-}
 
 .upcomingDateBlock {
   flex: 0 0 44px;
@@ -500,9 +496,16 @@
   color: var(--color-accent);
 }
 
-.upcomingListDdayUrgent {
-  background: color-mix(in srgb, var(--ticketing-upcoming) 12%, transparent);
+.upcomingListDdaySoon {
+  background: transparent;
   color: var(--ticketing-upcoming);
+  box-shadow: 0 0 0 1.5px color-mix(in srgb, var(--ticketing-upcoming) 45%, transparent);
+}
+
+.upcomingListDdayCritical {
+  background: var(--ticketing-upcoming);
+  color: #fff;
+  box-shadow: none;
 }
 
 /* 다가오는 공연 — 빈 상태 */

@@ -258,13 +258,13 @@ function HomePage() {
                 <div className={styles.upcomingList}>
                   {upcomingConcerts.map((concert) => {
                     const dday = getDday(concert.startDate, today)
-                    const isUrgent = dday && (dday === 'D-DAY' || parseInt(dday.replace('D-', '')) <= 7)
+                    const urgency = getTicketUrgency(dday)
                     const [, month, day] = concert.startDate.split('-').map(Number)
                     return (
                       <Link
                         key={concert.id}
                         to={ROUTES.CONCERT_DETAIL(concert.id)}
-                        className={`${styles.upcomingListItem}${isUrgent ? ` ${styles.upcomingListItemUrgent}` : ''}`}
+                        className={styles.upcomingListItem}
                       >
                         <div className={styles.upcomingDateBlock}>
                           <span className={styles.upcomingDateMonth}>{month}월</span>
@@ -283,7 +283,7 @@ function HomePage() {
                           <p className={styles.upcomingListMeta}>{concert.venue}</p>
                         </div>
                         {dday && (
-                          <span className={`${styles.upcomingListDday}${isUrgent ? ` ${styles.upcomingListDdayUrgent}` : ''}`}>
+                          <span className={`${styles.upcomingListDday}${urgency === 'soon' ? ` ${styles.upcomingListDdaySoon}` : urgency === 'critical' ? ` ${styles.upcomingListDdayCritical}` : ''}`}>
                             {dday}
                           </span>
                         )}
