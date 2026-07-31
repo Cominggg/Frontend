@@ -106,6 +106,9 @@ function HomePage() {
   const upcomingConcerts = upcomingData?.content ?? []
   const newReleases = releasesData?.content ?? []
 
+  const ticketCardUrgencyClass = { critical: styles.ticketCardCritical, soon: styles.ticketCardSoon }
+  const ddayUrgencyClass = { soon: styles.upcomingListDdaySoon, critical: styles.upcomingListDdayCritical }
+
   return (
     <div className={styles.page}>
 
@@ -187,7 +190,7 @@ function HomePage() {
                       <Link
                         key={concert.id}
                         to={ROUTES.CONCERT_DETAIL(concert.id)}
-                        className={`${styles.ticketCard}${urgency === 'critical' ? ` ${styles.ticketCardCritical}` : urgency === 'soon' ? ` ${styles.ticketCardSoon}` : ''}`}
+                        className={[styles.ticketCard, ticketCardUrgencyClass[urgency]].filter(Boolean).join(' ')}
                       >
                         <div className={styles.ticketDday}>{dday ?? '-'}</div>
                         <div className={styles.ticketInfo}>
@@ -283,7 +286,7 @@ function HomePage() {
                           <p className={styles.upcomingListMeta}>{concert.venue}</p>
                         </div>
                         {dday && (
-                          <span className={`${styles.upcomingListDday}${urgency === 'soon' ? ` ${styles.upcomingListDdaySoon}` : urgency === 'critical' ? ` ${styles.upcomingListDdayCritical}` : ''}`}>
+                          <span className={[styles.upcomingListDday, ddayUrgencyClass[urgency]].filter(Boolean).join(' ')}>
                             {dday}
                           </span>
                         )}
