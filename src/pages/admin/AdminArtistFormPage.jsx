@@ -165,7 +165,7 @@ function AdminArtistFormPage() {
       await updateArtist(id, {
         name: form.name.trim() || undefined,
         aliases: form.aliases,
-        imageUrl: form.imageUrl.trim() || null,
+        imageUrl: form.imageUrl.trim(),
         links: form.links,
       })
       setSavedMsg('수정되었습니다.')
