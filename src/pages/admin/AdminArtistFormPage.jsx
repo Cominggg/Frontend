@@ -69,11 +69,14 @@ function AdminArtistFormPage() {
   const navigate = useNavigate()
 
   const [form, setForm] = useState({ name: '', aliases: EMPTY_ALIASES, imageUrl: '', links: [] })
+  const [imgBroken, setImgBroken] = useState(false)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
   const [savedMsg, setSavedMsg] = useState('')
   const [triggering, setTriggering] = useState(false)
   const [triggerMsg, setTriggerMsg] = useState('')
+
+  useEffect(() => { setImgBroken(false) }, [form.imageUrl])
 
   useEffect(() => {
     if (!id) { navigate(ROUTES.ADMIN, { replace: true }); return }
@@ -156,6 +159,34 @@ function AdminArtistFormPage() {
               />
             </label>
           </div>
+        </section>
+
+        <section className={styles.section}>
+          <h2 className={styles.sectionTitle}>이미지</h2>
+          <label className={styles.field}>
+            <span className={styles.fieldLabel}>이미지 URL</span>
+            <input
+              type="text"
+              className={styles.input}
+              value={form.imageUrl}
+              onChange={(e) => setForm((prev) => ({ ...prev, imageUrl: e.target.value }))}
+              placeholder="https://..."
+            />
+          </label>
+          {form.imageUrl.trim() && (
+            <div className={styles.imagePreviewWrap}>
+              {imgBroken ? (
+                <div className={styles.imagePreviewBroken}>이미지 없음</div>
+              ) : (
+                <img
+                  src={form.imageUrl.trim()}
+                  alt="아티스트 이미지 미리보기"
+                  className={styles.imagePreview}
+                  onError={() => setImgBroken(true)}
+                />
+              )}
+            </div>
+          )}
         </section>
 
         <section className={styles.section}>
