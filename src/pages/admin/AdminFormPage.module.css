@@ -405,9 +405,26 @@
 
 .linkRow {
   display: grid;
-  grid-template-columns: 160px 1fr auto;
+  grid-template-columns: 160px 1fr auto auto;
   gap: 0.5rem;
   align-items: center;
+}
+
+.btnLinkOpen {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  color: var(--color-text-muted);
+  border-radius: var(--radius-sm);
+  transition: color 0.15s, background 0.15s;
+  flex-shrink: 0;
+}
+
+.btnLinkOpen:hover {
+  color: var(--color-accent);
+  background: color-mix(in srgb, var(--color-accent) 10%, transparent);
 }
 
 .btnRemoveLink {
