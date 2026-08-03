@@ -68,7 +68,7 @@ function AdminArtistFormPage() {
   const { id } = useParams()
   const navigate = useNavigate()
 
-  const [form, setForm] = useState({ name: '', aliases: EMPTY_ALIASES })
+  const [form, setForm] = useState({ name: '', aliases: EMPTY_ALIASES, imageUrl: '', links: [] })
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
   const [savedMsg, setSavedMsg] = useState('')
@@ -85,6 +85,8 @@ function AdminArtistFormPage() {
           en: artist.aliases?.en ?? [],
           ko: artist.aliases?.ko ?? [],
         },
+        imageUrl: artist.imageUrl ?? '',
+        links: artist.links ?? [],
       })
     }).catch(() => setError('아티스트 정보를 불러오지 못했습니다.'))
   }, [id, navigate])
@@ -101,6 +103,8 @@ function AdminArtistFormPage() {
       await updateArtist(id, {
         name: form.name.trim() || undefined,
         aliases: form.aliases,
+        imageUrl: form.imageUrl.trim() || null,
+        links: form.links,
       })
       setSavedMsg('수정되었습니다.')
       setTimeout(() => setSavedMsg(''), 3000)
