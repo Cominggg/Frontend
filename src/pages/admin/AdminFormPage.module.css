@@ -395,6 +395,59 @@
   opacity: 0.5;
 }
 
+/* ── 외부 링크 에디터 ── */
+.linkRows {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 0.625rem;
+}
+
+.linkRow {
+  display: grid;
+  grid-template-columns: 160px 1fr auto;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.btnRemoveLink {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border: none;
+  background: none;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  padding: 0;
+  border-radius: var(--radius-sm);
+  transition: color 0.15s, background 0.15s;
+  flex-shrink: 0;
+}
+
+.btnRemoveLink:hover {
+  color: var(--color-destructive, #e53e3e);
+  background: color-mix(in srgb, var(--color-destructive, #e53e3e) 10%, transparent);
+}
+
+.btnAddLink {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-accent);
+  background: none;
+  border: 1.5px dashed var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 0.4375rem 0.875rem;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+  width: 100%;
+}
+
+.btnAddLink:hover {
+  border-color: var(--color-accent);
+}
+
 /* ── 반응형 ── */
 @media (max-width: 767px) {
   .fieldGrid {

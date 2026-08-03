@@ -13,6 +13,60 @@ const ALIAS_LOCALES = [
 
 const EMPTY_ALIASES = { ja: [], en: [], ko: [] }
 
+const LINK_TYPE_OPTIONS = [
+  'spotify', 'youtube', 'instagram', 'twitter', 'facebook',
+  'melon', 'bugs', 'apple_music', 'genie', 'flo', 'vibe',
+]
+
+function LinkEditor({ links, onChange }) {
+  function addRow() { onChange([...links, { type: '', url: '' }]) }
+  function updateRow(i, key, value) {
+    onChange(links.map((row, idx) => idx === i ? { ...row, [key]: value } : row))
+  }
+  function removeRow(i) { onChange(links.filter((_, idx) => idx !== i)) }
+
+  return (
+    <div>
+      <datalist id="link-type-options">
+        {LINK_TYPE_OPTIONS.map((t) => <option key={t} value={t} />)}
+      </datalist>
+      <div className={styles.linkRows}>
+        {links.map((row, i) => (
+          <div key={i} className={styles.linkRow}>
+            <input
+              list="link-type-options"
+              className={styles.input}
+              value={row.type}
+              onChange={(e) => updateRow(i, 'type', e.target.value)}
+              placeholder="타입 (예: spotify)"
+            />
+            <input
+              type="text"
+              className={styles.input}
+              value={row.url}
+              onChange={(e) => updateRow(i, 'url', e.target.value)}
+              placeholder="https://..."
+            />
+            <button
+              type="button"
+              className={styles.btnRemoveLink}
+              onClick={() => removeRow(i)}
+              aria-label="링크 삭제"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" aria-hidden="true">
+                <path d="M18 6 6 18M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+        ))}
+      </div>
+      <button type="button" className={styles.btnAddLink} onClick={addRow}>
+        + 링크 추가
+      </button>
+    </div>
+  )
+}
+
 function AliasTagEditor({ label, values, onChange }) {
   const [input, setInput] = useState('')
   const composingRef = useRef(false)
@@ -100,8 +154,13 @@ function AdminArtistFormPage() {
 
   async function handleSubmit(e) {
     e.preventDefault()
-    setSaving(true)
     setError('')
+    const types = form.links.map((l) => l.type.trim()).filter(Boolean)
+    if (types.length !== new Set(types).size) {
+      setError('동일한 타입의 링크가 중복되었습니다.')
+      return
+    }
+    setSaving(true)
     try {
       await updateArtist(id, {
         name: form.name.trim() || undefined,
@@ -201,6 +260,14 @@ function AdminArtistFormPage() {
               />
             ))}
           </div>
+        </section>
+
+        <section className={styles.section}>
+          <h2 className={styles.sectionTitle}>외부 링크</h2>
+          <LinkEditor
+            links={form.links}
+            onChange={(next) => setForm((prev) => ({ ...prev, links: next }))}
+          />
         </section>
 
         {error && <p className={styles.errorMsg}>{error}</p>}
