@@ -18,12 +18,15 @@ const LINK_TYPE_OPTIONS = [
   'melon', 'bugs', 'apple_music', 'genie', 'flo', 'vibe',
 ]
 
+let _linkId = 0
+const nextLinkId = () => ++_linkId
+
 function LinkEditor({ links, onChange }) {
-  function addRow() { onChange([...links, { type: '', url: '' }]) }
-  function updateRow(i, key, value) {
-    onChange(links.map((row, idx) => idx === i ? { ...row, [key]: value } : row))
+  function addRow() { onChange([...links, { _id: nextLinkId(), type: '', url: '' }]) }
+  function updateRow(_id, key, value) {
+    onChange(links.map((row) => row._id === _id ? { ...row, [key]: value } : row))
   }
-  function removeRow(i) { onChange(links.filter((_, idx) => idx !== i)) }
+  function removeRow(_id) { onChange(links.filter((row) => row._id !== _id)) }
 
   return (
     <div>
@@ -31,20 +34,20 @@ function LinkEditor({ links, onChange }) {
         {LINK_TYPE_OPTIONS.map((t) => <option key={t} value={t} />)}
       </datalist>
       <div className={styles.linkRows}>
-        {links.map((row, i) => (
-          <div key={i} className={styles.linkRow}>
+        {links.map((row) => (
+          <div key={row._id} className={styles.linkRow}>
             <input
               list="link-type-options"
               className={styles.input}
               value={row.type}
-              onChange={(e) => updateRow(i, 'type', e.target.value)}
+              onChange={(e) => updateRow(row._id, 'type', e.target.value)}
               placeholder="타입 (예: spotify)"
             />
             <input
               type="text"
               className={styles.input}
               value={row.url}
-              onChange={(e) => updateRow(i, 'url', e.target.value)}
+              onChange={(e) => updateRow(row._id, 'url', e.target.value)}
               placeholder="https://..."
             />
             {row.url.trim() ? (
@@ -65,7 +68,7 @@ function LinkEditor({ links, onChange }) {
             <button
               type="button"
               className={styles.btnRemoveLink}
-              onClick={() => removeRow(i)}
+              onClick={() => removeRow(row._id)}
               aria-label="링크 삭제"
             >
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" aria-hidden="true">
@@ -158,7 +161,7 @@ function AdminArtistFormPage() {
           ko: artist.aliases?.ko ?? [],
         },
         imageUrl: artist.imageUrl ?? '',
-        links: artist.links ?? [],
+        links: (artist.links ?? []).map((l) => ({ ...l, _id: nextLinkId() })),
       })
     }).catch(() => setError('아티스트 정보를 불러오지 못했습니다.'))
   }, [id, navigate])
@@ -170,7 +173,8 @@ function AdminArtistFormPage() {
   async function handleSubmit(e) {
     e.preventDefault()
     setError('')
-    const types = form.links.map((l) => l.type.trim()).filter(Boolean)
+    const validLinks = form.links.filter((l) => l.type.trim())
+    const types = validLinks.map((l) => l.type.trim())
     if (types.length !== new Set(types).size) {
       setError('동일한 타입의 링크가 중복되었습니다.')
       return
@@ -181,7 +185,7 @@ function AdminArtistFormPage() {
         name: form.name.trim() || undefined,
         aliases: form.aliases,
         imageUrl: form.imageUrl.trim(),
-        links: form.links,
+        links: validLinks.map(({ type, url }) => ({ type, url })),
       })
       setSavedMsg('수정되었습니다.')
       setTimeout(() => setSavedMsg(''), 3000)
