@@ -33,38 +33,59 @@
 
 <div align="center">
   <img src="docs/screenshots/home-desktop.png" alt="홈 페이지" width="100%" />
+  <p><sub>홈 — 인기 공연 및 예매 일정 한눈에 보기</sub></p>
 </div>
 
-<br />
-
-<div align="center">
-  <img src="docs/screenshots/concerts-desktop.png" alt="공연 목록" width="49%" />
-  <img src="docs/screenshots/artists-desktop.png" alt="아티스트 목록" width="49%" />
-</div>
-
-<br />
-
-<div align="center">
-  <img src="docs/screenshots/artist-detail-desktop.png" alt="아티스트 상세" width="49%" />
-  <img src="docs/screenshots/calendar-desktop.png" alt="캘린더" width="49%" />
-</div>
-
-<br />
-
-<div align="center">
-  <img src="docs/screenshots/concert-detail-desktop.png" alt="공연 상세" width="49%" />
-  <img src="docs/screenshots/releases-desktop.png" alt="음반 목록" width="49%" />
-</div>
+<table>
+  <tr>
+    <td align="center" width="50%">
+      <img src="docs/screenshots/concerts-desktop.png" alt="공연 목록" width="100%" />
+      <sub><b>공연 목록</b> — 내한 공연 검색 및 필터</sub>
+    </td>
+    <td align="center" width="50%">
+      <img src="docs/screenshots/artists-desktop.png" alt="아티스트 목록" width="100%" />
+      <sub><b>아티스트 목록</b> — 아티스트 탐색 및 팔로우</sub>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" width="50%">
+      <img src="docs/screenshots/artist-detail-desktop.png" alt="아티스트 상세" width="100%" />
+      <sub><b>아티스트 상세</b> — 다음 내한 D-day · 디스코그래피 · 소셜 링크</sub>
+    </td>
+    <td align="center" width="50%">
+      <img src="docs/screenshots/calendar-desktop.png" alt="캘린더" width="100%" />
+      <sub><b>캘린더</b> — 월별 공연 일정 뷰</sub>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" width="50%">
+      <img src="docs/screenshots/concert-detail-desktop.png" alt="공연 상세" width="100%" />
+      <sub><b>공연 상세</b> — 공연 정보 · 장소 · 가격 · 예매처</sub>
+    </td>
+    <td align="center" width="50%">
+      <img src="docs/screenshots/releases-desktop.png" alt="음반 목록" width="100%" />
+      <sub><b>음반</b> — 아티스트 음반 릴리즈 목록</sub>
+    </td>
+  </tr>
+</table>
 
 <br />
 
 <details>
-<summary>모바일 화면 보기</summary>
+<summary>📱 모바일 화면 보기</summary>
 <br />
-<div align="center">
-  <img src="docs/screenshots/home-mobile.png" alt="홈 — 모바일" width="320" />
-  <img src="docs/screenshots/concerts-mobile.png" alt="공연 목록 — 모바일" width="320" />
-</div>
+<table>
+  <tr>
+    <td align="center">
+      <img src="docs/screenshots/home-mobile.png" alt="홈 — 모바일" width="300" />
+      <br /><sub><b>홈</b></sub>
+    </td>
+    <td align="center">
+      <img src="docs/screenshots/concerts-mobile.png" alt="공연 목록 — 모바일" width="300" />
+      <br /><sub><b>공연 목록</b></sub>
+    </td>
+  </tr>
+</table>
 </details>
 
 ---
