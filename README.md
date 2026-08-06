@@ -14,6 +14,7 @@
   [![Vite](https://img.shields.io/badge/Vite-8-646CFF?style=flat-square&logo=vite&logoColor=white)](https://vitejs.dev/)
   [![React Query](https://img.shields.io/badge/React_Query-v5-FF4154?style=flat-square&logo=reactquery&logoColor=white)](https://tanstack.com/query)
   [![Zustand](https://img.shields.io/badge/Zustand-v5-433E38?style=flat-square)](https://zustand-demo.pmnd.rs/)
+  [![License](https://img.shields.io/badge/license-MIT-green?style=flat-square)](LICENSE)
 
   <br />
 
@@ -216,6 +217,12 @@ src/
 
 | 레포 | 설명 |
 |------|------|
-| [Backend](https://github.com/Cominggg/Backend) | Spring Boot 3.x 백엔드 |
+| [Backend](https://github.com/Cominggg/Backend) | Spring Boot 4.x 백엔드 |
 | [Data](https://github.com/Cominggg/Data) | Python 데이터 파이프라인 (KOPIS·MusicBrainz·setlist.fm) |
 | [Specification](https://github.com/Cominggg/Specification) | ERD, API 명세, 인증 정책 |
+
+---
+
+## License
+
+[MIT](LICENSE) © 2026 Cominggg
