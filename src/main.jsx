@@ -4,7 +4,10 @@ import { BrowserRouter } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import App from './App.jsx'
 import ErrorBoundary from './components/ui/ErrorBoundary.jsx'
+import { initGA } from './utils/analytics.js'
 import './index.css'
+
+initGA()
 
 const queryClient = new QueryClient({
   defaultOptions: {
