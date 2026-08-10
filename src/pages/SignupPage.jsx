@@ -82,8 +82,8 @@ function SignupPage() {
   const nicknameTimer = useRef(null)
 
   useEffect(() => {
-    document.title = '회원가입 — Coming'
-    return () => { document.title = 'Coming' }
+    document.title = '회원가입 — 커밍'
+    return () => { document.title = '커밍' }
   }, [])
 
   function handleAllAgreed(checked) {
@@ -199,7 +199,7 @@ function SignupPage() {
           <Logo size="lg" />
         </div>
         <h1 className={styles.title}>회원가입</h1>
-        <p className={styles.subtitle}>Coming을 이용하려면 아래 정보를 입력해주세요.</p>
+        <p className={styles.subtitle}>커밍을 이용하려면 아래 정보를 입력해주세요.</p>
 
         <form className={styles.form} onSubmit={handleSubmit} noValidate>
           {/* 닉네임 */}

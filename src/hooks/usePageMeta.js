@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 
-const DEFAULT_TITLE = 'Coming - Jpop 아티스트 내한 공연 정보'
-const DEFAULT_DESCRIPTION = 'Jpop 아티스트 내한 공연 정보를 한 곳에서 확인하세요. 공연 일정, 아티스트, 발매 소식을 통합 제공하는 Coming입니다.'
+const DEFAULT_TITLE = '커밍 - Jpop 아티스트 내한 공연 정보'
+const DEFAULT_DESCRIPTION = 'Jpop 아티스트 내한 공연 정보를 한 곳에서 확인하세요. 공연 일정, 아티스트, 발매 소식을 통합 제공하는 커밍입니다.'
 const DEFAULT_URL = 'https://comingg.com'
 const DEFAULT_IMAGE = 'https://comingg.com/logo-transparent.png'
 

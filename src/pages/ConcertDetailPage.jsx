@@ -51,7 +51,7 @@ function ConcertDetailPage() {
   })
 
   usePageMeta({
-    title: concert?.title ? `${concert.title} — Coming` : undefined,
+    title: concert?.title ? `${concert.title} — 커밍` : undefined,
     description: concert
       ? `${(concert.artists ?? []).map((a) => a.name).join(' · ')} · ${concert.venue} · ${formatDate(concert.startDate)}`
       : undefined,
