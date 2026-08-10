@@ -13,6 +13,7 @@ import useAuthStore from '@/stores/authStore'
 import useLoginModalStore from '@/stores/loginModalStore'
 import { ROUTES } from '@/constants/routes'
 import { formatDate, formatDateTime } from '@/utils/date'
+import { buildConcertEventJsonLd, toSafeJsonLd } from '@/utils/structuredData'
 import styles from './ConcertDetailPage.module.css'
 
 function PosterImage({ url, alt }) {
@@ -141,8 +142,13 @@ function ConcertDetailPage() {
     ? `${formatDate(startDate)} ~ ${formatDate(endDate)}`
     : formatDate(startDate)
 
+  const eventJsonLd = buildConcertEventJsonLd(concert)
+
   return (
     <>
+    {eventJsonLd && (
+      <script type="application/ld+json">{toSafeJsonLd(eventJsonLd)}</script>
+    )}
     <div className={styles.page}>
       <div className={styles.inner}>
 

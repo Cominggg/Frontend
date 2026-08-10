@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /me
+Disallow: /auth/callback
+
+Sitemap: https://comingg.com/sitemap.xml
