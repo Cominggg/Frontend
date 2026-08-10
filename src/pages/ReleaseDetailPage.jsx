@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { Link, useParams, useNavigate, useLocation } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 
@@ -6,6 +6,7 @@ import ArtistAliasName from '@/components/artist/ArtistAliasName'
 import EmptyState from '@/components/ui/EmptyState'
 import SourceCredit from '@/components/ui/SourceCredit'
 import SpotifyIcon from '@/components/ui/SpotifyIcon'
+import usePageMeta from '@/hooks/usePageMeta'
 import { getRelease } from '@/services/releaseApi'
 import { ROUTES } from '@/constants/routes'
 import { getArtistColor } from '@/utils/artistColor'
@@ -36,10 +37,12 @@ function ReleaseDetailPage() {
     retry: false,
   })
 
-  useEffect(() => {
-    if (release?.title) document.title = `${release.title} — Coming`
-    return () => { document.title = 'Coming' }
-  }, [release?.title])
+  usePageMeta({
+    title: release?.title ? `${release.title} — Coming` : undefined,
+    description: release?.title ? `${release.artistName} · ${release.title} 발매 정보` : undefined,
+    path: `/releases/${releaseId}`,
+    image: release?.coverUrl,
+  })
 
   function handleBack() {
     locationKey !== 'default' ? navigate(-1) : navigate(ROUTES.RELEASES)

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { Link, useParams, useSearchParams } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 
@@ -14,6 +14,7 @@ import SourceCredit from '@/components/ui/SourceCredit'
 import SpotifyIcon from '@/components/ui/SpotifyIcon'
 import XIcon from '@/components/ui/XIcon'
 import YouTubeIcon from '@/components/ui/YouTubeIcon'
+import usePageMeta from '@/hooks/usePageMeta'
 import { getArtist, getArtistConcerts, getArtistReleases, followArtist, unfollowArtist } from '@/services/artistApi'
 import useAuthStore from '@/stores/authStore'
 import useLoginModalStore from '@/stores/loginModalStore'
@@ -100,10 +101,12 @@ function ArtistDetailPage() {
     retry: false,
   })
 
-  useEffect(() => {
-    if (artist?.name) document.title = `${artist.name} — Coming`
-    return () => { document.title = 'Coming' }
-  }, [artist?.name])
+  usePageMeta({
+    title: artist?.name ? `${artist.name} — Coming` : undefined,
+    description: artist?.name ? `${artist.name} 아티스트 프로필 및 내한 공연 정보` : undefined,
+    path: `/artists/${artistId}`,
+    image: artist?.imageUrl,
+  })
 
   const { data: concertsData, isLoading: concertsLoading } = useQuery({
     queryKey: ['artist-concerts', artistId, concertTab, concertPage],

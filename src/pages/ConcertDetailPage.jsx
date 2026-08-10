@@ -7,6 +7,7 @@ import BackButton from '@/components/ui/BackButton'
 import Badge from '@/components/ui/Badge'
 import EmptyState from '@/components/ui/EmptyState'
 import InquiryModal from '@/components/ui/InquiryModal'
+import usePageMeta from '@/hooks/usePageMeta'
 import { getConcert, getConcertSetlist } from '@/services/concertApi'
 import { addToCalendar, removeFromCalendar } from '@/services/calendarApi'
 import useAuthStore from '@/stores/authStore'
@@ -49,10 +50,14 @@ function ConcertDetailPage() {
     retry: false,
   })
 
-  useEffect(() => {
-    if (concert?.title) document.title = `${concert.title} — Coming`
-    return () => { document.title = 'Coming' }
-  }, [concert?.title])
+  usePageMeta({
+    title: concert?.title ? `${concert.title} — Coming` : undefined,
+    description: concert
+      ? `${(concert.artists ?? []).map((a) => a.name).join(' · ')} · ${concert.venue} · ${formatDate(concert.startDate)}`
+      : undefined,
+    path: `/concerts/${concertId}`,
+    image: concert?.posterUrl,
+  })
 
   const { data: setlistData } = useQuery({
     queryKey: ['concert-setlist', concertId],
