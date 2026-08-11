@@ -41,6 +41,18 @@ export function buildConcertEventJsonLd(concert) {
   }
 }
 
+// 사이트 전역용 schema.org/WebSite 구조화 데이터. 브랜드 키워드("커밍") 검색 시 사이트 정체성 인식용.
+export function buildWebsiteJsonLd() {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: '커밍',
+    alternateName: 'Coming',
+    url: 'https://comingg.com',
+    description: 'Jpop 아티스트 내한 공연 정보를 한 곳에서 확인하세요. 공연 일정, 아티스트, 발매 소식을 통합 제공하는 커밍입니다.',
+  }
+}
+
 // script 태그 조기 종료(</script>) 인젝션 방지
 export function toSafeJsonLd(data) {
   return JSON.stringify(data).replace(/</g, '\\u003c')

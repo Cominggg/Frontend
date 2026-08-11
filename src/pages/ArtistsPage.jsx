@@ -29,7 +29,7 @@ function ArtistsPage() {
   const openLoginModal = useLoginModalStore((s) => s.open)
   const effectiveFollowedOnly = followedOnly && !!user
 
-  usePageTitle('아티스트 — Coming')
+  usePageTitle('아티스트 — 커밍')
 
   useEffect(() => {
     if (inputValue === urlQueryRef.current) return

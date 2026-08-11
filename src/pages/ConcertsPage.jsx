@@ -43,7 +43,7 @@ function ConcertsPage() {
   const openLoginModal = useLoginModalStore((s) => s.open)
   const effectiveFollowedOnly = followedOnly && !!user
 
-  usePageTitle('공연 — Coming')
+  usePageTitle('공연 — 커밍')
 
   useEffect(() => {
     if (inputValue === urlQueryRef.current) return

@@ -360,8 +360,8 @@ function MyPage() {
   const [inquiryPage, setInquiryPage] = useState(1)
 
   useEffect(() => {
-    document.title = '마이페이지 — Coming'
-    return () => { document.title = 'Coming' }
+    document.title = '마이페이지 — 커밍'
+    return () => { document.title = '커밍' }
   }, [])
 
   const { data: user } = useQuery({

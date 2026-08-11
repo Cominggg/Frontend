@@ -36,7 +36,7 @@ function CalendarPage() {
   const [selectedDate, setSelectedDate] = useState(null)
   const [viewMode, setViewMode] = useState('all') // 'all' | 'my'
 
-  usePageTitle('캘린더 — Coming')
+  usePageTitle('캘린더 — 커밍')
 
   const user = useAuthStore((s) => s.user)
   const isLoggedIn = !!user
