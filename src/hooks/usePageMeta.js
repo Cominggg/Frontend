@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 
-const DEFAULT_TITLE = '커밍 - Jpop 아티스트 내한 공연 정보'
+const DEFAULT_TITLE = '커밍'
+const DEFAULT_OG_TITLE = '커밍 - Jpop 아티스트 내한 공연 정보'
 const DEFAULT_DESCRIPTION = 'Jpop 아티스트 내한 공연 정보를 한 곳에서 확인하세요. 공연 일정, 아티스트, 발매 소식을 통합 제공하는 커밍입니다.'
 const DEFAULT_URL = 'https://comingg.com'
 const DEFAULT_IMAGE = 'https://comingg.com/logo-transparent.png'
@@ -23,7 +24,7 @@ export default function usePageMeta({ title, description, path, image }) {
 
     return () => {
       document.title = DEFAULT_TITLE
-      setMetaContent('og:title', DEFAULT_TITLE)
+      setMetaContent('og:title', DEFAULT_OG_TITLE)
       setMetaContent('og:description', DEFAULT_DESCRIPTION)
       setMetaContent('og:url', DEFAULT_URL)
       setMetaContent('og:image', DEFAULT_IMAGE)
