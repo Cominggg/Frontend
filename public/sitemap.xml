@@ -1,37 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://comingg.com/</loc>
+    <loc>https://www.comingg.com/</loc>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://comingg.com/artists</loc>
+    <loc>https://www.comingg.com/artists</loc>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://comingg.com/concerts</loc>
+    <loc>https://www.comingg.com/concerts</loc>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://comingg.com/releases</loc>
+    <loc>https://www.comingg.com/releases</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://comingg.com/calendar</loc>
+    <loc>https://www.comingg.com/calendar</loc>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://comingg.com/terms</loc>
+    <loc>https://www.comingg.com/terms</loc>
     <changefreq>yearly</changefreq>
     <priority>0.2</priority>
   </url>
   <url>
-    <loc>https://comingg.com/privacy</loc>
+    <loc>https://www.comingg.com/privacy</loc>
     <changefreq>yearly</changefreq>
     <priority>0.2</priority>
   </url>
