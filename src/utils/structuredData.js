@@ -1,3 +1,5 @@
+import { SITE_URL } from '@/constants/site'
+
 const EVENT_STATUS_SCHEMA = {
   UPCOMING: 'https://schema.org/EventScheduled',
   ONGOING: 'https://schema.org/EventScheduled',
@@ -48,7 +50,7 @@ export function buildWebsiteJsonLd() {
     '@type': 'WebSite',
     name: '커밍',
     alternateName: 'Coming',
-    url: 'https://www.comingg.com',
+    url: SITE_URL,
     description: 'Jpop 아티스트 내한 공연 정보를 한 곳에서 확인하세요. 공연 일정, 아티스트, 발매 소식을 통합 제공하는 커밍입니다.',
   }
 }
