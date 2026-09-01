@@ -11,20 +11,21 @@
 }
 
 .text {
-  font-weight: 700;
+  font-family: 'Wanted Sans', var(--font-sans);
+  font-weight: 900;
   letter-spacing: -0.02em;
   color: var(--color-text);
   line-height: 1;
 }
 
-/* sm: 헤더용 */
-.sm .icon { width: 28px; height: 28px; }
+/* sm: 헤더용 (아이콘은 텍스트 대비 2배 크기, margin-right로 시각적 간격은 이전과 동일하게 보정) */
+.sm .icon { width: 36px; height: 36px; margin-right: -5px; }
 .sm .text { font-size: 1.125rem; }
 
 /* md: 헤더 기본 */
-.md .icon { width: 40px; height: 40px; }
+.md .icon { width: 38px; height: 38px; margin-right: -5.5px; }
 .md .text { font-size: 1.1875rem; }
 
 /* lg: 로그인 모달용 */
-.lg .icon { width: 44px; height: 44px; }
+.lg .icon { width: 48px; height: 48px; margin-right: -7.5px; }
 .lg .text { font-size: 1.5rem; }

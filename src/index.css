@@ -1,3 +1,12 @@
+/* 로고 워드마크 전용 서체 (Coming 6글자만 서브셋, OFL 라이선스: public/fonts/WantedSans-OFL.txt) */
+@font-face {
+  font-family: 'Wanted Sans';
+  src: url('/fonts/WantedSans-Black.woff2') format('woff2');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
 /* ===========================
    디자인 토큰 (라이트 모드 기본)
    =========================== */
