@@ -51,7 +51,7 @@ export function buildWebsiteJsonLd() {
     name: '커밍',
     alternateName: 'Coming',
     url: SITE_URL,
-    description: 'Jpop 아티스트 내한 공연 정보를 한 곳에서 확인하세요. 공연 일정, 아티스트, 발매 소식을 통합 제공하는 커밍입니다.',
+    description: '일본(Jpop) 아티스트 내한 공연 정보를 한 곳에서 확인하세요. 공연 일정, 아티스트, 발매 소식을 통합 제공하는 커밍입니다.',
   }
 }
 
