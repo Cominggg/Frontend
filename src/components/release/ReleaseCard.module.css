@@ -152,6 +152,11 @@
   font-weight: 600;
   letter-spacing: 0.04em;
   color: var(--color-accent-light);
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .title {
