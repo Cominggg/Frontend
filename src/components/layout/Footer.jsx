@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 
+import DiscordIcon from '@/components/ui/DiscordIcon'
 import { ROUTES } from '@/constants/routes'
 import styles from './Footer.module.css'
 
@@ -12,10 +13,11 @@ function Footer() {
           <nav className={styles.links} aria-label="공식 채널">
             <a
               href="https://discord.gg/zhreVgYnWP"
-              className={styles.link}
+              className={`${styles.link} ${styles.discordLink}`}
               target="_blank"
               rel="noopener noreferrer"
             >
+              <DiscordIcon size={16} />
               디스코드
             </a>
           </nav>
