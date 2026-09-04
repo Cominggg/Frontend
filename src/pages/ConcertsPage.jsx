@@ -78,13 +78,15 @@ function ConcertsPage() {
   }
 
   const statusParam = selectedStatus === 'ALL' ? undefined : selectedStatus
+  // 종료·취소 공연은 최신순(내림차순), 그 외(전체·예정·진행중)는 날짜 임박순(오름차순)
+  const sortParam = selectedStatus === 'ENDED' || selectedStatus === 'CANCELLED' ? 'startDate,desc' : 'startDate,asc'
   // 검색어가 있으면 팔로우 필터보다 우선 — BE /concerts/search가 following 파라미터 미지원
   const isSearchMode = !!urlQuery
 
   // 전체 공연 (검색·팔로우 모드 아닐 때)
   const { data: allData, isLoading: allLoading } = useQuery({
-    queryKey: ['concerts', statusParam, currentPage],
-    queryFn: () => getConcerts({ status: statusParam, page: currentPage - 1, size: ITEMS_PER_PAGE }),
+    queryKey: ['concerts', statusParam, sortParam, currentPage],
+    queryFn: () => getConcerts({ status: statusParam, sort: sortParam, page: currentPage - 1, size: ITEMS_PER_PAGE }),
     placeholderData: (prev) => prev,
     enabled: !effectiveFollowedOnly && !urlQuery,
   })
