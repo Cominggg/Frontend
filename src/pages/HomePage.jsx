@@ -92,7 +92,7 @@ function HomePage() {
 
   const { data: followingData, isLoading: followingLoading } = useQuery({
     queryKey: ['following-concerts-home', user?.id],
-    queryFn: () => getConcerts({ followedOnly: true, size: 5 }),
+    queryFn: () => getConcerts({ followedOnly: true, size: 5, sort: 'startDate,asc' }),
     enabled: isLoggedIn,
     staleTime: 0,
   })
