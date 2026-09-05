@@ -6,6 +6,7 @@ import ArtistCard from '@/components/artist/ArtistCard'
 import ArtistCardSkeleton from '@/components/artist/ArtistCardSkeleton'
 import EmptyState from '@/components/ui/EmptyState'
 import Pagination from '@/components/ui/Pagination'
+import SortDropdown from '@/components/ui/SortDropdown'
 import { getArtists } from '@/services/artistApi'
 import useAuthStore from '@/stores/authStore'
 import useLoginModalStore from '@/stores/loginModalStore'
@@ -13,6 +14,11 @@ import usePageTitle from '@/hooks/usePageTitle'
 import styles from './ArtistsPage.module.css'
 
 const PAGE_SIZE = 25
+const DEFAULT_SORT = 'sortName,asc'
+const SORT_OPTIONS = [
+  { value: DEFAULT_SORT, label: '이름순' },
+  { value: 'followerCount,desc', label: '팔로워순' },
+]
 
 function ArtistsPage() {
   const [searchParams, setSearchParams] = useSearchParams()
@@ -20,6 +26,9 @@ function ArtistsPage() {
   const urlQuery = searchParams.get('q') || ''
   const followedOnly = searchParams.get('followed') === 'true'
   const isComing = searchParams.get('isComing') === 'true'
+  const sort = SORT_OPTIONS.some((o) => o.value === searchParams.get('sort'))
+    ? searchParams.get('sort')
+    : DEFAULT_SORT
   const currentPage = Math.max(1, parseInt(searchParams.get('page') || '1', 10))
 
   const urlQueryRef = useRef(urlQuery)
@@ -50,11 +59,12 @@ function ArtistsPage() {
   }, [inputValue, setSearchParams])
 
   const { data, isLoading } = useQuery({
-    queryKey: ['artists', urlQuery, currentPage, effectiveFollowedOnly, isComing],
+    queryKey: ['artists', urlQuery, currentPage, effectiveFollowedOnly, isComing, sort],
     queryFn: () => getArtists({
       name: urlQuery || undefined,
       following: effectiveFollowedOnly || undefined,
       isComing: isComing || undefined,
+      sort: sort === DEFAULT_SORT ? undefined : sort,
       page: currentPage - 1,
       size: PAGE_SIZE,
     }),
@@ -91,6 +101,19 @@ function ArtistsPage() {
       return next
     }, { replace: false })
     window.scrollTo(0, 0)
+  }
+
+  function handleSortChange(value) {
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev)
+      if (value === DEFAULT_SORT) {
+        next.delete('sort')
+      } else {
+        next.set('sort', value)
+      }
+      next.delete('page')
+      return next
+    }, { replace: false })
   }
 
   function handleFollowedToggle() {
@@ -186,16 +209,19 @@ function ArtistsPage() {
               COMING
             </button>
           </div>
-          <button
-            className={`${styles.followedToggle} ${effectiveFollowedOnly ? styles.followedToggleActive : ''}`}
-            onClick={handleFollowedToggle}
-            aria-pressed={effectiveFollowedOnly}
-          >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill={effectiveFollowedOnly ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-            </svg>
-            관심 아티스트만
-          </button>
+          <div className={styles.controls}>
+            <SortDropdown options={SORT_OPTIONS} value={sort} onChange={handleSortChange} ariaLabel="아티스트 정렬" />
+            <button
+              className={`${styles.followedToggle} ${effectiveFollowedOnly ? styles.followedToggleActive : ''}`}
+              onClick={handleFollowedToggle}
+              aria-pressed={effectiveFollowedOnly}
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill={effectiveFollowedOnly ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+              </svg>
+              관심 아티스트만
+            </button>
+          </div>
         </div>
 
         {/* 아티스트 그리드 */}
