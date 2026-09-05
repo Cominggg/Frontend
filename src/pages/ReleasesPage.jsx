@@ -15,6 +15,7 @@ import styles from './ReleasesPage.module.css'
 
 const MAIN_TYPES = ['Album', 'Single']
 const TYPE_FILTERS = ['전체', ...MAIN_TYPES]
+const TYPE_LABELS = { Album: '앨범', Single: '싱글' }
 const PAGE_SIZE = 20
 
 function ReleasesPage() {
@@ -177,7 +178,7 @@ function ReleasesPage() {
                 className={`${styles.filterTab} ${selectedType === t ? styles.filterTabActive : ''}`}
                 onClick={() => handleTypeChange(t)}
               >
-                {t}
+                {TYPE_LABELS[t] ?? t}
               </button>
             ))}
           </div>
@@ -221,7 +222,7 @@ function ReleasesPage() {
                 : effectiveFollowedOnly
                   ? '관심 아티스트의 음반이 없습니다.'
                   : selectedType !== '전체'
-                    ? `${selectedType} 음반이 없습니다.`
+                    ? `${TYPE_LABELS[selectedType] ?? selectedType} 음반이 없습니다.`
                     : '아직 수집된 음반 정보가 없습니다.'
             }
             action={
