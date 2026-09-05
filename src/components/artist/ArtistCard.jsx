@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 
@@ -18,6 +18,10 @@ function ArtistCard({ artist }) {
   const user = useAuthStore((s) => s.user)
   const openLoginModal = useLoginModalStore((s) => s.open)
   const queryClient = useQueryClient()
+
+  useEffect(() => {
+    setIsFollowing(artist.isFollowing)
+  }, [artist.isFollowing])
 
   const showPlaceholder = !imageUrl || imgFailed
   const [colorFrom, colorTo] = getArtistColor(name)
