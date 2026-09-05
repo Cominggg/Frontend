@@ -12,7 +12,7 @@ import { followArtist, unfollowArtist } from '@/services/artistApi'
 import styles from './ArtistCard.module.css'
 
 function ArtistCard({ artist }) {
-  const { id, name, koreanName, imageUrl, hasUpcomingConcert, spotifyUrl, followerCount } = artist
+  const { id, name, koreanName, imageUrl, hasUpcomingConcert, spotifyUrl } = artist
   const [isFollowing, setIsFollowing] = useState(artist.isFollowing)
   const [imgFailed, setImgFailed] = useState(false)
   const user = useAuthStore((s) => s.user)
@@ -82,9 +82,6 @@ function ArtistCard({ artist }) {
       </div>
       <Link to={ROUTES.ARTIST_DETAIL(id)} className={styles.info}>
         <p className={styles.name}><ArtistAliasName name={name} koreanName={koreanName} /></p>
-        {followerCount != null && (
-          <p className={styles.followerCount}>팔로워 {followerCount.toLocaleString()}</p>
-        )}
       </Link>
       <button
         className={`${styles.followBtn} ${isFollowing ? styles.following : ''}`}
