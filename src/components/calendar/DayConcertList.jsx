@@ -101,7 +101,7 @@ function DayConcertList({ selectedDate, events, onCalendarToggle }) {
 
                   <div className={styles.actions}>
                     {isTicketing ? (
-                      <span className={styles.ticketingBadge}>예매 오픈</span>
+                      <span className={styles.ticketingBadge}>티켓팅 오픈</span>
                     ) : (
                       <span
                         className={styles.badge}

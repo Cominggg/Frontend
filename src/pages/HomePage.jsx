@@ -150,7 +150,7 @@ function HomePage() {
           {/* 오른쪽: 예매 일정 패널 (항상 표시) */}
           <section className={styles.mainZoneRight}>
             <div className={styles.sectionHeader}>
-              <h2 className={styles.sectionTitle}>예매 일정</h2>
+              <h2 className={styles.sectionTitle}>티켓팅 일정</h2>
               {!ticketingLoading && ticketingConcerts.length > 0 && (
                 <Link to={ROUTES.CALENDAR} className={styles.sectionMore}>
                   전체 보기
@@ -177,7 +177,7 @@ function HomePage() {
                   <div className={styles.ticketingEmptyIcon} aria-hidden="true">
                     <Icon name="calendar" size={20} />
                   </div>
-                  <p className={styles.ticketingEmptyText}>현재 예매 일정이 없어요</p>
+                  <p className={styles.ticketingEmptyText}>현재 티켓팅 일정이 없어요</p>
                 </div>
               ) : (
                 <div className={styles.ticketingPanelList}>
