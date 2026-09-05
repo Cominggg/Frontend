@@ -78,8 +78,12 @@ function ConcertsPage() {
   }
 
   const statusParam = selectedStatus === 'ALL' ? undefined : selectedStatus
-  // 종료·취소 공연은 최신순(내림차순), 그 외(전체·예정·진행중)는 날짜 임박순(오름차순)
-  const sortParam = selectedStatus === 'ENDED' || selectedStatus === 'CANCELLED' ? 'startDate,desc' : 'startDate,asc'
+  // 티켓팅 예정만 필터 중엔 티켓 오픈 임박순, 그 외엔 종료·취소는 최신순(내림차순)·나머지는 공연일 임박순(오름차순)
+  const sortParam = ticketOpenPending
+    ? 'ticketOpenAt,asc'
+    : selectedStatus === 'ENDED' || selectedStatus === 'CANCELLED'
+      ? 'startDate,desc'
+      : 'startDate,asc'
 
   const { data, isLoading } = useQuery({
     queryKey: ['concerts', urlQuery || undefined, statusParam, effectiveFollowedOnly, ticketOpenPending, sortParam, currentPage],
