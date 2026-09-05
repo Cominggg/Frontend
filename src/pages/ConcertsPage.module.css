@@ -188,16 +188,6 @@
   color: var(--color-on-accent);
 }
 
-.filterToggle:disabled {
-  opacity: 0.38;
-  cursor: not-allowed;
-}
-
-.filterToggle:disabled:hover {
-  border-color: var(--color-border);
-  color: var(--color-text-muted);
-}
-
 /* ── 공연 그리드 ── */
 .grid {
   display: grid;
