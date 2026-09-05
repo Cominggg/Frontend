@@ -115,10 +115,10 @@ function Header() {
                 aria-expanded={dropdownOpen}
                 aria-label="사용자 메뉴"
               >
-                <span className={styles.avatarInitial} aria-hidden="true">
-                  {user.nickname?.charAt(0) || '?'}
-                </span>
                 <span className={styles.avatarName}>{user.nickname}</span>
+                <svg className={styles.avatarChevron} width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <polyline points="6 9 12 15 18 9" />
+                </svg>
               </button>
               {dropdownOpen && (
                 <div className={styles.dropdown}>
