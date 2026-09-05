@@ -118,6 +118,7 @@ function Header() {
                 <span className={styles.avatarInitial} aria-hidden="true">
                   {user.nickname?.charAt(0) || '?'}
                 </span>
+                <span className={styles.avatarName}>{user.nickname}</span>
               </button>
               {dropdownOpen && (
                 <div className={styles.dropdown}>

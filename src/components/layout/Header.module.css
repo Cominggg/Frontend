@@ -104,13 +104,28 @@
 .avatarBtn {
   display: flex;
   align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  overflow: hidden;
+  gap: 0.5rem;
+  max-width: 160px;
+  padding: 0.25rem 0.75rem 0.25rem 0.25rem;
+  border-radius: var(--radius-full);
   background: transparent;
-  border: none;
-  padding: 0;
+  border: 1px solid var(--color-border);
   cursor: pointer;
+  transition: border-color 0.15s, background-color 0.15s;
+}
+
+.avatarBtn:hover {
+  border-color: var(--color-accent-border);
+  background-color: var(--color-surface-hover);
+}
+
+.avatarName {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .dropdown {
@@ -158,12 +173,13 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
   background: var(--color-accent);
   color: var(--color-on-accent);
-  font-size: 0.875rem;
+  font-size: 0.8125rem;
   font-weight: 700;
   line-height: 1;
 }
