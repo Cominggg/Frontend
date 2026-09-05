@@ -8,7 +8,7 @@ import ConcertCardSkeleton from '@/components/concert/ConcertCardSkeleton'
 import ReleaseCardSkeleton from '@/components/release/ReleaseCardSkeleton'
 import Icon from '@/components/ui/Icon'
 import { ROUTES } from '@/constants/routes'
-import { getPopularConcerts, getConcerts, getFollowingConcerts, getTicketingConcerts } from '@/services/concertApi'
+import { getPopularConcerts, getConcerts, getTicketingConcerts } from '@/services/concertApi'
 import { getReleases } from '@/services/releaseApi'
 import useAuthStore from '@/stores/authStore'
 import useLoginModalStore from '@/stores/loginModalStore'
@@ -90,12 +90,13 @@ function HomePage() {
     staleTime: 5 * 60 * 1000,
   })
 
-  const { data: followingConcerts = [], isLoading: followingLoading } = useQuery({
+  const { data: followingData, isLoading: followingLoading } = useQuery({
     queryKey: ['following-concerts-home', user?.id],
-    queryFn: getFollowingConcerts,
+    queryFn: () => getConcerts({ followedOnly: true, size: 5 }),
     enabled: isLoggedIn,
     staleTime: 0,
   })
+  const followingConcerts = followingData?.content ?? []
 
   const { data: ticketingConcerts = [], isLoading: ticketingLoading } = useQuery({
     queryKey: ['ticketing-concerts-home'],
@@ -362,7 +363,7 @@ function HomePage() {
               </div>
             ) : (
               <div className={styles.gridFive}>
-                {followingConcerts.slice(0, 5).map((concert) => (
+                {followingConcerts.map((concert) => (
                   <ConcertCard key={concert.id} concert={concert} />
                 ))}
               </div>
