@@ -15,9 +15,9 @@ import styles from './ArtistsPage.module.css'
 
 const PAGE_SIZE = 25
 const DEFAULT_SORT = 'sortName,asc'
-// TODO: BE가 /artists sort=followerCount,desc 지원 배포 후 옵션 복구 (현재 배포된 BE에서 500 반환)
 const SORT_OPTIONS = [
   { value: DEFAULT_SORT, label: '이름순' },
+  { value: 'followerCount,desc', label: '팔로워순' },
 ]
 
 function ArtistsPage() {
@@ -64,7 +64,7 @@ function ArtistsPage() {
       name: urlQuery || undefined,
       following: effectiveFollowedOnly || undefined,
       isComing: isComing || undefined,
-      sort,
+      sort: sort === DEFAULT_SORT ? undefined : sort,
       page: currentPage - 1,
       size: PAGE_SIZE,
     }),
