@@ -8,7 +8,7 @@ import EmptyState from '@/components/ui/EmptyState'
 import Pagination from '@/components/ui/Pagination'
 import SourceCredit from '@/components/ui/SourceCredit'
 import { CONCERT_STATUS_LABEL } from '@/constants/concert'
-import { getConcerts, searchConcerts, getFollowingConcerts } from '@/services/concertApi'
+import { getConcerts } from '@/services/concertApi'
 import useAuthStore from '@/stores/authStore'
 import useLoginModalStore from '@/stores/loginModalStore'
 import usePageTitle from '@/hooks/usePageTitle'
@@ -34,6 +34,7 @@ function ConcertsPage() {
     ? searchParams.get('status')
     : 'ALL'
   const followedOnly = searchParams.get('followed') === 'true'
+  const ticketOpenPending = searchParams.get('ticketOpenPending') === 'true'
   const currentPage = Math.max(1, parseInt(searchParams.get('page') || '1', 10))
 
   const urlQueryRef = useRef(urlQuery)
@@ -77,50 +78,30 @@ function ConcertsPage() {
   }
 
   const statusParam = selectedStatus === 'ALL' ? undefined : selectedStatus
-  // 검색어가 있으면 팔로우 필터보다 우선 — BE /concerts/search가 following 파라미터 미지원
-  const isSearchMode = !!urlQuery
+  // 티켓팅 예정만 필터 중엔 티켓 오픈 임박순, 그 외엔 종료·취소는 최신순(내림차순)·나머지는 공연일 임박순(오름차순)
+  const sortParam = ticketOpenPending
+    ? 'ticketOpenAt,asc'
+    : selectedStatus === 'ENDED' || selectedStatus === 'CANCELLED'
+      ? 'startDate,desc'
+      : 'startDate,asc'
 
-  // 전체 공연 (검색·팔로우 모드 아닐 때)
-  const { data: allData, isLoading: allLoading } = useQuery({
-    queryKey: ['concerts', statusParam, currentPage],
-    queryFn: () => getConcerts({ status: statusParam, page: currentPage - 1, size: ITEMS_PER_PAGE }),
+  const { data, isLoading } = useQuery({
+    queryKey: ['concerts', urlQuery || undefined, statusParam, effectiveFollowedOnly, effectiveFollowedOnly ? user?.id : undefined, ticketOpenPending, sortParam, currentPage],
+    queryFn: () => getConcerts({
+      q: urlQuery || undefined,
+      status: statusParam,
+      followedOnly: effectiveFollowedOnly || undefined,
+      ticketOpenPending: ticketOpenPending || undefined,
+      sort: sortParam,
+      page: currentPage - 1,
+      size: ITEMS_PER_PAGE,
+    }),
     placeholderData: (prev) => prev,
-    enabled: !effectiveFollowedOnly && !urlQuery,
   })
 
-  // 검색 모드 — GET /api/concerts/search
-  const { data: searchData, isLoading: searchLoading } = useQuery({
-    queryKey: ['concerts-search', urlQuery, statusParam, currentPage],
-    queryFn: () => searchConcerts({ q: urlQuery, status: statusParam, page: currentPage - 1, size: ITEMS_PER_PAGE }),
-    placeholderData: (prev) => prev,
-    enabled: isSearchMode,
-  })
-
-  // 팔로우 모드 — GET /api/concerts/following (페이지네이션 없음 → 클라이언트 처리)
-  const { data: followingData, isLoading: followingLoading } = useQuery({
-    queryKey: ['concerts-following', statusParam],
-    queryFn: () => getFollowingConcerts({ status: statusParam }),
-    enabled: effectiveFollowedOnly,
-  })
-
-  const isLoading = isSearchMode ? searchLoading : effectiveFollowedOnly ? followingLoading : allLoading
-
-  let concerts, totalElements, totalPages
-  if (isSearchMode) {
-    concerts = searchData?.content ?? []
-    totalElements = searchData?.totalElements ?? 0
-    totalPages = searchData?.totalPages ?? 1
-  } else if (effectiveFollowedOnly) {
-    const all = followingData ?? []
-    const filtered = statusParam ? all.filter((c) => c.status === statusParam) : all
-    totalElements = filtered.length
-    totalPages = Math.max(1, Math.ceil(filtered.length / ITEMS_PER_PAGE))
-    concerts = filtered.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE)
-  } else {
-    concerts = allData?.content ?? []
-    totalElements = allData?.totalElements ?? 0
-    totalPages = allData?.totalPages ?? 1
-  }
+  const concerts = data?.content ?? []
+  const totalElements = data?.totalElements ?? 0
+  const totalPages = data?.totalPages ?? 1
 
   function handleQueryClear() {
     setInputValue('')
@@ -143,6 +124,11 @@ function ConcertsPage() {
       return
     }
     updateParams({ followed: followedOnly ? false : true, page: 1 })
+    window.scrollTo(0, 0)
+  }
+
+  function handleTicketOpenPendingToggle() {
+    updateParams({ ticketOpenPending: ticketOpenPending ? false : true, page: 1 })
     window.scrollTo(0, 0)
   }
 
@@ -208,18 +194,28 @@ function ConcertsPage() {
               </button>
             ))}
           </div>
-          <button
-            className={`${styles.followedToggle} ${effectiveFollowedOnly ? styles.followedToggleActive : ''}`}
-            onClick={handleFollowedToggle}
-            aria-pressed={effectiveFollowedOnly}
-            disabled={isSearchMode}
-            title={isSearchMode ? '검색 중에는 팔로우 필터를 사용할 수 없습니다' : undefined}
-          >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill={effectiveFollowedOnly ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-            </svg>
-            관심 아티스트만
-          </button>
+          <div className={styles.toggleGroup}>
+            <button
+              className={`${styles.filterToggle} ${effectiveFollowedOnly ? styles.filterToggleActive : ''}`}
+              onClick={handleFollowedToggle}
+              aria-pressed={effectiveFollowedOnly}
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill={effectiveFollowedOnly ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+              </svg>
+              관심 아티스트만
+            </button>
+            <button
+              className={`${styles.filterToggle} ${ticketOpenPending ? styles.filterToggleActive : ''}`}
+              onClick={handleTicketOpenPendingToggle}
+              aria-pressed={ticketOpenPending}
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
+                <path d="M2 9a1 1 0 0 1 1-1h18a1 1 0 0 1 1 1v1.5a2.5 2.5 0 0 0 0 5V17a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1v-1.5a2.5 2.5 0 0 0 0-5V9z" />
+              </svg>
+              티켓팅 예정만
+            </button>
+          </div>
         </div>
 
         {/* 공연 그리드 */}

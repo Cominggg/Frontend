@@ -148,8 +148,15 @@
   color: var(--color-on-accent);
 }
 
-/* ── 관심 아티스트 토글 ── */
-.followedToggle {
+/* ── 필터 토글 그룹 (관심 아티스트만 / 티켓팅 예정만) ── */
+.toggleGroup {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.filterToggle {
   display: inline-flex;
   align-items: center;
   gap: 0.375rem;
@@ -164,12 +171,12 @@
   white-space: nowrap;
 }
 
-.followedToggle:hover {
+.filterToggle:hover {
   border-color: var(--color-accent-border);
   color: var(--color-accent);
 }
 
-.followedToggleActive {
+.filterToggleActive {
   background: var(--color-accent);
   border-color: var(--color-accent);
   color: var(--color-on-accent);
@@ -177,18 +184,8 @@
   box-shadow: 0 2px 8px var(--color-accent-shadow);
 }
 
-.followedToggleActive:hover {
+.filterToggleActive:hover {
   color: var(--color-on-accent);
-}
-
-.followedToggle:disabled {
-  opacity: 0.38;
-  cursor: not-allowed;
-}
-
-.followedToggle:disabled:hover {
-  border-color: var(--color-border);
-  color: var(--color-text-muted);
 }
 
 /* ── 공연 그리드 ── */

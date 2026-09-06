@@ -8,7 +8,7 @@ import ConcertCardSkeleton from '@/components/concert/ConcertCardSkeleton'
 import ReleaseCardSkeleton from '@/components/release/ReleaseCardSkeleton'
 import Icon from '@/components/ui/Icon'
 import { ROUTES } from '@/constants/routes'
-import { getPopularConcerts, getConcerts, getFollowingConcerts, getTicketingConcerts } from '@/services/concertApi'
+import { getPopularConcerts, getConcerts, getTicketingConcerts } from '@/services/concertApi'
 import { getReleases } from '@/services/releaseApi'
 import useAuthStore from '@/stores/authStore'
 import useLoginModalStore from '@/stores/loginModalStore'
@@ -90,12 +90,13 @@ function HomePage() {
     staleTime: 5 * 60 * 1000,
   })
 
-  const { data: followingConcerts = [], isLoading: followingLoading } = useQuery({
+  const { data: followingData, isLoading: followingLoading } = useQuery({
     queryKey: ['following-concerts-home', user?.id],
-    queryFn: getFollowingConcerts,
+    queryFn: () => getConcerts({ followedOnly: true, size: 5, sort: 'startDate,asc' }),
     enabled: isLoggedIn,
     staleTime: 0,
   })
+  const followingConcerts = followingData?.content ?? []
 
   const { data: ticketingConcerts = [], isLoading: ticketingLoading } = useQuery({
     queryKey: ['ticketing-concerts-home'],
@@ -149,7 +150,7 @@ function HomePage() {
           {/* 오른쪽: 예매 일정 패널 (항상 표시) */}
           <section className={styles.mainZoneRight}>
             <div className={styles.sectionHeader}>
-              <h2 className={styles.sectionTitle}>예매 일정</h2>
+              <h2 className={styles.sectionTitle}>티켓팅 일정</h2>
               {!ticketingLoading && ticketingConcerts.length > 0 && (
                 <Link to={ROUTES.CALENDAR} className={styles.sectionMore}>
                   전체 보기
@@ -176,7 +177,7 @@ function HomePage() {
                   <div className={styles.ticketingEmptyIcon} aria-hidden="true">
                     <Icon name="calendar" size={20} />
                   </div>
-                  <p className={styles.ticketingEmptyText}>현재 예매 일정이 없어요</p>
+                  <p className={styles.ticketingEmptyText}>현재 티켓팅 일정이 없어요</p>
                 </div>
               ) : (
                 <div className={styles.ticketingPanelList}>
@@ -362,7 +363,7 @@ function HomePage() {
               </div>
             ) : (
               <div className={styles.gridFive}>
-                {followingConcerts.slice(0, 5).map((concert) => (
+                {followingConcerts.map((concert) => (
                   <ConcertCard key={concert.id} concert={concert} />
                 ))}
               </div>
