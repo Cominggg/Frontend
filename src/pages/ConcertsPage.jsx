@@ -86,7 +86,7 @@ function ConcertsPage() {
       : 'startDate,asc'
 
   const { data, isLoading } = useQuery({
-    queryKey: ['concerts', urlQuery || undefined, statusParam, effectiveFollowedOnly, ticketOpenPending, sortParam, currentPage],
+    queryKey: ['concerts', urlQuery || undefined, statusParam, effectiveFollowedOnly, effectiveFollowedOnly ? user?.id : undefined, ticketOpenPending, sortParam, currentPage],
     queryFn: () => getConcerts({
       q: urlQuery || undefined,
       status: statusParam,
