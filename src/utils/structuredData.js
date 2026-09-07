@@ -1,4 +1,4 @@
-import { SITE_URL } from '@/constants/site'
+import { SITE_LOGO_URL, SITE_URL } from '@/constants/site'
 
 const EVENT_STATUS_SCHEMA = {
   UPCOMING: 'https://schema.org/EventScheduled',
@@ -52,6 +52,18 @@ export function buildWebsiteJsonLd() {
     alternateName: 'Coming',
     url: SITE_URL,
     description: '일본(Jpop) 아티스트 내한 공연 정보를 한 곳에서 확인하세요. 공연 일정, 아티스트, 발매 소식을 통합 제공하는 커밍입니다.',
+  }
+}
+
+// 브랜드 엔티티(로고 포함) 인식용. 공식 SNS 계정이 생기면 sameAs에 추가.
+export function buildOrganizationJsonLd() {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    name: '커밍',
+    alternateName: 'Coming',
+    url: SITE_URL,
+    logo: SITE_LOGO_URL,
   }
 }
 

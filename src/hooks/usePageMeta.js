@@ -2,14 +2,18 @@ import { useEffect } from 'react'
 
 import { SITE_LOGO_URL, SITE_URL } from '@/constants/site'
 
-const DEFAULT_TITLE = '커밍'
-const DEFAULT_OG_TITLE = '커밍 - Jpop 아티스트 내한 공연 정보'
+const DEFAULT_TITLE = '커밍 - Jpop 아티스트 내한 공연 정보'
+const DEFAULT_OG_TITLE = DEFAULT_TITLE
 const DEFAULT_DESCRIPTION = 'Jpop 아티스트 내한 공연 정보를 한 곳에서 확인하세요. 공연 일정, 아티스트, 발매 소식을 통합 제공하는 커밍입니다.'
 const DEFAULT_URL = SITE_URL
 const DEFAULT_IMAGE = SITE_LOGO_URL
 
 function setMetaContent(property, content) {
   document.querySelector(`meta[property="${property}"]`)?.setAttribute('content', content)
+}
+
+function setMetaByName(name, content) {
+  document.querySelector(`meta[name="${name}"]`)?.setAttribute('content', content)
 }
 
 function setCanonicalHref(href) {
@@ -29,6 +33,7 @@ export default function usePageMeta({ title, description, path, image }) {
     setMetaContent('og:description', description || DEFAULT_DESCRIPTION)
     setMetaContent('og:url', url)
     setMetaContent('og:image', image || DEFAULT_IMAGE)
+    setMetaByName('description', description || DEFAULT_DESCRIPTION)
     setCanonicalHref(url)
 
     return () => {
@@ -37,6 +42,7 @@ export default function usePageMeta({ title, description, path, image }) {
       setMetaContent('og:description', DEFAULT_DESCRIPTION)
       setMetaContent('og:url', DEFAULT_URL)
       setMetaContent('og:image', DEFAULT_IMAGE)
+      setMetaByName('description', DEFAULT_DESCRIPTION)
       setCanonicalHref(DEFAULT_URL)
     }
   }, [title, description, path, image])

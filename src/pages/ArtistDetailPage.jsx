@@ -22,6 +22,7 @@ import { ROUTES } from '@/constants/routes'
 import { getArtistColor } from '@/utils/artistColor'
 import { formatDate } from '@/utils/date'
 import { getSpotifyAlbumUrl, getSpotifyTrackUrl } from '@/utils/spotify'
+import { trackEvent } from '@/utils/analytics'
 import styles from './ArtistDetailPage.module.css'
 
 function formatFollowers(n) {
@@ -102,7 +103,7 @@ function ArtistDetailPage() {
   })
 
   usePageMeta({
-    title: artist?.name ? `${artist.name} — 커밍` : undefined,
+    title: artist?.name ? `${artist.name} - 커밍` : undefined,
     description: artist?.name ? `${artist.name} 아티스트 프로필 및 내한 공연 정보` : undefined,
     path: `/artists/${artistId}`,
     image: artist?.imageUrl,
@@ -154,6 +155,7 @@ function ArtistDetailPage() {
 
   function handleFollow() {
     if (!user) { openLoginModal(window.location.pathname + window.location.search); return }
+    trackEvent(artist.isFollowing ? 'unfollow_artist' : 'follow_artist', { artist_id: artistId, artist_name: artist.name })
     followMutation.mutate({ following: artist.isFollowing })
   }
 

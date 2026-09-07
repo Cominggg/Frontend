@@ -38,7 +38,7 @@ function ReleaseDetailPage() {
   })
 
   usePageMeta({
-    title: release?.title ? `${release.title} — 커밍` : undefined,
+    title: release?.title ? `${release.title} - 커밍` : undefined,
     description: release?.title ? `${release.artistName} · ${release.title} 발매 정보` : undefined,
     path: `/releases/${releaseId}`,
     image: release?.coverUrl,

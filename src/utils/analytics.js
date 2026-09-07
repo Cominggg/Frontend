@@ -15,5 +15,22 @@ export function initGA() {
   window.gtag = gtag
 
   gtag('js', new Date())
-  gtag('config', GA_MEASUREMENT_ID)
+  // CSR SPA라 라우트 변경 시 PageViewTracker가 page_view를 직접 전송한다.
+  // 자동 전송을 꺼두지 않으면 최초 진입 페이지에서 이벤트가 중복 발생한다.
+  gtag('config', GA_MEASUREMENT_ID, { send_page_view: false })
+}
+
+export function trackPageView(pagePath, pageTitle) {
+  if (!GA_MEASUREMENT_ID || typeof window.gtag !== 'function') return
+  window.gtag('event', 'page_view', {
+    page_path: pagePath,
+    page_title: pageTitle,
+    // 원본 window.location.href 대신 이미 민감 파라미터가 제거된 pagePath로 구성한다.
+    page_location: `${window.location.origin}${pagePath}`,
+  })
+}
+
+export function trackEvent(name, params = {}) {
+  if (!GA_MEASUREMENT_ID || typeof window.gtag !== 'function') return
+  window.gtag('event', name, params)
 }

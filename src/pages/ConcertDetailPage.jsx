@@ -15,6 +15,7 @@ import useLoginModalStore from '@/stores/loginModalStore'
 import { ROUTES } from '@/constants/routes'
 import { formatDate, formatDateTime } from '@/utils/date'
 import { buildConcertEventJsonLd, toSafeJsonLd } from '@/utils/structuredData'
+import { trackEvent } from '@/utils/analytics'
 import styles from './ConcertDetailPage.module.css'
 
 function PosterImage({ url, alt }) {
@@ -51,7 +52,7 @@ function ConcertDetailPage() {
   })
 
   usePageMeta({
-    title: concert?.title ? `${concert.title} — 커밍` : undefined,
+    title: concert?.title ? `${concert.title} - 커밍` : undefined,
     description: concert
       ? `${(concert.artists ?? []).map((a) => a.name).join(' · ')} · ${concert.venue} · ${formatDate(concert.startDate)}`
       : undefined,
@@ -88,7 +89,12 @@ function ConcertDetailPage() {
 
   function handleCalendar() {
     if (!user) { openLoginModal(window.location.pathname + window.location.search); return }
+    trackEvent(concert.isInCalendar ? 'remove_from_calendar' : 'add_to_calendar', { concert_id: concertId, concert_title: concert.title })
     calendarMutation.mutate({ inCalendar: concert.isInCalendar })
+  }
+
+  function handleTicketingClick(link) {
+    trackEvent('click_ticketing', { concert_id: concertId, concert_title: title, ticketing_label: link.label, ticketing_url: link.url })
   }
 
   function handleConcertInquiry() {
@@ -294,6 +300,7 @@ function ConcertDetailPage() {
                       target="_blank"
                       rel="noopener noreferrer"
                       className={styles.ticketBtn}
+                      onClick={() => handleTicketingClick(link)}
                     >
                       {link.label}
                       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
