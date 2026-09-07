@@ -36,7 +36,7 @@ function ReleasesPage() {
   const effectiveFollowedOnly = followedOnly && !!user
 
   usePageMeta({
-    title: '음악 — 커밍',
+    title: '음악 - 커밍',
     description: 'Jpop 아티스트의 신보·싱글 발매 소식을 모아봤습니다. 앨범·싱글 종류별로 필터링해 확인하세요.',
     path: '/releases',
   })

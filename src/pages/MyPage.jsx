@@ -360,7 +360,7 @@ function MyPage() {
   const [inquiryPage, setInquiryPage] = useState(1)
 
   useEffect(() => {
-    document.title = '마이페이지 — 커밍'
+    document.title = '마이페이지 - 커밍'
     return () => { document.title = '커밍 - Jpop 아티스트 내한 공연 정보' }
   }, [])
 

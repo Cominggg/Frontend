@@ -37,7 +37,7 @@ function CalendarPage() {
   const [viewMode, setViewMode] = useState('all') // 'all' | 'my'
 
   usePageMeta({
-    title: '캘린더 — 커밍',
+    title: '캘린더 - 커밍',
     description: '월별 캘린더에서 Jpop 아티스트의 공연 일정을 한눈에 확인하고 내 캘린더에 담아보세요.',
     path: '/calendar',
   })

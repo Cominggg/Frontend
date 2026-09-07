@@ -45,7 +45,7 @@ function ConcertsPage() {
   const effectiveFollowedOnly = followedOnly && !!user
 
   usePageMeta({
-    title: '공연 — 커밍',
+    title: '공연 - 커밍',
     description: '내한이 예정되거나 진행 중인 Jpop 아티스트 공연을 모아봤습니다. 상태·아티스트별로 필터링해 확인하세요.',
     path: '/concerts',
   })

@@ -102,7 +102,7 @@ function ArtistDetailPage() {
   })
 
   usePageMeta({
-    title: artist?.name ? `${artist.name} — 커밍` : undefined,
+    title: artist?.name ? `${artist.name} - 커밍` : undefined,
     description: artist?.name ? `${artist.name} 아티스트 프로필 및 내한 공연 정보` : undefined,
     path: `/artists/${artistId}`,
     image: artist?.imageUrl,
