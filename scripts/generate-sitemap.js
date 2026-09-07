@@ -17,30 +17,25 @@ const STATIC_URLS = [
   { loc: '/privacy', changefreq: 'yearly', priority: '0.2' },
 ]
 
-// 리스트 엔드포인트를 끝까지 페이지네이션하며 id만 수집. API 실패 시 빈 배열을 반환해
-// 해당 구간만 sitemap에서 빠지고 빌드는 계속 진행되도록 한다.
+// 리스트 엔드포인트를 끝까지 페이지네이션하며 id만 수집. 실패 시 에러를 그대로
+// 던져서 main()이 기존 sitemap.xml을 훼손하지 않고 유지하도록 한다.
 async function fetchAllIds(endpoint) {
   const ids = []
   let page = 0
 
-  try {
-    while (true) {
-      const res = await fetch(`${API_BASE_URL}${endpoint}?page=${page}&size=${PAGE_SIZE}`, {
-        signal: AbortSignal.timeout(10000),
-      })
-      if (!res.ok) throw new Error(`HTTP ${res.status}`)
-      const data = await res.json()
+  while (true) {
+    const res = await fetch(`${API_BASE_URL}${endpoint}?page=${page}&size=${PAGE_SIZE}`, {
+      signal: AbortSignal.timeout(10000),
+    })
+    if (!res.ok) throw new Error(`${endpoint} HTTP ${res.status}`)
+    const data = await res.json()
 
-      for (const item of data.content ?? []) {
-        if (item?.id != null) ids.push(item.id)
-      }
-
-      page += 1
-      if (page >= (data.totalPages ?? 0)) break
+    for (const item of data.content ?? []) {
+      if (item?.id != null) ids.push(item.id)
     }
-  } catch (err) {
-    console.warn(`[sitemap] ${endpoint} 수집 실패, 해당 구간은 sitemap에서 제외합니다: ${err.message}`)
-    return []
+
+    page += 1
+    if (page >= (data.totalPages ?? 0)) break
   }
 
   return ids
@@ -51,11 +46,19 @@ function buildUrlEntry({ loc, changefreq, priority }) {
 }
 
 async function main() {
-  const [concertIds, artistIds, releaseIds] = await Promise.all([
-    fetchAllIds('/concerts'),
-    fetchAllIds('/artists'),
-    fetchAllIds('/releases'),
-  ])
+  let concertIds, artistIds, releaseIds
+  try {
+    ;[concertIds, artistIds, releaseIds] = await Promise.all([
+      fetchAllIds('/concerts'),
+      fetchAllIds('/artists'),
+      fetchAllIds('/releases'),
+    ])
+  } catch (err) {
+    // 일부 구간만 빠진 채로 sitemap.xml을 덮어쓰면 이미 색인된 URL이 검색엔진에서
+    // 통째로 빠질 수 있어, 실패 시에는 파일을 건드리지 않고 기존 버전을 유지한다.
+    console.warn(`[sitemap] API 수집 실패, 기존 public/sitemap.xml을 유지합니다: ${err.message}`)
+    return
+  }
 
   const dynamicUrls = [
     ...concertIds.map((id) => ({ loc: `/concerts/${id}`, changefreq: 'weekly', priority: '0.6' })),
