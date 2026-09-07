@@ -11,6 +11,7 @@ import { getArtists } from '@/services/artistApi'
 import useAuthStore from '@/stores/authStore'
 import useLoginModalStore from '@/stores/loginModalStore'
 import usePageMeta from '@/hooks/usePageMeta'
+import { trackEvent } from '@/utils/analytics'
 import styles from './ArtistsPage.module.css'
 
 const PAGE_SIZE = 25
@@ -52,6 +53,7 @@ function ArtistsPage() {
         const next = new URLSearchParams(prev)
         if (inputValue) {
           next.set('q', inputValue)
+          trackEvent('search', { search_term: inputValue, page_type: 'artists' })
         } else {
           next.delete('q')
         }

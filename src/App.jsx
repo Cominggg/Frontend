@@ -8,6 +8,7 @@ import { buildOrganizationJsonLd, buildWebsiteJsonLd, toSafeJsonLd } from '@/uti
 import AdminLayout from '@/components/layout/AdminLayout'
 import AdminRoute from '@/components/layout/AdminRoute'
 import Layout from '@/components/layout/Layout'
+import PageViewTracker from '@/components/layout/PageViewTracker'
 import PrivateRoute from '@/components/layout/PrivateRoute'
 import ScrollToTop from '@/components/layout/ScrollToTop'
 import AuthCallbackPage from '@/pages/AuthCallbackPage'
@@ -88,6 +89,7 @@ function App() {
 
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
+      <PageViewTracker />
       <Analytics />
       <SpeedInsights />
     </Layout>

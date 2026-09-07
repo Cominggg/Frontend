@@ -6,6 +6,7 @@ import useAuthStore from '@/stores/authStore'
 import { getMe } from '@/services/authApi'
 import { ROUTES } from '@/constants/routes'
 import { LOGIN_REDIRECT_KEY } from '@/constants/auth'
+import { trackEvent } from '@/utils/analytics'
 import styles from './AuthCallbackPage.module.css'
 
 const AUTH_ERRORS = {
@@ -38,6 +39,7 @@ function AuthCallbackPage() {
 
         const user = await getMe()
         setUser(user)
+        trackEvent('login')
 
         const isNewUser = searchParams.get('isNewUser') === 'true'
         if (isNewUser || user.role === 'PENDING') {

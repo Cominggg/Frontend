@@ -7,6 +7,7 @@ import { ROUTES } from '@/constants/routes'
 import { LOGIN_REDIRECT_KEY } from '@/constants/auth'
 import { TERMS_CONTENT, PRIVACY_CONTENT, MARKETING_CONTENT } from '@/constants/policy'
 import Logo from '@/components/ui/Logo'
+import { trackEvent } from '@/utils/analytics'
 import styles from './SignupPage.module.css'
 
 const CURRENT_YEAR = new Date().getFullYear()
@@ -167,6 +168,7 @@ function SignupPage() {
       const { getMe } = await import('@/services/authApi')
       const user = await getMe()
       setUser(user)
+      trackEvent('sign_up')
       const raw = localStorage.getItem(LOGIN_REDIRECT_KEY)
       localStorage.removeItem(LOGIN_REDIRECT_KEY)
       const redirectUri = raw && raw.startsWith('/') ? raw : ROUTES.HOME

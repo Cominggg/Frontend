@@ -12,6 +12,7 @@ import { getConcerts } from '@/services/concertApi'
 import useAuthStore from '@/stores/authStore'
 import useLoginModalStore from '@/stores/loginModalStore'
 import usePageMeta from '@/hooks/usePageMeta'
+import { trackEvent } from '@/utils/analytics'
 import styles from './ConcertsPage.module.css'
 
 const STATUS_FILTERS = ['ALL', 'UPCOMING', 'ONGOING', 'ENDED', 'CANCELLED']
@@ -57,6 +58,7 @@ function ConcertsPage() {
         const next = new URLSearchParams(prev)
         if (inputValue) {
           next.set('q', inputValue)
+          trackEvent('search', { search_term: inputValue, page_type: 'concerts' })
         } else {
           next.delete('q')
         }

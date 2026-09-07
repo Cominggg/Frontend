@@ -11,6 +11,7 @@ import { getReleases } from '@/services/releaseApi'
 import useAuthStore from '@/stores/authStore'
 import useLoginModalStore from '@/stores/loginModalStore'
 import usePageMeta from '@/hooks/usePageMeta'
+import { trackEvent } from '@/utils/analytics'
 import styles from './ReleasesPage.module.css'
 
 const MAIN_TYPES = ['Album', 'Single']
@@ -48,6 +49,7 @@ function ReleasesPage() {
         const next = new URLSearchParams(prev)
         if (inputValue) {
           next.set('q', inputValue)
+          trackEvent('search', { search_term: inputValue, page_type: 'releases' })
         } else {
           next.delete('q')
         }

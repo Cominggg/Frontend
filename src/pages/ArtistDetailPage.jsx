@@ -22,6 +22,7 @@ import { ROUTES } from '@/constants/routes'
 import { getArtistColor } from '@/utils/artistColor'
 import { formatDate } from '@/utils/date'
 import { getSpotifyAlbumUrl, getSpotifyTrackUrl } from '@/utils/spotify'
+import { trackEvent } from '@/utils/analytics'
 import styles from './ArtistDetailPage.module.css'
 
 function formatFollowers(n) {
@@ -154,6 +155,7 @@ function ArtistDetailPage() {
 
   function handleFollow() {
     if (!user) { openLoginModal(window.location.pathname + window.location.search); return }
+    trackEvent(artist.isFollowing ? 'unfollow_artist' : 'follow_artist', { artist_id: artistId, artist_name: artist.name })
     followMutation.mutate({ following: artist.isFollowing })
   }
 

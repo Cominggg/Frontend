@@ -9,6 +9,7 @@ import useLoginModalStore from '@/stores/loginModalStore'
 import { ROUTES } from '@/constants/routes'
 import { getArtistColor } from '@/utils/artistColor'
 import { followArtist, unfollowArtist } from '@/services/artistApi'
+import { trackEvent } from '@/utils/analytics'
 import styles from './ArtistCard.module.css'
 
 function ArtistCard({ artist }) {
@@ -46,6 +47,7 @@ function ArtistCard({ artist }) {
     e.preventDefault()
     e.stopPropagation()
     if (!user) { openLoginModal(window.location.pathname + window.location.search); return }
+    trackEvent(isFollowing ? 'unfollow_artist' : 'follow_artist', { artist_id: id, artist_name: name })
     followMutation.mutate(isFollowing)
   }
 
