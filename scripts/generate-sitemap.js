@@ -25,7 +25,9 @@ async function fetchAllIds(endpoint) {
 
   try {
     while (true) {
-      const res = await fetch(`${API_BASE_URL}${endpoint}?page=${page}&size=${PAGE_SIZE}`)
+      const res = await fetch(`${API_BASE_URL}${endpoint}?page=${page}&size=${PAGE_SIZE}`, {
+        signal: AbortSignal.timeout(10000),
+      })
       if (!res.ok) throw new Error(`HTTP ${res.status}`)
       const data = await res.json()
 
