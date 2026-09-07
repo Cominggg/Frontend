@@ -53,7 +53,7 @@ function ArtistsPage() {
         const next = new URLSearchParams(prev)
         if (inputValue) {
           next.set('q', inputValue)
-          trackEvent('search', { search_term: inputValue, page_type: 'artists' })
+          trackEvent('search', { search_term_length: inputValue.length, page_type: 'artists' })
         } else {
           next.delete('q')
         }

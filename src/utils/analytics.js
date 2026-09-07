@@ -25,7 +25,8 @@ export function trackPageView(pagePath, pageTitle) {
   window.gtag('event', 'page_view', {
     page_path: pagePath,
     page_title: pageTitle,
-    page_location: window.location.href,
+    // 원본 window.location.href 대신 이미 민감 파라미터가 제거된 pagePath로 구성한다.
+    page_location: `${window.location.origin}${pagePath}`,
   })
 }
 

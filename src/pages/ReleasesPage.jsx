@@ -49,7 +49,7 @@ function ReleasesPage() {
         const next = new URLSearchParams(prev)
         if (inputValue) {
           next.set('q', inputValue)
-          trackEvent('search', { search_term: inputValue, page_type: 'releases' })
+          trackEvent('search', { search_term_length: inputValue.length, page_type: 'releases' })
         } else {
           next.delete('q')
         }
