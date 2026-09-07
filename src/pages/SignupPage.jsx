@@ -83,7 +83,7 @@ function SignupPage() {
 
   useEffect(() => {
     document.title = '회원가입 — 커밍'
-    return () => { document.title = '커밍' }
+    return () => { document.title = '커밍 - Jpop 아티스트 내한 공연 정보' }
   }, [])
 
   function handleAllAgreed(checked) {
