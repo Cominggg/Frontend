@@ -11,7 +11,7 @@ import { CONCERT_STATUS_LABEL } from '@/constants/concert'
 import { getConcerts } from '@/services/concertApi'
 import useAuthStore from '@/stores/authStore'
 import useLoginModalStore from '@/stores/loginModalStore'
-import usePageTitle from '@/hooks/usePageTitle'
+import usePageMeta from '@/hooks/usePageMeta'
 import styles from './ConcertsPage.module.css'
 
 const STATUS_FILTERS = ['ALL', 'UPCOMING', 'ONGOING', 'ENDED', 'CANCELLED']
@@ -44,7 +44,11 @@ function ConcertsPage() {
   const openLoginModal = useLoginModalStore((s) => s.open)
   const effectiveFollowedOnly = followedOnly && !!user
 
-  usePageTitle('공연 — 커밍')
+  usePageMeta({
+    title: '공연 — 커밍',
+    description: '내한이 예정되거나 진행 중인 Jpop 아티스트 공연을 모아봤습니다. 상태·아티스트별로 필터링해 확인하세요.',
+    path: '/concerts',
+  })
 
   useEffect(() => {
     if (inputValue === urlQueryRef.current) return

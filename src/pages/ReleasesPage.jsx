@@ -10,7 +10,7 @@ import Pagination from '@/components/ui/Pagination'
 import { getReleases } from '@/services/releaseApi'
 import useAuthStore from '@/stores/authStore'
 import useLoginModalStore from '@/stores/loginModalStore'
-import usePageTitle from '@/hooks/usePageTitle'
+import usePageMeta from '@/hooks/usePageMeta'
 import styles from './ReleasesPage.module.css'
 
 const MAIN_TYPES = ['Album', 'Single']
@@ -35,7 +35,11 @@ function ReleasesPage() {
   const openLoginModal = useLoginModalStore((s) => s.open)
   const effectiveFollowedOnly = followedOnly && !!user
 
-  usePageTitle('음악 — 커밍')
+  usePageMeta({
+    title: '음악 — 커밍',
+    description: 'Jpop 아티스트의 신보·싱글 발매 소식을 모아봤습니다. 앨범·싱글 종류별로 필터링해 확인하세요.',
+    path: '/releases',
+  })
 
   useEffect(() => {
     if (inputValue === urlQueryRef.current) return

@@ -12,6 +12,10 @@ function setMetaContent(property, content) {
   document.querySelector(`meta[property="${property}"]`)?.setAttribute('content', content)
 }
 
+function setMetaByName(name, content) {
+  document.querySelector(`meta[name="${name}"]`)?.setAttribute('content', content)
+}
+
 function setCanonicalHref(href) {
   document.querySelector('link[rel="canonical"]')?.setAttribute('href', href)
 }
@@ -29,6 +33,7 @@ export default function usePageMeta({ title, description, path, image }) {
     setMetaContent('og:description', description || DEFAULT_DESCRIPTION)
     setMetaContent('og:url', url)
     setMetaContent('og:image', image || DEFAULT_IMAGE)
+    setMetaByName('description', description || DEFAULT_DESCRIPTION)
     setCanonicalHref(url)
 
     return () => {
@@ -37,6 +42,7 @@ export default function usePageMeta({ title, description, path, image }) {
       setMetaContent('og:description', DEFAULT_DESCRIPTION)
       setMetaContent('og:url', DEFAULT_URL)
       setMetaContent('og:image', DEFAULT_IMAGE)
+      setMetaByName('description', DEFAULT_DESCRIPTION)
       setCanonicalHref(DEFAULT_URL)
     }
   }, [title, description, path, image])

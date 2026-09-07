@@ -10,7 +10,7 @@ import SortDropdown from '@/components/ui/SortDropdown'
 import { getArtists } from '@/services/artistApi'
 import useAuthStore from '@/stores/authStore'
 import useLoginModalStore from '@/stores/loginModalStore'
-import usePageTitle from '@/hooks/usePageTitle'
+import usePageMeta from '@/hooks/usePageMeta'
 import styles from './ArtistsPage.module.css'
 
 const PAGE_SIZE = 25
@@ -38,7 +38,11 @@ function ArtistsPage() {
   const openLoginModal = useLoginModalStore((s) => s.open)
   const effectiveFollowedOnly = followedOnly && !!user
 
-  usePageTitle('아티스트 — 커밍')
+  usePageMeta({
+    title: '아티스트 — 커밍',
+    description: '내한 소식이 있는 Jpop 아티스트를 한눈에 확인하고, 관심 아티스트를 팔로우해 새 소식을 받아보세요.',
+    path: '/artists',
+  })
 
   useEffect(() => {
     if (inputValue === urlQueryRef.current) return
