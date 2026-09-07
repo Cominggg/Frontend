@@ -4,7 +4,7 @@ import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/react'
 
 import useAuthStore, { SESSION_HINT } from '@/stores/authStore'
-import { buildWebsiteJsonLd, toSafeJsonLd } from '@/utils/structuredData'
+import { buildOrganizationJsonLd, buildWebsiteJsonLd, toSafeJsonLd } from '@/utils/structuredData'
 import AdminLayout from '@/components/layout/AdminLayout'
 import AdminRoute from '@/components/layout/AdminRoute'
 import Layout from '@/components/layout/Layout'
@@ -49,6 +49,7 @@ function App() {
   return (
     <>
     <script type="application/ld+json">{toSafeJsonLd(buildWebsiteJsonLd())}</script>
+    <script type="application/ld+json">{toSafeJsonLd(buildOrganizationJsonLd())}</script>
     <Layout>
       <ScrollToTop />
       <Routes>
