@@ -170,17 +170,3 @@
   justify-content: flex-end;
   margin-top: 1.5rem;
 }
-
-.submitBtn {
-  padding: 0.625rem 1.75rem;
-  border-radius: var(--radius-lg);
-  background: var(--color-accent);
-  color: var(--color-on-accent);
-  font-size: 0.9375rem;
-  font-weight: 600;
-  transition: background-color 0.15s;
-}
-
-.submitBtn:hover {
-  background: var(--color-accent-dark);
-}

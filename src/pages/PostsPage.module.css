@@ -27,17 +27,6 @@
 
 .writeBtn {
   flex-shrink: 0;
-  padding: 0.5rem 1.125rem;
-  border-radius: var(--radius-lg);
-  background: var(--color-accent);
-  color: var(--color-on-accent);
-  font-size: 0.875rem;
-  font-weight: 600;
-  transition: background-color 0.15s;
-}
-
-.writeBtn:hover {
-  background: var(--color-accent-dark);
 }
 
 /* ── 카테고리 필터 ── */

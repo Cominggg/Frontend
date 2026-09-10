@@ -4,6 +4,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 import PostEditor from '@/components/post/editor/PostEditor'
 import { extractEntityTags, isContentEmpty } from '@/components/post/editor/extractEntityTags'
+import Button from '@/components/ui/Button'
 import EmptyState from '@/components/ui/EmptyState'
 import usePageMeta from '@/hooks/usePageMeta'
 import { createPost, getPost, updatePost } from '@/services/postApi'
@@ -177,14 +178,14 @@ function PostWritePage() {
         {error && <p className={styles.error}>{error}</p>}
 
         <div className={styles.submitRow}>
-          <button
+          <Button
             type="button"
-            className={styles.submitBtn}
+            size="md"
             onClick={handleSubmit}
             disabled={isSubmitting}
           >
             {isSubmitting ? '저장 중...' : isEditMode ? '수정 완료' : '등록'}
-          </button>
+          </Button>
         </div>
 
       </div>

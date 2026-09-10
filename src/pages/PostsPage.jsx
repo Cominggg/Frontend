@@ -1,6 +1,7 @@
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 
+import Button from '@/components/ui/Button'
 import EmptyState from '@/components/ui/EmptyState'
 import Pagination from '@/components/ui/Pagination'
 import PostListItem from '@/components/post/PostListItem'
@@ -81,9 +82,9 @@ function PostsPage() {
 
         <div className={styles.pageHeader}>
           <h1 className={styles.pageTitle}>커뮤니티</h1>
-          <button className={styles.writeBtn} onClick={handleWriteClick}>
+          <Button size="sm" className={styles.writeBtn} onClick={handleWriteClick}>
             글쓰기
-          </button>
+          </Button>
         </div>
 
         <div className={styles.filterBar} role="tablist" aria-label="카테고리 필터">
