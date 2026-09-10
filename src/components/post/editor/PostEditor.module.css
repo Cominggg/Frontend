@@ -1,0 +1,59 @@
+.wrap {
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  overflow: hidden;
+}
+
+.wrap:focus-within {
+  border-color: var(--color-accent);
+}
+
+.toolbar {
+  display: flex;
+  gap: 0.25rem;
+  padding: 0.5rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.toolBtn,
+.toolBtnActive {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: var(--radius-sm);
+  background: none;
+  border: none;
+  font-size: 0.9375rem;
+  color: var(--color-text-muted);
+  transition: background-color 0.15s, color 0.15s;
+}
+
+.toolBtn:hover {
+  background: var(--color-surface-hover);
+  color: var(--color-text);
+}
+
+.toolBtnActive {
+  background: var(--color-accent-dim);
+  color: var(--color-accent);
+}
+
+.prose {
+  min-height: 320px;
+  padding: 1rem 1.125rem 1.5rem;
+  font-size: 0.9375rem;
+  line-height: 1.75;
+  color: var(--color-text);
+  outline: none;
+}
+
+.prose p {
+  margin: 0 0 0.75rem;
+}
+
+.prose p:last-child {
+  margin-bottom: 0;
+}
