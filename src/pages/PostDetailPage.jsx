@@ -8,7 +8,7 @@ import PostContentView from '@/components/post/PostContentView'
 import usePageMeta from '@/hooks/usePageMeta'
 import { deletePost, getPost, recommendPost, unrecommendPost } from '@/services/postApi'
 import { ROUTES } from '@/constants/routes'
-import { POST_CATEGORY_COLOR, POST_CATEGORY_LABEL } from '@/constants/post'
+import { POST_CATEGORY_LABEL } from '@/constants/post'
 import { formatDateTime } from '@/utils/date'
 import useAuthStore from '@/stores/authStore'
 import useLoginModalStore from '@/stores/loginModalStore'
@@ -110,7 +110,7 @@ function PostDetailPage() {
         <BackButton fallback={ROUTES.COMMUNITY} />
 
         <div className={styles.meta}>
-          <span className={styles.badge} style={{ backgroundColor: POST_CATEGORY_COLOR[post.category] }}>
+          <span className={styles.badge}>
             {POST_CATEGORY_LABEL[post.category]}
           </span>
           <span className={styles.metaText}>{formatDateTime(post.createdAt)}</span>

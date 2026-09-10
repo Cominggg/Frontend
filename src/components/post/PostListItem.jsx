@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 
 import { ROUTES } from '@/constants/routes'
-import { POST_CATEGORY_COLOR, POST_CATEGORY_LABEL } from '@/constants/post'
+import { POST_CATEGORY_LABEL } from '@/constants/post'
 import { formatPostDate } from '@/utils/date'
 import styles from './PostListItem.module.css'
 
@@ -11,7 +11,7 @@ function PostListItem({ post }) {
   return (
     <Link to={ROUTES.COMMUNITY_DETAIL(id)} className={styles.row}>
       <div className={styles.main}>
-        <span className={styles.badge} style={{ backgroundColor: POST_CATEGORY_COLOR[category] }}>
+        <span className={styles.badge}>
           {POST_CATEGORY_LABEL[category] ?? category}
         </span>
         <span className={styles.title}>{title}</span>
