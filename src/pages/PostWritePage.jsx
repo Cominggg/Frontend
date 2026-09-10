@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 import PostEditor from '@/components/post/editor/PostEditor'
-import { extractEntityTags } from '@/components/post/editor/extractEntityTags'
+import { extractEntityTags, isContentEmpty } from '@/components/post/editor/extractEntityTags'
 import EmptyState from '@/components/ui/EmptyState'
 import usePageMeta from '@/hooks/usePageMeta'
 import { createPost, getPost, updatePost } from '@/services/postApi'
@@ -76,6 +76,10 @@ function PostWritePage() {
   function handleSubmit() {
     if (!title.trim()) {
       setError('제목을 입력해주세요.')
+      return
+    }
+    if (isContentEmpty(contentJson)) {
+      setError('본문을 입력해주세요.')
       return
     }
     if (mentionRequired && entityTags.length === 0) {
