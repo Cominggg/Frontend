@@ -1,9 +1,11 @@
 import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useMutation } from '@tanstack/react-query'
 
 import PostEditor from '@/components/post/editor/PostEditor'
 import { extractEntityTags } from '@/components/post/editor/extractEntityTags'
 import usePageMeta from '@/hooks/usePageMeta'
+import { createPost } from '@/services/postApi'
 import { ROUTES } from '@/constants/routes'
 import { CATEGORIES_REQUIRING_MENTION, MENTION_TYPE_LABEL, POST_CATEGORY_LABEL } from '@/constants/post'
 import styles from './PostWritePage.module.css'
@@ -26,6 +28,16 @@ function PostWritePage() {
     path: '/community/write',
   })
 
+  const createMutation = useMutation({
+    mutationFn: createPost,
+    onSuccess: ({ id }) => {
+      navigate(ROUTES.COMMUNITY_DETAIL(id))
+    },
+    onError: () => {
+      setError('게시글 등록에 실패했습니다. 잠시 후 다시 시도해주세요.')
+    },
+  })
+
   function handleSubmit() {
     if (!title.trim()) {
       setError('제목을 입력해주세요.')
@@ -37,15 +49,12 @@ function PostWritePage() {
     }
     setError(null)
 
-    // TODO: API 연동 후 제거 — POST /api/posts 배포 완료 시 실 연동
-    const payload = {
+    createMutation.mutate({
       category,
       title: title.trim(),
       content: contentJson,
       entityTags: entityTags.map(({ entityType, entityId }) => ({ entityType, entityId })),
-    }
-    console.info('[mock] POST /api/posts', payload)
-    navigate(ROUTES.COMMUNITY)
+    })
   }
 
   return (
@@ -101,8 +110,13 @@ function PostWritePage() {
         {error && <p className={styles.error}>{error}</p>}
 
         <div className={styles.submitRow}>
-          <button type="button" className={styles.submitBtn} onClick={handleSubmit}>
-            등록
+          <button
+            type="button"
+            className={styles.submitBtn}
+            onClick={handleSubmit}
+            disabled={createMutation.isPending}
+          >
+            {createMutation.isPending ? '등록 중...' : '등록'}
           </button>
         </div>
 

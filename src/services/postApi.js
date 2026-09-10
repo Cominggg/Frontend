@@ -10,6 +10,11 @@ export async function getPost(id) {
   return data
 }
 
+export async function createPost(payload) {
+  const { data } = await api.post('/posts', payload)
+  return data
+}
+
 export async function searchMentions(params) {
   const { data } = await api.get('/mentions/search', { params })
   return data
