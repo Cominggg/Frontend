@@ -7,6 +7,8 @@ import usePageMeta from '@/hooks/usePageMeta'
 import { ROUTES } from '@/constants/routes'
 import { POST_CATEGORY_COLOR, POST_CATEGORY_LABEL } from '@/constants/post'
 import { formatDateTime } from '@/utils/date'
+import useAuthStore from '@/stores/authStore'
+import useLoginModalStore from '@/stores/loginModalStore'
 import styles from './PostDetailPage.module.css'
 
 // TODO: API 연동 후 제거 — GET /api/posts/{id} 배포 완료 시 실 데이터로 교체
@@ -77,6 +79,9 @@ function PostDetailPage() {
   const post = getMockPostDetail(postId)
   const [isRecommended, setIsRecommended] = useState(false)
   const [recommendCount, setRecommendCount] = useState(post.recommendCount)
+  const user = useAuthStore((s) => s.user)
+  const openLoginModal = useLoginModalStore((s) => s.open)
+  const isAuthor = user && post.isAuthor
 
   usePageMeta({
     title: `${post.title} - 커밍`,
@@ -85,6 +90,10 @@ function PostDetailPage() {
   })
 
   function handleRecommendToggle() {
+    if (!user) {
+      openLoginModal(window.location.pathname + window.location.search)
+      return
+    }
     // TODO: API 연동 후 제거 — POST/DELETE /api/posts/{id}/recommend 배포 완료 시 실 연동
     setIsRecommended((prev) => !prev)
     setRecommendCount((prev) => prev + (isRecommended ? -1 : 1))
@@ -116,7 +125,7 @@ function PostDetailPage() {
 
         <div className={styles.authorRow}>
           <span className={styles.author}>{post.authorNickname ?? '탈퇴 회원'}</span>
-          {post.isAuthor && (
+          {isAuthor && (
             <div className={styles.authorActions}>
               <button type="button" className={styles.authorActionBtn} onClick={handleEdit}>수정</button>
               <button type="button" className={styles.authorActionBtn} onClick={handleDelete}>삭제</button>
