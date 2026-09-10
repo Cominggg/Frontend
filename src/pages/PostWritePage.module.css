@@ -118,6 +118,7 @@
 
 .titleInput:focus-visible {
   outline: none;
+  border-radius: var(--radius-lg);
 }
 
 .titleInput::placeholder {
