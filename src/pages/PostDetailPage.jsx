@@ -1,12 +1,12 @@
 import { useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useMutation } from '@tanstack/react-query'
 
 import BackButton from '@/components/ui/BackButton'
 import EmptyState from '@/components/ui/EmptyState'
 import PostContentView from '@/components/post/PostContentView'
 import usePageMeta from '@/hooks/usePageMeta'
-import { getPost } from '@/services/postApi'
+import { getPost, recommendPost, unrecommendPost } from '@/services/postApi'
 import { ROUTES } from '@/constants/routes'
 import { POST_CATEGORY_COLOR, POST_CATEGORY_LABEL } from '@/constants/post'
 import { formatDateTime } from '@/utils/date'
@@ -34,6 +34,14 @@ function PostDetailPage() {
     setIsRecommended(!!post.isRecommended)
     setRecommendCount(post.recommendCount)
   }
+
+  const recommendMutation = useMutation({
+    mutationFn: (next) => (next ? recommendPost(postId) : unrecommendPost(postId)),
+    onError: (_err, next) => {
+      setIsRecommended(!next)
+      setRecommendCount((prev) => prev + (next ? -1 : 1))
+    },
+  })
 
   usePageMeta({
     title: post ? `${post.title} - 커밍` : undefined,
@@ -68,9 +76,10 @@ function PostDetailPage() {
       openLoginModal(window.location.pathname + window.location.search)
       return
     }
-    // TODO: API 연동 후 제거 — POST/DELETE /api/posts/{id}/recommend 배포 완료 시 실 연동
-    setIsRecommended((prev) => !prev)
-    setRecommendCount((prev) => prev + (isRecommended ? -1 : 1))
+    const next = !isRecommended
+    setIsRecommended(next)
+    setRecommendCount((prev) => prev + (next ? 1 : -1))
+    recommendMutation.mutate(next)
   }
 
   function handleEdit() {
