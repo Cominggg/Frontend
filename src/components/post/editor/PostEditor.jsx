@@ -2,11 +2,12 @@ import { EditorContent, useEditor } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 
 import { EntityMentionCard, EntityMentionChip } from './entityMentionExtensions'
+import SlashCommand from './slashCommand'
 import styles from './PostEditor.module.css'
 
 function PostEditor({ content, onChange }) {
   const editor = useEditor({
-    extensions: [StarterKit, EntityMentionCard, EntityMentionChip],
+    extensions: [StarterKit, EntityMentionCard, EntityMentionChip, SlashCommand],
     content,
     onUpdate: ({ editor: e }) => onChange?.(e.getJSON()),
     editorProps: {
@@ -39,6 +40,7 @@ function PostEditor({ content, onChange }) {
         >
           <em>I</em>
         </button>
+        <span className={styles.hint}>/ 를 입력해 공연·아티스트·음악을 태그해보세요</span>
       </div>
       <EditorContent editor={editor} />
     </div>
