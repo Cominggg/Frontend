@@ -1,13 +1,30 @@
 import { EditorContent, useEditor } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
+import Color from '@tiptap/extension-color'
+import { TextStyle } from '@tiptap/extension-text-style'
+import Placeholder from '@tiptap/extension-placeholder'
 
 import { EntityMentionCard, EntityMentionChip } from './entityMentionExtensions'
+import EditorBubbleMenu from './EditorBubbleMenu'
 import SlashCommand from './slashCommand'
 import styles from './PostEditor.module.css'
 
 function PostEditor({ content, onChange }) {
   const editor = useEditor({
-    extensions: [StarterKit, EntityMentionCard, EntityMentionChip, SlashCommand],
+    extensions: [
+      StarterKit.configure({ link: { openOnClick: false } }),
+      TextStyle,
+      Color,
+      EntityMentionCard,
+      EntityMentionChip,
+      SlashCommand,
+      Placeholder.configure({
+        placeholder: ({ editor: e, node }) =>
+          e.isEmpty && node.type.name === 'paragraph'
+            ? "'/' 를 입력해 서식을 지정하거나 공연·아티스트·음악을 태그해보세요"
+            : '',
+      }),
+    ],
     content,
     onUpdate: ({ editor: e }) => onChange?.(e.getJSON()),
     editorProps: {
@@ -21,27 +38,7 @@ function PostEditor({ content, onChange }) {
 
   return (
     <div className={styles.wrap}>
-      <div className={styles.toolbar}>
-        <button
-          type="button"
-          className={editor.isActive('bold') ? styles.toolBtnActive : styles.toolBtn}
-          onClick={() => editor.chain().focus().toggleBold().run()}
-          aria-label="굵게"
-          aria-pressed={editor.isActive('bold')}
-        >
-          <strong>B</strong>
-        </button>
-        <button
-          type="button"
-          className={editor.isActive('italic') ? styles.toolBtnActive : styles.toolBtn}
-          onClick={() => editor.chain().focus().toggleItalic().run()}
-          aria-label="기울임"
-          aria-pressed={editor.isActive('italic')}
-        >
-          <em>I</em>
-        </button>
-        <span className={styles.hint}>/ 를 입력해 공연·아티스트·음악을 태그해보세요</span>
-      </div>
+      <EditorBubbleMenu editor={editor} />
       <EditorContent editor={editor} />
     </div>
   )

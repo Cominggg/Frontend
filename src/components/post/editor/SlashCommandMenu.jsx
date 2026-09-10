@@ -47,13 +47,18 @@ const SlashCommandMenu = forwardRef(function SlashCommandMenu({ items, command }
     <div className={styles.menu}>
       {items.map((item, i) => (
         <button
-          key={item.stage === 'type' ? item.type : `${item.type}-${item.id}`}
+          key={item.stage === 'format' ? item.format : item.stage === 'type' ? item.type : `${item.type}-${item.id}`}
           type="button"
           className={i === selectedIndex ? styles.itemActive : styles.item}
           onMouseEnter={() => setSelectedIndex(i)}
           onClick={() => selectItem(i)}
         >
-          {item.stage === 'type' ? (
+          {item.stage === 'format' ? (
+            <>
+              <span className={styles.formatIcon}>{item.icon}</span>
+              <span className={styles.typeLabel}>{item.label}</span>
+            </>
+          ) : item.stage === 'type' ? (
             <span className={styles.typeLabel}>{item.label}</span>
           ) : (
             <>

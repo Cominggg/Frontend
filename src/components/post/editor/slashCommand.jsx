@@ -5,6 +5,15 @@ import { createRoot } from 'react-dom/client'
 import { filterTypeOptions, parseSlashQuery, searchMentions } from './mentionSearch'
 import SlashCommandMenu from './SlashCommandMenu'
 
+const FORMAT_APPLIERS = {
+  heading1: (chain) => chain.setNode('heading', { level: 1 }),
+  heading2: (chain) => chain.setNode('heading', { level: 2 }),
+  heading3: (chain) => chain.setNode('heading', { level: 3 }),
+  bulletList: (chain) => chain.toggleBulletList(),
+  orderedList: (chain) => chain.toggleOrderedList(),
+  blockquote: (chain) => chain.toggleBlockquote(),
+}
+
 function renderSlashMenu() {
   let root
   let container
@@ -46,6 +55,12 @@ const SlashCommand = Extension.create({
         },
         render: renderSlashMenu,
         command: ({ editor, range, props }) => {
+          if (props.stage === 'format') {
+            const applyFormat = FORMAT_APPLIERS[props.format]
+            applyFormat(editor.chain().focus().deleteRange(range)).run()
+            return
+          }
+
           if (props.stage === 'type') {
             // range.from은 트리거 문자('/') 위치 — 그대로 두고 그 뒤의 쿼리만 교체해야
             // 슬래시 커맨드가 활성 상태를 유지한 채 2단계(검색)로 이어진다

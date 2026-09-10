@@ -9,46 +9,6 @@
   border-color: var(--color-text-muted);
 }
 
-.toolbar {
-  display: flex;
-  gap: 0.25rem;
-  padding: 0.5rem;
-  border-bottom: 1px solid var(--color-border);
-}
-
-.toolBtn,
-.toolBtnActive {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 30px;
-  height: 30px;
-  border-radius: var(--radius-sm);
-  background: none;
-  border: none;
-  font-size: 0.9375rem;
-  color: var(--color-text-muted);
-  transition: background-color 0.15s, color 0.15s;
-}
-
-.toolBtn:hover {
-  background: var(--color-surface-hover);
-  color: var(--color-text);
-}
-
-.toolBtnActive {
-  background: var(--color-accent-dim);
-  color: var(--color-accent);
-}
-
-.hint {
-  display: flex;
-  align-items: center;
-  margin-left: 0.5rem;
-  font-size: 0.75rem;
-  color: var(--color-text-muted);
-}
-
 .prose {
   min-height: 320px;
   padding: 1rem 1.125rem 1.5rem;
@@ -68,4 +28,66 @@
 
 .prose p:last-child {
   margin-bottom: 0;
+}
+
+.prose h1,
+.prose h2,
+.prose h3 {
+  margin: 1.25rem 0 0.625rem;
+  font-weight: 700;
+  line-height: 1.35;
+  color: var(--color-text);
+}
+
+.prose h1:first-child,
+.prose h2:first-child,
+.prose h3:first-child {
+  margin-top: 0;
+}
+
+.prose h1 {
+  font-size: 1.375rem;
+}
+
+.prose h2 {
+  font-size: 1.1875rem;
+}
+
+.prose h3 {
+  font-size: 1.0625rem;
+}
+
+.prose ul,
+.prose ol {
+  margin: 0 0 0.75rem;
+  padding-left: 1.25rem;
+}
+
+.prose li {
+  margin: 0.25rem 0;
+}
+
+.prose li p {
+  margin: 0;
+}
+
+.prose blockquote {
+  margin: 0 0 0.75rem;
+  padding-left: 0.875rem;
+  border-left: 3px solid var(--color-border);
+  color: var(--color-text-muted);
+}
+
+.prose a {
+  color: var(--color-accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.prose p:global(.is-editor-empty):first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  color: var(--color-text-muted);
+  pointer-events: none;
 }
