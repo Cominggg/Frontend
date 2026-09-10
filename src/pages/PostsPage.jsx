@@ -13,7 +13,7 @@ import useAuthStore from '@/stores/authStore'
 import useLoginModalStore from '@/stores/loginModalStore'
 import styles from './PostsPage.module.css'
 
-const CATEGORY_FILTERS = ['ALL', 'REVIEW', 'INFO', 'FREE']
+const CATEGORY_FILTERS = ['ALL', 'FREE', 'INFO', 'REVIEW']
 const ITEMS_PER_PAGE = 20
 
 function PostsPage() {
@@ -29,7 +29,7 @@ function PostsPage() {
 
   usePageMeta({
     title: '커뮤니티 - 커밍',
-    description: '공연 후기, 정보·제보, 자유 이야기를 나누는 Jpop 팬 커뮤니티입니다.',
+    description: '자유, 정보, 공연 후기 이야기를 나누는 Jpop 팬 커뮤니티입니다.',
     path: '/community',
   })
 

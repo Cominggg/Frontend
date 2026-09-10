@@ -1,7 +1,7 @@
 export const POST_CATEGORY_LABEL = {
-  REVIEW: '후기',
-  INFO: '정보·제보',
   FREE: '자유',
+  INFO: '정보',
+  REVIEW: '후기',
 }
 
 // 후기·정보는 엔티티 멘션 최소 1개 필수

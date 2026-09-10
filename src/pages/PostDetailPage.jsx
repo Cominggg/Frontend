@@ -58,7 +58,7 @@ function PostDetailPage() {
 
   usePageMeta({
     title: post ? `${post.title} - 커밍` : undefined,
-    description: '공연 후기, 정보·제보, 자유 이야기를 나누는 Jpop 팬 커뮤니티입니다.',
+    description: '자유, 정보, 공연 후기 이야기를 나누는 Jpop 팬 커뮤니티입니다.',
     path: `/community/${postId}`,
   })
 

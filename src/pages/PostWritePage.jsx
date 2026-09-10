@@ -11,7 +11,7 @@ import { ROUTES } from '@/constants/routes'
 import { CATEGORIES_REQUIRING_MENTION, MENTION_TYPE_LABEL, POST_CATEGORY_LABEL } from '@/constants/post'
 import styles from './PostWritePage.module.css'
 
-const CATEGORIES = ['REVIEW', 'INFO', 'FREE']
+const CATEGORIES = ['FREE', 'INFO', 'REVIEW']
 
 function PostWritePage() {
   const { id } = useParams()
@@ -20,7 +20,7 @@ function PostWritePage() {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
   const [title, setTitle] = useState('')
-  const [category, setCategory] = useState('REVIEW')
+  const [category, setCategory] = useState('FREE')
   const [contentJson, setContentJson] = useState(null)
   const [error, setError] = useState(null)
   const [formReady, setFormReady] = useState(!isEditMode)
@@ -44,7 +44,7 @@ function PostWritePage() {
 
   usePageMeta({
     title: isEditMode ? '게시글 수정 - 커밍' : '글쓰기 - 커밍',
-    description: '공연 후기, 정보·제보, 자유 이야기를 남겨보세요.',
+    description: '자유, 정보, 공연 후기 이야기를 남겨보세요.',
     path: isEditMode ? `/community/${postId}/edit` : '/community/write',
   })
 
