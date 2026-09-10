@@ -70,6 +70,7 @@ function App() {
         <Route path={ROUTES.SEARCH} element={<div>통합 검색</div>} />
         <Route path={ROUTES.COMMUNITY} element={<PostsPage />} />
         <Route path={ROUTES.COMMUNITY_WRITE} element={<PrivateRoute><PostWritePage /></PrivateRoute>} />
+        <Route path="/community/:id/edit" element={<PrivateRoute><PostWritePage /></PrivateRoute>} />
         <Route path="/community/:id" element={<PostDetailPage />} />
         <Route path={ROUTES.TERMS} element={<PolicyPage title="서비스 이용약관" content={TERMS_CONTENT} />} />
         <Route path={ROUTES.PRIVACY} element={<PolicyPage title="개인정보처리방침" content={PRIVACY_CONTENT} />} />

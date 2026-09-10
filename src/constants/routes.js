@@ -13,6 +13,7 @@ export const ROUTES = {
   COMMUNITY: '/community',
   COMMUNITY_DETAIL: (id) => `/community/${id}`,
   COMMUNITY_WRITE: '/community/write',
+  COMMUNITY_EDIT: (id) => `/community/${id}/edit`,
   ME: '/me',
   ME_UPCOMING: '/me/concerts/upcoming',
   ME_HISTORY: '/me/concerts/history',

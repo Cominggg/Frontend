@@ -20,6 +20,50 @@
   letter-spacing: -0.02em;
 }
 
+/* ── 로딩 스켈레톤 (수정 모드) ── */
+@keyframes shimmer {
+  0% { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+
+.skeletonTitle,
+.skeletonBar,
+.skeletonInput,
+.skeletonBody {
+  border-radius: var(--radius-sm);
+  background: linear-gradient(
+    90deg,
+    var(--color-surface) 25%,
+    var(--color-surface-hover) 50%,
+    var(--color-surface) 75%
+  );
+  background-size: 800px 100%;
+  animation: shimmer 1.4s infinite linear;
+}
+
+.skeletonTitle {
+  width: 160px;
+  height: 30px;
+  margin-bottom: 1.75rem;
+}
+
+.skeletonBar {
+  width: 220px;
+  height: 32px;
+  margin-bottom: 1rem;
+}
+
+.skeletonInput {
+  width: 100%;
+  height: 48px;
+  margin-bottom: 0.875rem;
+}
+
+.skeletonBody {
+  width: 100%;
+  height: 240px;
+}
+
 /* ── 카테고리 선택 ── */
 .categoryBar {
   display: flex;

@@ -1,12 +1,12 @@
 import { useState } from 'react'
-import { useParams } from 'react-router-dom'
-import { useQuery, useMutation } from '@tanstack/react-query'
+import { useNavigate, useParams } from 'react-router-dom'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 
 import BackButton from '@/components/ui/BackButton'
 import EmptyState from '@/components/ui/EmptyState'
 import PostContentView from '@/components/post/PostContentView'
 import usePageMeta from '@/hooks/usePageMeta'
-import { getPost, recommendPost, unrecommendPost } from '@/services/postApi'
+import { deletePost, getPost, recommendPost, unrecommendPost } from '@/services/postApi'
 import { ROUTES } from '@/constants/routes'
 import { POST_CATEGORY_COLOR, POST_CATEGORY_LABEL } from '@/constants/post'
 import { formatDateTime } from '@/utils/date'
@@ -17,6 +17,8 @@ import styles from './PostDetailPage.module.css'
 function PostDetailPage() {
   const { id } = useParams()
   const postId = Number(id)
+  const navigate = useNavigate()
+  const queryClient = useQueryClient()
   const [isRecommended, setIsRecommended] = useState(false)
   const [recommendCount, setRecommendCount] = useState(0)
   const [syncedPost, setSyncedPost] = useState(null)
@@ -37,9 +39,20 @@ function PostDetailPage() {
 
   const recommendMutation = useMutation({
     mutationFn: (next) => (next ? recommendPost(postId) : unrecommendPost(postId)),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['posts'] })
+    },
     onError: (_err, next) => {
       setIsRecommended(!next)
       setRecommendCount((prev) => prev + (next ? -1 : 1))
+    },
+  })
+
+  const deleteMutation = useMutation({
+    mutationFn: () => deletePost(postId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['posts'] })
+      navigate(ROUTES.COMMUNITY)
     },
   })
 
@@ -83,11 +96,12 @@ function PostDetailPage() {
   }
 
   function handleEdit() {
-    // TODO: 수정 시 기존 내용 프리필 — 작성 폼에 편집 모드 추가 후 연결
+    navigate(ROUTES.COMMUNITY_EDIT(postId))
   }
 
   function handleDelete() {
-    // TODO: API 연동 후 제거 — DELETE /api/posts/{id} 배포 완료 시 실 연동
+    if (!window.confirm('게시글을 삭제하시겠습니까?')) return
+    deleteMutation.mutate()
   }
 
   return (
@@ -111,7 +125,14 @@ function PostDetailPage() {
           {post.isAuthor && (
             <div className={styles.authorActions}>
               <button type="button" className={styles.authorActionBtn} onClick={handleEdit}>수정</button>
-              <button type="button" className={styles.authorActionBtn} onClick={handleDelete}>삭제</button>
+              <button
+                type="button"
+                className={styles.authorActionBtn}
+                onClick={handleDelete}
+                disabled={deleteMutation.isPending}
+              >
+                {deleteMutation.isPending ? '삭제 중...' : '삭제'}
+              </button>
             </div>
           )}
         </div>

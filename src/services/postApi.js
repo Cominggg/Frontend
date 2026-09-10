@@ -15,6 +15,16 @@ export async function createPost(payload) {
   return data
 }
 
+export async function updatePost(id, payload) {
+  const { data } = await api.patch(`/posts/${id}`, payload)
+  return data
+}
+
+export async function deletePost(id) {
+  const { data } = await api.delete(`/posts/${id}`)
+  return data
+}
+
 export async function searchMentions(params) {
   const { data } = await api.get('/mentions/search', { params })
   return data

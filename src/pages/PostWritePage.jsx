@@ -1,11 +1,12 @@
 import { useMemo, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { useMutation } from '@tanstack/react-query'
+import { useNavigate, useParams } from 'react-router-dom'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 import PostEditor from '@/components/post/editor/PostEditor'
 import { extractEntityTags } from '@/components/post/editor/extractEntityTags'
+import EmptyState from '@/components/ui/EmptyState'
 import usePageMeta from '@/hooks/usePageMeta'
-import { createPost } from '@/services/postApi'
+import { createPost, getPost, updatePost } from '@/services/postApi'
 import { ROUTES } from '@/constants/routes'
 import { CATEGORIES_REQUIRING_MENTION, MENTION_TYPE_LABEL, POST_CATEGORY_LABEL } from '@/constants/post'
 import styles from './PostWritePage.module.css'
@@ -13,30 +14,64 @@ import styles from './PostWritePage.module.css'
 const CATEGORIES = ['REVIEW', 'INFO', 'FREE']
 
 function PostWritePage() {
+  const { id } = useParams()
+  const isEditMode = Boolean(id)
+  const postId = isEditMode ? Number(id) : null
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
   const [title, setTitle] = useState('')
   const [category, setCategory] = useState('REVIEW')
   const [contentJson, setContentJson] = useState(null)
   const [error, setError] = useState(null)
+  const [formReady, setFormReady] = useState(!isEditMode)
+
+  const { data: existingPost, isLoading: isLoadingPost, isError: isPostError } = useQuery({
+    queryKey: ['post', postId],
+    queryFn: () => getPost(postId),
+    enabled: isEditMode,
+    retry: false,
+  })
+
+  if (isEditMode && existingPost && !formReady) {
+    setFormReady(true)
+    setTitle(existingPost.title)
+    setCategory(existingPost.category)
+    setContentJson(existingPost.content)
+  }
 
   const entityTags = useMemo(() => extractEntityTags(contentJson), [contentJson])
   const mentionRequired = CATEGORIES_REQUIRING_MENTION.includes(category)
 
   usePageMeta({
-    title: '글쓰기 - 커밍',
+    title: isEditMode ? '게시글 수정 - 커밍' : '글쓰기 - 커밍',
     description: '공연 후기, 정보·제보, 자유 이야기를 남겨보세요.',
-    path: '/community/write',
+    path: isEditMode ? `/community/${postId}/edit` : '/community/write',
   })
 
   const createMutation = useMutation({
     mutationFn: createPost,
-    onSuccess: ({ id }) => {
-      navigate(ROUTES.COMMUNITY_DETAIL(id))
+    onSuccess: ({ id: newId }) => {
+      queryClient.invalidateQueries({ queryKey: ['posts'] })
+      navigate(ROUTES.COMMUNITY_DETAIL(newId))
     },
     onError: () => {
       setError('게시글 등록에 실패했습니다. 잠시 후 다시 시도해주세요.')
     },
   })
+
+  const updateMutation = useMutation({
+    mutationFn: (payload) => updatePost(postId, payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['post', postId] })
+      queryClient.invalidateQueries({ queryKey: ['posts'] })
+      navigate(ROUTES.COMMUNITY_DETAIL(postId))
+    },
+    onError: () => {
+      setError('게시글 수정에 실패했습니다. 잠시 후 다시 시도해주세요.')
+    },
+  })
+
+  const isSubmitting = createMutation.isPending || updateMutation.isPending
 
   function handleSubmit() {
     if (!title.trim()) {
@@ -49,19 +84,47 @@ function PostWritePage() {
     }
     setError(null)
 
-    createMutation.mutate({
+    const payload = {
       category,
       title: title.trim(),
       content: contentJson,
       entityTags: entityTags.map(({ entityType, entityId }) => ({ entityType, entityId })),
-    })
+    }
+
+    if (isEditMode) {
+      updateMutation.mutate(payload)
+    } else {
+      createMutation.mutate(payload)
+    }
+  }
+
+  if (isEditMode && isPostError) {
+    return (
+      <EmptyState
+        message="게시글이 존재하지 않습니다"
+        action={{ to: ROUTES.COMMUNITY, label: '커뮤니티 목록으로' }}
+      />
+    )
+  }
+
+  if (isEditMode && (isLoadingPost || !formReady)) {
+    return (
+      <div className={styles.page}>
+        <div className={styles.inner}>
+          <div className={styles.skeletonTitle} />
+          <div className={styles.skeletonBar} />
+          <div className={styles.skeletonInput} />
+          <div className={styles.skeletonBody} />
+        </div>
+      </div>
+    )
   }
 
   return (
     <div className={styles.page}>
       <div className={styles.inner}>
         <div className={styles.pageHeader}>
-          <h1 className={styles.pageTitle}>글쓰기</h1>
+          <h1 className={styles.pageTitle}>{isEditMode ? '게시글 수정' : '글쓰기'}</h1>
         </div>
 
         <div className={styles.categoryBar} role="tablist" aria-label="카테고리 선택">
@@ -114,9 +177,9 @@ function PostWritePage() {
             type="button"
             className={styles.submitBtn}
             onClick={handleSubmit}
-            disabled={createMutation.isPending}
+            disabled={isSubmitting}
           >
-            {createMutation.isPending ? '등록 중...' : '등록'}
+            {isSubmitting ? '저장 중...' : isEditMode ? '수정 완료' : '등록'}
           </button>
         </div>
 
