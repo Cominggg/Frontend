@@ -38,6 +38,7 @@ const SlashCommand = Extension.create({
         char: '/',
         allowSpaces: true,
         startOfLine: false,
+        debounce: 200,
         items: ({ query }) => {
           const parsed = parseSlashQuery(query)
           if (parsed.stage === 'type') return filterTypeOptions(parsed.typeQuery)
