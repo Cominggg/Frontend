@@ -1,14 +1,13 @@
+import { Link } from 'react-router-dom'
 import { NodeViewWrapper } from '@tiptap/react'
 
 import { MENTION_TYPE_LABEL } from '@/constants/post'
+import { ROUTES } from '@/constants/routes'
 import styles from './EntityMentionCard.module.css'
 
-function EntityMentionCardView({ node }) {
-  const { entityType, title, subtitle, thumbnailUrl } = node.attrs
-  const variantClass = entityType === 'CONCERT' ? styles.concert : styles.release
-
+function CardInner({ entityType, title, subtitle, thumbnailUrl }) {
   return (
-    <NodeViewWrapper as="div" className={`${styles.card} ${variantClass}`} contentEditable={false}>
+    <>
       <div
         className={styles.thumb}
         style={thumbnailUrl ? { backgroundImage: `url(${thumbnailUrl})` } : undefined}
@@ -23,6 +22,32 @@ function EntityMentionCardView({ node }) {
           <path d="M9 18l6-6-6-6" />
         </svg>
       </span>
+    </>
+  )
+}
+
+function getDetailPath(entityType, entityId) {
+  return entityType === 'CONCERT' ? ROUTES.CONCERT_DETAIL(entityId) : ROUTES.RELEASE_DETAIL(entityId)
+}
+
+function EntityMentionCardView({ node, editor }) {
+  const { entityType, entityId, title, subtitle, thumbnailUrl } = node.attrs
+  const variantClass = entityType === 'CONCERT' ? styles.concert : styles.release
+  const className = `${styles.card} ${variantClass}`
+
+  if (!editor.isEditable) {
+    return (
+      <NodeViewWrapper as="div">
+        <Link to={getDetailPath(entityType, entityId)} className={className}>
+          <CardInner entityType={entityType} title={title} subtitle={subtitle} thumbnailUrl={thumbnailUrl} />
+        </Link>
+      </NodeViewWrapper>
+    )
+  }
+
+  return (
+    <NodeViewWrapper as="div" className={className} contentEditable={false}>
+      <CardInner entityType={entityType} title={title} subtitle={subtitle} thumbnailUrl={thumbnailUrl} />
     </NodeViewWrapper>
   )
 }

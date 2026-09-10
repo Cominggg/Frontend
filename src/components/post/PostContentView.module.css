@@ -1,0 +1,17 @@
+.prose {
+  font-size: 0.9375rem;
+  line-height: 1.8;
+  color: var(--color-text);
+}
+
+.prose :global(.ProseMirror) {
+  outline: none;
+}
+
+.prose :global(p) {
+  margin: 0 0 0.875rem;
+}
+
+.prose :global(p:last-child) {
+  margin-bottom: 0;
+}
