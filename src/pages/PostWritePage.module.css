@@ -113,7 +113,11 @@
 }
 
 .titleInput:focus {
-  border-color: var(--color-accent);
+  border-color: var(--color-text-muted);
+}
+
+.titleInput:focus-visible {
+  outline: none;
 }
 
 .titleInput::placeholder {

@@ -6,7 +6,7 @@
 }
 
 .wrap:focus-within {
-  border-color: var(--color-accent);
+  border-color: var(--color-text-muted);
 }
 
 .toolbar {
@@ -55,6 +55,10 @@
   font-size: 0.9375rem;
   line-height: 1.75;
   color: var(--color-text);
+  outline: none;
+}
+
+.prose:focus-visible {
   outline: none;
 }
 
