@@ -20,6 +20,9 @@ import ConcertDetailPage from '@/pages/ConcertDetailPage'
 import ConcertsPage from '@/pages/ConcertsPage'
 import ReleaseDetailPage from '@/pages/ReleaseDetailPage'
 import ReleasesPage from '@/pages/ReleasesPage'
+import PostDetailPage from '@/pages/PostDetailPage'
+import PostsPage from '@/pages/PostsPage'
+import PostWritePage from '@/pages/PostWritePage'
 import HomePage from '@/pages/HomePage'
 import MyPage from '@/pages/MyPage'
 import NotFoundPage from '@/pages/NotFoundPage'
@@ -65,6 +68,9 @@ function App() {
         <Route path="/releases/:id" element={<ReleaseDetailPage />} />
         <Route path={ROUTES.CALENDAR} element={<CalendarPage />} />
         <Route path={ROUTES.SEARCH} element={<div>통합 검색</div>} />
+        <Route path={ROUTES.COMMUNITY} element={<PostsPage />} />
+        <Route path={ROUTES.COMMUNITY_WRITE} element={<PrivateRoute><PostWritePage /></PrivateRoute>} />
+        <Route path="/community/:id" element={<PostDetailPage />} />
         <Route path={ROUTES.TERMS} element={<PolicyPage title="서비스 이용약관" content={TERMS_CONTENT} />} />
         <Route path={ROUTES.PRIVACY} element={<PolicyPage title="개인정보처리방침" content={PRIVACY_CONTENT} />} />
         <Route path={ROUTES.ME} element={<PrivateRoute><MyPage /></PrivateRoute>} />
