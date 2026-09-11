@@ -5,6 +5,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import BackButton from '@/components/ui/BackButton'
 import EmptyState from '@/components/ui/EmptyState'
 import PostContentView from '@/components/post/PostContentView'
+import CommentSection from '@/components/post/comment/CommentSection'
 import usePageMeta from '@/hooks/usePageMeta'
 import { deletePost, getPost, recommendPost, unrecommendPost } from '@/services/postApi'
 import { ROUTES } from '@/constants/routes'
@@ -154,6 +155,10 @@ function PostDetailPage() {
               </svg>
               추천 {recommendCount.toLocaleString()}
             </button>
+          </div>
+
+          <div className={styles.commentsWrap}>
+            <CommentSection />
           </div>
         </div>
 
