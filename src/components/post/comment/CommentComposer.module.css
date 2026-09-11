@@ -2,15 +2,15 @@
   display: flex;
   gap: 0.7rem;
   align-items: flex-start;
-  margin-top: 1.35rem;
-  padding-top: 1.35rem;
-  border-top: 1px solid var(--color-border);
+  margin-bottom: 1.35rem;
+  padding-bottom: 1.35rem;
+  border-bottom: 1px solid var(--color-border);
 }
 
 .compact {
-  margin-top: 0;
-  padding-top: 0;
-  border-top: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
 }
 
 .field {

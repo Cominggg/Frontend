@@ -100,6 +100,13 @@ function CommentSection({ postId, commentCount }) {
         <span className={styles.count}>{commentCount ?? 0}</span>
       </div>
 
+      <CommentComposer
+        isLoggedIn={!!user}
+        onRequireLogin={requireLogin}
+        onSubmit={(content) => createMutation.mutate({ content })}
+        pending={topPending}
+      />
+
       <div className={styles.list}>
         {items.map((comment) => (
           <CommentItem
@@ -126,13 +133,6 @@ function CommentSection({ postId, commentCount }) {
           댓글 더 보기
         </button>
       )}
-
-      <CommentComposer
-        isLoggedIn={!!user}
-        onRequireLogin={requireLogin}
-        onSubmit={(content) => createMutation.mutate({ content })}
-        pending={topPending}
-      />
     </div>
   )
 }

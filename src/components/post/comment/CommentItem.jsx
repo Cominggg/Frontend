@@ -38,55 +38,54 @@ function CommentItem({ comment, isLoggedIn, onRequireLogin, onReply, onToggleLik
     onDeleteReply(replyId)
   }
 
+  const replyComposer = showReplyBox && (
+    <CommentComposer
+      isLoggedIn={isLoggedIn}
+      onRequireLogin={onRequireLogin}
+      onSubmit={handleReplySubmit}
+      onCancel={() => setShowReplyBox(false)}
+      placeholder={`${comment.authorNickname ?? '탈퇴 회원'}님에게 답글 남기기`}
+      compact
+    />
+  )
+
   return (
     <div className={styles.comment}>
-      <div className={styles.avatar} aria-hidden="true">
-        {(comment.authorNickname ?? '?').charAt(0)}
-      </div>
-
       <div className={styles.body}>
         <div className={styles.top}>
           <span className={styles.name}>{comment.authorNickname ?? '탈퇴 회원'}</span>
           <span className={styles.time}>{formatRelativeDate(comment.createdAt)}</span>
         </div>
-        <p className={styles.text}>{comment.content}</p>
-        <div className={styles.actions}>
-          <button
-            type="button"
-            className={styles.actionBtn}
-            onClick={() => guard(onToggleLike)}
-            aria-pressed={comment.isLiked}
-            disabled={isDeleted}
-          >
-            <LikeIcon />
-            {comment.likeCount}
-          </button>
-          <button
-            type="button"
-            className={styles.actionBtn}
-            onClick={() => guard(() => setShowReplyBox((v) => !v))}
-            disabled={isDeleted}
-          >
-            답글 달기
-          </button>
-          {comment.isAuthor && (
-            <button type="button" className={styles.actionBtn} onClick={handleDelete}>
-              삭제
-            </button>
-          )}
-        </div>
+        <p className={isDeleted ? `${styles.text} ${styles.deletedText}` : styles.text}>{comment.content}</p>
 
-        {showReplyBox && (
-          <div className={styles.replyComposer}>
-            <CommentComposer
-              isLoggedIn={isLoggedIn}
-              onRequireLogin={onRequireLogin}
-              onSubmit={handleReplySubmit}
-              onCancel={() => setShowReplyBox(false)}
-              placeholder={`${comment.authorNickname ?? '탈퇴 회원'}님에게 답글 남기기`}
-              compact
-            />
+        {!isDeleted && (
+          <div className={styles.actions}>
+            <button
+              type="button"
+              className={styles.actionBtn}
+              onClick={() => guard(onToggleLike)}
+              aria-pressed={comment.isLiked}
+            >
+              <LikeIcon />
+              {comment.likeCount}
+            </button>
+            <button
+              type="button"
+              className={styles.actionBtn}
+              onClick={() => guard(() => setShowReplyBox((v) => !v))}
+            >
+              답글 달기
+            </button>
+            {comment.isAuthor && (
+              <button type="button" className={styles.actionBtn} onClick={handleDelete}>
+                삭제
+              </button>
+            )}
           </div>
+        )}
+
+        {comment.replies.length === 0 && replyComposer && (
+          <div className={styles.replyComposer}>{replyComposer}</div>
         )}
 
         {comment.replies.length > 0 && (
@@ -95,40 +94,44 @@ function CommentItem({ comment, isLoggedIn, onRequireLogin, onReply, onToggleLik
               const replyDeleted = reply.authorNickname == null
               return (
                 <div key={reply.id} className={styles.reply}>
-                  <div className={styles.replyAvatar} aria-hidden="true">
-                    {(reply.authorNickname ?? '?').charAt(0)}
-                  </div>
                   <div className={styles.body}>
                     <div className={styles.top}>
-                      <span className={styles.name}>{reply.authorNickname ?? '탈퇴 회원'}</span>
+                      <span className={styles.replyName}>{reply.authorNickname ?? '탈퇴 회원'}</span>
                       <span className={styles.time}>{formatRelativeDate(reply.createdAt)}</span>
                     </div>
-                    <p className={styles.text}>{reply.content}</p>
-                    <div className={styles.actions}>
-                      <button
-                        type="button"
-                        className={styles.actionBtn}
-                        onClick={() => guard(() => onToggleReplyLike(reply.id))}
-                        aria-pressed={reply.isLiked}
-                        disabled={replyDeleted}
-                      >
-                        <LikeIcon />
-                        {reply.likeCount}
-                      </button>
-                      {reply.isAuthor && (
+                    <p className={replyDeleted ? `${styles.text} ${styles.deletedText}` : styles.text}>
+                      {!replyDeleted && (
+                        <span className={styles.mention}>@{comment.authorNickname ?? '탈퇴 회원'}</span>
+                      )}{' '}
+                      {reply.content}
+                    </p>
+                    {!replyDeleted && (
+                      <div className={styles.actions}>
                         <button
                           type="button"
                           className={styles.actionBtn}
-                          onClick={() => handleReplyDelete(reply.id)}
+                          onClick={() => guard(() => onToggleReplyLike(reply.id))}
+                          aria-pressed={reply.isLiked}
                         >
-                          삭제
+                          <LikeIcon />
+                          {reply.likeCount}
                         </button>
-                      )}
-                    </div>
+                        {reply.isAuthor && (
+                          <button
+                            type="button"
+                            className={styles.actionBtn}
+                            onClick={() => handleReplyDelete(reply.id)}
+                          >
+                            삭제
+                          </button>
+                        )}
+                      </div>
+                    )}
                   </div>
                 </div>
               )
             })}
+            {replyComposer}
           </div>
         )}
       </div>
