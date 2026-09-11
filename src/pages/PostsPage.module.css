@@ -77,5 +77,5 @@
 .list {
   display: flex;
   flex-direction: column;
-  border-top: 1px solid var(--color-border);
+  gap: 0.75rem;
 }
