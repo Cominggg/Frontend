@@ -49,7 +49,7 @@ function PostWritePage() {
   const entityTags = useMemo(() => extractEntityTags(contentJson), [contentJson])
 
   usePageMeta({
-    title: isEditMode ? '게시글 수정 - 커밍' : '글쓰기 - 커밍',
+    title: isEditMode ? '게시글 수정 - 커밍' : '게시글 작성 - 커밍',
     description: '자유, 정보, 공연 후기 이야기를 남겨보세요.',
     path: isEditMode ? `/community/${postId}/edit` : '/community/write',
   })
@@ -140,7 +140,7 @@ function PostWritePage() {
     <div className={styles.page}>
       <div className={styles.inner}>
         <div className={styles.pageHeader}>
-          <h1 className={styles.pageTitle}>{isEditMode ? '게시글 수정' : '글쓰기'}</h1>
+          <h1 className={styles.pageTitle}>{isEditMode ? '게시글 수정' : '게시글 작성'}</h1>
         </div>
 
         <div className={styles.categoryBar} role="tablist" aria-label="카테고리 선택">

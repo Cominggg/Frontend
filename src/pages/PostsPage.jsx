@@ -102,7 +102,7 @@ function PostsPage() {
               ))}
             </div>
             <Button size="sm" className={styles.writeBtn} onClick={handleWriteClick}>
-              글쓰기
+              게시글 작성
             </Button>
           </div>
 
