@@ -4,8 +4,15 @@
 }
 
 .inner {
-  max-width: 760px;
+  max-width: 840px;
   margin: 0 auto;
+}
+
+.card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  padding: 2.25rem 2.75rem 2.5rem;
 }
 
 @keyframes shimmer {
@@ -30,7 +37,7 @@
 .skeletonMeta {
   width: 160px;
   height: 20px;
-  margin: 1.25rem 0 1rem;
+  margin: 0 0 1rem;
 }
 
 .skeletonTitle {
@@ -48,7 +55,7 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  margin: 1.25rem 0 0.75rem;
+  margin: 0 0 0.75rem;
 }
 
 .badge {

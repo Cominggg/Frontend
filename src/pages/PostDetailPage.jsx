@@ -67,9 +67,11 @@ function PostDetailPage() {
       <div className={styles.page}>
         <div className={styles.inner}>
           <BackButton fallback={ROUTES.COMMUNITY} />
-          <div className={styles.skeletonMeta} />
-          <div className={styles.skeletonTitle} />
-          <div className={styles.skeletonBody} />
+          <div className={styles.card}>
+            <div className={styles.skeletonMeta} />
+            <div className={styles.skeletonTitle} />
+            <div className={styles.skeletonBody} />
+          </div>
         </div>
       </div>
     )
@@ -109,48 +111,50 @@ function PostDetailPage() {
       <div className={styles.inner}>
         <BackButton fallback={ROUTES.COMMUNITY} />
 
-        <div className={styles.meta}>
-          <span className={styles.badge}>
-            {POST_CATEGORY_LABEL[post.category]}
-          </span>
-          <span className={styles.metaText}>{formatDateTime(post.createdAt)}</span>
-          <span className={styles.dot} aria-hidden="true">·</span>
-          <span className={styles.metaText}>조회 {post.viewCount.toLocaleString()}</span>
-        </div>
+        <div className={styles.card}>
+          <div className={styles.meta}>
+            <span className={styles.badge}>
+              {POST_CATEGORY_LABEL[post.category]}
+            </span>
+            <span className={styles.metaText}>{formatDateTime(post.createdAt)}</span>
+            <span className={styles.dot} aria-hidden="true">·</span>
+            <span className={styles.metaText}>조회 {post.viewCount.toLocaleString()}</span>
+          </div>
 
-        <h1 className={styles.title}>{post.title}</h1>
+          <h1 className={styles.title}>{post.title}</h1>
 
-        <div className={styles.authorRow}>
-          <span className={styles.author}>{post.authorNickname ?? '탈퇴 회원'}</span>
-          {post.isAuthor && (
-            <div className={styles.authorActions}>
-              <button type="button" className={styles.authorActionBtn} onClick={handleEdit}>수정</button>
-              <button
-                type="button"
-                className={styles.authorActionBtn}
-                onClick={handleDelete}
-                disabled={deleteMutation.isPending}
-              >
-                {deleteMutation.isPending ? '삭제 중...' : '삭제'}
-              </button>
-            </div>
-          )}
-        </div>
+          <div className={styles.authorRow}>
+            <span className={styles.author}>{post.authorNickname ?? '탈퇴 회원'}</span>
+            {post.isAuthor && (
+              <div className={styles.authorActions}>
+                <button type="button" className={styles.authorActionBtn} onClick={handleEdit}>수정</button>
+                <button
+                  type="button"
+                  className={styles.authorActionBtn}
+                  onClick={handleDelete}
+                  disabled={deleteMutation.isPending}
+                >
+                  {deleteMutation.isPending ? '삭제 중...' : '삭제'}
+                </button>
+              </div>
+            )}
+          </div>
 
-        <PostContentView content={post.content} />
+          <PostContentView content={post.content} />
 
-        <div className={styles.footer}>
-          <button
-            type="button"
-            className={isRecommended ? styles.recommendBtnActive : styles.recommendBtn}
-            onClick={handleRecommendToggle}
-            aria-pressed={isRecommended}
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill={isRecommended ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3" />
-            </svg>
-            추천 {recommendCount.toLocaleString()}
-          </button>
+          <div className={styles.footer}>
+            <button
+              type="button"
+              className={isRecommended ? styles.recommendBtnActive : styles.recommendBtn}
+              onClick={handleRecommendToggle}
+              aria-pressed={isRecommended}
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill={isRecommended ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3" />
+              </svg>
+              추천 {recommendCount.toLocaleString()}
+            </button>
+          </div>
         </div>
 
       </div>

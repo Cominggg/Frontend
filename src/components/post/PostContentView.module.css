@@ -1,4 +1,5 @@
 .prose {
+  max-width: 42rem;
   font-size: 0.9375rem;
   line-height: 1.8;
   color: var(--color-text);
