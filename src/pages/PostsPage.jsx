@@ -81,7 +81,10 @@ function PostsPage() {
       <div className={styles.inner}>
 
         <div className={styles.pageHeader}>
-          <h1 className={styles.pageTitle}>커뮤니티</h1>
+          <div>
+            <h1 className={styles.pageTitle}>커뮤니티</h1>
+            <p className={styles.pageDesc}>자유 · 정보 · 후기를 나누는 Jpop 팬 공간이에요</p>
+          </div>
           <Button size="sm" className={styles.writeBtn} onClick={handleWriteClick}>
             글쓰기
           </Button>
