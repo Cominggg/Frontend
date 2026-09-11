@@ -9,7 +9,7 @@ import EmptyState from '@/components/ui/EmptyState'
 import usePageMeta from '@/hooks/usePageMeta'
 import { createPost, getPost, updatePost } from '@/services/postApi'
 import { ROUTES } from '@/constants/routes'
-import { CATEGORIES_REQUIRING_MENTION, MENTION_TYPE_LABEL, POST_CATEGORY_LABEL } from '@/constants/post'
+import { MENTION_TYPE_LABEL, POST_CATEGORY_LABEL } from '@/constants/post'
 import styles from './PostWritePage.module.css'
 
 const CATEGORIES = ['FREE', 'INFO', 'REVIEW']
@@ -41,7 +41,6 @@ function PostWritePage() {
   }
 
   const entityTags = useMemo(() => extractEntityTags(contentJson), [contentJson])
-  const mentionRequired = CATEGORIES_REQUIRING_MENTION.includes(category)
 
   usePageMeta({
     title: isEditMode ? '게시글 수정 - 커밍' : '글쓰기 - 커밍',
@@ -81,10 +80,6 @@ function PostWritePage() {
     }
     if (isContentEmpty(contentJson)) {
       setError('본문을 입력해주세요.')
-      return
-    }
-    if (mentionRequired && entityTags.length === 0) {
-      setError(`${POST_CATEGORY_LABEL[category]} 게시글은 공연·아티스트·음악을 1개 이상 태그해야 해요. 본문에 '/'를 입력해 태그해보세요.`)
       return
     }
     setError(null)
@@ -159,9 +154,7 @@ function PostWritePage() {
         <PostEditor content={contentJson} onChange={setContentJson} />
 
         <div className={styles.tagRow}>
-          <span className={styles.tagRowLabel}>
-            태그된 항목{mentionRequired ? ' (1개 이상 필수)' : ''}
-          </span>
+          <span className={styles.tagRowLabel}>태그된 항목</span>
           {entityTags.length > 0 ? (
             <div className={styles.tagList}>
               {entityTags.map((tag) => (
