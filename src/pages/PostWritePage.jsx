@@ -204,7 +204,7 @@ function PostWritePage() {
                 ))}
               </div>
             ) : (
-              <span className={styles.tagRowEmpty}>본문에 '/'를 입력해 공연·아티스트·음악을 태그해보세요</span>
+              <span className={styles.tagRowEmpty}>아직 태그한 항목이 없어요</span>
             )}
           </div>
 

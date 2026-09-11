@@ -44,10 +44,10 @@ function PostEditor({ content, onChange, onCharacterCountChange }) {
   if (!editor) return null
 
   return (
-    <div className={styles.wrap}>
+    <>
       <EditorBubbleMenu editor={editor} />
       <EditorContent editor={editor} />
-    </div>
+    </>
   )
 }
 

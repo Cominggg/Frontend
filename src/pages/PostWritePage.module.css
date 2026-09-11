@@ -103,31 +103,26 @@
   padding: 2.25rem 2.75rem 2.5rem;
 }
 
-/* ── 제목 입력 ── */
+/* ── 제목 입력 (카드에 바로 이어지는 무보더 타이틀) ── */
 .titleInput {
   display: block;
   width: 100%;
-  padding: 0.75rem 0.875rem;
-  margin-bottom: 0.875rem;
-  border-radius: var(--radius-lg);
-  border: 1.5px solid var(--color-border);
-  background: var(--color-surface);
+  padding: 0 0 1rem;
+  margin-bottom: 1.25rem;
+  border: none;
+  border-bottom: 1px solid var(--color-border);
+  background: transparent;
   color: var(--color-text);
-  font-size: 1.0625rem;
-  font-weight: 600;
+  font-size: 1.375rem;
+  font-weight: 700;
   font-family: var(--font-sans);
+  letter-spacing: -0.01em;
   outline: none;
-  transition: border-color 0.15s;
-}
-
-.titleInput:focus-visible {
-  outline: none;
-  border-radius: var(--radius-lg);
 }
 
 .titleInput::placeholder {
   color: var(--color-text-muted);
-  font-weight: 500;
+  font-weight: 700;
 }
 
 /* ── 본문 글자수 ── */
@@ -144,13 +139,15 @@
   color: var(--color-destructive);
 }
 
-/* ── 태그 미리보기 ── */
+/* ── 태그 미리보기 (본문과 구분선으로 분리) ── */
 .tagRow {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 0.5rem;
-  margin-top: 0.875rem;
+  margin-top: 1.25rem;
+  padding-top: 1.125rem;
+  border-top: 1px solid var(--color-border);
 }
 
 .tagRowLabel {
