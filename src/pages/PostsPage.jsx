@@ -6,6 +6,7 @@ import EmptyState from '@/components/ui/EmptyState'
 import Pagination from '@/components/ui/Pagination'
 import PostListItem from '@/components/post/PostListItem'
 import PostListItemSkeleton from '@/components/post/PostListItemSkeleton'
+import PostsSidebar from '@/components/post/sidebar/PostsSidebar'
 import usePageMeta from '@/hooks/usePageMeta'
 import { getPosts } from '@/services/postApi'
 import { ROUTES } from '@/constants/routes'
@@ -79,55 +80,60 @@ function PostsPage() {
   return (
     <div className={styles.page}>
       <div className={styles.inner}>
+        <div className={styles.layout}>
+          <div className={styles.main}>
 
-        <div className={styles.pageHeader}>
-          <div>
-            <h1 className={styles.pageTitle}>커뮤니티</h1>
-            <p className={styles.pageDesc}>자유 · 정보 · 후기를 나누는 Jpop 팬 공간이에요</p>
+            <div className={styles.pageHeader}>
+              <div>
+                <h1 className={styles.pageTitle}>커뮤니티</h1>
+                <p className={styles.pageDesc}>자유 · 정보 · 후기를 나누는 Jpop 팬 공간이에요</p>
+              </div>
+              <Button size="sm" className={styles.writeBtn} onClick={handleWriteClick}>
+                글쓰기
+              </Button>
+            </div>
+
+            <div className={styles.filterBar} role="tablist" aria-label="카테고리 필터">
+              {CATEGORY_FILTERS.map((c) => (
+                <button
+                  key={c}
+                  role="tab"
+                  aria-selected={selectedCategory === c}
+                  className={`${styles.filterTab} ${selectedCategory === c ? styles.filterTabActive : ''}`}
+                  onClick={() => handleCategoryChange(c)}
+                >
+                  {c === 'ALL' ? '전체' : POST_CATEGORY_LABEL[c]}
+                </button>
+              ))}
+            </div>
+
+            {isLoading ? (
+              <div className={styles.list}>
+                {Array.from({ length: 8 }).map((_, i) => (
+                  <PostListItemSkeleton key={i} />
+                ))}
+              </div>
+            ) : posts.length > 0 ? (
+              <div className={styles.list}>
+                {posts.map((post) => (
+                  <PostListItem key={post.id} post={post} />
+                ))}
+              </div>
+            ) : (
+              <EmptyState message="아직 등록된 게시글이 없습니다." />
+            )}
+
+            {!isLoading && totalPages > 1 && (
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={handlePageChange}
+              />
+            )}
+
           </div>
-          <Button size="sm" className={styles.writeBtn} onClick={handleWriteClick}>
-            글쓰기
-          </Button>
+          <PostsSidebar />
         </div>
-
-        <div className={styles.filterBar} role="tablist" aria-label="카테고리 필터">
-          {CATEGORY_FILTERS.map((c) => (
-            <button
-              key={c}
-              role="tab"
-              aria-selected={selectedCategory === c}
-              className={`${styles.filterTab} ${selectedCategory === c ? styles.filterTabActive : ''}`}
-              onClick={() => handleCategoryChange(c)}
-            >
-              {c === 'ALL' ? '전체' : POST_CATEGORY_LABEL[c]}
-            </button>
-          ))}
-        </div>
-
-        {isLoading ? (
-          <div className={styles.list}>
-            {Array.from({ length: 8 }).map((_, i) => (
-              <PostListItemSkeleton key={i} />
-            ))}
-          </div>
-        ) : posts.length > 0 ? (
-          <div className={styles.list}>
-            {posts.map((post) => (
-              <PostListItem key={post.id} post={post} />
-            ))}
-          </div>
-        ) : (
-          <EmptyState message="아직 등록된 게시글이 없습니다." />
-        )}
-
-        {!isLoading && totalPages > 1 && (
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={handlePageChange}
-          />
-        )}
-
       </div>
     </div>
   )
