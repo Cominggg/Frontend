@@ -80,32 +80,33 @@ function PostsPage() {
   return (
     <div className={styles.page}>
       <div className={styles.inner}>
+
+        <div className={styles.pageHeader}>
+          <h1 className={styles.pageTitle}>커뮤니티</h1>
+          <p className={styles.pageDesc}>자유 · 정보 · 후기를 나누는 Jpop 팬 공간이에요</p>
+        </div>
+
+        <div className={styles.toolbar}>
+          <div className={styles.filterBar} role="tablist" aria-label="카테고리 필터">
+            {CATEGORY_FILTERS.map((c) => (
+              <button
+                key={c}
+                role="tab"
+                aria-selected={selectedCategory === c}
+                className={`${styles.filterTab} ${selectedCategory === c ? styles.filterTabActive : ''}`}
+                onClick={() => handleCategoryChange(c)}
+              >
+                {c === 'ALL' ? '전체' : POST_CATEGORY_LABEL[c]}
+              </button>
+            ))}
+          </div>
+          <Button size="sm" className={styles.writeBtn} onClick={handleWriteClick}>
+            글쓰기
+          </Button>
+        </div>
+
         <div className={styles.layout}>
           <div className={styles.main}>
-
-            <div className={styles.pageHeader}>
-              <div>
-                <h1 className={styles.pageTitle}>커뮤니티</h1>
-                <p className={styles.pageDesc}>자유 · 정보 · 후기를 나누는 Jpop 팬 공간이에요</p>
-              </div>
-              <Button size="sm" className={styles.writeBtn} onClick={handleWriteClick}>
-                글쓰기
-              </Button>
-            </div>
-
-            <div className={styles.filterBar} role="tablist" aria-label="카테고리 필터">
-              {CATEGORY_FILTERS.map((c) => (
-                <button
-                  key={c}
-                  role="tab"
-                  aria-selected={selectedCategory === c}
-                  className={`${styles.filterTab} ${selectedCategory === c ? styles.filterTabActive : ''}`}
-                  onClick={() => handleCategoryChange(c)}
-                >
-                  {c === 'ALL' ? '전체' : POST_CATEGORY_LABEL[c]}
-                </button>
-              ))}
-            </div>
 
             {isLoading ? (
               <div className={styles.list}>
