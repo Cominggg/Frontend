@@ -89,6 +89,12 @@
   color: var(--color-accent);
 }
 
+.actionBtn:disabled {
+  color: var(--color-text-muted);
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .replyComposer {
   margin-top: 0.9rem;
 }

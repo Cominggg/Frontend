@@ -8,6 +8,7 @@ function CommentComposer({
   placeholder = '댓글을 남겨보세요',
   compact = false,
   onCancel,
+  pending = false,
 }) {
   const [value, setValue] = useState('')
 
@@ -44,9 +45,9 @@ function CommentComposer({
             type="button"
             className={styles.submitBtn}
             onClick={isLoggedIn ? handleSubmit : onRequireLogin}
-            disabled={isLoggedIn && !value.trim()}
+            disabled={isLoggedIn && (!value.trim() || pending)}
           >
-            등록
+            {pending ? '등록 중...' : '등록'}
           </button>
         </div>
       </div>

@@ -49,3 +49,28 @@ export async function unrecommendPost(id) {
   const { data } = await api.delete(`/posts/${id}/recommend`)
   return data
 }
+
+export async function getComments(postId, params) {
+  const { data } = await api.get(`/posts/${postId}/comments`, { params })
+  return data
+}
+
+export async function createComment(postId, payload) {
+  const { data } = await api.post(`/posts/${postId}/comments`, payload)
+  return data
+}
+
+export async function deleteComment(commentId) {
+  const { data } = await api.delete(`/comments/${commentId}`)
+  return data
+}
+
+export async function likeComment(commentId) {
+  const { data } = await api.post(`/comments/${commentId}/like`)
+  return data
+}
+
+export async function unlikeComment(commentId) {
+  const { data } = await api.delete(`/comments/${commentId}/like`)
+  return data
+}

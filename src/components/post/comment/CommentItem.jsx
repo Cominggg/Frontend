@@ -11,8 +11,9 @@ function LikeIcon() {
   )
 }
 
-function CommentItem({ comment, isLoggedIn, onRequireLogin, onReply, onToggleLike, onToggleReplyLike }) {
+function CommentItem({ comment, isLoggedIn, onRequireLogin, onReply, onToggleLike, onToggleReplyLike, onDelete, onDeleteReply }) {
   const [showReplyBox, setShowReplyBox] = useState(false)
+  const isDeleted = comment.authorNickname == null
 
   function guard(action) {
     if (!isLoggedIn) {
@@ -25,6 +26,16 @@ function CommentItem({ comment, isLoggedIn, onRequireLogin, onReply, onToggleLik
   function handleReplySubmit(content) {
     onReply(content)
     setShowReplyBox(false)
+  }
+
+  function handleDelete() {
+    if (!window.confirm('댓글을 삭제하시겠습니까?')) return
+    onDelete()
+  }
+
+  function handleReplyDelete(replyId) {
+    if (!window.confirm('답글을 삭제하시겠습니까?')) return
+    onDeleteReply(replyId)
   }
 
   return (
@@ -45,6 +56,7 @@ function CommentItem({ comment, isLoggedIn, onRequireLogin, onReply, onToggleLik
             className={styles.actionBtn}
             onClick={() => guard(onToggleLike)}
             aria-pressed={comment.isLiked}
+            disabled={isDeleted}
           >
             <LikeIcon />
             {comment.likeCount}
@@ -53,9 +65,15 @@ function CommentItem({ comment, isLoggedIn, onRequireLogin, onReply, onToggleLik
             type="button"
             className={styles.actionBtn}
             onClick={() => guard(() => setShowReplyBox((v) => !v))}
+            disabled={isDeleted}
           >
             답글 달기
           </button>
+          {comment.isAuthor && (
+            <button type="button" className={styles.actionBtn} onClick={handleDelete}>
+              삭제
+            </button>
+          )}
         </div>
 
         {showReplyBox && (
@@ -73,31 +91,44 @@ function CommentItem({ comment, isLoggedIn, onRequireLogin, onReply, onToggleLik
 
         {comment.replies.length > 0 && (
           <div className={styles.replyList}>
-            {comment.replies.map((reply) => (
-              <div key={reply.id} className={styles.reply}>
-                <div className={styles.replyAvatar} aria-hidden="true">
-                  {(reply.authorNickname ?? '?').charAt(0)}
-                </div>
-                <div className={styles.body}>
-                  <div className={styles.top}>
-                    <span className={styles.name}>{reply.authorNickname ?? '탈퇴 회원'}</span>
-                    <span className={styles.time}>{formatRelativeDate(reply.createdAt)}</span>
+            {comment.replies.map((reply) => {
+              const replyDeleted = reply.authorNickname == null
+              return (
+                <div key={reply.id} className={styles.reply}>
+                  <div className={styles.replyAvatar} aria-hidden="true">
+                    {(reply.authorNickname ?? '?').charAt(0)}
                   </div>
-                  <p className={styles.text}>{reply.content}</p>
-                  <div className={styles.actions}>
-                    <button
-                      type="button"
-                      className={styles.actionBtn}
-                      onClick={() => guard(() => onToggleReplyLike(reply.id))}
-                      aria-pressed={reply.isLiked}
-                    >
-                      <LikeIcon />
-                      {reply.likeCount}
-                    </button>
+                  <div className={styles.body}>
+                    <div className={styles.top}>
+                      <span className={styles.name}>{reply.authorNickname ?? '탈퇴 회원'}</span>
+                      <span className={styles.time}>{formatRelativeDate(reply.createdAt)}</span>
+                    </div>
+                    <p className={styles.text}>{reply.content}</p>
+                    <div className={styles.actions}>
+                      <button
+                        type="button"
+                        className={styles.actionBtn}
+                        onClick={() => guard(() => onToggleReplyLike(reply.id))}
+                        aria-pressed={reply.isLiked}
+                        disabled={replyDeleted}
+                      >
+                        <LikeIcon />
+                        {reply.likeCount}
+                      </button>
+                      {reply.isAuthor && (
+                        <button
+                          type="button"
+                          className={styles.actionBtn}
+                          onClick={() => handleReplyDelete(reply.id)}
+                        >
+                          삭제
+                        </button>
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              )
+            })}
           </div>
         )}
       </div>
