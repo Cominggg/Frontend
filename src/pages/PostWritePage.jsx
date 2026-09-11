@@ -127,8 +127,10 @@ function PostWritePage() {
         <div className={styles.inner}>
           <div className={styles.skeletonTitle} />
           <div className={styles.skeletonBar} />
-          <div className={styles.skeletonInput} />
-          <div className={styles.skeletonBody} />
+          <div className={styles.card}>
+            <div className={styles.skeletonInput} />
+            <div className={styles.skeletonBody} />
+          </div>
         </div>
       </div>
     )
@@ -156,68 +158,69 @@ function PostWritePage() {
           ))}
         </div>
 
-        <input
-          type="text"
-          className={styles.titleInput}
-          placeholder="제목을 입력하세요"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          maxLength={100}
-        />
+        <div className={styles.card}>
+          <input
+            type="text"
+            className={styles.titleInput}
+            placeholder="제목을 입력하세요"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            maxLength={100}
+          />
 
-        <PostEditor
-          content={contentJson}
-          onChange={setContentJson}
-          onCharacterCountChange={setContentLength}
-        />
+          <PostEditor
+            content={contentJson}
+            onChange={setContentJson}
+            onCharacterCountChange={setContentLength}
+          />
 
-        <div
-          className={
-            contentLength > POST_CONTENT_MAX_LENGTH ? styles.contentCountOver : styles.contentCount
-          }
-        >
-          {contentLength.toLocaleString()} / {POST_CONTENT_MAX_LENGTH.toLocaleString()}자
-        </div>
-
-        <div className={styles.tagRow}>
-          <span className={styles.tagRowLabel}>
-            태그된 항목{' '}
-            <span
-              className={
-                entityTags.length > POST_ENTITY_TAG_MAX_COUNT
-                  ? styles.tagCountOver
-                  : styles.tagCount
-              }
-            >
-              ({entityTags.length}/{POST_ENTITY_TAG_MAX_COUNT})
-            </span>
-          </span>
-          {entityTags.length > 0 ? (
-            <div className={styles.tagList}>
-              {entityTags.map((tag) => (
-                <span key={`${tag.entityType}:${tag.entityId}`} className={styles.tagChip}>
-                  {MENTION_TYPE_LABEL[tag.entityType]} · {tag.title}
-                </span>
-              ))}
-            </div>
-          ) : (
-            <span className={styles.tagRowEmpty}>본문에 '/'를 입력해 공연·아티스트·음악을 태그해보세요</span>
-          )}
-        </div>
-
-        {error && <p className={styles.error}>{error}</p>}
-
-        <div className={styles.submitRow}>
-          <Button
-            type="button"
-            size="md"
-            onClick={handleSubmit}
-            disabled={isSubmitting}
+          <div
+            className={
+              contentLength > POST_CONTENT_MAX_LENGTH ? styles.contentCountOver : styles.contentCount
+            }
           >
-            {isSubmitting ? '저장 중...' : isEditMode ? '수정 완료' : '등록'}
-          </Button>
-        </div>
+            {contentLength.toLocaleString()} / {POST_CONTENT_MAX_LENGTH.toLocaleString()}자
+          </div>
 
+          <div className={styles.tagRow}>
+            <span className={styles.tagRowLabel}>
+              태그된 항목{' '}
+              <span
+                className={
+                  entityTags.length > POST_ENTITY_TAG_MAX_COUNT
+                    ? styles.tagCountOver
+                    : styles.tagCount
+                }
+              >
+                ({entityTags.length}/{POST_ENTITY_TAG_MAX_COUNT})
+              </span>
+            </span>
+            {entityTags.length > 0 ? (
+              <div className={styles.tagList}>
+                {entityTags.map((tag) => (
+                  <span key={`${tag.entityType}:${tag.entityId}`} className={styles.tagChip}>
+                    {MENTION_TYPE_LABEL[tag.entityType]} · {tag.title}
+                  </span>
+                ))}
+              </div>
+            ) : (
+              <span className={styles.tagRowEmpty}>본문에 '/'를 입력해 공연·아티스트·음악을 태그해보세요</span>
+            )}
+          </div>
+
+          {error && <p className={styles.error}>{error}</p>}
+
+          <div className={styles.submitRow}>
+            <Button
+              type="button"
+              size="md"
+              onClick={handleSubmit}
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? '저장 중...' : isEditMode ? '수정 완료' : '등록'}
+            </Button>
+          </div>
+        </div>
       </div>
     </div>
   )
