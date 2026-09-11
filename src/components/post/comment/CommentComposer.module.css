@@ -41,9 +41,22 @@
 
 .row {
   display: flex;
+  align-items: center;
   justify-content: flex-end;
   gap: 0.5rem;
   margin-top: 0.55rem;
+}
+
+.count {
+  margin-right: auto;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+}
+
+.countOver {
+  composes: count;
+  color: var(--color-destructive);
 }
 
 .cancelBtn {

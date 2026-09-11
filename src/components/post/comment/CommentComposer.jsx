@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { COMMENT_MAX_LENGTH } from '@/constants/post'
 import styles from './CommentComposer.module.css'
 
 function CommentComposer({
@@ -18,7 +19,7 @@ function CommentComposer({
 
   function handleSubmit() {
     const trimmed = value.trim()
-    if (!trimmed) return
+    if (!trimmed || trimmed.length > COMMENT_MAX_LENGTH) return
     onSubmit(trimmed)
     setValue('')
   }
@@ -34,8 +35,12 @@ function CommentComposer({
           onFocus={handleFocus}
           readOnly={!isLoggedIn}
           rows={compact ? 2 : 3}
+          maxLength={COMMENT_MAX_LENGTH}
         />
         <div className={styles.row}>
+          <span className={value.length > COMMENT_MAX_LENGTH ? styles.countOver : styles.count}>
+            {value.length}/{COMMENT_MAX_LENGTH}자
+          </span>
           {onCancel && (
             <button type="button" className={styles.cancelBtn} onClick={onCancel}>
               취소
@@ -45,7 +50,7 @@ function CommentComposer({
             type="button"
             className={styles.submitBtn}
             onClick={isLoggedIn ? handleSubmit : onRequireLogin}
-            disabled={isLoggedIn && (!value.trim() || pending)}
+            disabled={isLoggedIn && (!value.trim() || value.length > COMMENT_MAX_LENGTH || pending)}
           >
             {pending ? '등록 중...' : '등록'}
           </button>

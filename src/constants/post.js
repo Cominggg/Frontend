@@ -1,5 +1,6 @@
 export const POST_CONTENT_MAX_LENGTH = 10000
 export const POST_ENTITY_TAG_MAX_COUNT = 10
+export const COMMENT_MAX_LENGTH = 500
 
 export const POST_CATEGORY_LABEL = {
   FREE: '자유',
