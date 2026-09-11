@@ -9,7 +9,12 @@ import EmptyState from '@/components/ui/EmptyState'
 import usePageMeta from '@/hooks/usePageMeta'
 import { createPost, getPost, updatePost } from '@/services/postApi'
 import { ROUTES } from '@/constants/routes'
-import { MENTION_TYPE_LABEL, POST_CATEGORY_LABEL } from '@/constants/post'
+import {
+  MENTION_TYPE_LABEL,
+  POST_CATEGORY_LABEL,
+  POST_CONTENT_MAX_LENGTH,
+  POST_ENTITY_TAG_MAX_COUNT,
+} from '@/constants/post'
 import styles from './PostWritePage.module.css'
 
 const CATEGORIES = ['FREE', 'INFO', 'REVIEW']
@@ -23,6 +28,7 @@ function PostWritePage() {
   const [title, setTitle] = useState('')
   const [category, setCategory] = useState('FREE')
   const [contentJson, setContentJson] = useState(null)
+  const [contentLength, setContentLength] = useState(0)
   const [error, setError] = useState(null)
   const [formReady, setFormReady] = useState(!isEditMode)
 
@@ -80,6 +86,14 @@ function PostWritePage() {
     }
     if (isContentEmpty(contentJson)) {
       setError('본문을 입력해주세요.')
+      return
+    }
+    if (contentLength > POST_CONTENT_MAX_LENGTH) {
+      setError(`본문은 ${POST_CONTENT_MAX_LENGTH.toLocaleString()}자를 초과할 수 없습니다.`)
+      return
+    }
+    if (entityTags.length > POST_ENTITY_TAG_MAX_COUNT) {
+      setError(`태그는 최대 ${POST_ENTITY_TAG_MAX_COUNT}개까지 추가할 수 있습니다.`)
       return
     }
     setError(null)
@@ -151,10 +165,33 @@ function PostWritePage() {
           maxLength={100}
         />
 
-        <PostEditor content={contentJson} onChange={setContentJson} />
+        <PostEditor
+          content={contentJson}
+          onChange={setContentJson}
+          onCharacterCountChange={setContentLength}
+        />
+
+        <div
+          className={
+            contentLength > POST_CONTENT_MAX_LENGTH ? styles.contentCountOver : styles.contentCount
+          }
+        >
+          {contentLength.toLocaleString()} / {POST_CONTENT_MAX_LENGTH.toLocaleString()}자
+        </div>
 
         <div className={styles.tagRow}>
-          <span className={styles.tagRowLabel}>태그된 항목</span>
+          <span className={styles.tagRowLabel}>
+            태그된 항목{' '}
+            <span
+              className={
+                entityTags.length > POST_ENTITY_TAG_MAX_COUNT
+                  ? styles.tagCountOver
+                  : styles.tagCount
+              }
+            >
+              ({entityTags.length}/{POST_ENTITY_TAG_MAX_COUNT})
+            </span>
+          </span>
           {entityTags.length > 0 ? (
             <div className={styles.tagList}>
               {entityTags.map((tag) => (

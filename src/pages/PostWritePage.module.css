@@ -126,6 +126,20 @@
   font-weight: 500;
 }
 
+/* ── 본문 글자수 ── */
+.contentCount {
+  margin-top: 0.5rem;
+  text-align: right;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+}
+
+.contentCountOver {
+  composes: contentCount;
+  color: var(--color-destructive);
+}
+
 /* ── 태그 미리보기 ── */
 .tagRow {
   display: flex;
@@ -139,6 +153,15 @@
   font-size: 0.8125rem;
   font-weight: 600;
   color: var(--color-text-muted);
+}
+
+.tagCount {
+  font-weight: 500;
+}
+
+.tagCountOver {
+  composes: tagCount;
+  color: var(--color-destructive);
 }
 
 .tagRowEmpty {
