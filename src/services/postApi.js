@@ -10,6 +10,11 @@ export async function getPost(id) {
   return data
 }
 
+export async function getPopularPosts(params) {
+  const { data } = await api.get('/posts/popular', { params })
+  return data
+}
+
 export async function createPost(payload) {
   const { data } = await api.post('/posts', payload)
   return data
