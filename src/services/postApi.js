@@ -15,6 +15,11 @@ export async function getPopularPosts(params) {
   return data
 }
 
+export async function getTrendingTags(params) {
+  const { data } = await api.get('/posts/trending-tags', { params })
+  return data
+}
+
 export async function createPost(payload) {
   const { data } = await api.post('/posts', payload)
   return data
