@@ -112,10 +112,6 @@
   transition: border-color 0.15s;
 }
 
-.titleInput:focus {
-  border-color: var(--color-text-muted);
-}
-
 .titleInput:focus-visible {
   outline: none;
   border-radius: var(--radius-lg);

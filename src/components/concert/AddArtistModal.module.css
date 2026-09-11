@@ -66,8 +66,6 @@
   transition: border-color 0.15s;
 }
 
-.searchInput:focus { border-color: var(--color-accent); }
-
 .searchBtn {
   padding: 0.5625rem 1rem;
   border-radius: var(--radius-md);
