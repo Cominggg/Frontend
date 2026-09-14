@@ -39,9 +39,11 @@ export function filterTypeOptions(typeQuery) {
   return options.filter((o) => o.label.includes(typeQuery))
 }
 
+const MENTION_SEARCH_LIMIT = 10
+
 export async function searchMentions(type, term) {
   const q = term.trim()
   if (!q) return []
-  const results = await apiSearchMentions({ type, q })
+  const results = await apiSearchMentions({ type, q, limit: MENTION_SEARCH_LIMIT })
   return results.map((item) => ({ stage: 'search', ...item }))
 }
