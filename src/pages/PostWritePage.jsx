@@ -123,6 +123,15 @@ function PostWritePage() {
     )
   }
 
+  if (isEditMode && existingPost && !existingPost.isAuthor) {
+    return (
+      <EmptyState
+        message="게시글을 수정할 권한이 없습니다"
+        action={{ to: ROUTES.COMMUNITY_DETAIL(postId), label: '게시글로 돌아가기' }}
+      />
+    )
+  }
+
   if (isEditMode && (isLoadingPost || !formReady)) {
     return (
       <div className={styles.page}>

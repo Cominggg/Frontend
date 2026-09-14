@@ -32,7 +32,12 @@ function CommentSection({ postId, commentCount }) {
 
   if (data && data !== syncedData) {
     setSyncedData(data)
-    setItems((prev) => (data.page === 0 ? data.content : [...prev, ...data.content]))
+    setItems((prev) => {
+      if (data.page === 0) return data.content
+      const merged = new Map(prev.map((c) => [c.id, c]))
+      data.content.forEach((c) => merged.set(c.id, c))
+      return Array.from(merged.values())
+    })
   }
 
   function requireLogin() {
@@ -116,7 +121,7 @@ function CommentSection({ postId, commentCount }) {
       <CommentComposer
         isLoggedIn={!!user}
         onRequireLogin={requireLogin}
-        onSubmit={(content) => createMutation.mutate({ content })}
+        onSubmit={(content) => createMutation.mutateAsync({ content })}
         pending={topPending}
       />
 
@@ -129,7 +134,7 @@ function CommentSection({ postId, commentCount }) {
             comment={comment}
             isLoggedIn={!!user}
             onRequireLogin={requireLogin}
-            onReply={(content) => createMutation.mutate({ content, parentCommentId: comment.id })}
+            onReply={(content) => createMutation.mutateAsync({ content, parentCommentId: comment.id })}
             onToggleLike={() => likeMutation.mutate({ id: comment.id, isLiked: comment.isLiked })}
             onToggleReplyLike={(replyId) => {
               const reply = comment.replies.find((r) => r.id === replyId)

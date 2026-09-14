@@ -17,11 +17,15 @@ function CommentComposer({
     if (!isLoggedIn) onRequireLogin()
   }
 
-  function handleSubmit() {
+  async function handleSubmit() {
     const trimmed = value.trim()
     if (!trimmed || trimmed.length > COMMENT_MAX_LENGTH) return
-    onSubmit(trimmed)
-    setValue('')
+    try {
+      await onSubmit(trimmed)
+      setValue('')
+    } catch {
+      // 실패 시 입력값 유지 — 에러 안내는 호출부(mutation onError)에서 처리
+    }
   }
 
   return (
@@ -29,6 +33,7 @@ function CommentComposer({
       <div className={styles.field}>
         <textarea
           className={styles.box}
+          aria-label="댓글 내용"
           placeholder={placeholder}
           value={value}
           onChange={(e) => setValue(e.target.value)}

@@ -150,6 +150,7 @@ function PostDetailPage() {
               type="button"
               className={isRecommended ? styles.recommendBtnActive : styles.recommendBtn}
               onClick={handleRecommendToggle}
+              disabled={recommendMutation.isPending}
               aria-pressed={isRecommended}
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill={isRecommended ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">

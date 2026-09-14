@@ -27,7 +27,8 @@ function PostsPage() {
   const selectedCategory = CATEGORY_FILTERS.includes(searchParams.get('category'))
     ? searchParams.get('category')
     : 'ALL'
-  const currentPage = Math.max(1, parseInt(searchParams.get('page') || '1', 10))
+  const pageParam = Number(searchParams.get('page') ?? 1)
+  const currentPage = Number.isInteger(pageParam) && pageParam > 0 ? pageParam : 1
 
   usePageMeta({
     title: '커뮤니티 - 커밍',

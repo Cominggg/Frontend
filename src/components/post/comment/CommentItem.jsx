@@ -23,8 +23,8 @@ function CommentItem({ comment, isLoggedIn, onRequireLogin, onReply, onToggleLik
     action()
   }
 
-  function handleReplySubmit(content) {
-    onReply(content)
+  async function handleReplySubmit(content) {
+    await onReply(content)
     setShowReplyBox(false)
   }
 
