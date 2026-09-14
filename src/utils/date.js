@@ -39,7 +39,7 @@ export function formatPostDate(isoStr) {
   const date = new Date(isoStr)
   const now = new Date()
 
-  if (now - date < 86400000) {
+  if (now - date >= 0 && now - date < 86400000) {
     return `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`
   }
   if (date.getFullYear() === now.getFullYear()) {

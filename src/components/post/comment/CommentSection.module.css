@@ -23,6 +23,13 @@
   flex-direction: column;
 }
 
+.error {
+  margin: 0.75rem 0 0;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--color-destructive);
+}
+
 .status {
   padding: 1.25rem 0;
   font-size: 0.875rem;

@@ -14,6 +14,7 @@ function CommentSection({ postId, commentCount }) {
   const [items, setItems] = useState([])
   const [syncedPostId, setSyncedPostId] = useState(postId)
   const [syncedData, setSyncedData] = useState(null)
+  const [actionError, setActionError] = useState(null)
   const user = useAuthStore((s) => s.user)
   const openLoginModal = useLoginModalStore((s) => s.open)
   const queryClient = useQueryClient()
@@ -55,6 +56,7 @@ function CommentSection({ postId, commentCount }) {
         createdAt: new Date().toISOString(),
         replies: [],
       }
+      setActionError(null)
       setItems((prev) => {
         if (!parentCommentId) return [...prev, comment]
         return prev.map((c) =>
@@ -62,6 +64,9 @@ function CommentSection({ postId, commentCount }) {
         )
       })
       refreshCommentCount()
+    },
+    onError: () => {
+      setActionError('댓글 등록에 실패했습니다. 잠시 후 다시 시도해주세요.')
     },
   })
 
@@ -71,10 +76,14 @@ function CommentSection({ postId, commentCount }) {
       function softDelete(c) {
         return c.id === id ? { ...c, authorNickname: null, isAuthor: false, content: '삭제된 댓글입니다', likeCount: 0, isLiked: false } : c
       }
+      setActionError(null)
       setItems((prev) =>
         prev.map((c) => (!parentId ? softDelete(c) : c.id === parentId ? { ...c, replies: c.replies.map(softDelete) } : c))
       )
       refreshCommentCount()
+    },
+    onError: () => {
+      setActionError('댓글 삭제에 실패했습니다. 잠시 후 다시 시도해주세요.')
     },
   })
 
@@ -84,9 +93,13 @@ function CommentSection({ postId, commentCount }) {
       function flip(c) {
         return c.id === id ? { ...c, isLiked: !c.isLiked, likeCount: res.likeCount } : c
       }
+      setActionError(null)
       setItems((prev) =>
         prev.map((c) => (!parentId ? flip(c) : c.id === parentId ? { ...c, replies: c.replies.map(flip) } : c))
       )
+    },
+    onError: () => {
+      setActionError('요청 처리에 실패했습니다. 잠시 후 다시 시도해주세요.')
     },
   })
 
@@ -106,6 +119,8 @@ function CommentSection({ postId, commentCount }) {
         onSubmit={(content) => createMutation.mutate({ content })}
         pending={topPending}
       />
+
+      {actionError && <p className={styles.error}>{actionError}</p>}
 
       <div className={styles.list}>
         {items.map((comment) => (
