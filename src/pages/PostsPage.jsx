@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 
@@ -23,6 +24,7 @@ function PostsPage() {
   const navigate = useNavigate()
   const user = useAuthStore((s) => s.user)
   const openLoginModal = useLoginModalStore((s) => s.open)
+  const [searchValue, setSearchValue] = useState('')
 
   const selectedCategory = CATEGORY_FILTERS.includes(searchParams.get('category'))
     ? searchParams.get('category')
@@ -78,6 +80,13 @@ function PostsPage() {
     navigate(ROUTES.COMMUNITY_WRITE)
   }
 
+  function handleSearchSubmit(e) {
+    e.preventDefault()
+    const trimmed = searchValue.trim()
+    if (!trimmed) return
+    navigate(`${ROUTES.SEARCH}?q=${encodeURIComponent(trimmed)}`)
+  }
+
   return (
     <div className={styles.page}>
       <div className={styles.inner}>
@@ -86,6 +95,24 @@ function PostsPage() {
           <h1 className={styles.pageTitle}>커뮤니티</h1>
           <p className={styles.pageDesc}>자유 · 정보 · 후기를 나누는 Jpop 팬 공간이에요</p>
         </div>
+
+        {/* 게시글 통합 검색 진입점 — 제목/본문/멘션 매치를 합친 결과는 /search 페이지에서 확인 */}
+        <form className={styles.searchWrap} onSubmit={handleSearchSubmit} role="search">
+          <span className={styles.searchIcon} aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
+          </span>
+          <input
+            type="text"
+            className={styles.searchInput}
+            placeholder="게시글 제목, 본문, 태그로 검색..."
+            value={searchValue}
+            onChange={(e) => setSearchValue(e.target.value)}
+            aria-label="게시글 검색"
+          />
+        </form>
 
         <div className={styles.layout}>
           <div className={styles.toolbar}>
