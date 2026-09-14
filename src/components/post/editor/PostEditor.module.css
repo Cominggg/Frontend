@@ -1,0 +1,83 @@
+.prose {
+  min-height: 280px;
+  max-width: 42rem;
+  padding: 0;
+  font-size: 0.9375rem;
+  line-height: 1.8;
+  color: var(--color-text);
+  outline: none;
+}
+
+.prose:focus-visible {
+  outline: none;
+}
+
+.prose p {
+  margin: 0 0 0.875rem;
+}
+
+.prose p:last-child {
+  margin-bottom: 0;
+}
+
+.prose h1,
+.prose h2,
+.prose h3 {
+  margin: 1.5rem 0 0.75rem;
+  font-weight: 700;
+  line-height: 1.35;
+  color: var(--color-text);
+}
+
+.prose h1:first-child,
+.prose h2:first-child,
+.prose h3:first-child {
+  margin-top: 0;
+}
+
+.prose h1 {
+  font-size: 1.5rem;
+}
+
+.prose h2 {
+  font-size: 1.3125rem;
+}
+
+.prose h3 {
+  font-size: 1.1875rem;
+}
+
+.prose ul,
+.prose ol {
+  margin: 0 0 0.875rem;
+  padding-left: 1.25rem;
+}
+
+.prose li {
+  margin: 0.3125rem 0;
+}
+
+.prose li p {
+  margin: 0;
+}
+
+.prose blockquote {
+  margin: 0 0 0.875rem;
+  padding-left: 0.875rem;
+  border-left: 3px solid var(--color-border);
+  color: var(--color-text-muted);
+}
+
+.prose a {
+  color: var(--color-accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.prose p:global(.is-editor-empty):first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  color: var(--color-text-muted);
+  pointer-events: none;
+}

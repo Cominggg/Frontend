@@ -1,0 +1,100 @@
+.comment {
+  padding: 1.1rem 0;
+}
+
+.comment:last-child {
+  padding-bottom: 0.4rem;
+}
+
+.top {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin-bottom: 0.3rem;
+  flex-wrap: wrap;
+}
+
+.name {
+  font-size: 0.875rem;
+  font-weight: 800;
+  color: var(--color-text);
+}
+
+.replyName {
+  composes: name;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.mention {
+  color: var(--color-accent);
+  font-weight: 700;
+}
+
+.time {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+}
+
+.text {
+  font-size: 0.875rem;
+  line-height: 1.7;
+  color: var(--color-text);
+  margin: 0 0 0.5rem;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.deletedText {
+  color: var(--color-text-muted);
+  font-style: italic;
+}
+
+.actions {
+  display: flex;
+  gap: 0.9rem;
+}
+
+.actionBtn {
+  border: none;
+  background: none;
+  padding: 0;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--color-text-muted);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  transition: color 0.15s;
+}
+
+.actionBtn:hover {
+  color: var(--color-accent);
+}
+
+.actionBtn svg path {
+  fill: none;
+  transition: fill 0.15s;
+}
+
+.actionBtn[aria-pressed='true'] {
+  color: var(--color-accent);
+}
+
+.actionBtn[aria-pressed='true'] svg path {
+  fill: currentColor;
+}
+
+.replyComposer {
+  margin-top: 0.9rem;
+}
+
+.replyList {
+  margin-top: 0.95rem;
+  padding-left: 1.15rem;
+  border-left: 1.5px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  gap: 0.95rem;
+}
+
