@@ -10,6 +10,7 @@ import EmptyState from '@/components/ui/EmptyState'
 import InquiryModal from '@/components/ui/InquiryModal'
 import InstagramIcon from '@/components/ui/InstagramIcon'
 import Pagination from '@/components/ui/Pagination'
+import RelatedPostsSection from '@/components/post/RelatedPostsSection'
 import SourceCredit from '@/components/ui/SourceCredit'
 import SpotifyIcon from '@/components/ui/SpotifyIcon'
 import XIcon from '@/components/ui/XIcon'
@@ -477,6 +478,9 @@ function ArtistDetailPage() {
             />
           )}
         </section>
+
+        {/* 관련 게시글 */}
+        <RelatedPostsSection entityType="ARTIST" entityId={id} limit={5} />
 
         {/* 아티스트 정보 문의 */}
         <div className={styles.inquiryRow}>
