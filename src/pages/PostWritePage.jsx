@@ -4,6 +4,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 import PostEditor from '@/components/post/editor/PostEditor'
 import { extractEntityTags, isContentEmpty } from '@/components/post/editor/extractEntityTags'
+import BackButton from '@/components/ui/BackButton'
 import Button from '@/components/ui/Button'
 import EmptyState from '@/components/ui/EmptyState'
 import usePageMeta from '@/hooks/usePageMeta'
@@ -47,6 +48,7 @@ function PostWritePage() {
   }
 
   const entityTags = useMemo(() => extractEntityTags(contentJson), [contentJson])
+  const backFallback = isEditMode ? ROUTES.COMMUNITY_DETAIL(postId) : ROUTES.COMMUNITY
 
   usePageMeta({
     title: isEditMode ? '게시글 수정 - 커밍' : '게시글 작성 - 커밍',
@@ -125,6 +127,7 @@ function PostWritePage() {
     return (
       <div className={styles.page}>
         <div className={styles.inner}>
+          <BackButton fallback={backFallback} />
           <div className={styles.skeletonTitle} />
           <div className={styles.skeletonBar} />
           <div className={styles.card}>
@@ -139,6 +142,8 @@ function PostWritePage() {
   return (
     <div className={styles.page}>
       <div className={styles.inner}>
+        <BackButton fallback={backFallback} />
+
         <div className={styles.pageHeader}>
           <h1 className={styles.pageTitle}>{isEditMode ? '게시글 수정' : '게시글 작성'}</h1>
         </div>

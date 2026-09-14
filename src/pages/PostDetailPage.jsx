@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 
 import BackButton from '@/components/ui/BackButton'
+import Button from '@/components/ui/Button'
 import EmptyState from '@/components/ui/EmptyState'
 import PostContentView from '@/components/post/PostContentView'
 import CommentSection from '@/components/post/comment/CommentSection'
@@ -128,15 +129,16 @@ function PostDetailPage() {
             <span className={styles.author}>{post.authorNickname ?? '탈퇴 회원'}</span>
             {post.isAuthor && (
               <div className={styles.authorActions}>
-                <button type="button" className={styles.authorActionBtn} onClick={handleEdit}>수정</button>
-                <button
+                <Button type="button" variant="outline" size="xs" onClick={handleEdit}>수정</Button>
+                <Button
                   type="button"
-                  className={styles.authorActionBtn}
+                  variant="outline"
+                  size="xs"
                   onClick={handleDelete}
                   disabled={deleteMutation.isPending}
                 >
                   {deleteMutation.isPending ? '삭제 중...' : '삭제'}
-                </button>
+                </Button>
               </div>
             )}
           </div>
