@@ -3,6 +3,7 @@ import { Link, useParams, useNavigate, useLocation } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 
 import ArtistAliasName from '@/components/artist/ArtistAliasName'
+import RelatedPostsSection from '@/components/post/RelatedPostsSection'
 import EmptyState from '@/components/ui/EmptyState'
 import SourceCredit from '@/components/ui/SourceCredit'
 import SpotifyIcon from '@/components/ui/SpotifyIcon'
@@ -206,6 +207,10 @@ function ReleaseDetailPage() {
             </ol>
           </section>
 
+          {/* 관련 게시글 */}
+          <aside className={styles.relatedCol}>
+            <RelatedPostsSection entityType="RELEASE" entityId={releaseId} limit={4} />
+          </aside>
         </div>
         <SourceCredit
           text="데이터 출처: MusicBrainz, Spotify"
