@@ -229,7 +229,8 @@ button {
 }
 
 /* 전역 포커스 링 — 키보드 탭 이동 시 일관된 포커스 표시 */
-:focus-visible {
+/* input/textarea/select는 클릭만으로도 focus-visible이 걸릴 수 있어 제외 (자체 round 값 유지) */
+:focus-visible:not(input):not(textarea):not(select) {
   outline: 2px solid var(--color-accent);
   outline-offset: 2px;
   border-radius: var(--radius-xs);
