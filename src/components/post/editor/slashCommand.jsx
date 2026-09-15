@@ -24,11 +24,11 @@ function renderSlashMenu() {
     onStart: (props) => {
       container = document.createElement('div')
       root = createRoot(container)
-      root.render(<SlashCommandMenu ref={menuRef} items={props.items} command={props.command} />)
+      root.render(<SlashCommandMenu ref={menuRef} items={props.items} query={props.query} command={props.command} />)
       unmount = props.mount(container)
     },
     onUpdate: (props) => {
-      root.render(<SlashCommandMenu ref={menuRef} items={props.items} command={props.command} />)
+      root.render(<SlashCommandMenu ref={menuRef} items={props.items} query={props.query} command={props.command} />)
     },
     onKeyDown: (props) => menuRef.current?.onKeyDown(props) ?? false,
     onExit: () => {
