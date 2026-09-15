@@ -23,7 +23,6 @@ import ReleasesPage from '@/pages/ReleasesPage'
 import PostDetailPage from '@/pages/PostDetailPage'
 import PostsPage from '@/pages/PostsPage'
 import PostWritePage from '@/pages/PostWritePage'
-import SearchPage from '@/pages/SearchPage'
 import HomePage from '@/pages/HomePage'
 import MyPage from '@/pages/MyPage'
 import NotFoundPage from '@/pages/NotFoundPage'
@@ -68,7 +67,6 @@ function App() {
         <Route path={ROUTES.RELEASES} element={<ReleasesPage />} />
         <Route path="/releases/:id" element={<ReleaseDetailPage />} />
         <Route path={ROUTES.CALENDAR} element={<CalendarPage />} />
-        <Route path={ROUTES.SEARCH} element={<SearchPage />} />
         <Route path={ROUTES.COMMUNITY} element={<PostsPage />} />
         <Route path={ROUTES.COMMUNITY_WRITE} element={<PrivateRoute><PostWritePage /></PrivateRoute>} />
         <Route path="/community/:id/edit" element={<PrivateRoute><PostWritePage /></PrivateRoute>} />

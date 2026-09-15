@@ -9,7 +9,6 @@ export const ROUTES = {
   RELEASES: '/releases',
   RELEASE_DETAIL: (id) => `/releases/${id}`,
   CALENDAR: '/calendar',
-  SEARCH: '/search',
   COMMUNITY: '/community',
   COMMUNITY_DETAIL: (id) => `/community/${id}`,
   COMMUNITY_WRITE: '/community/write',
