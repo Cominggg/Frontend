@@ -188,6 +188,9 @@ function PostsPage() {
                 ))}
               </div>
             )}
+          </div>
+
+          <div className={styles.writeBtnCell}>
             <Button size="sm" className={styles.writeBtn} onClick={handleWriteClick}>
               게시글 작성
             </Button>

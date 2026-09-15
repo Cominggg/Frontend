@@ -12,20 +12,26 @@
 .layout {
   display: grid;
   grid-template-columns: 1fr 15.5rem;
+  grid-template-areas:
+    'toolbar writeBtn'
+    'main sidebar';
   column-gap: 2rem;
   row-gap: 1.5rem;
   align-items: start;
 }
 
 .main {
-  grid-column: 1;
-  grid-row: 2;
+  grid-area: main;
   min-width: 0;
 }
 
 .sidebarCell {
-  grid-column: 2;
-  grid-row: 2;
+  grid-area: sidebar;
+}
+
+/* 글쓰기 버튼 칸 — 검색바 아래, 사이드 위젯 위, 사이드바와 동일한 폭 */
+.writeBtnCell {
+  grid-area: writeBtn;
 }
 
 /* ── 페이지 헤더 ── */
@@ -103,18 +109,15 @@
   background: var(--color-border);
 }
 
-/* ── 툴바 (카테고리 필터 + 글쓰기, 목록 칸과 동일한 폭) ── */
+/* ── 툴바 (카테고리 필터, 목록 칸과 동일한 폭) ── */
 .toolbar {
-  grid-column: 1;
-  grid-row: 1;
   display: flex;
   align-items: center;
-  justify-content: space-between;
   gap: 0.75rem;
 }
 
 .writeBtn {
-  flex-shrink: 0;
+  width: 100%;
 }
 
 .filterBar {
@@ -175,6 +178,10 @@
 
   .layout {
     grid-template-columns: 1fr;
+    grid-template-areas:
+      'toolbar'
+      'writeBtn'
+      'main';
   }
 
   .sidebarCell {
@@ -187,9 +194,5 @@
     flex-direction: column;
     align-items: stretch;
     gap: 0.75rem;
-  }
-
-  .writeBtn {
-    align-self: stretch;
   }
 }
