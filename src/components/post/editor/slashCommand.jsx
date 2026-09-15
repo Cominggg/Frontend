@@ -76,6 +76,7 @@ const SlashCommand = Extension.create({
               title: props.title,
               subtitle: props.subtitle ?? null,
               thumbnailUrl: props.thumbnailUrl ?? null,
+              releaseGroupId: props.releaseGroupId ?? null,
             },
           }
 
