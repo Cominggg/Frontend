@@ -92,6 +92,18 @@
   border-radius: var(--radius-sm);
 }
 
+/* ── 트랙: 소속 앨범 아트를 공유하는 정사각 썸네일 (1:1) ── */
+.track {
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.track .thumb {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-sm);
+}
+
 /* ── 아티스트: 원형 아바타 인라인 칩 ── */
 .artist {
   display: inline-flex;
