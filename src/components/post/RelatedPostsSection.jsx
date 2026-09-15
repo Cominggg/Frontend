@@ -1,7 +1,8 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 
 import EmptyState from '@/components/ui/EmptyState'
+import Pagination from '@/components/ui/Pagination'
 import { getEntityPosts } from '@/services/postApi'
 import PostListItem from './PostListItem'
 import PostListItemSkeleton from './PostListItemSkeleton'
@@ -16,46 +17,38 @@ function RelatedPostsSection({ entityType, entityId, limit = 5, showHeading = tr
   const entityKey = `${entityType}:${entityId}`
   const [syncedEntityKey, setSyncedEntityKey] = useState(entityKey)
   const [sortBy, setSortBy] = useState('RECOMMEND')
-  const [page, setPage] = useState(0)
-  const [posts, setPosts] = useState([])
-  const [syncedData, setSyncedData] = useState(null)
+  const [currentPage, setCurrentPage] = useState(1)
+  const sectionRef = useRef(null)
 
   if (entityKey !== syncedEntityKey) {
     setSyncedEntityKey(entityKey)
-    setPage(0)
-    setPosts([])
-    setSyncedData(null)
+    setCurrentPage(1)
   }
 
   const sortParam = sortBy.toLowerCase()
 
   const { data, isLoading } = useQuery({
-    queryKey: ['entityPosts', entityType, entityId, sortParam, page],
-    queryFn: () => getEntityPosts(entityType, entityId, { sort: sortParam, page, size: limit }),
+    queryKey: ['entityPosts', entityType, entityId, sortParam, currentPage],
+    queryFn: () =>
+      getEntityPosts(entityType, entityId, { sort: sortParam, page: currentPage - 1, size: limit }),
   })
 
-  if (data && data !== syncedData) {
-    setSyncedData(data)
-    setPosts((prev) => {
-      if (page === 0) return data.content
-      const merged = new Map(prev.map((p) => [p.id, p]))
-      data.content.forEach((p) => merged.set(p.id, p))
-      return Array.from(merged.values())
-    })
-  }
+  const posts = data?.content ?? []
+  const totalPages = data?.totalPages ?? 0
 
   function handleSortChange(value) {
     if (value === sortBy) return
     setSortBy(value)
-    setPage(0)
-    setPosts([])
-    setSyncedData(null)
+    setCurrentPage(1)
   }
 
-  const hasMore = !!data && page + 1 < data.totalPages
+  function handlePageChange(nextPage) {
+    setCurrentPage(nextPage)
+    sectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
 
   return (
-    <section className={styles.section}>
+    <section className={styles.section} ref={sectionRef}>
       <div className={`${styles.head} ${!showHeading ? styles.headNoTitle : ''}`}>
         {showHeading && <h2 className={styles.title}>관련 게시글</h2>}
         <div className={styles.sortToggle} role="tablist" aria-label="정렬 기준">
@@ -74,7 +67,7 @@ function RelatedPostsSection({ entityType, entityId, limit = 5, showHeading = tr
         </div>
       </div>
 
-      {isLoading && page === 0 ? (
+      {isLoading ? (
         <div className={styles.list}>
           {Array.from({ length: limit }).map((_, i) => (
             <PostListItemSkeleton key={i} />
@@ -87,10 +80,8 @@ function RelatedPostsSection({ entityType, entityId, limit = 5, showHeading = tr
               <PostListItem key={post.id} post={post} />
             ))}
           </div>
-          {hasMore && (
-            <button type="button" className={styles.moreBtn} onClick={() => setPage((p) => p + 1)}>
-              더보기
-            </button>
+          {totalPages > 1 && (
+            <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
           )}
         </>
       ) : (

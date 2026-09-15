@@ -480,7 +480,7 @@ function ArtistDetailPage() {
         </section>
 
         {/* 관련 게시글 */}
-        <RelatedPostsSection entityType="ARTIST" entityId={id} limit={5} />
+        <RelatedPostsSection entityType="ARTIST" entityId={id} limit={10} />
 
         {/* 아티스트 정보 문의 */}
         <div className={styles.inquiryRow}>

@@ -409,7 +409,7 @@ function ConcertDetailPage() {
 
           {activeTab === 'relatedPosts' && (
             <div className={styles.tabPanel}>
-              <RelatedPostsSection entityType="CONCERT" entityId={id} limit={5} showHeading={false} />
+              <RelatedPostsSection entityType="CONCERT" entityId={id} limit={10} showHeading={false} />
             </div>
           )}
         </div>

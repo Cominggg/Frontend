@@ -209,7 +209,7 @@ function ReleaseDetailPage() {
 
           {/* 관련 게시글 */}
           <aside className={styles.relatedCol}>
-            <RelatedPostsSection entityType="RELEASE" entityId={releaseId} limit={4} />
+            <RelatedPostsSection entityType="RELEASE" entityId={releaseId} limit={5} />
           </aside>
         </div>
         <SourceCredit
