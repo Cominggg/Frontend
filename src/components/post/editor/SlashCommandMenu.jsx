@@ -13,6 +13,8 @@ const SlashCommandMenu = forwardRef(function SlashCommandMenu({ items, query, co
   const [page, setPage] = useState(0)
   const [isLoadingMore, setIsLoadingMore] = useState(false)
   const loadingMoreRef = useRef(false)
+  const queryRef = useRef(query)
+  queryRef.current = query
 
   if (items !== prevItems) {
     setPrevItems(items)
@@ -37,13 +39,17 @@ const SlashCommandMenu = forwardRef(function SlashCommandMenu({ items, query, co
 
     loadingMoreRef.current = true
     setIsLoadingMore(true)
-    const nextPage = page + 1
-    const more = await searchMentions(parsed.type, parsed.searchTerm, nextPage)
-    setAllItems((prev) => [...prev, ...more])
-    setHasMore(more.hasMore ?? false)
-    setPage(nextPage)
-    setIsLoadingMore(false)
-    loadingMoreRef.current = false
+    try {
+      const nextPage = page + 1
+      const more = await searchMentions(parsed.type, parsed.searchTerm, nextPage)
+      if (queryRef.current !== query) return
+      setAllItems((prev) => [...prev, ...more])
+      setHasMore(more.hasMore ?? false)
+      setPage(nextPage)
+    } finally {
+      setIsLoadingMore(false)
+      loadingMoreRef.current = false
+    }
   }
 
   useImperativeHandle(ref, () => ({

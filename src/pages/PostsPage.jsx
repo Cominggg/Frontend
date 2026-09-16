@@ -37,6 +37,7 @@ function PostsPage() {
   const urlQueryRef = useRef(urlQuery)
   useEffect(() => { urlQueryRef.current = urlQuery })
   const [inputValue, setInputValue] = useState(urlQuery)
+  useEffect(() => { setInputValue(urlQuery) }, [urlQuery])
 
   const selectedCategory = CATEGORY_FILTERS.includes(searchParams.get('category'))
     ? searchParams.get('category')
@@ -84,7 +85,6 @@ function PostsPage() {
         size: ITEMS_PER_PAGE,
       })),
     enabled: !isQueryTooShort,
-    placeholderData: (prev) => prev,
   })
 
   const posts = data?.content ?? []

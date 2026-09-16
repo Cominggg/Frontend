@@ -27,7 +27,7 @@ function RelatedPostsSection({ entityType, entityId, limit = 5, showHeading = tr
 
   const sortParam = sortBy.toLowerCase()
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isError } = useQuery({
     queryKey: ['entityPosts', entityType, entityId, sortParam, currentPage],
     queryFn: () =>
       getEntityPosts(entityType, entityId, { sort: sortParam, page: currentPage - 1, size: limit }),
@@ -73,6 +73,8 @@ function RelatedPostsSection({ entityType, entityId, limit = 5, showHeading = tr
             <PostListItemSkeleton key={i} />
           ))}
         </div>
+      ) : isError ? (
+        <EmptyState compact message="관련 게시글을 불러오지 못했습니다. 잠시 후 다시 시도해주세요." />
       ) : posts.length > 0 ? (
         <>
           <div className={styles.list}>
