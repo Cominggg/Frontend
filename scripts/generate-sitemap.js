@@ -19,8 +19,10 @@ const STATIC_URLS = [
 
 // 리스트 엔드포인트를 끝까지 페이지네이션하며 id만 수집. 실패 시 에러를 그대로
 // 던져서 main()이 기존 sitemap.xml을 훼손하지 않고 유지하도록 한다.
+// 페이지 수집 도중 데이터가 추가/삭제되면 offset이 밀리면서 같은 id가 여러 페이지에
+// 걸쳐 중복 수집될 수 있어 Set으로 걸러낸다.
 async function fetchAllIds(endpoint) {
-  const ids = []
+  const ids = new Set()
   let page = 0
 
   while (true) {
@@ -31,14 +33,14 @@ async function fetchAllIds(endpoint) {
     const data = await res.json()
 
     for (const item of data.content ?? []) {
-      if (item?.id != null) ids.push(item.id)
+      if (item?.id != null) ids.add(item.id)
     }
 
     page += 1
     if (page >= (data.totalPages ?? 0)) break
   }
 
-  return ids
+  return [...ids]
 }
 
 function buildUrlEntry({ loc, changefreq, priority }) {
