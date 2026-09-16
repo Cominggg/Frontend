@@ -219,10 +219,13 @@
 
 .bodyGrid {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: minmax(0, 1fr) 400px;
   gap: 3rem;
   align-items: start;
-  max-width: 680px;
+}
+
+.relatedCol {
+  min-width: 0;
 }
 
 .sectionHeading {
@@ -269,6 +272,12 @@
 
 .trackItem:hover {
   background: var(--color-surface-hover);
+}
+
+.trackItemHighlight {
+  background: var(--color-surface-hover);
+  outline: 2px solid var(--color-accent);
+  outline-offset: -2px;
 }
 
 .trackNum {
@@ -322,6 +331,12 @@
 }
 
 /* ── 반응형 ── */
+@media (max-width: 900px) {
+  .bodyGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media (max-width: 767px) {
   .hero {
     padding: 2.5rem 1rem 2rem;

@@ -20,6 +20,16 @@ export async function getTrendingTags(params) {
   return data
 }
 
+export async function getEntityPosts(entityType, entityId, params) {
+  const { data } = await api.get(`/entities/${entityType}/${entityId}/posts`, { params })
+  return data
+}
+
+export async function getSearch(params) {
+  const { data } = await api.get('/search', { params })
+  return data
+}
+
 export async function createPost(payload) {
   const { data } = await api.post('/posts', payload)
   return data

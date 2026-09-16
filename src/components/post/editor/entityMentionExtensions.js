@@ -11,6 +11,8 @@ function entityAttributes() {
     title: { default: '' },
     subtitle: { default: null },
     thumbnailUrl: { default: null },
+    // 트랙 멘션 전용 — 트랙이 속한 앨범(ReleaseGroup) id. 앨범 상세 페이지로의 딥링크에 쓰인다
+    releaseGroupId: { default: null },
   }
 }
 

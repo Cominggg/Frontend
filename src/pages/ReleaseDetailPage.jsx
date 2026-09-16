@@ -1,8 +1,9 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, useParams, useNavigate, useLocation } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 
 import ArtistAliasName from '@/components/artist/ArtistAliasName'
+import RelatedPostsSection from '@/components/post/RelatedPostsSection'
 import EmptyState from '@/components/ui/EmptyState'
 import SourceCredit from '@/components/ui/SourceCredit'
 import SpotifyIcon from '@/components/ui/SpotifyIcon'
@@ -24,18 +25,36 @@ const RELEASE_TYPE_COLOR = {
   Single: 'var(--color-badge-single)',
 }
 
+const TRACK_HIGHLIGHT_DURATION_MS = 2000
+
 function ReleaseDetailPage() {
   const { id } = useParams()
   const releaseId = Number(id)
   const [coverFailed, setCoverFailed] = useState(false)
+  const [highlightedTrackAnchor, setHighlightedTrackAnchor] = useState(null)
   const navigate = useNavigate()
-  const { key: locationKey } = useLocation()
+  const { key: locationKey, hash } = useLocation()
 
   const { data: release, isLoading, isError } = useQuery({
     queryKey: ['release', releaseId],
     queryFn: () => getRelease(releaseId),
     retry: false,
   })
+
+  // 트랙 멘션 카드에서 앨범 상세로 딥링크될 때(#track-{id}) 해당 트랙으로 스크롤 + 일시 하이라이트.
+  // ScrollToTop은 pathname 변경 시에만 top으로 스크롤하고 hash는 보지 않으므로, tracks가 로드된
+  // 뒤 실행되는 이 effect가 항상 나중에 실행돼 ScrollToTop과 충돌하지 않는다.
+  useEffect(() => {
+    if (!hash || !release) return
+    const anchorId = hash.slice(1)
+    const el = document.getElementById(anchorId)
+    if (!el) return
+
+    el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    setHighlightedTrackAnchor(anchorId)
+    const timer = setTimeout(() => setHighlightedTrackAnchor(null), TRACK_HIGHLIGHT_DURATION_MS)
+    return () => clearTimeout(timer)
+  }, [hash, release])
 
   usePageMeta({
     title: release?.title ? `${release.title} - 커밍` : undefined,
@@ -174,12 +193,17 @@ function ReleaseDetailPage() {
                   idx === 0 || tracks[idx - 1].discNumber !== track.discNumber
                 )
                 const trackSpotifyUrl = getSpotifyTrackUrl(track.spotifyId)
+                const trackAnchorId = `track-${track.id ?? track.position}`
+                const isHighlighted = highlightedTrackAnchor === trackAnchorId
                 return (
                   <li key={track.position}>
                     {showDiscHeader && (
                       <div className={styles.discHeader}>Disc {track.discNumber}</div>
                     )}
-                    <div className={styles.trackItem}>
+                    <div
+                      id={trackAnchorId}
+                      className={`${styles.trackItem} ${isHighlighted ? styles.trackItemHighlight : ''}`}
+                    >
                       <span className={styles.trackNum}>{track.position}</span>
                       <span className={styles.trackTitle}>
                         {track.title}
@@ -206,6 +230,10 @@ function ReleaseDetailPage() {
             </ol>
           </section>
 
+          {/* 관련 게시글 */}
+          <aside className={styles.relatedCol}>
+            <RelatedPostsSection entityType="RELEASE" entityId={releaseId} limit={5} />
+          </aside>
         </div>
         <SourceCredit
           text="데이터 출처: MusicBrainz, Spotify"

@@ -12,4 +12,5 @@ export const MENTION_TYPE_LABEL = {
   CONCERT: '공연',
   ARTIST: '아티스트',
   RELEASE: '음악',
+  TRACK: '트랙',
 }

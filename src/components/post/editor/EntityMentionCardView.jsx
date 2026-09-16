@@ -26,19 +26,21 @@ function CardInner({ entityType, title, subtitle, thumbnailUrl }) {
   )
 }
 
-function getDetailPath(entityType, entityId) {
-  return entityType === 'CONCERT' ? ROUTES.CONCERT_DETAIL(entityId) : ROUTES.RELEASE_DETAIL(entityId)
+function getDetailPath(entityType, entityId, releaseGroupId) {
+  if (entityType === 'CONCERT') return ROUTES.CONCERT_DETAIL(entityId)
+  if (entityType === 'TRACK') return `${ROUTES.RELEASE_DETAIL(releaseGroupId)}#track-${entityId}`
+  return ROUTES.RELEASE_DETAIL(entityId)
 }
 
 function EntityMentionCardView({ node, editor }) {
-  const { entityType, entityId, title, subtitle, thumbnailUrl } = node.attrs
-  const variantClass = entityType === 'CONCERT' ? styles.concert : styles.release
+  const { entityType, entityId, title, subtitle, thumbnailUrl, releaseGroupId } = node.attrs
+  const variantClass = entityType === 'CONCERT' ? styles.concert : entityType === 'TRACK' ? styles.track : styles.release
   const className = `${styles.card} ${variantClass}`
 
   if (!editor.isEditable) {
     return (
       <NodeViewWrapper as="div">
-        <Link to={getDetailPath(entityType, entityId)} className={className}>
+        <Link to={getDetailPath(entityType, entityId, releaseGroupId)} className={className}>
           <CardInner entityType={entityType} title={title} subtitle={subtitle} thumbnailUrl={thumbnailUrl} />
         </Link>
       </NodeViewWrapper>

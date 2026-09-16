@@ -7,6 +7,7 @@ import BackButton from '@/components/ui/BackButton'
 import Badge from '@/components/ui/Badge'
 import EmptyState from '@/components/ui/EmptyState'
 import InquiryModal from '@/components/ui/InquiryModal'
+import RelatedPostsSection from '@/components/post/RelatedPostsSection'
 import usePageMeta from '@/hooks/usePageMeta'
 import { getConcert, getConcertSetlist } from '@/services/concertApi'
 import { addToCalendar, removeFromCalendar } from '@/services/calendarApi'
@@ -340,24 +341,28 @@ function ConcertDetailPage() {
 
         {/* 하단 탭 */}
         <div className={styles.tabSection}>
-          {status === 'ENDED' ? (
-            <div className={styles.tabBar}>
-              <button
-                className={`${styles.tabBtn} ${activeTab === 'info' ? styles.tabBtnActive : ''}`}
-                onClick={() => setActiveTab('info')}
-              >
-                공연 정보
-              </button>
+          <div className={styles.tabBar}>
+            <button
+              className={`${styles.tabBtn} ${activeTab === 'info' ? styles.tabBtnActive : ''}`}
+              onClick={() => setActiveTab('info')}
+            >
+              공연 정보
+            </button>
+            {status === 'ENDED' && (
               <button
                 className={`${styles.tabBtn} ${activeTab === 'setlist' ? styles.tabBtnActive : ''}`}
                 onClick={() => setActiveTab('setlist')}
               >
                 셋리스트
               </button>
-            </div>
-          ) : (
-            <h2 className={styles.sectionTitle}>공연 정보</h2>
-          )}
+            )}
+            <button
+              className={`${styles.tabBtn} ${activeTab === 'relatedPosts' ? styles.tabBtnActive : ''}`}
+              onClick={() => setActiveTab('relatedPosts')}
+            >
+              관련 게시글
+            </button>
+          </div>
 
           {activeTab === 'setlist' && status === 'ENDED' && (
             <div className={styles.tabPanel}>
@@ -388,7 +393,7 @@ function ConcertDetailPage() {
             </div>
           )}
 
-          {(activeTab === 'info' || status !== 'ENDED') && (
+          {activeTab === 'info' && (
             <div className={styles.tabPanel}>
               {imageUrls && imageUrls.length > 0 ? (
                 <div className={styles.posterList}>
@@ -399,6 +404,12 @@ function ConcertDetailPage() {
               ) : (
                 <p className={styles.posterEmpty}>공연 정보가 존재하지 않습니다</p>
               )}
+            </div>
+          )}
+
+          {activeTab === 'relatedPosts' && (
+            <div className={styles.tabPanel}>
+              <RelatedPostsSection entityType="CONCERT" entityId={id} limit={10} showHeading={false} />
             </div>
           )}
         </div>

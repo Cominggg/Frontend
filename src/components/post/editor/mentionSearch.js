@@ -4,6 +4,7 @@ export const MENTION_TYPE_OPTIONS = [
   { stage: 'type', type: 'CONCERT', label: '공연' },
   { stage: 'type', type: 'ARTIST', label: '아티스트' },
   { stage: 'type', type: 'RELEASE', label: '음악' },
+  { stage: 'type', type: 'TRACK', label: '트랙' },
 ]
 
 // 즉시 실행되는 서식 커맨드 — 엔티티 타입과 달리 검색 단계로 넘어가지 않고
@@ -17,7 +18,7 @@ export const FORMAT_OPTIONS = [
   { stage: 'format', format: 'blockquote', label: '인용', icon: '"' },
 ]
 
-const TYPE_LABEL_TO_TYPE = { 공연: 'CONCERT', 아티스트: 'ARTIST', 음악: 'RELEASE' }
+const TYPE_LABEL_TO_TYPE = { 공연: 'CONCERT', 아티스트: 'ARTIST', 음악: 'RELEASE', 트랙: 'TRACK' }
 
 // '/공연 vaundy' 형태의 슬래시 커맨드 쿼리를 단계별로 해석한다
 // 1단계(type): 타입/서식 선택 전 — 입력값으로 목록을 좁혀 보여준다
@@ -39,11 +40,15 @@ export function filterTypeOptions(typeQuery) {
   return options.filter((o) => o.label.includes(typeQuery))
 }
 
-const MENTION_SEARCH_LIMIT = 10
+const MENTION_SEARCH_LIMIT = 20
 
-export async function searchMentions(type, term) {
+// items 배열에 hasMore를 얹어 반환한다 — Tiptap Suggestion의 items()는 배열을 기대하므로
+// 페이지 메타(hasMore)는 배열 자체의 부가 속성으로 실어 SlashCommandMenu의 무한 스크롤에 전달한다
+export async function searchMentions(type, term, page = 0) {
   const q = term.trim()
   if (!q) return []
-  const results = await apiSearchMentions({ type, q, limit: MENTION_SEARCH_LIMIT })
-  return results.map((item) => ({ stage: 'search', ...item }))
+  const { content, totalPages } = await apiSearchMentions({ type, q, limit: MENTION_SEARCH_LIMIT, page })
+  const items = content.map((item) => ({ stage: 'search', ...item }))
+  items.hasMore = page + 1 < totalPages
+  return items
 }

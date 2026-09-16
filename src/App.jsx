@@ -67,7 +67,6 @@ function App() {
         <Route path={ROUTES.RELEASES} element={<ReleasesPage />} />
         <Route path="/releases/:id" element={<ReleaseDetailPage />} />
         <Route path={ROUTES.CALENDAR} element={<CalendarPage />} />
-        <Route path={ROUTES.SEARCH} element={<div>통합 검색</div>} />
         <Route path={ROUTES.COMMUNITY} element={<PostsPage />} />
         <Route path={ROUTES.COMMUNITY_WRITE} element={<PrivateRoute><PostWritePage /></PrivateRoute>} />
         <Route path="/community/:id/edit" element={<PrivateRoute><PostWritePage /></PrivateRoute>} />
