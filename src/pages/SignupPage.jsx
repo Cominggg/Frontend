@@ -5,7 +5,14 @@ import useAuthStore from '@/stores/authStore'
 import { register, checkNickname } from '@/services/authApi'
 import { ROUTES } from '@/constants/routes'
 import { LOGIN_REDIRECT_KEY } from '@/constants/auth'
-import { TERMS_CONTENT, PRIVACY_CONTENT, MARKETING_CONTENT } from '@/constants/policy'
+import {
+  TERMS_CONTENT,
+  TERMS_VERSIONS,
+  PRIVACY_CONTENT,
+  PRIVACY_VERSIONS,
+  MARKETING_CONTENT,
+  getUpcomingVersion,
+} from '@/constants/policy'
 import Logo from '@/components/ui/Logo'
 import { trackEvent } from '@/utils/analytics'
 import styles from './SignupPage.module.css'
@@ -15,9 +22,23 @@ const MIN_AGE = 14
 const MAX_NICKNAME = 20
 
 const TERMS = [
-  { id: 'agreedTerms', label: '서비스 이용약관 동의', required: true, content: TERMS_CONTENT },
-  { id: 'agreedPrivacy', label: '개인정보처리방침 동의', required: true, content: PRIVACY_CONTENT },
-  { id: 'agreedMarketing', label: '마케팅 수신 동의', required: false, content: MARKETING_CONTENT },
+  {
+    id: 'agreedTerms',
+    label: '서비스 이용약관 동의',
+    required: true,
+    content: TERMS_CONTENT,
+    upcoming: getUpcomingVersion(TERMS_VERSIONS),
+    detailUrl: ROUTES.TERMS,
+  },
+  {
+    id: 'agreedPrivacy',
+    label: '개인정보처리방침 동의',
+    required: true,
+    content: PRIVACY_CONTENT,
+    upcoming: getUpcomingVersion(PRIVACY_VERSIONS),
+    detailUrl: ROUTES.PRIVACY,
+  },
+  { id: 'agreedMarketing', label: '마케팅 수신 동의', required: false, content: MARKETING_CONTENT, upcoming: null, detailUrl: null },
 ]
 
 function TermsModal({ term, onClose }) {
@@ -54,6 +75,19 @@ function TermsModal({ term, onClose }) {
           </button>
         </div>
         <div className={styles.modalContent}>
+          {term.upcoming && (
+            <p className={styles.modalNotice}>
+              {term.upcoming.effectiveDate}부터 개정된 버전이 시행될 예정입니다.{' '}
+              <a
+                href={term.detailUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={styles.modalNoticeLink}
+              >
+                변경 예정 내용 보기
+              </a>
+            </p>
+          )}
           <pre className={styles.modalText}>{term.content}</pre>
         </div>
       </div>

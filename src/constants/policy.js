@@ -13,6 +13,15 @@ export function getCurrentVersionIndex(versions) {
   return index === -1 ? versions.length - 1 : index
 }
 
+// 아직 시행 전(공지만 된) 버전 중 가장 먼저 시행될 것 — 없으면 null.
+// 신규 가입자는 시행 전 버전에 동의할 필요가 없지만(BE도 동의 대상으로 잡지 않음),
+// "곧 바뀐다"는 사실은 알아야 하므로 안내 배너용으로 사용한다.
+export function getUpcomingVersion(versions) {
+  const upcoming = versions.slice(0, getCurrentVersionIndex(versions))
+  if (upcoming.length === 0) return null
+  return upcoming.reduce((soonest, v) => (v.effectiveDate < soonest.effectiveDate ? v : soonest))
+}
+
 export const TERMS_VERSIONS = [
   {
     version: '1.1',
