@@ -33,6 +33,7 @@ import AdminConcertCreatePage from '@/pages/admin/AdminConcertCreatePage'
 import AdminInquiriesPage from '@/pages/admin/AdminInquiriesPage'
 import AdminPendingConcertsPage from '@/pages/admin/AdminPendingConcertsPage'
 import AdminExcludedConcertsPage from '@/pages/admin/AdminExcludedConcertsPage'
+import AdminPolicyPage from '@/pages/admin/AdminPolicyPage'
 import PolicyPage from '@/pages/PolicyPage'
 import { TERMS_CONTENT, PRIVACY_CONTENT } from '@/constants/policy'
 import { ROUTES } from '@/constants/routes'
@@ -91,6 +92,7 @@ function App() {
           <Route path="concerts/excluded" element={<AdminExcludedConcertsPage />} />
           <Route path="concerts/:id/edit" element={<AdminConcertFormPage />} />
           <Route path="inquiries" element={<AdminInquiriesPage />} />
+          <Route path="policies" element={<AdminPolicyPage />} />
         </Route>
 
         <Route path="*" element={<NotFoundPage />} />
