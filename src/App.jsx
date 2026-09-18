@@ -35,7 +35,7 @@ import AdminPendingConcertsPage from '@/pages/admin/AdminPendingConcertsPage'
 import AdminExcludedConcertsPage from '@/pages/admin/AdminExcludedConcertsPage'
 import AdminPolicyPage from '@/pages/admin/AdminPolicyPage'
 import PolicyPage from '@/pages/PolicyPage'
-import { TERMS_CONTENT, PRIVACY_CONTENT } from '@/constants/policy'
+import { TERMS_VERSIONS, PRIVACY_VERSIONS } from '@/constants/policy'
 import { ROUTES } from '@/constants/routes'
 
 function App() {
@@ -72,8 +72,8 @@ function App() {
         <Route path={ROUTES.COMMUNITY_WRITE} element={<PrivateRoute><PostWritePage /></PrivateRoute>} />
         <Route path="/community/:id/edit" element={<PrivateRoute><PostWritePage /></PrivateRoute>} />
         <Route path="/community/:id" element={<PostDetailPage />} />
-        <Route path={ROUTES.TERMS} element={<PolicyPage title="서비스 이용약관" content={TERMS_CONTENT} />} />
-        <Route path={ROUTES.PRIVACY} element={<PolicyPage title="개인정보처리방침" content={PRIVACY_CONTENT} />} />
+        <Route path={ROUTES.TERMS} element={<PolicyPage title="서비스 이용약관" versions={TERMS_VERSIONS} />} />
+        <Route path={ROUTES.PRIVACY} element={<PolicyPage title="개인정보처리방침" versions={PRIVACY_VERSIONS} />} />
         <Route path={ROUTES.ME} element={<PrivateRoute><MyPage /></PrivateRoute>} />
         <Route path={ROUTES.ME_UPCOMING} element={<PrivateRoute><MyPage /></PrivateRoute>} />
         <Route path={ROUTES.ME_HISTORY} element={<PrivateRoute><MyPage /></PrivateRoute>} />
