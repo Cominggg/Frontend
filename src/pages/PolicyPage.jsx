@@ -1,8 +1,16 @@
 import { useState } from 'react'
+import { getCurrentVersionIndex } from '@/constants/policy'
 import styles from './PolicyPage.module.css'
 
+function labelFor(version, index, currentIndex) {
+  if (index === currentIndex) return `v${version.version} (현재 시행)`
+  if (index < currentIndex) return `v${version.version} (시행 예정 · ${version.effectiveDate})`
+  return `v${version.version} (이전 버전)`
+}
+
 function PolicyPage({ title, versions }) {
-  const [selectedIndex, setSelectedIndex] = useState(0)
+  const currentIndex = getCurrentVersionIndex(versions)
+  const [selectedIndex, setSelectedIndex] = useState(currentIndex)
   const current = versions[selectedIndex]
 
   return (
@@ -15,11 +23,11 @@ function PolicyPage({ title, versions }) {
               className={styles.versionSelect}
               value={selectedIndex}
               onChange={(e) => setSelectedIndex(Number(e.target.value))}
-              aria-label="이전 버전 보기"
+              aria-label="버전 보기"
             >
               {versions.map((v, i) => (
                 <option key={v.version} value={i}>
-                  {i === 0 ? `v${v.version} (현재 시행)` : `v${v.version} (이전 버전)`}
+                  {labelFor(v, i, currentIndex)}
                 </option>
               ))}
             </select>
