@@ -104,6 +104,12 @@ export async function triggerConcertSetlistCollect(concertId) {
   return data
 }
 
+// 정책(약관·개인정보처리방침) 새 버전 등록 — 등록 트랜잭션 커밋 후 변경 이메일 고지 배치 자동 트리거
+export async function registerPolicy(body) {
+  const { data } = await api.post('/admin/policies', body)
+  return data
+}
+
 // 파이프라인 검색
 export async function searchMbArtists(query) {
   const { data } = await api.get('/admin/data/search/artists', { params: { name: query } })
