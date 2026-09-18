@@ -4,11 +4,12 @@ import { Link } from 'react-router-dom'
 import { registerPolicy } from '@/services/adminApi'
 import AppDatePicker from '@/components/ui/AppDatePicker'
 import { ROUTES } from '@/constants/routes'
+import { SITE_URL } from '@/constants/site'
 import styles from './AdminFormPage.module.css'
 
 const POLICY_TYPES = [
-  { value: 'TERMS', label: '이용약관', detailUrl: ROUTES.TERMS },
-  { value: 'PRIVACY', label: '개인정보처리방침', detailUrl: ROUTES.PRIVACY },
+  { value: 'TERMS', label: '이용약관', detailUrl: `${SITE_URL}${ROUTES.TERMS}` },
+  { value: 'PRIVACY', label: '개인정보처리방침', detailUrl: `${SITE_URL}${ROUTES.PRIVACY}` },
 ]
 
 const INITIAL_FORM = { type: 'TERMS', version: '', effectiveDate: '', changeSummary: '' }
