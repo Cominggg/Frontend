@@ -43,7 +43,7 @@ function AdminPolicyPage() {
         changeSummary: form.changeSummary.trim(),
         detailUrl,
       })
-      setSavedMsg('등록되었습니다. 전체 회원에게 변경 안내 메일이 자동 발송됩니다.')
+      setSavedMsg('등록되었습니다. 활성 회원에게 변경 안내 메일이 자동 발송됩니다.')
       setForm((prev) => ({ ...INITIAL_FORM, type: prev.type }))
       setTimeout(() => setSavedMsg(''), 4000)
     } catch (err) {
@@ -68,7 +68,7 @@ function AdminPolicyPage() {
         </Link>
         <h1 className={styles.pageTitle}>정책 버전 등록</h1>
         <p className={styles.pageDesc}>
-          이용약관·개인정보처리방침의 새 버전을 등록합니다. 등록 즉시 전체 회원에게 변경 안내 메일이 자동 발송되므로,
+          이용약관·개인정보처리방침의 새 버전을 등록합니다. 등록 즉시 활성 회원에게 변경 안내 메일이 자동 발송되므로,
           약관 원문(정책 페이지)이 먼저 반영·배포된 상태인지 확인 후 등록하세요.
         </p>
       </div>

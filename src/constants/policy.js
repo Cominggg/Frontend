@@ -4,8 +4,14 @@
 // 새 버전 시행 시: 1) 이 파일에 새 항목을 배열 맨 앞에 추가해 배포 2) 어드민 정책 등록
 // 페이지(POST /api/admin/policies)에서 동일 버전·시행일로 등록해 변경 메일을 발송한다.
 
+// 정책 시행일은 서비스 기준 시간대(KST)의 달력 날짜로 판정한다 — UTC 기준이면
+// KST 자정이 아니라 시행일 오전 9시부터 전환되는 오차가 생긴다.
+function getKstDateString() {
+  return new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Seoul' }).format(new Date())
+}
+
 function isEffective(version) {
-  return version.effectiveDate <= new Date().toISOString().slice(0, 10)
+  return version.effectiveDate <= getKstDateString()
 }
 
 export function getCurrentVersionIndex(versions) {
@@ -26,7 +32,7 @@ export const TERMS_VERSIONS = [
   {
     version: '1.1',
     effectiveDate: '2026-10-18',
-    content: `시행일: 2026년 7월 1일
+    content: `시행일: 2026년 10월 18일
 
 제1조 (목적)
 
@@ -186,7 +192,7 @@ export const PRIVACY_VERSIONS = [
   {
     version: '1.1',
     effectiveDate: '2026-10-18',
-    content: `시행일: 2026년 7월 1일
+    content: `시행일: 2026년 10월 18일
 
 커밍(이하 "서비스")은 개인정보보호법 제30조에 따라 이용자의 개인정보를 보호하고 관련 고충을 신속하게 처리하기 위해 다음과 같이 개인정보처리방침을 수립·공개합니다.
 
