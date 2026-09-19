@@ -80,7 +80,7 @@ function DetailModal({ id, onClose, onStatusChange }) {
                   )}
                 </dd>
               </div>
-              <div><dt>신고자</dt><dd>{item.reporterNickname}</dd></div>
+              <div><dt>신고자</dt><dd>{item.reporterNickname || '탈퇴한 사용자'}</dd></div>
               <div><dt>접수일</dt><dd>{item.createdAt}</dd></div>
             </dl>
 
@@ -249,7 +249,7 @@ function AdminReportsPage() {
                   <span className={styles.rowDate}>{item.createdAt}</span>
                 </div>
                 <p className={styles.rowTitle}>{REPORT_REASON_LABEL[item.reason]}</p>
-                <p className={styles.rowTarget}>대상 ID {item.targetId} · 신고자 {item.reporterNickname}</p>
+                <p className={styles.rowTarget}>대상 ID {item.targetId} · 신고자 {item.reporterNickname || '탈퇴한 사용자'}</p>
               </div>
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={styles.rowChevron} aria-hidden="true">
                 <path d="m9 18 6-6-6-6" />
