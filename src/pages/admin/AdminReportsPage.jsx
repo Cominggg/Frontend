@@ -1,7 +1,9 @@
 import { useState, useEffect, useCallback } from 'react'
+import { Link } from 'react-router-dom'
 
 import { getReports, getReport, updateReportStatus } from '@/services/adminApi'
 import { REPORT_REASON_LABEL, REPORT_STATUS_LABEL } from '@/constants/post'
+import { ROUTES } from '@/constants/routes'
 import styles from './AdminReportsPage.module.css'
 
 const TARGET_TYPE_LABEL = { POST: '게시글', COMMENT: '댓글' }
@@ -62,7 +64,22 @@ function DetailModal({ id, onClose, onStatusChange }) {
         {item && (
           <>
             <dl className={styles.modalMeta}>
-              <div><dt>대상 ID</dt><dd>{item.targetId}</dd></div>
+              <div>
+                <dt>대상 ID</dt>
+                <dd>
+                  {item.targetId}
+                  {item.targetType === 'POST' && (
+                    <Link
+                      to={ROUTES.COMMUNITY_DETAIL(item.targetId)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={styles.targetLink}
+                    >
+                      게시글 보기
+                    </Link>
+                  )}
+                </dd>
+              </div>
               <div><dt>신고자</dt><dd>{item.reporterNickname}</dd></div>
               <div><dt>접수일</dt><dd>{item.createdAt}</dd></div>
             </dl>
