@@ -157,6 +157,38 @@
   color: var(--color-text-muted);
 }
 
+/* ── 페이지네이션 ── */
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.pageBtn {
+  padding: 0.4375rem 1rem;
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  font-weight: 500;
+  background: none;
+  border: 1.5px solid var(--color-border);
+  color: var(--color-text);
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.pageBtn:hover:not(:disabled) {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+.pageBtn:disabled { opacity: 0.4; cursor: default; }
+
+.pageInfo {
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+}
+
 @media (max-width: 767px) {
   .row {
     flex-direction: column;

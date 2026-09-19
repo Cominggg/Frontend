@@ -2,24 +2,31 @@ import { useState, useEffect, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 
 import { ROUTES } from '@/constants/routes'
-import { mockGetNotices, mockToggleNoticeActive, mockDeleteNotice } from '@/mocks/noticeMocks'
+import { getAdminNotices, updateNotice, deleteNotice } from '@/services/adminApi'
 import styles from './AdminNoticesPage.module.css'
+
+const PAGE_SIZE = 20
 
 function AdminNoticesPage() {
   const [items, setItems] = useState([])
   const [loading, setLoading] = useState(false)
+  const [totalElements, setTotalElements] = useState(0)
+  const [page, setPage] = useState(0)
   const [togglingId, setTogglingId] = useState(null)
   const [deletingId, setDeletingId] = useState(null)
 
   const fetchNotices = useCallback(async () => {
     setLoading(true)
     try {
-      const data = await mockGetNotices()
-      setItems(data)
+      const data = await getAdminNotices({ page, size: PAGE_SIZE })
+      setItems(data.content)
+      setTotalElements(data.totalElements)
+    } catch {
+      setItems([])
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [page])
 
   useEffect(() => {
     fetchNotices()
@@ -28,7 +35,7 @@ function AdminNoticesPage() {
   async function handleToggleActive(notice) {
     setTogglingId(notice.id)
     try {
-      await mockToggleNoticeActive(notice.id, !notice.active)
+      await updateNotice(notice.id, { active: !notice.active })
       setItems((prev) => prev.map((n) => n.id === notice.id ? { ...n, active: !n.active } : n))
     } finally {
       setTogglingId(null)
@@ -39,12 +46,15 @@ function AdminNoticesPage() {
     if (!window.confirm('공지를 삭제하시겠습니까?')) return
     setDeletingId(notice.id)
     try {
-      await mockDeleteNotice(notice.id)
+      await deleteNotice(notice.id)
       setItems((prev) => prev.filter((n) => n.id !== notice.id))
+      setTotalElements((prev) => prev - 1)
     } finally {
       setDeletingId(null)
     }
   }
+
+  const totalPages = Math.ceil(totalElements / PAGE_SIZE)
 
   return (
     <div className={styles.page}>
@@ -94,6 +104,26 @@ function AdminNoticesPage() {
               </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {totalPages > 1 && (
+        <div className={styles.pagination}>
+          <button
+            className={styles.pageBtn}
+            disabled={page === 0}
+            onClick={() => setPage((p) => p - 1)}
+          >
+            이전
+          </button>
+          <span className={styles.pageInfo}>{page + 1} / {totalPages}</span>
+          <button
+            className={styles.pageBtn}
+            disabled={page >= totalPages - 1}
+            onClick={() => setPage((p) => p + 1)}
+          >
+            다음
+          </button>
         </div>
       )}
     </div>

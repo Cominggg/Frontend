@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 
 import { ROUTES } from '@/constants/routes'
-import { mockGetNotice, mockCreateNotice, mockUpdateNotice } from '@/mocks/noticeMocks'
+import { getAdminNotice, createNotice, updateNotice } from '@/services/adminApi'
 import styles from './AdminFormPage.module.css'
 import noticeStyles from './AdminNoticeFormPage.module.css'
 
@@ -20,10 +20,9 @@ function AdminNoticeFormPage() {
 
   useEffect(() => {
     if (!isEdit) return
-    mockGetNotice(id).then((notice) => {
-      if (!notice) { setError('공지를 찾을 수 없습니다.'); return }
+    getAdminNotice(id).then((notice) => {
       setForm({ title: notice.title, content: notice.content, active: notice.active })
-    })
+    }).catch(() => setError('공지를 찾을 수 없습니다.'))
   }, [id, isEdit])
 
   function setField(key, value) {
@@ -37,9 +36,9 @@ function AdminNoticeFormPage() {
     setError('')
     try {
       if (isEdit) {
-        await mockUpdateNotice(id, form)
+        await updateNotice(id, form)
       } else {
-        await mockCreateNotice(form)
+        await createNotice(form)
       }
       setSavedMsg('저장되었습니다.')
       setTimeout(() => navigate(ROUTES.ADMIN_NOTICES), 600)

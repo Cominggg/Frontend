@@ -57,6 +57,30 @@ export async function updateReportStatus(id, body) {
   return data
 }
 
+export async function getAdminNotices(params) {
+  const { data } = await api.get('/admin/notices', { params })
+  return data
+}
+
+export async function getAdminNotice(id) {
+  const { data } = await api.get(`/admin/notices/${id}`)
+  return data
+}
+
+export async function createNotice(body) {
+  const { data } = await api.post('/admin/notices', body)
+  return data
+}
+
+export async function updateNotice(id, body) {
+  const { data } = await api.patch(`/admin/notices/${id}`, body)
+  return data
+}
+
+export async function deleteNotice(id) {
+  await api.delete(`/admin/notices/${id}`)
+}
+
 // PENDING 공연 검토
 export async function getPendingConcerts(params) {
   const { data } = await api.get('/admin/concerts/pending', { params })
