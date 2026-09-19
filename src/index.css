@@ -41,6 +41,10 @@
   --admin-type-artist: #7c3aed;
   --admin-type-setlist: #0f766e;
 
+  /* Admin 신고 대상 타입 색상 */
+  --admin-type-post: #1565c0;
+  --admin-type-comment: #7c3aed;
+
   /* Admin 문의 상태 색상 */
   --admin-status-pending: #b45309;
   --admin-status-resolved: #2e7d32;

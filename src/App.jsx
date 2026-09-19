@@ -31,6 +31,7 @@ import AdminArtistFormPage from '@/pages/admin/AdminArtistFormPage'
 import AdminConcertFormPage from '@/pages/admin/AdminConcertFormPage'
 import AdminConcertCreatePage from '@/pages/admin/AdminConcertCreatePage'
 import AdminInquiriesPage from '@/pages/admin/AdminInquiriesPage'
+import AdminReportsPage from '@/pages/admin/AdminReportsPage'
 import AdminPendingConcertsPage from '@/pages/admin/AdminPendingConcertsPage'
 import AdminExcludedConcertsPage from '@/pages/admin/AdminExcludedConcertsPage'
 import PolicyPage from '@/pages/PolicyPage'
@@ -91,6 +92,7 @@ function App() {
           <Route path="concerts/excluded" element={<AdminExcludedConcertsPage />} />
           <Route path="concerts/:id/edit" element={<AdminConcertFormPage />} />
           <Route path="inquiries" element={<AdminInquiriesPage />} />
+          <Route path="reports" element={<AdminReportsPage />} />
         </Route>
 
         <Route path="*" element={<NotFoundPage />} />
