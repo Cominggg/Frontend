@@ -10,7 +10,7 @@ import PostListItem from '@/components/post/PostListItem'
 import PostListItemSkeleton from '@/components/post/PostListItemSkeleton'
 import PostsSidebar from '@/components/post/sidebar/PostsSidebar'
 import usePageMeta from '@/hooks/usePageMeta'
-import { getPosts, getSearch } from '@/services/postApi'
+import { getPosts, getPopularBoardPosts, getSearch } from '@/services/postApi'
 import { ROUTES } from '@/constants/routes'
 import { POST_CATEGORY_LABEL } from '@/constants/post'
 import { trackEvent } from '@/utils/analytics'
@@ -22,30 +22,6 @@ const CATEGORY_FILTERS = ['ALL', 'FREE', 'INFO', 'REVIEW', 'POPULAR']
 const CATEGORY_TAB_LABEL = { ALL: '전체', POPULAR: '인기글' }
 const ITEMS_PER_PAGE = 20
 const MIN_QUERY_LENGTH = 2
-
-// TODO: API 연동 후 제거 — postApi.js의 getPopularBoardPosts(GET /api/posts/popular-board)로 교체 (BE #123 완료 후)
-const POPULAR_MOCK_POSTS = [
-  {
-    id: 9001,
-    category: 'FREE',
-    title: '이번 주 가장 많이 추천받은 후기 모음',
-    authorNickname: '커밍지기',
-    recommendCount: 128,
-    viewCount: 3420,
-    createdAt: '2026-09-17T10:00:00',
-    entityTags: [],
-  },
-  {
-    id: 9002,
-    category: 'REVIEW',
-    title: '드디어 다녀온 첫 내한 공연 후기',
-    authorNickname: 'jpop_lover',
-    recommendCount: 96,
-    viewCount: 2110,
-    createdAt: '2026-09-16T21:30:00',
-    entityTags: [],
-  },
-]
 
 function getEmptyMessage(urlQuery, isQueryTooShort) {
   if (isQueryTooShort) return `검색어는 ${MIN_QUERY_LENGTH}자 이상 입력해주세요.`
@@ -104,20 +80,23 @@ function PostsPage() {
   const { data, isLoading } = useQuery({
     queryKey: isSearching
       ? ['search', urlQuery, currentPage]
-      : ['posts', selectedCategory, currentPage],
+      : isPopular
+        ? ['posts', 'popular-board', currentPage]
+        : ['posts', selectedCategory, currentPage],
     queryFn: () => (isSearching
       ? getSearch({ q: urlQuery, page: currentPage - 1, size: ITEMS_PER_PAGE })
-      : getPosts({
-        category: selectedCategory === 'ALL' ? undefined : selectedCategory,
-        page: currentPage - 1,
-        size: ITEMS_PER_PAGE,
-      })),
-    enabled: !isQueryTooShort && !isPopular,
+      : isPopular
+        ? getPopularBoardPosts({ page: currentPage - 1, size: ITEMS_PER_PAGE })
+        : getPosts({
+          category: selectedCategory === 'ALL' ? undefined : selectedCategory,
+          page: currentPage - 1,
+          size: ITEMS_PER_PAGE,
+        })),
+    enabled: !isQueryTooShort,
   })
 
-  const posts = isPopular ? POPULAR_MOCK_POSTS : (data?.content ?? [])
-  const totalPages = isPopular ? 1 : (data?.totalPages ?? 1)
-  const loading = !isPopular && isLoading
+  const posts = data?.content ?? []
+  const totalPages = data?.totalPages ?? 1
 
   function handleCategoryChange(category) {
     setInputValue('')
@@ -231,7 +210,7 @@ function PostsPage() {
 
             {isQueryTooShort ? (
               <EmptyState message={getEmptyMessage(urlQuery, isQueryTooShort)} />
-            ) : loading ? (
+            ) : isLoading ? (
               <div className={styles.list}>
                 {Array.from({ length: 8 }).map((_, i) => (
                   <PostListItemSkeleton key={i} />
@@ -247,7 +226,7 @@ function PostsPage() {
               <EmptyState message={getEmptyMessage(urlQuery, isQueryTooShort)} />
             )}
 
-            {!loading && !isQueryTooShort && totalPages > 1 && (
+            {!isLoading && !isQueryTooShort && totalPages > 1 && (
               <Pagination
                 currentPage={currentPage}
                 totalPages={totalPages}

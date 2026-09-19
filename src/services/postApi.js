@@ -15,6 +15,11 @@ export async function getPopularPosts(params) {
   return data
 }
 
+export async function getPopularBoardPosts(params) {
+  const { data } = await api.get('/posts/popular-board', { params })
+  return data
+}
+
 export async function getTrendingTags(params) {
   const { data } = await api.get('/posts/trending-tags', { params })
   return data
