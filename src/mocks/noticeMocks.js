@@ -1,4 +1,4 @@
-// TODO: API 연동 후 제거 — adminApi.js의 실제 공지 CRUD 엔드포인트(/api/admin/notices/**)로 교체 (BE #123 완료 후)
+// TODO: API 연동 후 제거 — noticeApi.js/adminApi.js의 실제 공지 엔드포인트(/api/notices, /api/admin/notices/**)로 교체 (BE #123 완료 후)
 export const MOCK_NOTICES = [
   {
     id: 1,
@@ -27,6 +27,10 @@ let nextId = 4
 
 export async function mockGetNotices() {
   return [...MOCK_NOTICES].sort((a, b) => b.id - a.id)
+}
+
+export async function mockGetActiveNotices() {
+  return (await mockGetNotices()).filter((n) => n.active)
 }
 
 export async function mockGetNotice(id) {

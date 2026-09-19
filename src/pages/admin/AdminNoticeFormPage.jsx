@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 
 import { ROUTES } from '@/constants/routes'
-import { mockGetNotice, mockCreateNotice, mockUpdateNotice } from './adminNoticeMockData'
+import { mockGetNotice, mockCreateNotice, mockUpdateNotice } from '@/mocks/noticeMocks'
 import styles from './AdminFormPage.module.css'
 import noticeStyles from './AdminNoticeFormPage.module.css'
 
