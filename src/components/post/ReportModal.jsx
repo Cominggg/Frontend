@@ -66,7 +66,7 @@ function ReportModal({ onClose, onSubmit }) {
 
             {detailRequired && (
               <label className={styles.detailLabel}>
-                상세 사유 <span className={styles.required}>*</span>
+                <span>상세 사유 <span className={styles.required}>*</span></span>
                 <textarea
                   className={styles.detailInput}
                   value={detail}
