@@ -32,6 +32,8 @@ import AdminConcertFormPage from '@/pages/admin/AdminConcertFormPage'
 import AdminConcertCreatePage from '@/pages/admin/AdminConcertCreatePage'
 import AdminInquiriesPage from '@/pages/admin/AdminInquiriesPage'
 import AdminReportsPage from '@/pages/admin/AdminReportsPage'
+import AdminNoticesPage from '@/pages/admin/AdminNoticesPage'
+import AdminNoticeFormPage from '@/pages/admin/AdminNoticeFormPage'
 import AdminPendingConcertsPage from '@/pages/admin/AdminPendingConcertsPage'
 import AdminExcludedConcertsPage from '@/pages/admin/AdminExcludedConcertsPage'
 import PolicyPage from '@/pages/PolicyPage'
@@ -93,6 +95,9 @@ function App() {
           <Route path="concerts/:id/edit" element={<AdminConcertFormPage />} />
           <Route path="inquiries" element={<AdminInquiriesPage />} />
           <Route path="reports" element={<AdminReportsPage />} />
+          <Route path="notices" element={<AdminNoticesPage />} />
+          <Route path="notices/new" element={<AdminNoticeFormPage />} />
+          <Route path="notices/:id/edit" element={<AdminNoticeFormPage />} />
         </Route>
 
         <Route path="*" element={<NotFoundPage />} />
