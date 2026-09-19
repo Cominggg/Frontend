@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { formatRelativeDate } from '@/utils/date'
+import ReportModal from '@/components/post/ReportModal'
 import CommentComposer from './CommentComposer'
 import styles from './CommentItem.module.css'
 
@@ -13,6 +14,7 @@ function LikeIcon() {
 
 function CommentItem({ comment, isLoggedIn, onRequireLogin, onReply, onToggleLike, onToggleReplyLike, onDelete, onDeleteReply }) {
   const [showReplyBox, setShowReplyBox] = useState(false)
+  const [reportTargetId, setReportTargetId] = useState(null)
   const isDeleted = comment.authorNickname == null
 
   function guard(action) {
@@ -21,6 +23,11 @@ function CommentItem({ comment, isLoggedIn, onRequireLogin, onReply, onToggleLik
       return
     }
     action()
+  }
+
+  // TODO: API 연동 후 제거 — reportApi.js의 createReport로 교체 (BE #123 완료 후)
+  async function handleReportSubmit({ reason, detail }) {
+    await Promise.resolve({ commentId: reportTargetId, reason, detail })
   }
 
   async function handleReplySubmit(content) {
@@ -76,9 +83,17 @@ function CommentItem({ comment, isLoggedIn, onRequireLogin, onReply, onToggleLik
             >
               답글 달기
             </button>
-            {comment.isAuthor && (
+            {comment.isAuthor ? (
               <button type="button" className={styles.actionBtn} onClick={handleDelete}>
                 삭제
+              </button>
+            ) : (
+              <button
+                type="button"
+                className={styles.actionBtn}
+                onClick={() => guard(() => setReportTargetId(comment.id))}
+              >
+                신고
               </button>
             )}
           </div>
@@ -116,13 +131,21 @@ function CommentItem({ comment, isLoggedIn, onRequireLogin, onReply, onToggleLik
                           <LikeIcon />
                           {reply.likeCount}
                         </button>
-                        {reply.isAuthor && (
+                        {reply.isAuthor ? (
                           <button
                             type="button"
                             className={styles.actionBtn}
                             onClick={() => handleReplyDelete(reply.id)}
                           >
                             삭제
+                          </button>
+                        ) : (
+                          <button
+                            type="button"
+                            className={styles.actionBtn}
+                            onClick={() => guard(() => setReportTargetId(reply.id))}
+                          >
+                            신고
                           </button>
                         )}
                       </div>
@@ -135,6 +158,13 @@ function CommentItem({ comment, isLoggedIn, onRequireLogin, onReply, onToggleLik
           </div>
         )}
       </div>
+
+      {reportTargetId !== null && (
+        <ReportModal
+          onClose={() => setReportTargetId(null)}
+          onSubmit={handleReportSubmit}
+        />
+      )}
     </div>
   )
 }
