@@ -6,6 +6,7 @@ import BackButton from '@/components/ui/BackButton'
 import Button from '@/components/ui/Button'
 import EmptyState from '@/components/ui/EmptyState'
 import PostContentView from '@/components/post/PostContentView'
+import ReportModal from '@/components/post/ReportModal'
 import CommentSection from '@/components/post/comment/CommentSection'
 import usePageMeta from '@/hooks/usePageMeta'
 import { deletePost, getPost, recommendPost, unrecommendPost } from '@/services/postApi'
@@ -24,6 +25,7 @@ function PostDetailPage() {
   const [isRecommended, setIsRecommended] = useState(false)
   const [recommendCount, setRecommendCount] = useState(0)
   const [syncedPost, setSyncedPost] = useState(null)
+  const [showReportModal, setShowReportModal] = useState(false)
   const user = useAuthStore((s) => s.user)
   const openLoginModal = useLoginModalStore((s) => s.open)
 
@@ -99,6 +101,19 @@ function PostDetailPage() {
     recommendMutation.mutate(next)
   }
 
+  function handleReportClick() {
+    if (!user) {
+      openLoginModal(window.location.pathname + window.location.search)
+      return
+    }
+    setShowReportModal(true)
+  }
+
+  // TODO: API 연동 후 제거 — reportApi.js의 createReport로 교체 (BE #123 완료 후)
+  async function handleReportSubmit({ reason, detail }) {
+    await Promise.resolve({ postId, reason, detail })
+  }
+
   function handleEdit() {
     navigate(ROUTES.COMMUNITY_EDIT(postId))
   }
@@ -158,6 +173,13 @@ function PostDetailPage() {
               </svg>
               추천 {recommendCount.toLocaleString()}
             </button>
+            <button
+              type="button"
+              className={styles.reportBtn}
+              onClick={handleReportClick}
+            >
+              신고
+            </button>
           </div>
 
           <div className={styles.commentsWrap}>
@@ -166,6 +188,13 @@ function PostDetailPage() {
         </div>
 
       </div>
+
+      {showReportModal && (
+        <ReportModal
+          onClose={() => setShowReportModal(false)}
+          onSubmit={handleReportSubmit}
+        />
+      )}
     </div>
   )
 }
