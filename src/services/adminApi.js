@@ -42,6 +42,21 @@ export async function updateInquiryStatus(id, body) {
   return data
 }
 
+export async function getReports(params) {
+  const { data } = await api.get('/admin/reports', { params })
+  return data
+}
+
+export async function getReport(id) {
+  const { data } = await api.get(`/admin/reports/${id}`)
+  return data
+}
+
+export async function updateReportStatus(id, body) {
+  const { data } = await api.patch(`/admin/reports/${id}/status`, body)
+  return data
+}
+
 // PENDING 공연 검토
 export async function getPendingConcerts(params) {
   const { data } = await api.get('/admin/concerts/pending', { params })

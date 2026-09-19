@@ -1,77 +1,33 @@
 import { useState, useEffect, useCallback } from 'react'
 
+import { getReports, getReport, updateReportStatus } from '@/services/adminApi'
 import { REPORT_REASON_LABEL, REPORT_STATUS_LABEL } from '@/constants/post'
 import styles from './AdminReportsPage.module.css'
 
 const TARGET_TYPE_LABEL = { POST: '게시글', COMMENT: '댓글' }
 const STATUS_FILTERS = ['전체', 'PENDING', 'RESOLVED', 'REJECTED']
 const TARGET_TYPE_FILTERS = ['전체', 'POST', 'COMMENT']
-
-// TODO: API 연동 후 제거 — adminApi.js의 getReports/getReport/updateReportStatus(GET/PATCH /api/admin/reports/**)로 교체 (BE #123 완료 후)
-const MOCK_REPORTS = [
-  {
-    id: 1,
-    targetType: 'POST',
-    targetId: 501,
-    reason: 'SPAM',
-    detail: null,
-    status: 'PENDING',
-    reporterNickname: 'user_a',
-    createdAt: '2026-09-18 10:12',
-  },
-  {
-    id: 2,
-    targetType: 'COMMENT',
-    targetId: 3021,
-    reason: 'ABUSE',
-    detail: null,
-    status: 'PENDING',
-    reporterNickname: 'user_b',
-    createdAt: '2026-09-18 14:40',
-  },
-  {
-    id: 3,
-    targetType: 'POST',
-    targetId: 488,
-    reason: 'ETC',
-    detail: '거래 유도 게시글로 보입니다.',
-    status: 'RESOLVED',
-    reporterNickname: 'user_c',
-    createdAt: '2026-09-17 09:03',
-  },
-]
-
-async function mockGetReports({ status, targetType }) {
-  let items = MOCK_REPORTS
-  if (status) items = items.filter((r) => r.status === status)
-  if (targetType) items = items.filter((r) => r.targetType === targetType)
-  return { content: items, totalElements: items.length }
-}
-
-async function mockGetReport(id) {
-  return MOCK_REPORTS.find((r) => r.id === id)
-}
-
-async function mockUpdateReportStatus(id, status) {
-  const item = MOCK_REPORTS.find((r) => r.id === id)
-  if (item) item.status = status
-  return item
-}
+const PAGE_SIZE = 20
 
 function DetailModal({ id, onClose, onStatusChange }) {
   const [item, setItem] = useState(null)
+  const [note, setNote] = useState('')
+  const [deleteTarget, setDeleteTarget] = useState(false)
   const [processing, setProcessing] = useState(false)
   const [error, setError] = useState('')
 
   useEffect(() => {
-    mockGetReport(id).then((data) => setItem(data)).catch(() => setError('신고를 불러오지 못했습니다.'))
+    getReport(id).then((data) => {
+      setItem(data)
+      setNote(data.adminNote ?? '')
+    }).catch(() => setError('신고를 불러오지 못했습니다.'))
   }, [id])
 
   async function handleAction(status) {
     setProcessing(true)
     setError('')
     try {
-      await mockUpdateReportStatus(id, status)
+      await updateReportStatus(id, { status, adminNote: note.trim() || undefined, deleteTarget })
       onStatusChange(id, status)
       onClose()
     } catch {
@@ -117,6 +73,29 @@ function DetailModal({ id, onClose, onStatusChange }) {
               </div>
             )}
 
+            <label className={styles.noteLabel}>
+              처리 메모
+              <textarea
+                className={styles.noteInput}
+                value={note}
+                onChange={(e) => setNote(e.target.value)}
+                placeholder="처리 내용 또는 반려 사유를 입력하세요."
+                rows={3}
+                disabled={!isPending}
+              />
+            </label>
+
+            {isPending && (
+              <label className={styles.deleteTargetLabel}>
+                <input
+                  type="checkbox"
+                  checked={deleteTarget}
+                  onChange={(e) => setDeleteTarget(e.target.checked)}
+                />
+                처리완료 시 신고 대상 {TARGET_TYPE_LABEL[item.targetType]} 함께 삭제
+              </label>
+            )}
+
             {error && <p className={styles.modalError}>{error}</p>}
 
             {isPending && (
@@ -147,6 +126,8 @@ function DetailModal({ id, onClose, onStatusChange }) {
 function AdminReportsPage() {
   const [items, setItems] = useState([])
   const [loading, setLoading] = useState(false)
+  const [totalElements, setTotalElements] = useState(0)
+  const [page, setPage] = useState(0)
   const [statusFilter, setStatusFilter] = useState('전체')
   const [targetTypeFilter, setTargetTypeFilter] = useState('전체')
   const [selectedId, setSelectedId] = useState(null)
@@ -154,21 +135,29 @@ function AdminReportsPage() {
   const fetchReports = useCallback(async () => {
     setLoading(true)
     try {
-      const params = {}
+      const params = { page, size: PAGE_SIZE }
       if (statusFilter !== '전체') params.status = statusFilter
       if (targetTypeFilter !== '전체') params.targetType = targetTypeFilter
-      const data = await mockGetReports(params)
+      const data = await getReports(params)
       setItems(data.content)
+      setTotalElements(data.totalElements)
     } catch {
       setItems([])
     } finally {
       setLoading(false)
     }
-  }, [statusFilter, targetTypeFilter])
+  }, [page, statusFilter, targetTypeFilter])
 
   useEffect(() => {
     fetchReports()
   }, [fetchReports])
+
+  function handleFilterChange(setter) {
+    return (value) => {
+      setter(value)
+      setPage(0)
+    }
+  }
 
   function handleStatusChange(id, newStatus) {
     setItems((prev) =>
@@ -176,7 +165,10 @@ function AdminReportsPage() {
     )
   }
 
-  const pendingCount = items.filter((it) => it.status === 'PENDING').length
+  const pendingCount = totalElements > 0
+    ? items.filter((it) => it.status === 'PENDING').length
+    : 0
+  const totalPages = Math.ceil(totalElements / PAGE_SIZE)
 
   return (
     <div className={styles.page}>
@@ -198,7 +190,7 @@ function AdminReportsPage() {
               role="tab"
               aria-selected={statusFilter === f}
               className={`${styles.filterTab} ${statusFilter === f ? styles.filterTabActive : ''}`}
-              onClick={() => setStatusFilter(f)}
+              onClick={() => handleFilterChange(setStatusFilter)(f)}
             >
               {f === '전체' ? '전체' : REPORT_STATUS_LABEL[f]}
             </button>
@@ -209,7 +201,7 @@ function AdminReportsPage() {
             <button
               key={f}
               className={`${styles.typeChip} ${targetTypeFilter === f ? styles.typeChipActive : ''}`}
-              onClick={() => setTargetTypeFilter(f)}
+              onClick={() => handleFilterChange(setTargetTypeFilter)(f)}
             >
               {f === '전체' ? '전체' : TARGET_TYPE_LABEL[f]}
             </button>
@@ -247,6 +239,26 @@ function AdminReportsPage() {
               </svg>
             </button>
           ))}
+        </div>
+      )}
+
+      {totalPages > 1 && (
+        <div className={styles.pagination}>
+          <button
+            className={styles.pageBtn}
+            disabled={page === 0}
+            onClick={() => setPage((p) => p - 1)}
+          >
+            이전
+          </button>
+          <span className={styles.pageInfo}>{page + 1} / {totalPages}</span>
+          <button
+            className={styles.pageBtn}
+            disabled={page >= totalPages - 1}
+            onClick={() => setPage((p) => p + 1)}
+          >
+            다음
+          </button>
         </div>
       )}
 
