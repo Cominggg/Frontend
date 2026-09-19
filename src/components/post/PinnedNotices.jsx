@@ -1,21 +1,18 @@
-import { useEffect, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import { Link } from 'react-router-dom'
 
 import { ROUTES } from '@/constants/routes'
-import { mockGetActiveNotices } from '@/mocks/noticeMocks'
+import { getPinnedNotices } from '@/services/noticeApi'
 import { formatRelativeDate } from '@/utils/date'
 import styles from './PinnedNotices.module.css'
 
-function PinnedNotices() {
-  const [notices, setNotices] = useState([])
+const PINNED_NOTICE_LIMIT = 3
 
-  useEffect(() => {
-    let cancelled = false
-    mockGetActiveNotices().then((data) => {
-      if (!cancelled) setNotices(data)
-    })
-    return () => { cancelled = true }
-  }, [])
+function PinnedNotices() {
+  const { data: notices = [] } = useQuery({
+    queryKey: ['notices', 'pinned'],
+    queryFn: () => getPinnedNotices({ limit: PINNED_NOTICE_LIMIT }),
+  })
 
   if (notices.length === 0) return null
 

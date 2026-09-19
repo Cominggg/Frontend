@@ -4,24 +4,18 @@ import { useParams } from 'react-router-dom'
 import BackButton from '@/components/ui/BackButton'
 import EmptyState from '@/components/ui/EmptyState'
 import usePageMeta from '@/hooks/usePageMeta'
-import { mockGetNotice } from '@/mocks/noticeMocks'
+import { getNotice } from '@/services/noticeApi'
 import { ROUTES } from '@/constants/routes'
+import { formatDateTime } from '@/utils/date'
 import styles from './NoticeDetailPage.module.css'
-
-// TODO: API 연동 후 제거 — noticeApi.js의 getNotice(GET /api/notices/{id})로 교체 (BE #123 완료 후, 비활성 공지는 404 처리)
-async function fetchNotice(id) {
-  const notice = await mockGetNotice(id)
-  if (!notice || !notice.active) return null
-  return notice
-}
 
 function NoticeDetailPage() {
   const { id } = useParams()
   const noticeId = Number(id)
 
-  const { data: notice, isLoading } = useQuery({
+  const { data: notice, isLoading, isError } = useQuery({
     queryKey: ['notice', noticeId],
-    queryFn: () => fetchNotice(noticeId),
+    queryFn: () => getNotice(noticeId),
     retry: false,
   })
 
@@ -46,7 +40,7 @@ function NoticeDetailPage() {
     )
   }
 
-  if (!notice) {
+  if (isError || !notice) {
     return (
       <EmptyState
         message="공지사항이 존재하지 않습니다"
@@ -63,7 +57,7 @@ function NoticeDetailPage() {
         <div className={styles.card}>
           <div className={styles.meta}>
             <span className={styles.badge}>공지</span>
-            <span className={styles.metaText}>{notice.createdAt}</span>
+            <span className={styles.metaText}>{formatDateTime(notice.createdAt)}</span>
           </div>
 
           <h1 className={styles.title}>{notice.title}</h1>
