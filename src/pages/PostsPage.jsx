@@ -5,6 +5,7 @@ import { useQuery } from '@tanstack/react-query'
 import Button from '@/components/ui/Button'
 import EmptyState from '@/components/ui/EmptyState'
 import Pagination from '@/components/ui/Pagination'
+import PinnedNotices from '@/components/post/PinnedNotices'
 import PostListItem from '@/components/post/PostListItem'
 import PostListItemSkeleton from '@/components/post/PostListItemSkeleton'
 import PostsSidebar from '@/components/post/sidebar/PostsSidebar'
@@ -46,6 +47,7 @@ function PostsPage() {
   const currentPage = Number.isInteger(pageParam) && pageParam > 0 ? pageParam : 1
   const isQueryTooShort = urlQuery.length > 0 && urlQuery.length < MIN_QUERY_LENGTH
   const isSearching = !!urlQuery && !isQueryTooShort
+  const showPinnedNotices = selectedCategory === 'ALL' && currentPage === 1 && !urlQuery
 
   usePageMeta({
     title: '커뮤니티 - 커밍',
@@ -197,6 +199,8 @@ function PostsPage() {
           </div>
 
           <div className={styles.main}>
+
+            {showPinnedNotices && <PinnedNotices />}
 
             {isQueryTooShort ? (
               <EmptyState message={getEmptyMessage(urlQuery, isQueryTooShort)} />
