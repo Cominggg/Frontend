@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { formatRelativeDate } from '@/utils/date'
+import { createReport } from '@/services/reportApi'
 import ReportModal from '@/components/post/ReportModal'
 import CommentComposer from './CommentComposer'
 import styles from './CommentItem.module.css'
@@ -25,9 +26,8 @@ function CommentItem({ comment, isLoggedIn, onRequireLogin, onReply, onToggleLik
     action()
   }
 
-  // TODO: API 연동 후 제거 — reportApi.js의 createReport로 교체 (BE #123 완료 후)
   async function handleReportSubmit({ reason, detail }) {
-    await Promise.resolve({ commentId: reportTargetId, reason, detail })
+    await createReport({ targetType: 'COMMENT', targetId: reportTargetId, reason, detail })
   }
 
   async function handleReplySubmit(content) {

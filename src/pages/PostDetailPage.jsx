@@ -10,6 +10,7 @@ import ReportModal from '@/components/post/ReportModal'
 import CommentSection from '@/components/post/comment/CommentSection'
 import usePageMeta from '@/hooks/usePageMeta'
 import { deletePost, getPost, recommendPost, unrecommendPost } from '@/services/postApi'
+import { createReport } from '@/services/reportApi'
 import { ROUTES } from '@/constants/routes'
 import { POST_CATEGORY_LABEL } from '@/constants/post'
 import { formatDateTime } from '@/utils/date'
@@ -109,9 +110,8 @@ function PostDetailPage() {
     setShowReportModal(true)
   }
 
-  // TODO: API 연동 후 제거 — reportApi.js의 createReport로 교체 (BE #123 완료 후)
   async function handleReportSubmit({ reason, detail }) {
-    await Promise.resolve({ postId, reason, detail })
+    await createReport({ targetType: 'POST', targetId: postId, reason, detail })
   }
 
   function handleEdit() {
