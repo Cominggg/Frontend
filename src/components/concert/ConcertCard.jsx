@@ -99,12 +99,16 @@ function ConcertCard({ concert }) {
           </span>
           <span className={styles.metaText}>{venue}</span>
         </div>
-        {averageRating != null && (
-          <div className={styles.meta}>
-            <StarRating value={averageRating} size={12} ariaLabel={`평균 별점 ${averageRating}점`} />
-            <span className={styles.ratingValue}>{averageRating.toFixed(1)}</span>
-          </div>
-        )}
+        <div className={styles.meta}>
+          {averageRating != null ? (
+            <>
+              <StarRating value={averageRating} size={12} ariaLabel={`평균 별점 ${averageRating}점`} />
+              <span className={styles.ratingValue}>{averageRating.toFixed(1)}</span>
+            </>
+          ) : (
+            <span className={styles.ratingEmpty}>평점 없음</span>
+          )}
+        </div>
       </div>
     </Link>
   )
