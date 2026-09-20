@@ -9,12 +9,6 @@ import { getArtistColor } from '@/utils/colorPalette'
 import { getSpotifyAlbumUrl } from '@/utils/spotify'
 import styles from './ReleaseCard.module.css'
 
-// TODO: API 연동 후 제거 (averageRating 필드로 대체)
-function getMockAverageRating(id) {
-  const seed = Number(id) || 0
-  return Math.min(5, 3 + (seed % 5) * 0.5)
-}
-
 const RELEASE_TYPE_COLOR = {
   Album: 'var(--color-accent)',
   Single: 'var(--color-badge-single)',
@@ -33,7 +27,7 @@ function isNewRelease(dateStr) {
 }
 
 function ReleaseCard({ release }) {
-  const { id, coverUrl, artistName, artistKoreanName, title, releaseDate, type, spotifyId } = release
+  const { id, coverUrl, artistName, artistKoreanName, title, releaseDate, type, spotifyId, averageRating } = release
   const [imgFailed, setImgFailed] = useState(false)
   const showPlaceholder = !coverUrl || imgFailed
   const [colorFrom, colorTo] = getArtistColor(artistName)
@@ -41,7 +35,6 @@ function ReleaseCard({ release }) {
   const typeLabel = RELEASE_TYPE_LABEL[type] ?? type
   const isNew = isNewRelease(releaseDate)
   const spotifyUrl = getSpotifyAlbumUrl(spotifyId)
-  const averageRating = getMockAverageRating(id)
 
   return (
     <Link to={ROUTES.RELEASE_DETAIL(id)} className={styles.card}>
@@ -101,10 +94,12 @@ function ReleaseCard({ release }) {
           </span>
           {releaseDate}
         </div>
-        <div className={styles.meta}>
-          <StarRating value={averageRating} size={12} ariaLabel={`평균 별점 ${averageRating}점`} />
-          <span className={styles.ratingValue}>{averageRating.toFixed(1)}</span>
-        </div>
+        {averageRating != null && (
+          <div className={styles.meta}>
+            <StarRating value={averageRating} size={12} ariaLabel={`평균 별점 ${averageRating}점`} />
+            <span className={styles.ratingValue}>{averageRating.toFixed(1)}</span>
+          </div>
+        )}
       </div>
     </Link>
   )
