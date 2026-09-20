@@ -30,6 +30,7 @@ export const ROUTES = {
   ADMIN_NOTICES: '/admin/notices',
   ADMIN_NOTICE_NEW: '/admin/notices/new',
   ADMIN_NOTICE_EDIT: (id) => `/admin/notices/${id}/edit`,
+  ADMIN_POLICIES: '/admin/policies',
   TERMS: '/terms',
   PRIVACY: '/privacy',
 }
