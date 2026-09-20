@@ -267,8 +267,15 @@ function ConcertDetailPage() {
               )}
             </dl>
 
-            {/* 별점 평가 */}
-            <RatingSection entityType="CONCERT" entityId={concertId} average={averageRating} count={ratingCount} />
+            {/* 별점 평가 (공연 종료 후에만 가능) */}
+            <RatingSection
+              entityType="CONCERT"
+              entityId={concertId}
+              average={averageRating}
+              count={ratingCount}
+              canRate={status === 'ENDED'}
+              disabledMessage="공연 종료 후 별점을 남길 수 있어요"
+            />
 
             {/* 관리자 수정 버튼 */}
             {user?.role === 'ADMIN' && (

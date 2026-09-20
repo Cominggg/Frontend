@@ -11,7 +11,7 @@ const RATING_API = {
   RELEASE: { getMy: getMyReleaseRating, rate: rateRelease },
 }
 
-function RatingSection({ entityType, entityId, average, count, onDark = false }) {
+function RatingSection({ entityType, entityId, average, count, onDark = false, canRate = true, disabledMessage = '평가할 수 없어요' }) {
   const user = useAuthStore((s) => s.user)
   const openLoginModal = useLoginModalStore((s) => s.open)
   const queryClient = useQueryClient()
@@ -20,7 +20,7 @@ function RatingSection({ entityType, entityId, average, count, onDark = false })
   const { data: myRating } = useQuery({
     queryKey: ['myRating', entityType, entityId],
     queryFn: () => getMy(entityId),
-    enabled: !!user,
+    enabled: !!user && canRate,
   })
 
   const rateMutation = useMutation({
@@ -60,18 +60,24 @@ function RatingSection({ entityType, entityId, average, count, onDark = false })
           <span className={styles.count}>아직 평가한 사람이 없어요</span>
         )}
       </div>
-      <div className={styles.myRating}>
-        <span className={styles.myRatingLabel}>{myScore != null ? '내 별점' : '별점 남기기'}</span>
-        <StarRating
-          value={myScore ?? 0}
-          onChange={handleRate}
-          size={22}
-          color={starColor}
-          emptyColor={emptyColor}
-          ariaLabel="내 별점 선택"
-        />
-        {myScore != null && <span className={styles.myScoreValue}>{myScore.toFixed(1)}</span>}
-      </div>
+      {canRate ? (
+        <div className={styles.myRating}>
+          <span className={styles.myRatingLabel}>{myScore != null ? '내 별점' : '별점 남기기'}</span>
+          <StarRating
+            value={myScore ?? 0}
+            onChange={handleRate}
+            size={22}
+            color={starColor}
+            emptyColor={emptyColor}
+            ariaLabel="내 별점 선택"
+          />
+          {myScore != null && <span className={styles.myScoreValue}>{myScore.toFixed(1)}</span>}
+        </div>
+      ) : (
+        <div className={styles.myRatingDisabled}>
+          <span className={styles.count}>{disabledMessage}</span>
+        </div>
+      )}
     </div>
   )
 }
