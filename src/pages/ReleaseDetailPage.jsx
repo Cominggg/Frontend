@@ -3,6 +3,7 @@ import { Link, useParams, useNavigate, useLocation } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 
 import ArtistAliasName from '@/components/artist/ArtistAliasName'
+import RatingSection from '@/components/rating/RatingSection'
 import RelatedPostsSection from '@/components/post/RelatedPostsSection'
 import EmptyState from '@/components/ui/EmptyState'
 import SourceCredit from '@/components/ui/SourceCredit'
@@ -176,6 +177,7 @@ function ReleaseDetailPage() {
                   LISTEN ON SPOTIFY
                 </a>
               )}
+              <RatingSection entityType="RELEASE" entityId={releaseId} onDark />
             </div>
           </div>
         </div>
