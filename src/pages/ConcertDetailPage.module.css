@@ -52,6 +52,11 @@
 }
 
 /* ── 대표 이미지 ── */
+.posterCol {
+  position: sticky;
+  top: calc(var(--header-height) + 1.5rem);
+}
+
 .thumbnailWrap {
   width: 100%;
   aspect-ratio: 2 / 3;
@@ -443,6 +448,10 @@
   .layout {
     grid-template-columns: 1fr;
     gap: 1.5rem;
+  }
+
+  .posterCol {
+    position: static;
   }
 
   .thumbnailWrap {

@@ -173,7 +173,7 @@ function ConcertDetailPage() {
         <div className={styles.layout}>
 
           {/* 대표 이미지 */}
-          <div>
+          <div className={styles.posterCol}>
             <div className={styles.thumbnailWrap}>
               {showPosterPlaceholder ? (
                 <div className={styles.thumbnailPlaceholder}>
