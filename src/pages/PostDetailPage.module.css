@@ -112,7 +112,9 @@
 
 .footer {
   display: flex;
+  align-items: center;
   justify-content: center;
+  gap: 0.625rem;
   margin-top: 2.5rem;
   padding-top: 2rem;
 }
@@ -142,6 +144,24 @@
   background: var(--color-accent);
   border-color: var(--color-accent);
   color: var(--color-on-accent);
+}
+
+.reportBtn {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.625rem 1.25rem;
+  border-radius: var(--radius-full);
+  border: 1.5px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text-muted);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.reportBtn:hover {
+  border-color: var(--color-destructive);
+  color: var(--color-destructive);
 }
 
 .commentsWrap {

@@ -14,3 +14,19 @@ export const MENTION_TYPE_LABEL = {
   RELEASE: '음악',
   TRACK: '트랙',
 }
+
+export const REPORT_REASON_LABEL = {
+  SPAM: '스팸/광고',
+  ABUSE: '욕설/비방',
+  SEXUAL: '음란물',
+  ILLEGAL: '불법 정보',
+  COPYRIGHT: '저작권 침해',
+  PRIVACY: '개인정보 노출',
+  ETC: '기타',
+}
+
+export const REPORT_STATUS_LABEL = {
+  PENDING: '대기 중',
+  RESOLVED: '처리완료',
+  REJECTED: '반려',
+}

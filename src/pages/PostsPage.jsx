@@ -5,11 +5,12 @@ import { useQuery } from '@tanstack/react-query'
 import Button from '@/components/ui/Button'
 import EmptyState from '@/components/ui/EmptyState'
 import Pagination from '@/components/ui/Pagination'
+import PinnedNotices from '@/components/post/PinnedNotices'
 import PostListItem from '@/components/post/PostListItem'
 import PostListItemSkeleton from '@/components/post/PostListItemSkeleton'
 import PostsSidebar from '@/components/post/sidebar/PostsSidebar'
 import usePageMeta from '@/hooks/usePageMeta'
-import { getPosts, getSearch } from '@/services/postApi'
+import { getPosts, getPopularBoardPosts, getSearch } from '@/services/postApi'
 import { ROUTES } from '@/constants/routes'
 import { POST_CATEGORY_LABEL } from '@/constants/post'
 import { trackEvent } from '@/utils/analytics'
@@ -17,7 +18,8 @@ import useAuthStore from '@/stores/authStore'
 import useLoginModalStore from '@/stores/loginModalStore'
 import styles from './PostsPage.module.css'
 
-const CATEGORY_FILTERS = ['ALL', 'FREE', 'INFO', 'REVIEW']
+const CATEGORY_FILTERS = ['ALL', 'FREE', 'INFO', 'REVIEW', 'POPULAR']
+const CATEGORY_TAB_LABEL = { ALL: '전체', POPULAR: '인기글' }
 const ITEMS_PER_PAGE = 20
 const MIN_QUERY_LENGTH = 2
 
@@ -46,6 +48,8 @@ function PostsPage() {
   const currentPage = Number.isInteger(pageParam) && pageParam > 0 ? pageParam : 1
   const isQueryTooShort = urlQuery.length > 0 && urlQuery.length < MIN_QUERY_LENGTH
   const isSearching = !!urlQuery && !isQueryTooShort
+  const isPopular = selectedCategory === 'POPULAR'
+  const showPinnedNotices = selectedCategory === 'ALL' && currentPage === 1 && !urlQuery
 
   usePageMeta({
     title: '커뮤니티 - 커밍',
@@ -76,14 +80,18 @@ function PostsPage() {
   const { data, isLoading } = useQuery({
     queryKey: isSearching
       ? ['search', urlQuery, currentPage]
-      : ['posts', selectedCategory, currentPage],
+      : isPopular
+        ? ['posts', 'popular-board', currentPage]
+        : ['posts', selectedCategory, currentPage],
     queryFn: () => (isSearching
       ? getSearch({ q: urlQuery, page: currentPage - 1, size: ITEMS_PER_PAGE })
-      : getPosts({
-        category: selectedCategory === 'ALL' ? undefined : selectedCategory,
-        page: currentPage - 1,
-        size: ITEMS_PER_PAGE,
-      })),
+      : isPopular
+        ? getPopularBoardPosts({ page: currentPage - 1, size: ITEMS_PER_PAGE })
+        : getPosts({
+          category: selectedCategory === 'ALL' ? undefined : selectedCategory,
+          page: currentPage - 1,
+          size: ITEMS_PER_PAGE,
+        })),
     enabled: !isQueryTooShort,
   })
 
@@ -183,7 +191,7 @@ function PostsPage() {
                     className={`${styles.filterTab} ${selectedCategory === c ? styles.filterTabActive : ''}`}
                     onClick={() => handleCategoryChange(c)}
                   >
-                    {c === 'ALL' ? '전체' : POST_CATEGORY_LABEL[c]}
+                    {CATEGORY_TAB_LABEL[c] ?? POST_CATEGORY_LABEL[c]}
                   </button>
                 ))}
               </div>
@@ -197,6 +205,8 @@ function PostsPage() {
           </div>
 
           <div className={styles.main}>
+
+            {showPinnedNotices && <PinnedNotices />}
 
             {isQueryTooShort ? (
               <EmptyState message={getEmptyMessage(urlQuery, isQueryTooShort)} />
