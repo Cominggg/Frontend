@@ -14,15 +14,18 @@ function AdminNoticeFormPage() {
   const navigate = useNavigate()
 
   const [form, setForm] = useState(EMPTY_FORM)
+  const [loadingNotice, setLoadingNotice] = useState(isEdit)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
   const [savedMsg, setSavedMsg] = useState('')
 
   useEffect(() => {
     if (!isEdit) return
+    setLoadingNotice(true)
     getAdminNotice(id).then((notice) => {
       setForm({ title: notice.title, content: notice.content, active: notice.active })
     }).catch(() => setError('공지를 찾을 수 없습니다.'))
+      .finally(() => setLoadingNotice(false))
   }, [id, isEdit])
 
   function setField(key, value) {
@@ -72,6 +75,7 @@ function AdminNoticeFormPage() {
               value={form.title}
               onChange={(e) => setField('title', e.target.value)}
               placeholder="공지 제목을 입력하세요"
+              disabled={loadingNotice}
             />
           </label>
 
@@ -83,6 +87,7 @@ function AdminNoticeFormPage() {
               value={form.content}
               onChange={(e) => setField('content', e.target.value)}
               placeholder="공지 내용을 입력하세요"
+              disabled={loadingNotice}
             />
           </label>
 
@@ -91,6 +96,7 @@ function AdminNoticeFormPage() {
               type="checkbox"
               checked={form.active}
               onChange={(e) => setField('active', e.target.checked)}
+              disabled={loadingNotice}
             />
             커뮤니티 홈에 노출
           </label>
@@ -103,7 +109,7 @@ function AdminNoticeFormPage() {
           <button
             type="submit"
             className={styles.btnSubmit}
-            disabled={saving || !form.title.trim() || !form.content.trim()}
+            disabled={loadingNotice || saving || Boolean(savedMsg) || !form.title.trim() || !form.content.trim()}
           >
             {saving ? '저장 중...' : '저장'}
           </button>

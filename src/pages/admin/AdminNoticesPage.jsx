@@ -10,6 +10,7 @@ const PAGE_SIZE = 20
 function AdminNoticesPage() {
   const [items, setItems] = useState([])
   const [loading, setLoading] = useState(false)
+  const [loadError, setLoadError] = useState('')
   const [totalElements, setTotalElements] = useState(0)
   const [page, setPage] = useState(0)
   const [togglingId, setTogglingId] = useState(null)
@@ -17,12 +18,15 @@ function AdminNoticesPage() {
 
   const fetchNotices = useCallback(async () => {
     setLoading(true)
+    setLoadError('')
     try {
       const data = await getAdminNotices({ page, size: PAGE_SIZE })
       setItems(data.content)
       setTotalElements(data.totalElements)
     } catch {
       setItems([])
+      setTotalElements(0)
+      setLoadError('공지 목록을 불러오지 못했습니다.')
     } finally {
       setLoading(false)
     }
@@ -68,6 +72,11 @@ function AdminNoticesPage() {
 
       {loading ? (
         <div className={styles.empty}><p className={styles.emptyText}>불러오는 중...</p></div>
+      ) : loadError ? (
+        <div className={styles.empty}>
+          <p className={styles.emptyText}>{loadError}</p>
+          <button type="button" className={styles.pageBtn} onClick={fetchNotices}>다시 시도</button>
+        </div>
       ) : items.length === 0 ? (
         <div className={styles.empty}><p className={styles.emptyText}>등록된 공지가 없습니다.</p></div>
       ) : (

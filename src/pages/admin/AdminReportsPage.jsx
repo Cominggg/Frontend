@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { Link } from 'react-router-dom'
 
 import { getReports, getReport, updateReportStatus } from '@/services/adminApi'
@@ -29,7 +29,11 @@ function DetailModal({ id, onClose, onStatusChange }) {
     setProcessing(true)
     setError('')
     try {
-      await updateReportStatus(id, { status, adminNote: note.trim() || undefined, deleteTarget })
+      await updateReportStatus(id, {
+        status,
+        adminNote: note.trim() || undefined,
+        deleteTarget: status === 'RESOLVED' && deleteTarget,
+      })
       onStatusChange(id, status)
       onClose()
     } catch {
@@ -143,31 +147,53 @@ function DetailModal({ id, onClose, onStatusChange }) {
 function AdminReportsPage() {
   const [items, setItems] = useState([])
   const [loading, setLoading] = useState(false)
+  const [loadError, setLoadError] = useState('')
   const [totalElements, setTotalElements] = useState(0)
   const [page, setPage] = useState(0)
   const [statusFilter, setStatusFilter] = useState('전체')
   const [targetTypeFilter, setTargetTypeFilter] = useState('전체')
   const [selectedId, setSelectedId] = useState(null)
+  const [pendingTotal, setPendingTotal] = useState(0)
+  const requestIdRef = useRef(0)
 
   const fetchReports = useCallback(async () => {
+    const requestId = ++requestIdRef.current
     setLoading(true)
+    setLoadError('')
     try {
       const params = { page, size: PAGE_SIZE }
       if (statusFilter !== '전체') params.status = statusFilter
       if (targetTypeFilter !== '전체') params.targetType = targetTypeFilter
       const data = await getReports(params)
+      if (requestId !== requestIdRef.current) return
       setItems(data.content)
       setTotalElements(data.totalElements)
     } catch {
+      if (requestId !== requestIdRef.current) return
       setItems([])
+      setTotalElements(0)
+      setLoadError('신고 목록을 불러오지 못했습니다.')
     } finally {
-      setLoading(false)
+      if (requestId === requestIdRef.current) setLoading(false)
     }
   }, [page, statusFilter, targetTypeFilter])
+
+  const fetchPendingTotal = useCallback(async () => {
+    try {
+      const data = await getReports({ status: 'PENDING', page: 0, size: 1 })
+      setPendingTotal(data.totalElements)
+    } catch {
+      // 배지 표시용 보조 값이므로 실패 시 이전 값을 유지한다
+    }
+  }, [])
 
   useEffect(() => {
     fetchReports()
   }, [fetchReports])
+
+  useEffect(() => {
+    fetchPendingTotal()
+  }, [fetchPendingTotal])
 
   function handleFilterChange(setter) {
     return (value) => {
@@ -177,14 +203,16 @@ function AdminReportsPage() {
   }
 
   function handleStatusChange(id, newStatus) {
+    const shouldRemove = statusFilter === 'PENDING' && newStatus !== 'PENDING'
     setItems((prev) =>
-      prev.map((it) => it.id === id ? { ...it, status: newStatus } : it)
+      shouldRemove
+        ? prev.filter((it) => it.id !== id)
+        : prev.map((it) => it.id === id ? { ...it, status: newStatus } : it)
     )
+    if (shouldRemove) setTotalElements((prev) => Math.max(prev - 1, 0))
+    fetchPendingTotal()
   }
 
-  const pendingCount = totalElements > 0
-    ? items.filter((it) => it.status === 'PENDING').length
-    : 0
   const totalPages = Math.ceil(totalElements / PAGE_SIZE)
 
   return (
@@ -194,8 +222,8 @@ function AdminReportsPage() {
           <h1 className={styles.pageTitle}>신고 관리</h1>
           <p className={styles.pageDesc}>사용자가 접수한 게시글·댓글 신고를 검토하고 처리합니다.</p>
         </div>
-        {pendingCount > 0 && (
-          <span className={styles.pendingBadge}>{pendingCount}건 미처리</span>
+        {pendingTotal > 0 && (
+          <span className={styles.pendingBadge}>{pendingTotal}건 미처리</span>
         )}
       </div>
 
@@ -228,6 +256,11 @@ function AdminReportsPage() {
 
       {loading ? (
         <div className={styles.empty}><p className={styles.emptyText}>불러오는 중...</p></div>
+      ) : loadError ? (
+        <div className={styles.empty}>
+          <p className={styles.emptyText}>{loadError}</p>
+          <button type="button" className={styles.pageBtn} onClick={fetchReports}>다시 시도</button>
+        </div>
       ) : items.length === 0 ? (
         <div className={styles.empty}><p className={styles.emptyText}>해당 조건의 신고가 없습니다.</p></div>
       ) : (
