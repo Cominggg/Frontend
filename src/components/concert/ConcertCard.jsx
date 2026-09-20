@@ -3,10 +3,17 @@ import { Link } from 'react-router-dom'
 
 import ArtistAliasName from '@/components/artist/ArtistAliasName'
 import Badge from '@/components/ui/Badge'
+import StarRating from '@/components/ui/StarRating'
 import { ROUTES } from '@/constants/routes'
 import { formatDate } from '@/utils/date'
 import { getArtistColor } from '@/utils/colorPalette'
 import styles from './ConcertCard.module.css'
+
+// TODO: API 연동 후 제거 (averageRating 필드로 대체)
+function getMockAverageRating(id) {
+  const seed = Number(id) || 0
+  return Math.min(5, 3 + (seed % 5) * 0.5)
+}
 
 function getTicketDday(ticketOpenAt) {
   if (!ticketOpenAt) return null
@@ -30,6 +37,7 @@ function ConcertCard({ concert }) {
   const [colorFrom, colorTo] = getArtistColor(primaryArtistName)
 
   const ticketDday = getTicketDday(ticketOpenAt)
+  const averageRating = getMockAverageRating(id)
 
   const dateRange = endDate && endDate !== startDate
     ? `${formatDate(startDate)} ~ ${formatDate(endDate)}`
@@ -97,6 +105,10 @@ function ConcertCard({ concert }) {
             </svg>
           </span>
           <span className={styles.metaText}>{venue}</span>
+        </div>
+        <div className={styles.meta}>
+          <StarRating value={averageRating} size={12} ariaLabel={`평균 별점 ${averageRating}점`} />
+          <span className={styles.ratingValue}>{averageRating.toFixed(1)}</span>
         </div>
       </div>
     </Link>

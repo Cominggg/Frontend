@@ -186,6 +186,11 @@
   flex-shrink: 0;
 }
 
+.ratingValue {
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+
 @media (max-width: 767px) {
   .info {
     padding: 0.625rem 0.75rem 0.75rem;

@@ -138,6 +138,11 @@
   text-overflow: ellipsis;
 }
 
+.ratingValue {
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+
 .ticketBadge {
   position: absolute;
   top: 10px;

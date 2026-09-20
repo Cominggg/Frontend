@@ -3,10 +3,17 @@ import { Link } from 'react-router-dom'
 
 import ArtistAliasName from '@/components/artist/ArtistAliasName'
 import SpotifyIcon from '@/components/ui/SpotifyIcon'
+import StarRating from '@/components/ui/StarRating'
 import { ROUTES } from '@/constants/routes'
 import { getArtistColor } from '@/utils/colorPalette'
 import { getSpotifyAlbumUrl } from '@/utils/spotify'
 import styles from './ReleaseCard.module.css'
+
+// TODO: API 연동 후 제거 (averageRating 필드로 대체)
+function getMockAverageRating(id) {
+  const seed = Number(id) || 0
+  return Math.min(5, 3 + (seed % 5) * 0.5)
+}
 
 const RELEASE_TYPE_COLOR = {
   Album: 'var(--color-accent)',
@@ -34,6 +41,7 @@ function ReleaseCard({ release }) {
   const typeLabel = RELEASE_TYPE_LABEL[type] ?? type
   const isNew = isNewRelease(releaseDate)
   const spotifyUrl = getSpotifyAlbumUrl(spotifyId)
+  const averageRating = getMockAverageRating(id)
 
   return (
     <Link to={ROUTES.RELEASE_DETAIL(id)} className={styles.card}>
@@ -92,6 +100,10 @@ function ReleaseCard({ release }) {
             </svg>
           </span>
           {releaseDate}
+        </div>
+        <div className={styles.meta}>
+          <StarRating value={averageRating} size={12} ariaLabel={`평균 별점 ${averageRating}점`} />
+          <span className={styles.ratingValue}>{averageRating.toFixed(1)}</span>
         </div>
       </div>
     </Link>
