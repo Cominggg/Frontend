@@ -1,0 +1,39 @@
+.stars {
+  position: relative;
+  display: inline-flex;
+  line-height: 0;
+  color: var(--star-empty);
+}
+
+.starsBg,
+.starsFg {
+  display: flex;
+  gap: 1px;
+}
+
+.starsFg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  overflow: hidden;
+  color: var(--star-fill);
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+.starSlot {
+  display: inline-flex;
+  flex-shrink: 0;
+  width: var(--star-size);
+  height: var(--star-size);
+}
+
+.starIcon {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.interactive .starSlot {
+  cursor: pointer;
+}
