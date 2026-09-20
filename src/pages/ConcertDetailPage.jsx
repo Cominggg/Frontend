@@ -7,6 +7,7 @@ import BackButton from '@/components/ui/BackButton'
 import Badge from '@/components/ui/Badge'
 import EmptyState from '@/components/ui/EmptyState'
 import InquiryModal from '@/components/ui/InquiryModal'
+import RatingSection from '@/components/rating/RatingSection'
 import RelatedPostsSection from '@/components/post/RelatedPostsSection'
 import usePageMeta from '@/hooks/usePageMeta'
 import { getConcert, getConcertSetlist } from '@/services/concertApi'
@@ -264,6 +265,9 @@ function ConcertDetailPage() {
                 </div>
               )}
             </dl>
+
+            {/* 별점 평가 */}
+            <RatingSection entityType="CONCERT" entityId={concertId} />
 
             {/* 관리자 수정 버튼 */}
             {user?.role === 'ADMIN' && (
