@@ -113,7 +113,7 @@ function ReleaseDetailPage() {
     )
   }
 
-  const { artistName, artistKoreanName, artistId, title, type, releaseDate, coverUrl, tracks, totalTracks, spotifyId } = release
+  const { artistName, artistKoreanName, artistId, title, type, releaseDate, coverUrl, tracks, totalTracks, spotifyId, averageRating, ratingCount } = release
   const showCoverPlaceholder = !coverUrl || coverFailed
   const [accentFrom, accentTo] = getArtistColor(artistName)
   const badgeColor = RELEASE_TYPE_COLOR[type] ?? 'var(--color-text-muted)'
@@ -177,7 +177,7 @@ function ReleaseDetailPage() {
                   LISTEN ON SPOTIFY
                 </a>
               )}
-              <RatingSection entityType="RELEASE" entityId={releaseId} onDark />
+              <RatingSection entityType="RELEASE" entityId={releaseId} average={averageRating} count={ratingCount} onDark />
             </div>
           </div>
         </div>

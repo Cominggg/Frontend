@@ -144,7 +144,8 @@ function ConcertDetailPage() {
 
   const { posterUrl, imageUrls, artists = [],
           title, startDate, endDate, venue, status,
-          price, isInCalendar, ticketLinks, ticketOpenAt } = concert
+          price, isInCalendar, ticketLinks, ticketOpenAt,
+          averageRating, ratingCount } = concert
   const artistDisplayName = artists.map((a) => a.name).join(' · ')
 
   const setlist = setlistData?.tracks ?? []
@@ -267,7 +268,7 @@ function ConcertDetailPage() {
             </dl>
 
             {/* 별점 평가 */}
-            <RatingSection entityType="CONCERT" entityId={concertId} />
+            <RatingSection entityType="CONCERT" entityId={concertId} average={averageRating} count={ratingCount} />
 
             {/* 관리자 수정 버튼 */}
             {user?.role === 'ADMIN' && (
