@@ -7,6 +7,7 @@ import BackButton from '@/components/ui/BackButton'
 import Badge from '@/components/ui/Badge'
 import EmptyState from '@/components/ui/EmptyState'
 import InquiryModal from '@/components/ui/InquiryModal'
+import RatingSection from '@/components/rating/RatingSection'
 import RelatedPostsSection from '@/components/post/RelatedPostsSection'
 import usePageMeta from '@/hooks/usePageMeta'
 import { getConcert, getConcertSetlist } from '@/services/concertApi'
@@ -143,7 +144,8 @@ function ConcertDetailPage() {
 
   const { posterUrl, imageUrls, artists = [],
           title, startDate, endDate, venue, status,
-          price, isInCalendar, ticketLinks, ticketOpenAt } = concert
+          price, isInCalendar, ticketLinks, ticketOpenAt,
+          averageRating, ratingCount } = concert
   const artistDisplayName = artists.map((a) => a.name).join(' · ')
 
   const setlist = setlistData?.tracks ?? []
@@ -171,7 +173,7 @@ function ConcertDetailPage() {
         <div className={styles.layout}>
 
           {/* 대표 이미지 */}
-          <div>
+          <div className={styles.posterCol}>
             <div className={styles.thumbnailWrap}>
               {showPosterPlaceholder ? (
                 <div className={styles.thumbnailPlaceholder}>
@@ -264,6 +266,16 @@ function ConcertDetailPage() {
                 </div>
               )}
             </dl>
+
+            {/* 별점 평가 (공연 종료 후에만 가능) */}
+            <RatingSection
+              entityType="CONCERT"
+              entityId={concertId}
+              average={averageRating}
+              count={ratingCount}
+              canRate={status === 'ENDED'}
+              disabledMessage="공연 종료 후 별점을 남길 수 있어요"
+            />
 
             {/* 관리자 수정 버튼 */}
             {user?.role === 'ADMIN' && (

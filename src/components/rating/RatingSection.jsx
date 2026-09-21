@@ -1,0 +1,92 @@
+import { useState } from 'react'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+
+import StarRating from '@/components/ui/StarRating'
+import { getMyConcertRating, rateConcert, getMyReleaseRating, rateRelease } from '@/services/ratingApi'
+import useAuthStore from '@/stores/authStore'
+import useLoginModalStore from '@/stores/loginModalStore'
+import styles from './RatingSection.module.css'
+
+const RATING_API = {
+  CONCERT: { getMy: getMyConcertRating, rate: rateConcert },
+  RELEASE: { getMy: getMyReleaseRating, rate: rateRelease },
+}
+
+function RatingSection({ entityType, entityId, average, count, onDark = false, canRate = true, disabledMessage = '평가할 수 없어요' }) {
+  const user = useAuthStore((s) => s.user)
+  const openLoginModal = useLoginModalStore((s) => s.open)
+  const queryClient = useQueryClient()
+  const { getMy, rate } = RATING_API[entityType]
+  const [rateError, setRateError] = useState(null)
+
+  const { data: myRating } = useQuery({
+    queryKey: ['myRating', entityType, entityId],
+    queryFn: () => getMy(entityId),
+    enabled: !!user && canRate,
+  })
+
+  const rateMutation = useMutation({
+    mutationFn: (score) => rate(entityId, score),
+    onSuccess: () => {
+      setRateError(null)
+      queryClient.invalidateQueries({ queryKey: ['myRating', entityType, entityId] })
+      queryClient.invalidateQueries({ queryKey: [entityType.toLowerCase(), entityId] })
+    },
+    onError: () => {
+      setRateError('별점 등록에 실패했습니다. 잠시 후 다시 시도해주세요.')
+    },
+  })
+
+  function handleRate(score) {
+    if (!user) { openLoginModal(window.location.pathname + window.location.search); return }
+    rateMutation.mutate(score)
+  }
+
+  const myScore = myRating?.score ?? null
+  const hasAverage = average != null
+  const starColor = onDark ? 'var(--color-on-accent)' : undefined
+  const emptyColor = onDark ? 'rgba(255, 255, 255, 0.3)' : undefined
+
+  return (
+    <div className={`${styles.section} ${onDark ? styles.onDark : ''}`}>
+      <div className={styles.average}>
+        <StarRating
+          value={average ?? 0}
+          size={16}
+          color={starColor}
+          emptyColor={emptyColor}
+          ariaLabel={hasAverage ? `평균 별점 ${average}점` : '평균 별점 없음'}
+        />
+        {hasAverage ? (
+          <>
+            <span className={styles.averageValue}>{average.toFixed(1)}</span>
+            <span className={styles.count}>({(count ?? 0).toLocaleString()}명 평가)</span>
+          </>
+        ) : (
+          <span className={styles.count}>아직 평가한 사람이 없어요</span>
+        )}
+      </div>
+      {canRate ? (
+        <div className={styles.myRating}>
+          <span className={styles.myRatingLabel}>{myScore != null ? '내 별점' : '별점 남기기'}</span>
+          <StarRating
+            value={myScore ?? 0}
+            onChange={rateMutation.isPending ? undefined : handleRate}
+            size={22}
+            color={starColor}
+            emptyColor={emptyColor}
+            ariaLabel="내 별점 선택"
+          />
+          {myScore != null && <span className={styles.myScoreValue}>{myScore.toFixed(1)}</span>}
+          {rateError && <span className={styles.error}>{rateError}</span>}
+        </div>
+      ) : (
+        <div className={styles.myRatingDisabled}>
+          <span className={styles.count}>{disabledMessage}</span>
+        </div>
+      )}
+    </div>
+  )
+}
+
+export default RatingSection

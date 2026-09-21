@@ -1,0 +1,81 @@
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1rem 1.125rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+}
+
+.average {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.averageValue {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.count {
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+}
+
+.myRating {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--color-border);
+}
+
+.myRatingDisabled {
+  display: flex;
+  align-items: center;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--color-border);
+}
+
+.myRatingLabel {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+}
+
+.myScoreValue {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: var(--color-accent);
+}
+
+.error {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--color-destructive);
+}
+
+/* 히어로(어두운 배경) 위에 올라갈 때 */
+.onDark {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.18);
+}
+
+.onDark .averageValue,
+.onDark .myScoreValue {
+  color: var(--color-on-accent);
+}
+
+.onDark .count,
+.onDark .myRatingLabel {
+  color: rgba(255, 255, 255, 0.65);
+}
+
+.onDark .myRating,
+.onDark .myRatingDisabled {
+  border-top-color: rgba(255, 255, 255, 0.18);
+}

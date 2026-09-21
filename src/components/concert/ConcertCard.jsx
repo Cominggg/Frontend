@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 
 import ArtistAliasName from '@/components/artist/ArtistAliasName'
 import Badge from '@/components/ui/Badge'
+import StarRating from '@/components/ui/StarRating'
 import { ROUTES } from '@/constants/routes'
 import { formatDate } from '@/utils/date'
 import { getArtistColor } from '@/utils/colorPalette'
@@ -22,7 +23,7 @@ function getTicketDday(ticketOpenAt) {
 }
 
 function ConcertCard({ concert }) {
-  const { id, posterUrl, artists = [], title, startDate, endDate, venue, status, ticketOpenAt } = concert
+  const { id, posterUrl, artists = [], title, startDate, endDate, venue, status, ticketOpenAt, averageRating } = concert
   const [imgFailed, setImgFailed] = useState(false)
   const showPlaceholder = !posterUrl || imgFailed
   const primaryArtistName = artists[0]?.name ?? ''
@@ -97,6 +98,16 @@ function ConcertCard({ concert }) {
             </svg>
           </span>
           <span className={styles.metaText}>{venue}</span>
+        </div>
+        <div className={styles.meta}>
+          {averageRating != null ? (
+            <>
+              <StarRating value={averageRating} size={12} ariaLabel={`평균 별점 ${averageRating}점`} />
+              <span className={styles.ratingValue}>{averageRating.toFixed(1)}</span>
+            </>
+          ) : (
+            <span className={styles.ratingEmpty}>평점 없음</span>
+          )}
         </div>
       </div>
     </Link>

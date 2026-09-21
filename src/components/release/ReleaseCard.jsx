@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 
 import ArtistAliasName from '@/components/artist/ArtistAliasName'
 import SpotifyIcon from '@/components/ui/SpotifyIcon'
+import StarRating from '@/components/ui/StarRating'
 import { ROUTES } from '@/constants/routes'
 import { getArtistColor } from '@/utils/colorPalette'
 import { getSpotifyAlbumUrl } from '@/utils/spotify'
@@ -26,7 +27,7 @@ function isNewRelease(dateStr) {
 }
 
 function ReleaseCard({ release }) {
-  const { id, coverUrl, artistName, artistKoreanName, title, releaseDate, type, spotifyId } = release
+  const { id, coverUrl, artistName, artistKoreanName, title, releaseDate, type, spotifyId, averageRating } = release
   const [imgFailed, setImgFailed] = useState(false)
   const showPlaceholder = !coverUrl || imgFailed
   const [colorFrom, colorTo] = getArtistColor(artistName)
@@ -92,6 +93,16 @@ function ReleaseCard({ release }) {
             </svg>
           </span>
           {releaseDate}
+        </div>
+        <div className={styles.meta}>
+          {averageRating != null ? (
+            <>
+              <StarRating value={averageRating} size={12} ariaLabel={`평균 별점 ${averageRating}점`} />
+              <span className={styles.ratingValue}>{averageRating.toFixed(1)}</span>
+            </>
+          ) : (
+            <span className={styles.ratingEmpty}>평점 없음</span>
+          )}
         </div>
       </div>
     </Link>
