@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 import StarRating from '@/components/ui/StarRating'
@@ -16,6 +17,7 @@ function RatingSection({ entityType, entityId, average, count, onDark = false, c
   const openLoginModal = useLoginModalStore((s) => s.open)
   const queryClient = useQueryClient()
   const { getMy, rate } = RATING_API[entityType]
+  const [rateError, setRateError] = useState(null)
 
   const { data: myRating } = useQuery({
     queryKey: ['myRating', entityType, entityId],
@@ -26,8 +28,12 @@ function RatingSection({ entityType, entityId, average, count, onDark = false, c
   const rateMutation = useMutation({
     mutationFn: (score) => rate(entityId, score),
     onSuccess: () => {
+      setRateError(null)
       queryClient.invalidateQueries({ queryKey: ['myRating', entityType, entityId] })
       queryClient.invalidateQueries({ queryKey: [entityType.toLowerCase(), entityId] })
+    },
+    onError: () => {
+      setRateError('별점 등록에 실패했습니다. 잠시 후 다시 시도해주세요.')
     },
   })
 
@@ -65,13 +71,14 @@ function RatingSection({ entityType, entityId, average, count, onDark = false, c
           <span className={styles.myRatingLabel}>{myScore != null ? '내 별점' : '별점 남기기'}</span>
           <StarRating
             value={myScore ?? 0}
-            onChange={handleRate}
+            onChange={rateMutation.isPending ? undefined : handleRate}
             size={22}
             color={starColor}
             emptyColor={emptyColor}
             ariaLabel="내 별점 선택"
           />
           {myScore != null && <span className={styles.myScoreValue}>{myScore.toFixed(1)}</span>}
+          {rateError && <span className={styles.error}>{rateError}</span>}
         </div>
       ) : (
         <div className={styles.myRatingDisabled}>

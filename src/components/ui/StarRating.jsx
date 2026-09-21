@@ -19,6 +19,17 @@ function pickScore(e, starIndex) {
   return isHalf ? starIndex + 0.5 : starIndex + 1
 }
 
+function handleKeyDown(e, value, onChange) {
+  const step = e.key === 'ArrowRight' || e.key === 'ArrowUp'
+    ? 0.5
+    : e.key === 'ArrowLeft' || e.key === 'ArrowDown'
+      ? -0.5
+      : null
+  if (step == null) return
+  e.preventDefault()
+  onChange(Math.max(0.5, Math.min(STAR_COUNT, value + step)))
+}
+
 function StarRating({
   value = 0,
   onChange,
@@ -37,10 +48,12 @@ function StarRating({
       className={`${styles.stars} ${interactive ? styles.interactive : ''}`}
       style={{ '--star-size': `${size}px`, '--star-empty': emptyColor, '--star-fill': color }}
       role={interactive ? 'slider' : 'img'}
+      tabIndex={interactive ? 0 : undefined}
       aria-label={ariaLabel}
       aria-valuenow={interactive ? value : undefined}
       aria-valuemin={interactive ? 0 : undefined}
       aria-valuemax={interactive ? STAR_COUNT : undefined}
+      onKeyDown={interactive ? (e) => handleKeyDown(e, value, onChange) : undefined}
       onMouseLeave={() => interactive && setHoverValue(null)}
     >
       <div className={styles.starsBg} aria-hidden="true">

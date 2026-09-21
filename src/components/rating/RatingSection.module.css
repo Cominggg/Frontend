@@ -53,6 +53,12 @@
   color: var(--color-accent);
 }
 
+.error {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--color-destructive);
+}
+
 /* 히어로(어두운 배경) 위에 올라갈 때 */
 .onDark {
   background: rgba(255, 255, 255, 0.08);
