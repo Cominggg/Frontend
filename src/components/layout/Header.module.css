@@ -66,8 +66,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 34px;
-  height: 34px;
+  width: 44px;
+  height: 44px;
   border-radius: var(--radius-md);
   background: transparent;
   border: 1px solid var(--color-border);
@@ -177,11 +177,11 @@
   flex-direction: column;
   justify-content: center;
   gap: 5px;
-  width: 36px;
-  height: 36px;
+  width: 44px;
+  height: 44px;
   background: transparent;
   border: none;
-  padding: 4px;
+  padding: 8px;
   margin-left: auto;
 }
 
