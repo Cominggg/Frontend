@@ -226,7 +226,7 @@
 }
 
 /* 모바일 반응형 */
-@media (max-width: 480px) {
+@media (max-width: 767px) {
   .page {
     padding: 24px 16px 48px;
     align-items: flex-start;
