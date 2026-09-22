@@ -1,8 +1,9 @@
-import { useEffect, useRef, useState } from 'react'
+import { useState } from 'react'
 
 import useAuthStore, { SESSION_HINT } from '@/stores/authStore'
 import useLoginModalStore from '@/stores/loginModalStore'
 import { devLogin, getMe } from '@/services/authApi'
+import useModalA11y from '@/hooks/useModalA11y'
 import Logo from '@/components/ui/Logo'
 import styles from './LoginModal.module.css'
 
@@ -44,8 +45,6 @@ const PROVIDERS = [
     ),
   },
 ]
-
-const FOCUSABLE = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
 
 const LOGIN_REDIRECT_KEY = 'loginRedirectUri'
 
@@ -114,32 +113,7 @@ function DevLoginSection({ onSuccess }) {
 
 function LoginModal() {
   const { isOpen, close, redirectUri } = useLoginModalStore()
-  const modalRef = useRef(null)
-
-  useEffect(() => {
-    if (!isOpen) return
-
-    const modal = modalRef.current
-    const focusable = modal ? [...modal.querySelectorAll(FOCUSABLE)] : []
-    focusable[0]?.focus()
-
-    function handleKeyDown(e) {
-      if (e.key === 'Escape') {
-        close()
-        return
-      }
-      if (e.key !== 'Tab' || focusable.length === 0) return
-      const first = focusable[0]
-      const last = focusable[focusable.length - 1]
-      if (e.shiftKey) {
-        if (document.activeElement === first) { e.preventDefault(); last.focus() }
-      } else {
-        if (document.activeElement === last) { e.preventDefault(); first.focus() }
-      }
-    }
-    document.addEventListener('keydown', handleKeyDown)
-    return () => document.removeEventListener('keydown', handleKeyDown)
-  }, [isOpen, close])
+  const modalRef = useModalA11y(close, { isOpen })
 
   if (!isOpen) return null
 

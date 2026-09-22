@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { REPORT_REASON_LABEL } from '@/constants/post'
+import useModalA11y from '@/hooks/useModalA11y'
 import styles from './ReportModal.module.css'
 
 const REPORT_REASONS = Object.keys(REPORT_REASON_LABEL)
@@ -10,6 +11,7 @@ function ReportModal({ onClose, onSubmit }) {
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
   const [done, setDone] = useState(false)
+  const modalRef = useModalA11y(onClose, { contentKey: done })
 
   const detailRequired = reason === 'ETC'
   const canSubmit = !!reason && (!detailRequired || detail.trim().length > 0)
@@ -30,7 +32,7 @@ function ReportModal({ onClose, onSubmit }) {
 
   return (
     <div className={styles.overlay} onClick={onClose}>
-      <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+      <div className={styles.modal} role="dialog" aria-modal="true" aria-label="신고하기" onClick={(e) => e.stopPropagation()} ref={modalRef}>
         {done ? (
           <>
             <p className={styles.doneText}>신고가 접수되었습니다.</p>

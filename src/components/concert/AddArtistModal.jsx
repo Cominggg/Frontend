@@ -2,6 +2,7 @@ import { useState } from 'react'
 
 import ArtistAliasName from '@/components/artist/ArtistAliasName'
 import { searchDbArtists, addConcertArtist } from '@/services/adminApi'
+import useModalA11y from '@/hooks/useModalA11y'
 import styles from './AddArtistModal.module.css'
 
 function AddArtistModal({ concertId, onClose, onAdded, addFn = addConcertArtist }) {
@@ -10,6 +11,7 @@ function AddArtistModal({ concertId, onClose, onAdded, addFn = addConcertArtist 
   const [searching, setSearching] = useState(false)
   const [adding, setAdding] = useState(false)
   const [error, setError] = useState('')
+  const modalRef = useModalA11y(onClose, { contentKey: results.length })
 
   async function handleSearch(e) {
     e.preventDefault()
@@ -42,7 +44,7 @@ function AddArtistModal({ concertId, onClose, onAdded, addFn = addConcertArtist 
 
   return (
     <div className={styles.overlay} onClick={onClose}>
-      <div className={styles.addModal} onClick={(e) => e.stopPropagation()}>
+      <div className={styles.addModal} role="dialog" aria-modal="true" aria-label="아티스트 직접 지정" onClick={(e) => e.stopPropagation()} ref={modalRef}>
         <div className={styles.addModalHeader}>
           <h3 className={styles.addModalTitle}>아티스트 직접 지정</h3>
           <button className={styles.modalCloseBtn} onClick={onClose} aria-label="닫기">
@@ -58,7 +60,6 @@ function AddArtistModal({ concertId, onClose, onAdded, addFn = addConcertArtist 
             placeholder="아티스트명 검색"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            autoFocus
           />
           <button type="submit" className={styles.searchBtn} disabled={searching || !query.trim()}>
             {searching ? '검색 중...' : '검색'}
