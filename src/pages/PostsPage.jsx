@@ -26,7 +26,24 @@ const MIN_QUERY_LENGTH = 2
 function getEmptyMessage(urlQuery, isQueryTooShort) {
   if (isQueryTooShort) return `검색어는 ${MIN_QUERY_LENGTH}자 이상 입력해주세요.`
   if (urlQuery) return `'${urlQuery}'에 대한 검색 결과가 없습니다.`
-  return '아직 등록된 게시글이 없습니다.'
+  return '첫 게시글을 남겨보세요'
+}
+
+function SearchEmptyIcon() {
+  return (
+    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <circle cx="11" cy="11" r="8" />
+      <line x1="21" y1="21" x2="16.65" y2="16.65" />
+    </svg>
+  )
+}
+
+function PostsEmptyIcon() {
+  return (
+    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+    </svg>
+  )
 }
 
 function PostsPage() {
@@ -209,7 +226,7 @@ function PostsPage() {
             {showPinnedNotices && <PinnedNotices />}
 
             {isQueryTooShort ? (
-              <EmptyState message={getEmptyMessage(urlQuery, isQueryTooShort)} />
+              <EmptyState icon={<SearchEmptyIcon />} message={getEmptyMessage(urlQuery, isQueryTooShort)} />
             ) : isLoading ? (
               <div className={styles.list}>
                 {Array.from({ length: 8 }).map((_, i) => (
@@ -222,8 +239,14 @@ function PostsPage() {
                   <PostListItem key={post.id} post={post} />
                 ))}
               </div>
+            ) : urlQuery ? (
+              <EmptyState icon={<SearchEmptyIcon />} message={getEmptyMessage(urlQuery, isQueryTooShort)} />
             ) : (
-              <EmptyState message={getEmptyMessage(urlQuery, isQueryTooShort)} />
+              <EmptyState
+                icon={<PostsEmptyIcon />}
+                message={getEmptyMessage(urlQuery, isQueryTooShort)}
+                action={{ label: '첫 게시글 작성하기', onClick: handleWriteClick }}
+              />
             )}
 
             {!isLoading && !isQueryTooShort && totalPages > 1 && (
