@@ -141,11 +141,11 @@
 }
 
 .filterTab {
+  position: relative;
   flex-shrink: 0;
   display: inline-flex;
   align-items: center;
   gap: 0.3rem;
-  min-height: 44px;
   padding: 0.375rem 1rem;
   border-radius: var(--radius-full);
   font-size: 0.875rem;
@@ -155,6 +155,16 @@
   color: var(--color-text-muted);
   transition: border-color 0.15s, color 0.15s, background-color 0.15s;
   white-space: nowrap;
+}
+
+/* 시각 크기는 유지하고 히트 영역만 44px로 확장 (WCAG 2.5.5) */
+.filterTab::before {
+  content: '';
+  position: absolute;
+  top: -6.25px;
+  bottom: -6.25px;
+  left: 0;
+  right: 0;
 }
 
 .filterTab:hover {
