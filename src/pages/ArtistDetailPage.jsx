@@ -219,6 +219,12 @@ function ArtistDetailPage() {
   const dday = nextConcert ? calcDday(nextConcert.startDate) : null
   const showDday = dday !== null && dday >= 0
 
+  // 디스코그래피·공연 이력이 둘 다 없으면(전체 탭 기준) 개별 섹션 대신
+  // 통합 안내 하나로 압축 — 빈 섹션 문구가 연이어 나열되는 걸 방지한다.
+  const hasNoDiscography = !releasesLoading && releases.length === 0
+  const hasNoConcertHistory = !concertsLoading && concertTab === 'all' && concerts.length === 0
+  const showCombinedEmpty = hasNoDiscography && hasNoConcertHistory
+
   return (
     <>
     <div className={styles.page}>
@@ -334,6 +340,23 @@ function ArtistDetailPage() {
           </Link>
         )}
 
+        {/* 디스코그래피 · 내한 공연 내역이 둘 다 없으면 통합 안내로 압축 */}
+        {showCombinedEmpty ? (
+          <section className={styles.section}>
+            <EmptyState
+              compact
+              icon={(
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <circle cx="12" cy="12" r="10" />
+                  <line x1="12" y1="8" x2="12" y2="12" />
+                  <line x1="12" y1="16" x2="12.01" y2="16" />
+                </svg>
+              )}
+              message="아직 등록된 활동 정보가 없어요"
+            />
+          </section>
+        ) : (
+        <>
         {/* 디스코그래피 */}
         <section className={styles.section}>
           <h2 className={styles.sectionTitle}>
@@ -478,6 +501,8 @@ function ArtistDetailPage() {
             />
           )}
         </section>
+        </>
+        )}
 
         {/* 관련 게시글 */}
         <RelatedPostsSection entityType="ARTIST" entityId={id} limit={10} />
