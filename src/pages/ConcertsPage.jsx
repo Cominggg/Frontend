@@ -84,7 +84,7 @@ function ConcertsPage() {
   }
 
   const statusParam = selectedStatus === 'ALL' ? undefined : selectedStatus
-  // 티켓팅 예정만 필터 중엔 티켓 오픈 임박순, 공연예정·공연중은 공연일 임박순(오름차순), 그 외(전체·종료·취소)는 최신순(내림차순)
+  // 티켓팅 예정만 필터 중엔 티켓 오픈 임박순, 공연예정·공연기간은 공연일 임박순(오름차순), 그 외(전체·종료·취소)는 최신순(내림차순)
   const sortParam = ticketOpenPending
     ? 'ticketOpenAt,asc'
     : selectedStatus === 'UPCOMING' || selectedStatus === 'ONGOING'

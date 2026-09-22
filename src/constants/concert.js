@@ -8,7 +8,7 @@ export const CONCERT_STATUS_COLOR = {
 
 export const CONCERT_STATUS_LABEL = {
   UPCOMING:  '공연예정',
-  ONGOING:   '공연중',
+  ONGOING:   '공연기간',
   ENDED:     '공연완료',
   CANCELLED: '공연취소',
   EXCLUDED:  '제외',
