@@ -438,7 +438,7 @@
   margin: 0;
   padding: 0;
   border-top: 1px solid var(--color-border);
-  background: var(--color-surface-secondary, color-mix(in srgb, var(--color-surface) 60%, var(--color-bg)));
+  background: var(--color-surface-raised);
 }
 
 .trackItem {

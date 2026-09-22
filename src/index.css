@@ -73,6 +73,7 @@
   --color-bg: #fafafa;
   --color-surface: #ffffff;
   --color-surface-hover: #fef2f4;
+  --color-surface-raised: #f3f2f3;
   --color-border: #e5e5e5;
   --color-accent: #e11d48;
   --color-accent-light: #fb7185;
@@ -130,6 +131,7 @@
   --_dk-color-bg: #1c1c1e;
   --_dk-color-surface: #2c2c2e;
   --_dk-color-surface-hover: #3a3a3c;
+  --_dk-color-surface-raised: #343436;
   --_dk-color-border: #48484a;
   --_dk-color-text: #f0f0f0;
   --_dk-color-text-muted: #9ca3af;
@@ -154,6 +156,7 @@
     --color-bg: var(--_dk-color-bg);
     --color-surface: var(--_dk-color-surface);
     --color-surface-hover: var(--_dk-color-surface-hover);
+    --color-surface-raised: var(--_dk-color-surface-raised);
     --color-border: var(--_dk-color-border);
     --color-text: var(--_dk-color-text);
     --color-text-muted: var(--_dk-color-text-muted);
@@ -179,6 +182,7 @@ html[data-theme="dark"] {
   --color-bg: var(--_dk-color-bg);
   --color-surface: var(--_dk-color-surface);
   --color-surface-hover: var(--_dk-color-surface-hover);
+  --color-surface-raised: var(--_dk-color-surface-raised);
   --color-border: var(--_dk-color-border);
   --color-text: var(--_dk-color-text);
   --color-text-muted: var(--_dk-color-text-muted);

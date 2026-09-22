@@ -294,7 +294,7 @@
 .skeletonTitle,
 .skeletonDetail {
   border-radius: var(--radius-sm);
-  background: linear-gradient(90deg, var(--color-border) 25%, var(--color-surface-alt, #f0f0f0) 50%, var(--color-border) 75%);
+  background: linear-gradient(90deg, var(--color-border) 25%, var(--color-surface-hover) 50%, var(--color-border) 75%);
   background-size: 200% 100%;
   animation: shimmer 1.4s infinite;
 }
@@ -520,7 +520,7 @@
 .inquiryDetail {
   padding: 0.875rem 1.25rem 1rem;
   border-top: 1px solid var(--color-border);
-  background: var(--color-surface-raised, var(--color-surface));
+  background: var(--color-surface-raised);
   animation: inquiryDetailIn 0.18s ease;
 }
 
