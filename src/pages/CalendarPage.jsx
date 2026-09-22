@@ -7,6 +7,7 @@ import { getCalendar, addToCalendar, removeFromCalendar } from '@/services/calen
 import useAuthStore from '@/stores/authStore'
 import useLoginModalStore from '@/stores/loginModalStore'
 import { isSameDay } from '@/utils/date'
+import { hashStringToIndex } from '@/utils/artistColor'
 import usePageMeta from '@/hooks/usePageMeta'
 import styles from './CalendarPage.module.css'
 
@@ -56,9 +57,10 @@ function CalendarPage() {
 
   const colorMap = useMemo(() => {
     const map = {}
-    let idx = 0
     rawEvents.forEach((ev) => {
-      if (!(ev.concertId in map)) map[ev.concertId] = PALETTE[idx++ % PALETTE.length]
+      if (ev.concertId in map) return
+      const primaryArtistName = ev.artists?.[0]?.name ?? String(ev.concertId)
+      map[ev.concertId] = PALETTE[hashStringToIndex(primaryArtistName, PALETTE.length)]
     })
     return map
   }, [rawEvents])

@@ -6,7 +6,7 @@ import Badge from '@/components/ui/Badge'
 import StarRating from '@/components/ui/StarRating'
 import { ROUTES } from '@/constants/routes'
 import { formatDate } from '@/utils/date'
-import { getArtistColor } from '@/utils/colorPalette'
+import { getArtistColor } from '@/utils/artistColor'
 import styles from './ConcertCard.module.css'
 
 function getTicketDday(ticketOpenAt) {

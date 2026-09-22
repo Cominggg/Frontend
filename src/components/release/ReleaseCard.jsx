@@ -5,7 +5,7 @@ import ArtistAliasName from '@/components/artist/ArtistAliasName'
 import SpotifyIcon from '@/components/ui/SpotifyIcon'
 import StarRating from '@/components/ui/StarRating'
 import { ROUTES } from '@/constants/routes'
-import { getArtistColor } from '@/utils/colorPalette'
+import { getArtistColor } from '@/utils/artistColor'
 import { getSpotifyAlbumUrl } from '@/utils/spotify'
 import styles from './ReleaseCard.module.css'
 
