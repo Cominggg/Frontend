@@ -177,18 +177,38 @@
     margin-bottom: 3px;
   }
 
+  /* 셀 폭이 좁아 텍스트가 심하게 잘리므로, 텍스트 없이 아티스트
+     컬러 도트만 표시한다. 전체 이름은 날짜 탭 시 DayConcertList에서
+     확인한다. */
+  .events {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 3px;
+  }
+
   .pill {
-    padding: 2px 3px;
-    gap: 2px;
+    padding: 0;
+    gap: 0;
+    border-radius: 50%;
+    background: none;
   }
 
   .pillDot {
-    width: 5px;
-    height: 5px;
+    width: 7px;
+    height: 7px;
   }
 
   .pillText {
-    font-size: 0.625rem;
+    display: none;
+  }
+
+  .pillTicketing {
+    border: none;
+  }
+
+  .pillTicketIcon {
+    width: 12px;
+    height: 12px;
   }
 
   .more {
