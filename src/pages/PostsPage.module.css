@@ -144,6 +144,7 @@
   flex-shrink: 0;
   display: inline-flex;
   align-items: center;
+  gap: 0.3rem;
   min-height: 44px;
   padding: 0.375rem 1rem;
   border-radius: var(--radius-full);
@@ -159,6 +160,16 @@
 .filterTab:hover {
   border-color: var(--color-accent-border);
   color: var(--color-accent);
+}
+
+/* 인기글 — 사용자가 고르는 카테고리가 아닌 서버 임계치 기반 필터라 시각적으로 구분 */
+.filterTabPopular {
+  border-color: var(--color-accent-border);
+  color: var(--color-accent);
+}
+
+.filterTabIcon {
+  flex-shrink: 0;
 }
 
 .filterTabActive {

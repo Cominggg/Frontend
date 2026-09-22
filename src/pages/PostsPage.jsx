@@ -18,7 +18,7 @@ import useAuthStore from '@/stores/authStore'
 import useLoginModalStore from '@/stores/loginModalStore'
 import styles from './PostsPage.module.css'
 
-const CATEGORY_FILTERS = ['ALL', 'FREE', 'INFO', 'REVIEW', 'POPULAR']
+const CATEGORY_FILTERS = ['ALL', 'POPULAR', 'FREE', 'INFO', 'REVIEW']
 const CATEGORY_TAB_LABEL = { ALL: '전체', POPULAR: '인기글' }
 const ITEMS_PER_PAGE = 10
 const MIN_QUERY_LENGTH = 2
@@ -205,9 +205,14 @@ function PostsPage() {
                     key={c}
                     role="tab"
                     aria-selected={selectedCategory === c}
-                    className={`${styles.filterTab} ${selectedCategory === c ? styles.filterTabActive : ''}`}
+                    className={`${styles.filterTab} ${c === 'POPULAR' ? styles.filterTabPopular : ''} ${selectedCategory === c ? styles.filterTabActive : ''}`}
                     onClick={() => handleCategoryChange(c)}
                   >
+                    {c === 'POPULAR' && (
+                      <svg className={styles.filterTabIcon} width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                        <path d="M12 2c-.3 3-2 4.8-3.5 6.5C7 10 6 11.5 6 13.5 6 17.6 8.7 21 12 21s6-3.4 6-7.5c0-2.5-1.3-4.2-2.5-5.7.2 1.6-.3 2.7-1.2 3.2C14.8 8.5 15 5 12 2z" />
+                      </svg>
+                    )}
                     {CATEGORY_TAB_LABEL[c] ?? POST_CATEGORY_LABEL[c]}
                   </button>
                 ))}
