@@ -198,9 +198,16 @@
 .mobileNav {
   display: none;
   flex-direction: column;
+  position: fixed;
+  top: var(--header-height);
+  left: 0;
+  right: 0;
   padding: 0.5rem 1rem 1rem;
   border-top: 1px solid var(--color-border);
   background-color: var(--color-mobile-nav-bg);
+  max-height: calc(100svh - var(--header-height));
+  overflow-y: auto;
+  z-index: 90;
 }
 
 .mobileNavLink {
