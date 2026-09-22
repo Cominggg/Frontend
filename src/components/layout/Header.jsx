@@ -13,8 +13,8 @@ import styles from './Header.module.css'
 const NAV_LINKS = [
   { to: ROUTES.CONCERTS, label: '공연' },
   { to: ROUTES.ARTISTS, label: '아티스트' },
-  { to: ROUTES.CALENDAR, label: '캘린더' },
   { to: ROUTES.RELEASES, label: '음악' },
+  { to: ROUTES.CALENDAR, label: '캘린더' },
   { to: ROUTES.COMMUNITY, label: '커뮤니티' },
 ]
 

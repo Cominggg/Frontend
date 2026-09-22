@@ -20,7 +20,7 @@ import styles from './PostsPage.module.css'
 
 const CATEGORY_FILTERS = ['ALL', 'FREE', 'INFO', 'REVIEW', 'POPULAR']
 const CATEGORY_TAB_LABEL = { ALL: '전체', POPULAR: '인기글' }
-const ITEMS_PER_PAGE = 20
+const ITEMS_PER_PAGE = 10
 const MIN_QUERY_LENGTH = 2
 
 function getEmptyMessage(urlQuery, isQueryTooShort) {
