@@ -30,6 +30,22 @@
   --ticketing-available: #10b981;
   --ticketing-available-hover: #059669;
 
+  /* 티켓팅 임박도 레일 그라데이션 (가까운 일정 → 먼 일정) — 주황 계열 스케일.
+     레일 선처럼 배경 위에 "칠해지는" 용도라 far로 갈수록 밝게(옅게) 만들어도
+     무방하다. */
+  --ticketing-rail-near: var(--ticketing-upcoming);
+  --ticketing-rail-mid: #fb923c;
+  --ticketing-rail-far: #fed7aa;
+
+  /* 티켓팅 D-day 텍스트 전용 3단 톤 (근접 → 여유). 레일 색을 텍스트에 그대로 쓰면
+     라이트 모드 흰 배경에서 mid/far가 거의 안 보인다(대비 부족) — 대신 far로
+     갈수록 밝아지지 않고 채도를 낮춰 무채색에 가까운 톤으로 바뀌도록 설계해,
+     "덜 급함"을 명도가 아닌 채도로 표현하면서 라이트/다크 양쪽에서 대비를 유지한다.
+     기존 --ticketing-upcoming처럼 다크 모드 오버라이드 없이 동일 값 사용. */
+  --ticketing-dday-near: var(--ticketing-upcoming);
+  --ticketing-dday-mid: #d9731c;
+  --ticketing-dday-far: #a8785a;
+
   /* OAuth 브랜드 색상 (항상 고정, 다크 모드 미적용) */
   --oauth-google-text: #3c4043;
   --oauth-google-border: #dadce0;

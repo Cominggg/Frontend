@@ -26,6 +26,12 @@ function getDday(dateStr, today) {
   return null
 }
 
+// 패널 높이가 좌측 "인기 공연" 그리드 높이에 더 이상 종속되지 않고
+// (align-self:start, HomePage.module.css .mainZoneRight) 5건 + "전체 보기" 행이
+// 다 찼을 때의 콘텐츠 높이로 자연스럽게 정해지므로, 브레이크포인트별 노출
+// 개수를 따로 제한할 필요가 없다.
+const MAX_TICKETING_ITEMS = 5
+
 function getTicketUrgency(dday) {
   if (!dday || dday === '-') return 'normal'
   if (dday === 'D-DAY') return 'critical'
@@ -35,6 +41,71 @@ function getTicketUrgency(dday) {
   return 'normal'
 }
 
+// dot과 레일 세그먼트가 항상 같은 색을 쓰도록 하는 단일 소스.
+// 이전엔 dot은 urgency 기반 클래스(.timelineRowCritical 등)로, 레일은
+// 리스트 전체 길이에 대한 고정 위치(0/55/100%) 그라데이션으로 각각 따로
+// 색을 정해서, urgency와 위치가 어긋나면(예: 항목이 1~2건뿐이거나 normal
+// 구간이 위쪽에 몰린 경우) dot 색과 그 지점의 레일 색이 달라 보였다.
+function getUrgencyRailColor(urgency) {
+  if (urgency === 'critical') return 'var(--ticketing-rail-near)'
+  if (urgency === 'soon') return 'var(--ticketing-rail-mid)'
+  return 'var(--ticketing-rail-far)'
+}
+
+
+function TicketingTimelineRow({ concert, dday, urgency, nextUrgency }) {
+  const timeStr = concert.ticketOpenAt.includes('T')
+    ? concert.ticketOpenAt.split('T')[1].slice(0, 5)
+    : null
+  const rowClass = [
+    styles.timelineRow,
+    urgency === 'critical' && styles.timelineRowCritical,
+    urgency === 'soon' && styles.timelineRowSoon,
+  ].filter(Boolean).join(' ')
+
+  const color = getUrgencyRailColor(urgency)
+  // 이 행의 색 → 다음 행의 색으로 이어지는 세그먼트를 그려 레일이 실제
+  // 데이터를 따라 자연스럽게 이어지게 한다. 마지막 실제 항목 뒤로는
+  // (고스트/전체 보기 행) urgency 색 체계에 속하지 않는 중립 구간이라
+  // "다음 색"이 없는데, 이때도 세그먼트 자체는 계속 그려야 그 아래
+  // 고스트/전체 보기 dot까지 레일이 끊기지 않는다 — far(가장 옅은 톤)로
+  // 마무리해 "더 이상 급한 일정 없음"을 자연스럽게 표현한다.
+  const nextColor = nextUrgency ? getUrgencyRailColor(nextUrgency) : 'var(--ticketing-rail-far)'
+
+  return (
+    <Link to={ROUTES.CONCERT_DETAIL(concert.id)} className={rowClass}>
+      <span className={styles.timelineRail} aria-hidden="true">
+        <span className={styles.timelineDot} style={{
+          background: color,
+          boxShadow: urgency === 'critical'
+            ? `0 0 0 3px color-mix(in srgb, ${color} 22%, transparent)`
+            : 'none',
+        }} />
+        <span
+          className={styles.timelineRailSegment}
+          style={{ background: `linear-gradient(to bottom, ${color}, ${nextColor})` }}
+        />
+      </span>
+      <span className={styles.timelineInfo}>
+        <span className={styles.timelineTop}>
+          <span className={styles.timelineDday}>{dday ?? '-'}</span>
+          <span className={styles.timelineArtist}>
+            {(concert.artists ?? []).map((a, i) => (
+              <span key={a.artistId ?? i}>
+                {i > 0 && ' · '}
+                <ArtistAliasName name={a.name} koreanName={a.koreanName} />
+              </span>
+            ))}
+          </span>
+        </span>
+        <p className={styles.timelineTitle}>{concert.title}</p>
+        <p className={styles.timelineMeta}>
+          {formatDate(concert.ticketOpenAt.split('T')[0])}{timeStr ? ` ${timeStr}` : ''} 오픈 · {concert.venue}
+        </p>
+      </span>
+    </Link>
+  )
+}
 
 function AlbumCard({ item }) {
   const [imgFailed, setImgFailed] = useState(false)
@@ -106,8 +177,14 @@ function HomePage() {
 
   const upcomingConcerts = upcomingData?.content ?? []
   const newReleases = releasesData?.content ?? []
+  const displayedTicketing = ticketingConcerts.slice(0, MAX_TICKETING_ITEMS)
+  // 레일 세그먼트 색을 이 배열의 urgency로부터 직접 계산해 dot과 항상 같은
+  // 소스를 쓰게 한다 (TicketingTimelineRow의 nextUrgency 참고).
+  const ticketingItems = displayedTicketing.map((concert) => {
+    const dday = getDday(concert.ticketOpenAt.split('T')[0], today)
+    return { concert, dday, urgency: getTicketUrgency(dday) }
+  })
 
-  const ticketCardUrgencyClass = { critical: styles.ticketCardCritical, soon: styles.ticketCardSoon }
   const ddayUrgencyClass = { soon: styles.upcomingListDdaySoon, critical: styles.upcomingListDdayCritical }
 
   return (
@@ -160,58 +237,69 @@ function HomePage() {
             </div>
             <div className={styles.ticketingPanel}>
               {ticketingLoading ? (
-                <div className={styles.ticketingPanelList}>
+                <div className={styles.timelineList}>
                   {Array.from({ length: 3 }).map((_, i) => (
-                    <div key={i} className={styles.ticketCardSkeleton}>
-                      <div className={styles.ticketSkeletonDday} />
-                      <div className={styles.ticketSkeletonInfo}>
-                        <div className={styles.ticketSkeletonLine} />
-                        <div className={`${styles.ticketSkeletonLine} ${styles.ticketSkeletonLineLg}`} />
-                        <div className={`${styles.ticketSkeletonLine} ${styles.ticketSkeletonLineSm}`} />
-                      </div>
+                    <div key={i} className={styles.timelineSkeletonRow}>
+                      <span className={styles.timelineSkeletonRail}>
+                        <span className={styles.timelineSkeletonDot} />
+                        <span className={styles.timelineSkeletonLine} />
+                      </span>
+                      <span className={styles.timelineSkeletonInfo}>
+                        <span className={styles.timelineSkeletonText} style={{ width: '30%' }} />
+                        <span className={styles.timelineSkeletonText} style={{ width: '80%', height: 12 }} />
+                        <span className={styles.timelineSkeletonText} style={{ width: '55%' }} />
+                      </span>
                     </div>
                   ))}
                 </div>
-              ) : ticketingConcerts.length === 0 ? (
-                <div className={styles.ticketingEmpty}>
-                  <div className={styles.ticketingEmptyIcon} aria-hidden="true">
-                    <Icon name="calendar" size={20} />
+              ) : displayedTicketing.length === 0 ? (
+                <div className={styles.ticketingEmptyCentered}>
+                  <div className={styles.ticketingEmptyRing} aria-hidden="true">
+                    <Icon name="calendar" size={18} />
                   </div>
-                  <p className={styles.ticketingEmptyText}>현재 티켓팅 일정이 없어요</p>
+                  <p className={styles.ticketingEmptyTitle}>가까운 티켓팅 일정이 없어요</p>
+                  <p className={styles.ticketingEmptySub}>새 예매가 열리면 이곳에 표시돼요</p>
+                  <Link to={ROUTES.CALENDAR} className={styles.ticketingEmptyCta}>
+                    캘린더에서 전체 일정 보기
+                    <Icon name="chevronRight" size={14} />
+                  </Link>
                 </div>
               ) : (
-                <div className={styles.ticketingPanelList}>
-                  {ticketingConcerts.slice(0, 5).map((concert) => {
-                    const dday = getDday(concert.ticketOpenAt.split('T')[0], today)
-                    const urgency = getTicketUrgency(dday)
-                    const timeStr = concert.ticketOpenAt.includes('T')
-                      ? concert.ticketOpenAt.split('T')[1].slice(0, 5)
-                      : null
-                    return (
-                      <Link
-                        key={concert.id}
-                        to={ROUTES.CONCERT_DETAIL(concert.id)}
-                        className={[styles.ticketCard, ticketCardUrgencyClass[urgency]].filter(Boolean).join(' ')}
-                      >
-                        <div className={styles.ticketDday}>{dday ?? '-'}</div>
-                        <div className={styles.ticketInfo}>
-                          <p className={styles.ticketArtist}>
-                            {(concert.artists ?? []).map((a, i) => (
-                              <span key={a.artistId ?? i}>
-                                {i > 0 && ' · '}
-                                <ArtistAliasName name={a.name} koreanName={a.koreanName} />
-                              </span>
-                            ))}
-                          </p>
-                          <p className={styles.ticketTitle}>{concert.title}</p>
-                          <p className={styles.ticketOpenDate}>
-                            <Icon name="calendar" size={12} />
-                            티켓 오픈 {formatDate(concert.ticketOpenAt.split('T')[0])}{timeStr ? ` ${timeStr}` : ''}
-                          </p>
-                        </div>
-                      </Link>
-                    )
-                  })}
+                <div className={styles.timelineList}>
+                  {ticketingItems.map((item, i) => (
+                    <TicketingTimelineRow
+                      key={item.concert.id}
+                      concert={item.concert}
+                      dday={item.dday}
+                      urgency={item.urgency}
+                      nextUrgency={ticketingItems[i + 1]?.urgency ?? null}
+                    />
+                  ))}
+                  {displayedTicketing.length < 3 && (
+                    <div className={styles.timelineRow}>
+                      <span className={`${styles.timelineRail} ${styles.timelineRailSingle}`} aria-hidden="true">
+                        <span className={styles.timelineRailSegment} style={{ background: 'var(--ticketing-rail-far)' }} />
+                        <span className={`${styles.timelineDot} ${styles.timelineDotGhost}`} />
+                        <span className={styles.timelineRailSegment} style={{ background: 'var(--ticketing-rail-far)' }} />
+                      </span>
+                      <span className={styles.timelineInfo}>
+                        <p className={styles.timelineGhostText}>다음 티켓 오픈을 기다리는 중</p>
+                      </span>
+                    </div>
+                  )}
+                  <Link to={ROUTES.CALENDAR} className={`${styles.timelineRow} ${styles.timelineCtaRow}`}>
+                    <span className={`${styles.timelineRail} ${styles.timelineRailSingle}`} aria-hidden="true">
+                      <span className={styles.timelineRailSegment} style={{ background: 'var(--ticketing-rail-far)' }} />
+                      <span className={`${styles.timelineDot} ${styles.timelineDotCta}`} />
+                      <span className={styles.timelineRailSpacer} />
+                    </span>
+                    <span className={styles.timelineInfo}>
+                      <span className={styles.timelineCtaText}>
+                        전체 일정 보기
+                        <Icon name="chevronRight" size={12} />
+                      </span>
+                    </span>
+                  </Link>
                 </div>
               )}
             </div>
