@@ -59,6 +59,7 @@
   color: var(--color-text-muted);
   line-height: 1.5;
   margin: 0;
+  word-break: keep-all;
 }
 
 .buttons {
@@ -190,6 +191,26 @@
 }
 
 @media (max-width: 767px) {
+  .overlay {
+    align-items: flex-end;
+    padding: 0;
+  }
+
+  .modal {
+    max-width: none;
+    max-height: 90vh;
+    overflow-y: auto;
+    border-radius: 20px 20px 0 0;
+    border-bottom: none;
+  }
+
+  .closeBtn {
+    top: calc(1rem - 6px);
+    right: calc(1rem - 6px);
+    width: 44px;
+    height: 44px;
+  }
+
   .devInput {
     font-size: 16px;
   }

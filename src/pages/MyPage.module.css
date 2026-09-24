@@ -940,6 +940,25 @@
     font-size: 16px;
   }
 
+  .modalOverlay {
+    align-items: flex-end;
+    padding: 0;
+  }
+
+  .modalBox {
+    max-width: none;
+    max-height: 90vh;
+    overflow-y: auto;
+    border-radius: 20px 20px 0 0;
+  }
+
+  .modalCloseBtn {
+    top: calc(1rem - 6px);
+    right: calc(1rem - 6px);
+    width: 44px;
+    height: 44px;
+  }
+
   .artistRow {
     padding: 0.875rem 1rem;
   }

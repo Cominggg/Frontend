@@ -151,3 +151,26 @@
 
 .btnPrimary:hover:not(:disabled) { opacity: 0.85; }
 .btnPrimary:disabled { opacity: 0.4; cursor: default; }
+
+@media (max-width: 767px) {
+  .overlay {
+    align-items: flex-end;
+    padding: 0;
+  }
+
+  .modal {
+    max-width: none;
+    max-height: 90vh;
+    overflow-y: auto;
+    border-radius: 20px 20px 0 0;
+  }
+
+  .closeBtn {
+    padding: 13px;
+    margin: -13px;
+  }
+
+  .detailInput {
+    font-size: 16px;
+  }
+}
