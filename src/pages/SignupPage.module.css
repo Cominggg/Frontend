@@ -269,6 +269,11 @@
     padding: 13px;
     margin: -13px;
   }
+
+  .termViewBtn {
+    padding: 10px 4px;
+    margin: -10px -4px;
+  }
 }
 
 /* 약관 전문 모달 */
