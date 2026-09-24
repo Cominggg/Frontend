@@ -210,6 +210,21 @@
   z-index: 90;
 }
 
+.mobileNavScrim {
+  display: none;
+  position: fixed;
+  top: var(--header-height);
+  left: 0;
+  right: 0;
+  /* backdrop-filter가 걸린 .header가 fixed 자손의 containing block이 되므로
+     bottom:0 대신 뷰포트 단위로 높이를 직접 계산 */
+  height: calc(100svh - var(--header-height));
+  background-color: rgba(0, 0, 0, 0.45);
+  z-index: 89;
+  border: none;
+  padding: 0;
+}
+
 .mobileNavLink {
   padding: 0.75rem 0.5rem;
   font-size: 1rem;
@@ -255,9 +270,13 @@
     display: none;
   }
 
-  .loginBtn,
   .avatarWrapper {
     display: none;
+  }
+
+  .loginBtn {
+    padding: 0.375rem 0.75rem;
+    font-size: 0.8125rem;
   }
 
   /* margin-left: auto는 .actions가 가져가므로 hamburger는 0으로 리셋 */
@@ -268,5 +287,9 @@
 
   .mobileNav {
     display: flex;
+  }
+
+  .mobileNavScrim {
+    display: block;
   }
 }

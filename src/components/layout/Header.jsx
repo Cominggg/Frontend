@@ -183,6 +183,14 @@ function Header() {
       </div>
 
       {menuOpen && (
+        <button
+          type="button"
+          className={styles.mobileNavScrim}
+          onClick={() => setMenuOpen(false)}
+          aria-label="메뉴 닫기"
+        />
+      )}
+      {menuOpen && (
         <nav className={styles.mobileNav}>
           {NAV_LINKS.map(({ to, label }) => (
             <NavLink
