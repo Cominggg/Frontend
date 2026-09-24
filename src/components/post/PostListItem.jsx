@@ -23,9 +23,7 @@ function PostListItem({ post }) {
       <div className={styles.bottomRow}>
         <div className={styles.meta}>
           <span className={styles.author}>{authorNickname ?? '탈퇴 회원'}</span>
-          <span className={styles.dot} aria-hidden="true">·</span>
           <span className={styles.date}>{formatPostDate(createdAt)}</span>
-          <span className={styles.dot} aria-hidden="true">·</span>
           <span className={styles.stat}>
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
               <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z" />
@@ -42,7 +40,6 @@ function PostListItem({ post }) {
         </div>
         {visibleTags.length > 0 && (
           <div className={styles.tags}>
-            <span className={styles.dot} aria-hidden="true">·</span>
             {visibleTags.map((tag) => (
               <span key={`${tag.entityType}:${tag.entityId}`} className={styles.tagChip}>
                 {MENTION_TYPE_LABEL[tag.entityType]} · {tag.title}
