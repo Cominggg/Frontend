@@ -10,6 +10,7 @@ import PostListItem from '@/components/post/PostListItem'
 import PostListItemSkeleton from '@/components/post/PostListItemSkeleton'
 import PostsSidebar from '@/components/post/sidebar/PostsSidebar'
 import usePageMeta from '@/hooks/usePageMeta'
+import useHorizontalWheelGuard from '@/hooks/useHorizontalWheelGuard'
 import { getPosts, getPopularBoardPosts, getSearch } from '@/services/postApi'
 import { ROUTES } from '@/constants/routes'
 import { POST_CATEGORY_LABEL } from '@/constants/post'
@@ -67,6 +68,7 @@ function PostsPage() {
   const isSearching = !!urlQuery && !isQueryTooShort
   const isPopular = selectedCategory === 'POPULAR'
   const showPinnedNotices = selectedCategory === 'ALL' && currentPage === 1 && !urlQuery
+  const filterBarRef = useHorizontalWheelGuard()
 
   usePageMeta({
     title: '커뮤니티 - 커밍',
@@ -198,7 +200,7 @@ function PostsPage() {
         <div className={styles.layout}>
           <div className={styles.toolbar}>
             {!urlQuery && (
-              <div className={styles.filterBar} role="tablist" aria-label="카테고리 필터">
+              <div ref={filterBarRef} className={styles.filterBar} role="tablist" aria-label="카테고리 필터">
                 {CATEGORY_FILTERS.map((c) => (
                   <button
                     key={c}

@@ -1,6 +1,7 @@
 import { NavLink, Outlet } from 'react-router-dom'
 
 import { ROUTES } from '@/constants/routes'
+import useHorizontalWheelGuard from '@/hooks/useHorizontalWheelGuard'
 import styles from './AdminLayout.module.css'
 
 const NAV_ITEMS = [
@@ -86,6 +87,8 @@ const NAV_ITEMS = [
 ]
 
 function AdminLayout() {
+  const navRef = useHorizontalWheelGuard()
+
   return (
     <div className={styles.layout}>
       <aside className={styles.sidebar}>
@@ -93,7 +96,7 @@ function AdminLayout() {
           <span className={styles.adminBadge}>ADMIN</span>
           <p className={styles.sidebarTitle}>관리자 콘솔</p>
         </div>
-        <nav className={styles.nav}>
+        <nav ref={navRef} className={styles.nav}>
           {NAV_ITEMS.map((item) => (
             <NavLink
               key={item.to}

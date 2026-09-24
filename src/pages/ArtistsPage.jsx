@@ -11,6 +11,7 @@ import { getArtists } from '@/services/artistApi'
 import useAuthStore from '@/stores/authStore'
 import useLoginModalStore from '@/stores/loginModalStore'
 import usePageMeta from '@/hooks/usePageMeta'
+import useHorizontalWheelGuard from '@/hooks/useHorizontalWheelGuard'
 import { trackEvent } from '@/utils/analytics'
 import styles from './ArtistsPage.module.css'
 
@@ -38,6 +39,7 @@ function ArtistsPage() {
   const user = useAuthStore((s) => s.user)
   const openLoginModal = useLoginModalStore((s) => s.open)
   const effectiveFollowedOnly = followedOnly && !!user
+  const filterBarRef = useHorizontalWheelGuard()
 
   usePageMeta({
     title: '아티스트 - 커밍',
@@ -197,7 +199,7 @@ function ArtistsPage() {
 
         {/* 필터 행 */}
         <div className={styles.filterRow}>
-          <div className={styles.filterBar} role="tablist" aria-label="아티스트 필터">
+          <div ref={filterBarRef} className={styles.filterBar} role="tablist" aria-label="아티스트 필터">
             <button
               role="tab"
               aria-selected={!isComing}

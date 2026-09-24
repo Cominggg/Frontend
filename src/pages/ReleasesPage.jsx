@@ -11,6 +11,7 @@ import { getReleases } from '@/services/releaseApi'
 import useAuthStore from '@/stores/authStore'
 import useLoginModalStore from '@/stores/loginModalStore'
 import usePageMeta from '@/hooks/usePageMeta'
+import useHorizontalWheelGuard from '@/hooks/useHorizontalWheelGuard'
 import { trackEvent } from '@/utils/analytics'
 import styles from './ReleasesPage.module.css'
 
@@ -35,6 +36,7 @@ function ReleasesPage() {
   const user = useAuthStore((s) => s.user)
   const openLoginModal = useLoginModalStore((s) => s.open)
   const effectiveFollowedOnly = followedOnly && !!user
+  const filterBarRef = useHorizontalWheelGuard()
 
   usePageMeta({
     title: '음악 - 커밍',
@@ -175,7 +177,7 @@ function ReleasesPage() {
 
         {/* 타입 필터 + 관심 아티스트 토글 */}
         <div className={styles.filterRow}>
-          <div className={styles.filterBar} role="tablist" aria-label="음반 타입 필터">
+          <div ref={filterBarRef} className={styles.filterBar} role="tablist" aria-label="음반 타입 필터">
             {TYPE_FILTERS.map((t) => (
               <button
                 key={t}

@@ -12,6 +12,7 @@ import { getConcerts } from '@/services/concertApi'
 import useAuthStore from '@/stores/authStore'
 import useLoginModalStore from '@/stores/loginModalStore'
 import usePageMeta from '@/hooks/usePageMeta'
+import useHorizontalWheelGuard from '@/hooks/useHorizontalWheelGuard'
 import { trackEvent } from '@/utils/analytics'
 import styles from './ConcertsPage.module.css'
 
@@ -44,6 +45,7 @@ function ConcertsPage() {
   const user = useAuthStore((s) => s.user)
   const openLoginModal = useLoginModalStore((s) => s.open)
   const effectiveFollowedOnly = followedOnly && !!user
+  const filterBarRef = useHorizontalWheelGuard()
 
   usePageMeta({
     title: 'Jpop 내한일정 - 커밍',
@@ -187,7 +189,7 @@ function ConcertsPage() {
 
         {/* 공연 상태 필터 + 관심 아티스트 토글 */}
         <div className={styles.filterRow}>
-          <div className={styles.filterBar} role="tablist" aria-label="공연 상태 필터">
+          <div ref={filterBarRef} className={styles.filterBar} role="tablist" aria-label="공연 상태 필터">
             {STATUS_FILTERS.map((s) => (
               <button
                 key={s}
