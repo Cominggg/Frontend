@@ -190,4 +190,13 @@
   .monthTitle {
     font-size: 1.125rem;
   }
+
+  .navBtn {
+    width: 40px;
+    height: 40px;
+  }
+
+  .todayBtn {
+    height: 40px;
+  }
 }

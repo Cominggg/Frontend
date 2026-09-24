@@ -924,7 +924,16 @@
 
   .profileEditBtn {
     font-size: 0.75rem;
-    padding: 0.375rem 0.75rem;
+    padding: 0.625rem 0.875rem;
+  }
+
+  .tabs {
+    mask-image: linear-gradient(to right, black calc(100% - 28px), transparent 100%);
+    -webkit-mask-image: linear-gradient(to right, black calc(100% - 28px), transparent 100%);
+  }
+
+  .unfollowBtn {
+    padding: 0.625rem 0.875rem;
   }
 
   .artistRow {
