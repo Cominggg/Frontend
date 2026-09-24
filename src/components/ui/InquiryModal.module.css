@@ -313,4 +313,9 @@
   .successActions {
     flex-direction: column;
   }
+
+  .input,
+  .textarea {
+    font-size: 16px;
+  }
 }

@@ -224,4 +224,8 @@
     mask-image: linear-gradient(to right, black calc(100% - 28px), transparent 100%);
     -webkit-mask-image: linear-gradient(to right, black calc(100% - 28px), transparent 100%);
   }
+
+  .searchInput {
+    font-size: 16px;
+  }
 }

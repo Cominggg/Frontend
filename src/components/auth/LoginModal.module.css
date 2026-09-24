@@ -188,3 +188,9 @@
   font-size: 0.8125rem;
   color: var(--color-destructive);
 }
+
+@media (max-width: 767px) {
+  .devInput {
+    font-size: 16px;
+  }
+}
