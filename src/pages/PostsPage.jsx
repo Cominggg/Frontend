@@ -162,7 +162,6 @@ function PostsPage() {
 
         <div className={styles.pageHeader}>
           <h1 className={styles.pageTitle}>커뮤니티</h1>
-          <p className={styles.pageDesc}>자유 · 정보 · 후기를 나누는 Jpop 팬 공간이에요</p>
         </div>
 
         {/* 게시글 통합 검색 — 제목/본문/멘션 태그를 함께 찾아 같은 목록에 표시 */}

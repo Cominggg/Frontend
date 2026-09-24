@@ -47,12 +47,6 @@
   letter-spacing: -0.02em;
 }
 
-.pageDesc {
-  margin: 0;
-  font-size: 0.8125rem;
-  color: var(--color-text-muted);
-}
-
 /* ── 게시글 검색 (통합 검색 진입점) ── */
 .searchWrap {
   position: relative;
