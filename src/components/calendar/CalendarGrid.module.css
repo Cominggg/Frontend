@@ -167,7 +167,7 @@
   .cell {
     height: 100px;
     overflow: hidden;
-    padding: 6px 3px 4px;
+    padding: 6px 2px 4px;
   }
 
   .num {
@@ -178,8 +178,8 @@
   }
 
   .pill {
-    padding: 1px 4px;
-    gap: 3px;
+    padding: 1px 3px;
+    gap: 2px;
   }
 
   .pillDot {
@@ -188,7 +188,7 @@
   }
 
   .pillText {
-    font-size: 0.5625rem;
+    font-size: 0.625rem;
   }
 
   .pillTicketIcon {
