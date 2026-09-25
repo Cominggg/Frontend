@@ -172,6 +172,21 @@
   background-color: var(--color-surface-hover);
 }
 
+.dropdownToggleRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.625rem 1rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.dropdownToggleLabel {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-text);
+}
+
 /* 햄버거 (모바일) */
 .hamburger {
   display: none;
@@ -195,7 +210,9 @@
   transition: transform 0.2s, opacity 0.2s;
 }
 
-/* 모바일 드로어 네비 */
+/* 모바일 드로어 네비 — 드로어 배경 자체가 하나의 표면이라, 그 위에
+   박스를 또 얹지 않고(카드 중첩 금지) 여백·소제목·헤어라인만으로 구분한다.
+   (참고: Toss/Spotify/Apple/에브리타임의 모바일 메뉴가 공통적으로 이 방식) */
 .mobileNav {
   display: none;
   flex-direction: column;
@@ -203,12 +220,81 @@
   top: var(--header-height);
   left: 0;
   right: 0;
-  padding: 0.5rem 1rem 1rem;
-  border-top: 1px solid var(--color-border);
+  padding: 1rem 1.25rem 1.5rem;
   background-color: var(--color-mobile-nav-bg);
   max-height: calc(100svh - var(--header-height));
   overflow-y: auto;
   z-index: 90;
+}
+
+/* 구분선은 섹션(종류)이 바뀔 때만 — 같은 종류의 배열 안에서는 표시하지 않는다.
+   여백을 더 주지 않고 각 행이 이미 가진 상하 패딩 사이에 선만 겹쳐 그려서
+   항목 간 거리가 종류와 무관하게 항상 동일하게 유지되도록 한다. */
+.mobileNav > * + * {
+  border-top: 1px solid var(--color-border);
+}
+
+/* 로그인 상태 요약 (닉네임) — 다른 행들과 동일한 상하 패딩으로 리듬을 맞춘다 */
+.mobileNavUser {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  padding: 0.75rem 0.25rem;
+}
+
+.mobileNavAvatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: var(--color-accent);
+  color: var(--color-on-accent);
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+.mobileNavUserName {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--color-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 네비 링크 / 계정 액션 섹션 — 배경·테두리 없는 플랫 리스트 */
+.mobileNavSection {
+  display: flex;
+  flex-direction: column;
+}
+
+/* 로그인 CTA — 유일한 강조 요소라 채워진 버튼으로 존재감을 준다 */
+.mobileNavLoginBtn {
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-on-accent);
+  background-color: var(--color-accent);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  text-align: center;
+  cursor: pointer;
+}
+
+/* 로그아웃 — 유일한 강조 요소인 로그인 버튼과 달리, 목록과 분리만 하고 강조는 주지 않는다 */
+.mobileNavLogoutBtn {
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  background-color: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  text-align: center;
+  cursor: pointer;
 }
 
 .mobileNavScrim {
@@ -227,33 +313,36 @@
 }
 
 .mobileNavLink {
-  padding: 0.75rem 0.5rem;
+  padding: 0.75rem 0.25rem;
   font-size: 1rem;
   font-weight: 500;
   color: var(--color-text-muted);
   text-decoration: none;
-  border-bottom: 1px solid var(--color-border);
-}
-
-.mobileNavLink:last-child {
-  border-bottom: none;
 }
 
 .mobileNavAction {
-  padding: 0.75rem 0.5rem;
+  padding: 0.75rem 0.25rem;
   font-size: 1rem;
   font-weight: 500;
   color: var(--color-text-muted);
   background: transparent;
   border: none;
-  border-bottom: 1px solid var(--color-border);
   text-align: left;
   cursor: pointer;
   width: 100%;
 }
 
-.mobileNavAction:last-child {
-  border-bottom: none;
+.mobileNavToggleRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 0.25rem;
+}
+
+.mobileNavToggleLabel {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
 }
 
 .mobileNavLink.active {
@@ -280,16 +369,9 @@
     display: none;
   }
 
+  /* 다크 모드 토글은 햄버거 드로어 안으로 이동 — 헤더 바에는 노출하지 않음 */
   .themeBtn {
-    width: 36px;
-    height: 36px;
-    border: none;
-  }
-
-  .themeBtn::before {
-    content: '';
-    position: absolute;
-    inset: -4px;
+    display: none;
   }
 
   /* margin-left: auto는 .actions가 가져가므로 hamburger는 0으로 리셋 */
