@@ -111,7 +111,10 @@
   display: flex;
   gap: 0.5rem;
   overflow-x: auto;
-  padding-bottom: 0.25rem;
+  /* overflow가 y축까지 잘라내므로, 44px로 확장한 탭 히트 영역(::before, 상하 6.25px)이
+     잘리지 않게 상하 여백을 확보하고 음수 margin으로 기존 레이아웃 높이를 유지한다. */
+  padding-block: 6.25px;
+  margin-block: -6.25px -2.25px;
   scrollbar-width: none;
   flex: 1;
   min-width: 0;

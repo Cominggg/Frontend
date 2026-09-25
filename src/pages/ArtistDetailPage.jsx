@@ -110,7 +110,7 @@ function ArtistDetailPage() {
     image: artist?.imageUrl,
   })
 
-  const { data: concertsData, isLoading: concertsLoading } = useQuery({
+  const { data: concertsData, isLoading: concertsLoading, isPlaceholderData: concertsIsPlaceholder } = useQuery({
     queryKey: ['artist-concerts', artistId, concertTab, concertPage],
     queryFn: () => getArtistConcerts(artistId, { tab: concertTab, page: concertPage - 1, size: CONCERT_PAGE_SIZE }),
     enabled: !!artist,
@@ -124,7 +124,7 @@ function ArtistDetailPage() {
     enabled: !!artist?.hasUpcomingConcert,
   })
 
-  const { data: releasesData, isLoading: releasesLoading } = useQuery({
+  const { data: releasesData, isLoading: releasesLoading, isPlaceholderData: releasesIsPlaceholder } = useQuery({
     queryKey: ['artist-releases', artistId, releasePage],
     queryFn: () => getArtistReleases(artistId, { page: releasePage - 1, size: RELEASE_PAGE_SIZE }),
     enabled: !!artist,
@@ -221,8 +221,9 @@ function ArtistDetailPage() {
 
   // 디스코그래피·공연 이력이 둘 다 없으면(전체 탭 기준) 개별 섹션 대신
   // 통합 안내 하나로 압축 — 빈 섹션 문구가 연이어 나열되는 걸 방지한다.
-  const hasNoDiscography = !releasesLoading && releases.length === 0
-  const hasNoConcertHistory = !concertsLoading && concertTab === 'all' && concerts.length === 0
+  // placeholderData는 이전 결과라서(예: 빈 '지난 공연' 탭 → '전체' 전환 직후) 판정에서 뺀다.
+  const hasNoDiscography = !releasesLoading && !releasesIsPlaceholder && releases.length === 0
+  const hasNoConcertHistory = !concertsLoading && !concertsIsPlaceholder && concertTab === 'all' && concerts.length === 0
   const showCombinedEmpty = hasNoDiscography && hasNoConcertHistory
 
   return (

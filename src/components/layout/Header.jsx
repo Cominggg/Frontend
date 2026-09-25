@@ -252,7 +252,7 @@ function Header() {
           <div className={styles.mobileNavSection}>
             <div className={styles.mobileNavToggleRow}>
               <span className={styles.mobileNavToggleLabel}>다크 모드</span>
-              <Switch checked={theme === 'dark'} onChange={toggleTheme} ariaLabel={themeLabel} />
+              <Switch checked={theme === 'dark'} onChange={toggleTheme} ariaLabel="다크 모드" />
             </div>
           </div>
 

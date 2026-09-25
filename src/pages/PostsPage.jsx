@@ -25,9 +25,11 @@ const CATEGORY_TAB_LABEL = { ALL: '전체', POPULAR: '인기글' }
 const ITEMS_PER_PAGE = 10
 const MIN_QUERY_LENGTH = 2
 
-function getEmptyMessage(urlQuery, isQueryTooShort) {
+function getEmptyMessage(urlQuery, isQueryTooShort, category = 'ALL') {
   if (isQueryTooShort) return `검색어는 ${MIN_QUERY_LENGTH}자 이상 입력해주세요.`
   if (urlQuery) return `'${urlQuery}'에 대한 검색 결과가 없습니다.`
+  if (category === 'POPULAR') return '아직 인기글이 없어요'
+  if (POST_CATEGORY_LABEL[category]) return `첫 ${POST_CATEGORY_LABEL[category]} 게시글을 남겨보세요`
   return '첫 게시글을 남겨보세요'
 }
 
@@ -247,10 +249,11 @@ function PostsPage() {
             ) : urlQuery ? (
               <EmptyState icon={<SearchEmptyIcon />} message={getEmptyMessage(urlQuery, isQueryTooShort)} />
             ) : (
+              // 인기글은 작성으로 바로 생기지 않으므로 작성 유도 버튼을 두지 않는다.
               <EmptyState
                 icon={<PostsEmptyIcon />}
-                message={getEmptyMessage(urlQuery, isQueryTooShort)}
-                action={{ label: '첫 게시글 작성하기', onClick: handleWriteClick }}
+                message={getEmptyMessage(urlQuery, isQueryTooShort, selectedCategory)}
+                action={isPopular ? undefined : { label: '첫 게시글 작성하기', onClick: handleWriteClick }}
               />
             )}
 

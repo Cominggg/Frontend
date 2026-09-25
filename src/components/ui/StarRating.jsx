@@ -15,7 +15,11 @@ function Star() {
 
 function pickScore(e, starIndex) {
   const rect = e.currentTarget.getBoundingClientRect()
-  const isHalf = e.clientX - rect.left < rect.width / 2
+  const x = e.clientX - rect.left
+  // 모바일에선 확장 히트 영역(::before)이 이웃 별과 겹쳐 뒤쪽 별이 이벤트를 받는다.
+  // 별 본체보다 왼쪽을 눌렀다면 앞 별의 만점으로 본다.
+  if (x < 0) return Math.max(0.5, starIndex)
+  const isHalf = x < rect.width / 2
   return isHalf ? starIndex + 0.5 : starIndex + 1
 }
 

@@ -38,13 +38,12 @@
   --ticketing-rail-far: #fed7aa;
 
   /* 티켓팅 D-day 텍스트 전용 3단 톤 (근접 → 여유). 레일 색을 텍스트에 그대로 쓰면
-     라이트 모드 흰 배경에서 mid/far가 거의 안 보인다(대비 부족) — 대신 far로
-     갈수록 밝아지지 않고 채도를 낮춰 무채색에 가까운 톤으로 바뀌도록 설계해,
-     "덜 급함"을 명도가 아닌 채도로 표현하면서 라이트/다크 양쪽에서 대비를 유지한다.
-     기존 --ticketing-upcoming처럼 다크 모드 오버라이드 없이 동일 값 사용. */
-  --ticketing-dday-near: var(--ticketing-upcoming);
-  --ticketing-dday-mid: #d9731c;
-  --ticketing-dday-far: #a8785a;
+     mid/far가 거의 안 보인다(대비 부족) — far로 갈수록 채도를 낮춰 "덜 급함"을
+     명도가 아닌 채도로 표현한다. 12px 텍스트라 WCAG AA 4.5:1이 필요해서
+     surface·surface-hover 배경 모두에서 4.5:1 이상이 되도록 라이트/다크 값을 나눴다. */
+  --ticketing-dday-near: #c2410c;
+  --ticketing-dday-mid: #b45309;
+  --ticketing-dday-far: #8a6048;
 
   /* OAuth 브랜드 색상 (항상 고정, 다크 모드 미적용) */
   --oauth-google-text: #3c4043;
@@ -165,6 +164,9 @@
   --_dk-color-overlay-btn-shadow: rgba(0, 0, 0, 0.35);
   --_dk-color-overlay-btn-shadow-hover: rgba(0, 0, 0, 0.5);
   --_dk-color-dot-inactive: rgba(255, 255, 255, 0.25);
+  --_dk-ticketing-dday-near: #fb923c;
+  --_dk-ticketing-dday-mid: #f5a35c;
+  --_dk-ticketing-dday-far: #c9a58c;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -190,6 +192,9 @@
     --color-overlay-btn-shadow: var(--_dk-color-overlay-btn-shadow);
     --color-overlay-btn-shadow-hover: var(--_dk-color-overlay-btn-shadow-hover);
     --color-dot-inactive: var(--_dk-color-dot-inactive);
+    --ticketing-dday-near: var(--_dk-ticketing-dday-near);
+    --ticketing-dday-mid: var(--_dk-ticketing-dday-mid);
+    --ticketing-dday-far: var(--_dk-ticketing-dday-far);
     color-scheme: dark;
   }
 }
@@ -216,6 +221,9 @@ html[data-theme="dark"] {
   --color-overlay-btn-shadow: var(--_dk-color-overlay-btn-shadow);
   --color-overlay-btn-shadow-hover: var(--_dk-color-overlay-btn-shadow-hover);
   --color-dot-inactive: var(--_dk-color-dot-inactive);
+  --ticketing-dday-near: var(--_dk-ticketing-dday-near);
+  --ticketing-dday-mid: var(--_dk-ticketing-dday-mid);
+  --ticketing-dday-far: var(--_dk-ticketing-dday-far);
   color-scheme: dark;
 }
 
