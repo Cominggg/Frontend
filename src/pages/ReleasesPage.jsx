@@ -5,6 +5,7 @@ import { useQuery } from '@tanstack/react-query'
 
 import ReleaseCard from '@/components/release/ReleaseCard'
 import ReleaseCardSkeleton from '@/components/release/ReleaseCardSkeleton'
+import PageHeader from '@/components/layout/PageHeader'
 import EmptyState from '@/components/ui/EmptyState'
 import FilterTabs from '@/components/ui/FilterTabs'
 import FilterToggle from '@/components/ui/FilterToggle'
@@ -138,12 +139,11 @@ function ReleasesPage() {
       <div className={styles.inner}>
 
         {/* 헤더 */}
-        <div className={styles.pageHeader}>
-          <h1 className={styles.pageTitle}>음악</h1>
+        <PageHeader title="음악">
           <p className={styles.pageCount}>
             {isLoading ? '' : `${totalElements.toLocaleString()}건`}
           </p>
-        </div>
+        </PageHeader>
 
         {/* 검색 */}
         <div className={styles.searchWrap}>

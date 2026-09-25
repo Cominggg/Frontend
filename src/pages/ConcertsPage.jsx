@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query'
 
 import ConcertCard from '@/components/concert/ConcertCard'
 import ConcertCardSkeleton from '@/components/concert/ConcertCardSkeleton'
+import PageHeader from '@/components/layout/PageHeader'
 import EmptyState from '@/components/ui/EmptyState'
 import FilterTabs from '@/components/ui/FilterTabs'
 import FilterToggle from '@/components/ui/FilterToggle'
@@ -150,12 +151,11 @@ function ConcertsPage() {
       <div className={styles.inner}>
 
         {/* 헤더 */}
-        <div className={styles.pageHeader}>
-          <h1 className={styles.pageTitle}>공연</h1>
+        <PageHeader title="공연">
           <p className={styles.pageCount}>
             {isLoading ? '' : `${totalElements.toLocaleString()}건`}
           </p>
-        </div>
+        </PageHeader>
 
         {/* 검색 */}
         <div className={styles.searchWrap}>

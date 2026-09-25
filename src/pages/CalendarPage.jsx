@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 
 import CalendarGrid from '@/components/calendar/CalendarGrid'
 import DayConcertList from '@/components/calendar/DayConcertList'
+import PageHeader from '@/components/layout/PageHeader'
 import { getCalendar, addToCalendar, removeFromCalendar } from '@/services/calendarApi'
 import useAuthStore from '@/stores/authStore'
 import useLoginModalStore from '@/stores/loginModalStore'
@@ -142,8 +143,7 @@ function CalendarPage() {
       <div className={styles.inner}>
 
         {/* 페이지 헤더 */}
-        <div className={styles.pageHeader}>
-          <h1 className={styles.pageTitle}>캘린더</h1>
+        <PageHeader title="캘린더" spread className={styles.calendarHeader}>
           <div className={styles.viewToggle} role="tablist" aria-label="캘린더 보기 선택">
             <button
               role="tab"
@@ -162,7 +162,7 @@ function CalendarPage() {
               내 캘린더
             </button>
           </div>
-        </div>
+        </PageHeader>
 
         {/* 월 네비게이션 */}
         <div className={styles.monthNav}>

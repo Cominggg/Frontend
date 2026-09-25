@@ -9,21 +9,6 @@
 }
 
 /* ── 페이지 헤더 ── */
-.pageHeader {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  margin-bottom: 1.75rem;
-}
-
-.pageTitle {
-  margin: 0;
-  font-size: 1.875rem;
-  font-weight: 700;
-  color: var(--color-text);
-  letter-spacing: -0.02em;
-}
-
 .pageCount {
   margin: 0;
   font-size: 0.8125rem;
@@ -139,15 +124,7 @@
 
 @media (max-width: 767px) {
   .page {
-    padding: 1.25rem 0.875rem 2.5rem;
-  }
-
-  .pageHeader {
-    margin-bottom: 1.25rem;
-  }
-
-  .pageTitle {
-    font-size: 1.25rem;
+    padding: 1.5rem 1rem 3rem;
   }
 
   .searchWrap {

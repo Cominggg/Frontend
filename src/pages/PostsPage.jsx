@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 
+import PageHeader from '@/components/layout/PageHeader'
 import Button from '@/components/ui/Button'
 import EmptyState from '@/components/ui/EmptyState'
 import Pagination from '@/components/ui/Pagination'
@@ -168,9 +169,7 @@ function PostsPage() {
     <div className={styles.page}>
       <div className={styles.inner}>
 
-        <div className={styles.pageHeader}>
-          <h1 className={styles.pageTitle}>커뮤니티</h1>
-        </div>
+        <PageHeader title="커뮤니티" />
 
         {/* 게시글 통합 검색 — 제목/본문/멘션 태그를 함께 찾아 같은 목록에 표시 */}
         <div className={styles.searchWrap}>
