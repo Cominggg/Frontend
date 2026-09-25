@@ -1,0 +1,35 @@
+/* 배타적 선택(FilterTabs)과 구분되도록 크기를 한 단계 낮추고,
+   active 상태도 단색 채움 대신 옅은 틴트로 처리해
+   "보조적인 불리언 필터"라는 시각적 위계를 준다. */
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3125rem;
+  flex-shrink: 0;
+  padding: 0.25rem 0.6875rem;
+  border-radius: var(--radius-full);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  border: 1px solid var(--color-border);
+  background: transparent;
+  color: var(--color-text-muted);
+  transition: border-color 0.15s, color 0.15s, background-color 0.15s;
+  white-space: nowrap;
+}
+
+.toggle:hover {
+  border-color: var(--color-accent-border);
+  color: var(--color-accent);
+}
+
+.toggleActive {
+  background: var(--color-accent-dim);
+  border-color: var(--color-accent-border);
+  color: var(--color-accent);
+  font-weight: 600;
+}
+
+.toggleActive:hover {
+  background: var(--color-accent-hover-bg);
+  border-color: var(--color-accent-hover-border);
+}
