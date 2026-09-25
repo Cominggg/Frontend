@@ -129,15 +129,14 @@ function Header() {
         </nav>
 
         <div className={styles.actions}>
-          {!user && (
-            <button
-              className={styles.themeBtn}
-              onClick={toggleTheme}
-              aria-label={themeLabel}
-            >
-              <ThemeIcon theme={theme} />
-            </button>
-          )}
+          {/* 데스크톱 다크 모드 진입점은 로그인 여부와 무관하게 이 버튼 하나 (모바일은 햄버거 드로어) */}
+          <button
+            className={styles.themeBtn}
+            onClick={toggleTheme}
+            aria-label={themeLabel}
+          >
+            <ThemeIcon theme={theme} size={16} />
+          </button>
           {user ? (
             <div className={styles.avatarWrapper} ref={dropdownRef}>
               <button
@@ -169,15 +168,6 @@ function Header() {
                       </button>
                     )
                   )}
-                  <div className={styles.dropdownToggleRow}>
-                    <span className={styles.dropdownToggleLabel}>다크 모드</span>
-                    <Switch
-                      checked={theme === 'dark'}
-                      onChange={toggleTheme}
-                      ariaLabel={themeLabel}
-                      size="sm"
-                    />
-                  </div>
                 </div>
               )}
             </div>
