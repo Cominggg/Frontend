@@ -1,18 +1,12 @@
-import useHorizontalWheelGuard from '@/hooks/useHorizontalWheelGuard'
-import useEdgeFade from '@/hooks/useEdgeFade'
+import useHorizontalScrollBar from '@/hooks/useHorizontalScrollBar'
 import styles from './FilterTabs.module.css'
 
 function FilterTabs({ options, value, onChange, ariaLabel }) {
-  const wheelGuardRef = useHorizontalWheelGuard()
-  const { ref: fadeRef, style: fadeStyle } = useEdgeFade()
-  const setRef = (el) => {
-    wheelGuardRef.current = el
-    fadeRef.current = el
-  }
+  const { ref: scrollBarRef, style: fadeStyle } = useHorizontalScrollBar()
 
   return (
     <div
-      ref={setRef}
+      ref={scrollBarRef}
       className={styles.tabs}
       role="tablist"
       aria-label={ariaLabel}

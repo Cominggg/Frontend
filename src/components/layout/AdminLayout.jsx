@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { NavLink, Outlet } from 'react-router-dom'
 
 import { ROUTES } from '@/constants/routes'
@@ -87,7 +88,8 @@ const NAV_ITEMS = [
 ]
 
 function AdminLayout() {
-  const navRef = useHorizontalWheelGuard()
+  const [navEl, setNavEl] = useState(null)
+  useHorizontalWheelGuard(navEl)
 
   return (
     <div className={styles.layout}>
@@ -96,7 +98,7 @@ function AdminLayout() {
           <span className={styles.adminBadge}>ADMIN</span>
           <p className={styles.sidebarTitle}>관리자 콘솔</p>
         </div>
-        <nav ref={navRef} className={styles.nav}>
+        <nav ref={setNavEl} className={styles.nav}>
           {NAV_ITEMS.map((item) => (
             <NavLink
               key={item.to}
