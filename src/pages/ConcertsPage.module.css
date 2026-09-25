@@ -236,12 +236,6 @@
     margin-bottom: 1.25rem;
   }
 
-  /* 상태 탭: 가로스크롤 대신 줄바꿈으로 모두 노출 */
-  .filterBar {
-    overflow-x: visible;
-    flex-wrap: wrap;
-    padding-bottom: 0;
-  }
 }
 
 /* ── 빈 상태 ── */

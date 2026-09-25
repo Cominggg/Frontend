@@ -233,11 +233,6 @@
     margin-bottom: 1.25rem;
   }
 
-  .filterBar {
-    overflow-x: visible;
-    flex-wrap: wrap;
-    padding-bottom: 0;
-  }
 }
 
 /* ── 빈 상태 ── */
