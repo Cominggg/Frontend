@@ -1,0 +1,28 @@
+.pageHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.75rem;
+}
+
+.pageHeader.spread {
+  justify-content: space-between;
+}
+
+.pageTitle {
+  margin: 0;
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: var(--color-text);
+  letter-spacing: -0.02em;
+}
+
+@media (max-width: 767px) {
+  .pageHeader {
+    margin-bottom: 1.25rem;
+  }
+
+  .pageTitle {
+    font-size: 1.5rem;
+  }
+}

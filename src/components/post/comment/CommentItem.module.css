@@ -85,6 +85,17 @@
   fill: currentColor;
 }
 
+@media (max-width: 767px) {
+  .actions {
+    gap: 1.1rem;
+  }
+
+  .actionBtn {
+    padding: 0.55rem 0.3rem;
+    margin: -0.55rem -0.3rem;
+  }
+}
+
 .replyComposer {
   margin-top: 0.9rem;
 }

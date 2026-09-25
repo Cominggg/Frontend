@@ -4,7 +4,10 @@ import { useQuery } from '@tanstack/react-query'
 
 import ConcertCard from '@/components/concert/ConcertCard'
 import ConcertCardSkeleton from '@/components/concert/ConcertCardSkeleton'
+import PageHeader from '@/components/layout/PageHeader'
 import EmptyState from '@/components/ui/EmptyState'
+import FilterTabs from '@/components/ui/FilterTabs'
+import FilterToggle from '@/components/ui/FilterToggle'
 import Pagination from '@/components/ui/Pagination'
 import SourceCredit from '@/components/ui/SourceCredit'
 import { CONCERT_STATUS_LABEL } from '@/constants/concert'
@@ -84,7 +87,7 @@ function ConcertsPage() {
   }
 
   const statusParam = selectedStatus === 'ALL' ? undefined : selectedStatus
-  // 티켓팅 예정만 필터 중엔 티켓 오픈 임박순, 공연예정·공연중은 공연일 임박순(오름차순), 그 외(전체·종료·취소)는 최신순(내림차순)
+  // 티켓팅 예정만 필터 중엔 티켓 오픈 임박순, 공연예정·공연기간은 공연일 임박순(오름차순), 그 외(전체·종료·취소)는 최신순(내림차순)
   const sortParam = ticketOpenPending
     ? 'ticketOpenAt,asc'
     : selectedStatus === 'UPCOMING' || selectedStatus === 'ONGOING'
@@ -148,12 +151,11 @@ function ConcertsPage() {
       <div className={styles.inner}>
 
         {/* 헤더 */}
-        <div className={styles.pageHeader}>
-          <h1 className={styles.pageTitle}>공연</h1>
+        <PageHeader title="공연">
           <p className={styles.pageCount}>
             {isLoading ? '' : `${totalElements.toLocaleString()}건`}
           </p>
-        </div>
+        </PageHeader>
 
         {/* 검색 */}
         <div className={styles.searchWrap}>
@@ -187,40 +189,35 @@ function ConcertsPage() {
 
         {/* 공연 상태 필터 + 관심 아티스트 토글 */}
         <div className={styles.filterRow}>
-          <div className={styles.filterBar} role="tablist" aria-label="공연 상태 필터">
-            {STATUS_FILTERS.map((s) => (
-              <button
-                key={s}
-                role="tab"
-                aria-selected={selectedStatus === s}
-                className={`${styles.filterTab} ${selectedStatus === s ? styles.filterTabActive : ''}`}
-                onClick={() => handleStatusChange(s)}
-              >
-                {s === 'ALL' ? '전체' : CONCERT_STATUS_LABEL[s]}
-              </button>
-            ))}
-          </div>
+          <FilterTabs
+            ariaLabel="공연 상태 필터"
+            options={STATUS_FILTERS.map((s) => ({ value: s, label: s === 'ALL' ? '전체' : CONCERT_STATUS_LABEL[s] }))}
+            value={selectedStatus}
+            onChange={handleStatusChange}
+          />
           <div className={styles.toggleGroup}>
-            <button
-              className={`${styles.filterToggle} ${effectiveFollowedOnly ? styles.filterToggleActive : ''}`}
+            <FilterToggle
+              pressed={effectiveFollowedOnly}
               onClick={handleFollowedToggle}
-              aria-pressed={effectiveFollowedOnly}
+              icon={
+                <svg width="14" height="14" viewBox="0 0 24 24" fill={effectiveFollowedOnly ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                </svg>
+              }
             >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill={effectiveFollowedOnly ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-              </svg>
               관심 아티스트만
-            </button>
-            <button
-              className={`${styles.filterToggle} ${ticketOpenPending ? styles.filterToggleActive : ''}`}
+            </FilterToggle>
+            <FilterToggle
+              pressed={ticketOpenPending}
               onClick={handleTicketOpenPendingToggle}
-              aria-pressed={ticketOpenPending}
+              icon={
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
+                  <path d="M2 9a1 1 0 0 1 1-1h18a1 1 0 0 1 1 1v1.5a2.5 2.5 0 0 0 0 5V17a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1v-1.5a2.5 2.5 0 0 0 0-5V9z" />
+                </svg>
+              }
             >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
-                <path d="M2 9a1 1 0 0 1 1-1h18a1 1 0 0 1 1 1v1.5a2.5 2.5 0 0 0 0 5V17a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1v-1.5a2.5 2.5 0 0 0 0-5V9z" />
-              </svg>
               티켓팅 예정만
-            </button>
+            </FilterToggle>
           </div>
         </div>
 

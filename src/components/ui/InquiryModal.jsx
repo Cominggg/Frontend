@@ -1,9 +1,10 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useQueryClient } from '@tanstack/react-query'
 
 import { checkInquiryExists, createInquiry } from '@/services/myApi'
 import { ROUTES } from '@/constants/routes'
+import useModalA11y from '@/hooks/useModalA11y'
 import styles from './InquiryModal.module.css'
 
 const TYPE_LABELS = {
@@ -22,8 +23,6 @@ const TYPE_SUBTITLES = {
   FEEDBACK: '서비스에 대한 의견이나 개선 제안을 남겨주세요. 더 나은 서비스를 위해 적극 반영하겠습니다.',
 }
 
-const FOCUSABLE = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-
 function InquiryModal({ isOpen, onClose, type, targetId }) {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
@@ -35,7 +34,10 @@ function InquiryModal({ isOpen, onClose, type, targetId }) {
   const [checking, setChecking] = useState(false)
   const [alreadyExists, setAlreadyExists] = useState(false)
   const [checkFailed, setCheckFailed] = useState(false)
-  const modalRef = useRef(null)
+  const modalRef = useModalA11y(onClose, {
+    isOpen,
+    contentKey: `${checking}-${alreadyExists}-${submitted}`,
+  })
 
   useEffect(() => {
     if (!isOpen || !type || !targetId) return
@@ -49,28 +51,6 @@ function InquiryModal({ isOpen, onClose, type, targetId }) {
       .finally(() => { if (!cancelled) setChecking(false) })
     return () => { cancelled = true }
   }, [isOpen, type, targetId])
-
-  useEffect(() => {
-    if (!isOpen) return
-
-    const modal = modalRef.current
-    const focusable = modal ? [...modal.querySelectorAll(FOCUSABLE)] : []
-    focusable[0]?.focus()
-
-    function handleKeyDown(e) {
-      if (e.key === 'Escape') { onClose(); return }
-      if (e.key !== 'Tab' || focusable.length === 0) return
-      const first = focusable[0]
-      const last = focusable[focusable.length - 1]
-      if (e.shiftKey) {
-        if (document.activeElement === first) { e.preventDefault(); last.focus() }
-      } else {
-        if (document.activeElement === last) { e.preventDefault(); first.focus() }
-      }
-    }
-    document.addEventListener('keydown', handleKeyDown)
-    return () => document.removeEventListener('keydown', handleKeyDown)
-  }, [isOpen, onClose, submitted, checking, alreadyExists])
 
   if (!isOpen) return null
 

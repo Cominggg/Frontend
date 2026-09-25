@@ -226,7 +226,7 @@
 }
 
 /* 모바일 반응형 */
-@media (max-width: 480px) {
+@media (max-width: 767px) {
   .page {
     padding: 24px 16px 48px;
     align-items: flex-start;
@@ -259,6 +259,20 @@
 
   .modalBox {
     max-height: 90vh;
+  }
+
+  .input {
+    font-size: 16px;
+  }
+
+  .modalCloseBtn {
+    padding: 13px;
+    margin: -13px;
+  }
+
+  .termViewBtn {
+    padding: 10px 4px;
+    margin: -10px -4px;
   }
 }
 

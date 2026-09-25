@@ -1,9 +1,11 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import styles from './SortDropdown.module.css'
 
 function SortDropdown({ options, value, onChange, ariaLabel = '정렬' }) {
   const [isOpen, setIsOpen] = useState(false)
+  const [align, setAlign] = useState('right')
   const wrapperRef = useRef(null)
+  const menuRef = useRef(null)
 
   useEffect(() => {
     if (!isOpen) return
@@ -21,6 +23,24 @@ function SortDropdown({ options, value, onChange, ariaLabel = '정렬' }) {
       document.removeEventListener('mousedown', handleClickOutside)
       document.removeEventListener('keydown', handleEscape)
     }
+  }, [isOpen])
+
+  // 트리거가 화면 왼쪽에 가까워 메뉴가 right:0 기준으로 뷰포트 밖으로
+  // 밀려날 경우(모바일 세로 배치 등) left 정렬로 전환해 잘림을 방지한다.
+  useLayoutEffect(() => {
+    if (!isOpen) return
+
+    function updateAlign() {
+      const wrapper = wrapperRef.current
+      const menu = menuRef.current
+      if (!wrapper || !menu) return
+      const wrapperRect = wrapper.getBoundingClientRect()
+      setAlign(wrapperRect.right - menu.offsetWidth < 0 ? 'left' : 'right')
+    }
+
+    updateAlign()
+    window.addEventListener('resize', updateAlign)
+    return () => window.removeEventListener('resize', updateAlign)
   }, [isOpen])
 
   const selected = options.find((o) => o.value === value) ?? options[0]
@@ -57,7 +77,12 @@ function SortDropdown({ options, value, onChange, ariaLabel = '정렬' }) {
         </svg>
       </button>
       {isOpen && (
-        <ul className={styles.menu} role="listbox" aria-label={ariaLabel}>
+        <ul
+          ref={menuRef}
+          className={`${styles.menu} ${align === 'left' ? styles.menuAlignLeft : ''}`}
+          role="listbox"
+          aria-label={ariaLabel}
+        >
           {options.map((option) => (
             <li key={option.value} role="presentation">
               <button

@@ -28,6 +28,7 @@
 .myRating {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 0.75rem;
   padding-top: 0.5rem;
   border-top: 1px solid var(--color-border);
@@ -54,6 +55,7 @@
 }
 
 .error {
+  width: 100%;
   font-size: 0.8125rem;
   font-weight: 500;
   color: var(--color-destructive);

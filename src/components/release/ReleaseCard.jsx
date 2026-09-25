@@ -5,18 +5,13 @@ import ArtistAliasName from '@/components/artist/ArtistAliasName'
 import SpotifyIcon from '@/components/ui/SpotifyIcon'
 import StarRating from '@/components/ui/StarRating'
 import { ROUTES } from '@/constants/routes'
-import { getArtistColor } from '@/utils/colorPalette'
+import { getArtistColor } from '@/utils/artistColor'
 import { getSpotifyAlbumUrl } from '@/utils/spotify'
 import styles from './ReleaseCard.module.css'
 
 const RELEASE_TYPE_COLOR = {
   Album: 'var(--color-accent)',
   Single: 'var(--color-badge-single)',
-}
-
-const RELEASE_TYPE_LABEL = {
-  Album: '앨범',
-  Single: '싱글',
 }
 
 function isNewRelease(dateStr) {
@@ -32,7 +27,6 @@ function ReleaseCard({ release }) {
   const showPlaceholder = !coverUrl || imgFailed
   const [colorFrom, colorTo] = getArtistColor(artistName)
   const badgeColor = RELEASE_TYPE_COLOR[type] ?? 'var(--color-text-muted)'
-  const typeLabel = RELEASE_TYPE_LABEL[type] ?? type
   const isNew = isNewRelease(releaseDate)
   const spotifyUrl = getSpotifyAlbumUrl(spotifyId)
 
@@ -45,7 +39,7 @@ function ReleaseCard({ release }) {
             style={{ '--p-from': colorFrom, '--p-to': colorTo }}
           >
             <span className={styles.placeholderArtist}>{artistName}</span>
-            <span className={styles.placeholderType}>{typeLabel}</span>
+            <span className={styles.placeholderType}>{type}</span>
           </div>
         ) : (
           <img
@@ -61,7 +55,7 @@ function ReleaseCard({ release }) {
           className={styles.typeBadge}
           style={{ backgroundColor: badgeColor }}
         >
-          {typeLabel}
+          {type}
         </span>
         {isNew && <span className={styles.newBadge}>NEW</span>}
         {spotifyUrl && (

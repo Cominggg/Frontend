@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 
+import PageHeader from '@/components/layout/PageHeader'
 import Button from '@/components/ui/Button'
 import EmptyState from '@/components/ui/EmptyState'
 import Pagination from '@/components/ui/Pagination'
@@ -10,6 +11,7 @@ import PostListItem from '@/components/post/PostListItem'
 import PostListItemSkeleton from '@/components/post/PostListItemSkeleton'
 import PostsSidebar from '@/components/post/sidebar/PostsSidebar'
 import usePageMeta from '@/hooks/usePageMeta'
+import useHorizontalScrollBar from '@/hooks/useHorizontalScrollBar'
 import { getPosts, getPopularBoardPosts, getSearch } from '@/services/postApi'
 import { ROUTES } from '@/constants/routes'
 import { POST_CATEGORY_LABEL } from '@/constants/post'
@@ -18,15 +20,34 @@ import useAuthStore from '@/stores/authStore'
 import useLoginModalStore from '@/stores/loginModalStore'
 import styles from './PostsPage.module.css'
 
-const CATEGORY_FILTERS = ['ALL', 'FREE', 'INFO', 'REVIEW', 'POPULAR']
+const CATEGORY_FILTERS = ['ALL', 'POPULAR', 'FREE', 'INFO', 'REVIEW']
 const CATEGORY_TAB_LABEL = { ALL: '전체', POPULAR: '인기글' }
-const ITEMS_PER_PAGE = 20
+const ITEMS_PER_PAGE = 10
 const MIN_QUERY_LENGTH = 2
 
-function getEmptyMessage(urlQuery, isQueryTooShort) {
+function getEmptyMessage(urlQuery, isQueryTooShort, category = 'ALL') {
   if (isQueryTooShort) return `검색어는 ${MIN_QUERY_LENGTH}자 이상 입력해주세요.`
   if (urlQuery) return `'${urlQuery}'에 대한 검색 결과가 없습니다.`
-  return '아직 등록된 게시글이 없습니다.'
+  if (category === 'POPULAR') return '아직 인기글이 없어요'
+  if (POST_CATEGORY_LABEL[category]) return `첫 ${POST_CATEGORY_LABEL[category]} 게시글을 남겨보세요`
+  return '첫 게시글을 남겨보세요'
+}
+
+function SearchEmptyIcon() {
+  return (
+    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <circle cx="11" cy="11" r="8" />
+      <line x1="21" y1="21" x2="16.65" y2="16.65" />
+    </svg>
+  )
+}
+
+function PostsEmptyIcon() {
+  return (
+    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+    </svg>
+  )
 }
 
 function PostsPage() {
@@ -50,6 +71,7 @@ function PostsPage() {
   const isSearching = !!urlQuery && !isQueryTooShort
   const isPopular = selectedCategory === 'POPULAR'
   const showPinnedNotices = selectedCategory === 'ALL' && currentPage === 1 && !urlQuery
+  const { ref: filterBarRef, style: filterBarFadeStyle } = useHorizontalScrollBar()
 
   usePageMeta({
     title: '커뮤니티 - 커밍',
@@ -143,10 +165,7 @@ function PostsPage() {
     <div className={styles.page}>
       <div className={styles.inner}>
 
-        <div className={styles.pageHeader}>
-          <h1 className={styles.pageTitle}>커뮤니티</h1>
-          <p className={styles.pageDesc}>자유 · 정보 · 후기를 나누는 Jpop 팬 공간이에요</p>
-        </div>
+        <PageHeader title="커뮤니티" />
 
         {/* 게시글 통합 검색 — 제목/본문/멘션 태그를 함께 찾아 같은 목록에 표시 */}
         <div className={styles.searchWrap}>
@@ -182,15 +201,20 @@ function PostsPage() {
         <div className={styles.layout}>
           <div className={styles.toolbar}>
             {!urlQuery && (
-              <div className={styles.filterBar} role="tablist" aria-label="카테고리 필터">
+              <div ref={filterBarRef} className={styles.filterBar} role="tablist" aria-label="카테고리 필터" style={filterBarFadeStyle}>
                 {CATEGORY_FILTERS.map((c) => (
                   <button
                     key={c}
                     role="tab"
                     aria-selected={selectedCategory === c}
-                    className={`${styles.filterTab} ${selectedCategory === c ? styles.filterTabActive : ''}`}
+                    className={`${styles.filterTab} ${c === 'POPULAR' ? styles.filterTabPopular : ''} ${selectedCategory === c ? styles.filterTabActive : ''}`}
                     onClick={() => handleCategoryChange(c)}
                   >
+                    {c === 'POPULAR' && (
+                      <svg className={styles.filterTabIcon} width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                        <path d="M12 2c-.3 3-2 4.8-3.5 6.5C7 10 6 11.5 6 13.5 6 17.6 8.7 21 12 21s6-3.4 6-7.5c0-2.5-1.3-4.2-2.5-5.7.2 1.6-.3 2.7-1.2 3.2C14.8 8.5 15 5 12 2z" />
+                      </svg>
+                    )}
                     {CATEGORY_TAB_LABEL[c] ?? POST_CATEGORY_LABEL[c]}
                   </button>
                 ))}
@@ -209,7 +233,7 @@ function PostsPage() {
             {showPinnedNotices && <PinnedNotices />}
 
             {isQueryTooShort ? (
-              <EmptyState message={getEmptyMessage(urlQuery, isQueryTooShort)} />
+              <EmptyState icon={<SearchEmptyIcon />} message={getEmptyMessage(urlQuery, isQueryTooShort)} />
             ) : isLoading ? (
               <div className={styles.list}>
                 {Array.from({ length: 8 }).map((_, i) => (
@@ -222,8 +246,15 @@ function PostsPage() {
                   <PostListItem key={post.id} post={post} />
                 ))}
               </div>
+            ) : urlQuery ? (
+              <EmptyState icon={<SearchEmptyIcon />} message={getEmptyMessage(urlQuery, isQueryTooShort)} />
             ) : (
-              <EmptyState message={getEmptyMessage(urlQuery, isQueryTooShort)} />
+              // 인기글은 작성으로 바로 생기지 않으므로 작성 유도 버튼을 두지 않는다.
+              <EmptyState
+                icon={<PostsEmptyIcon />}
+                message={getEmptyMessage(urlQuery, isQueryTooShort, selectedCategory)}
+                action={isPopular ? undefined : { label: '첫 게시글 작성하기', onClick: handleWriteClick }}
+              />
             )}
 
             {!isLoading && !isQueryTooShort && totalPages > 1 && (

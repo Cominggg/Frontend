@@ -9,22 +9,6 @@
   margin: 0 auto;
 }
 
-/* ── 페이지 헤더 ── */
-.pageHeader {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 1.5rem;
-}
-
-.pageTitle {
-  margin: 0;
-  font-size: 1.875rem;
-  font-weight: 700;
-  color: var(--color-text);
-  letter-spacing: -0.02em;
-}
-
 /* ── 뷰 토글 ── */
 .viewToggle {
   display: flex;
@@ -164,18 +148,13 @@
 
 @media (max-width: 767px) {
   .page {
-    padding: 1.5rem 0.75rem 3rem;
+    padding: 1.5rem 1rem 3rem;
   }
 
-  .pageHeader {
+  .calendarHeader {
     flex-direction: column;
     align-items: flex-start;
     gap: 0.75rem;
-    margin-bottom: 1rem;
-  }
-
-  .pageTitle {
-    font-size: 1.5rem;
   }
 
   .toggleBtn {
@@ -189,5 +168,14 @@
 
   .monthTitle {
     font-size: 1.125rem;
+  }
+
+  .navBtn {
+    width: 40px;
+    height: 40px;
+  }
+
+  .todayBtn {
+    height: 40px;
   }
 }

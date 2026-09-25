@@ -167,7 +167,7 @@
   .cell {
     height: 100px;
     overflow: hidden;
-    padding: 6px 3px 4px;
+    padding: 6px 2px 4px;
   }
 
   .num {
@@ -178,7 +178,7 @@
   }
 
   .pill {
-    padding: 2px 3px;
+    padding: 1px 3px;
     gap: 2px;
   }
 
@@ -189,6 +189,11 @@
 
   .pillText {
     font-size: 0.625rem;
+  }
+
+  .pillTicketIcon {
+    width: 10px;
+    height: 10px;
   }
 
   .more {

@@ -3,10 +3,12 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 
 import CalendarGrid from '@/components/calendar/CalendarGrid'
 import DayConcertList from '@/components/calendar/DayConcertList'
+import PageHeader from '@/components/layout/PageHeader'
 import { getCalendar, addToCalendar, removeFromCalendar } from '@/services/calendarApi'
 import useAuthStore from '@/stores/authStore'
 import useLoginModalStore from '@/stores/loginModalStore'
 import { isSameDay } from '@/utils/date'
+import { hashStringToIndex } from '@/utils/artistColor'
 import usePageMeta from '@/hooks/usePageMeta'
 import styles from './CalendarPage.module.css'
 
@@ -56,9 +58,10 @@ function CalendarPage() {
 
   const colorMap = useMemo(() => {
     const map = {}
-    let idx = 0
     rawEvents.forEach((ev) => {
-      if (!(ev.concertId in map)) map[ev.concertId] = PALETTE[idx++ % PALETTE.length]
+      if (ev.concertId in map) return
+      const primaryArtistName = ev.artists?.[0]?.name ?? String(ev.concertId)
+      map[ev.concertId] = PALETTE[hashStringToIndex(primaryArtistName, PALETTE.length)]
     })
     return map
   }, [rawEvents])
@@ -140,8 +143,7 @@ function CalendarPage() {
       <div className={styles.inner}>
 
         {/* 페이지 헤더 */}
-        <div className={styles.pageHeader}>
-          <h1 className={styles.pageTitle}>캘린더</h1>
+        <PageHeader title="캘린더" spread className={styles.calendarHeader}>
           <div className={styles.viewToggle} role="tablist" aria-label="캘린더 보기 선택">
             <button
               role="tab"
@@ -160,7 +162,7 @@ function CalendarPage() {
               내 캘린더
             </button>
           </div>
-        </div>
+        </PageHeader>
 
         {/* 월 네비게이션 */}
         <div className={styles.monthNav}>

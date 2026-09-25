@@ -85,6 +85,14 @@ function PostDetailPage() {
   if (isError || !post) {
     return (
       <EmptyState
+        icon={(
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+            <path d="M14 2v6h6" />
+            <line x1="9.5" y1="13.5" x2="14.5" y2="18.5" />
+            <line x1="14.5" y1="13.5" x2="9.5" y2="18.5" />
+          </svg>
+        )}
         message="게시글이 존재하지 않습니다"
         action={{ to: ROUTES.COMMUNITY, label: '커뮤니티 목록으로' }}
       />

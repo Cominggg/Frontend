@@ -35,5 +35,19 @@
 }
 
 .interactive .starSlot {
+  position: relative;
   cursor: pointer;
+}
+
+@media (max-width: 767px) {
+  .interactive .starsBg,
+  .interactive .starsFg {
+    gap: 6px;
+  }
+
+  .interactive .starSlot::before {
+    content: '';
+    position: absolute;
+    inset: -8px;
+  }
 }

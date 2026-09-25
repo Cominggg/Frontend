@@ -14,6 +14,7 @@ import useAuthStore from '@/stores/authStore'
 import { ROUTES } from '@/constants/routes'
 import { getArtistColor } from '@/utils/artistColor'
 import { formatDate } from '@/utils/date'
+import useHorizontalScrollBar from '@/hooks/useHorizontalScrollBar'
 import styles from './MyPage.module.css'
 
 const INQ_TYPE_LABELS = { CONCERT: '공연 정보', ARTIST: '아티스트 정보', SETLIST: '셋리스트' }
@@ -347,6 +348,7 @@ function MyPage() {
   const { pathname } = useLocation()
   const queryClient = useQueryClient()
   const clearUser = useAuthStore((s) => s.clearUser)
+  const { ref: tabsRef, style: tabsFadeStyle } = useHorizontalScrollBar()
 
   const activeTab = useMemo(() => {
     const tab = TABS.find((t) => t.path === pathname)
@@ -471,7 +473,7 @@ function MyPage() {
         )}
 
         {/* 탭 */}
-        <div className={styles.tabs} role="tablist">
+        <div ref={tabsRef} className={styles.tabs} role="tablist" style={tabsFadeStyle}>
           {TABS.map((tab) => (
             <button
               key={tab.id}

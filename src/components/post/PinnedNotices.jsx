@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 
 import { ROUTES } from '@/constants/routes'
 import { getPinnedNotices } from '@/services/noticeApi'
-import { formatRelativeDate } from '@/utils/date'
+import { formatPostDate } from '@/utils/date'
 import styles from './PinnedNotices.module.css'
 
 const PINNED_NOTICE_LIMIT = 3
@@ -26,7 +26,7 @@ function PinnedNotices() {
         >
           <span className={styles.badge}>공지</span>
           <span className={styles.title}>{notice.title}</span>
-          <span className={styles.date}>{formatRelativeDate(notice.createdAt)}</span>
+          <span className={styles.date}>{formatPostDate(notice.createdAt)}</span>
         </Link>
       ))}
     </div>

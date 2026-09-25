@@ -8,44 +8,6 @@
 }
 
 /* ── 스켈레톤 공통 ── */
-.ticketCardSkeleton {
-  display: flex;
-  align-items: center;
-  gap: 0.875rem;
-  padding: 0.875rem 1rem;
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-}
-
-.ticketSkeletonDday {
-  flex: 0 0 52px;
-  height: 52px;
-  border-radius: var(--radius-md);
-  background: linear-gradient(90deg, var(--color-surface) 25%, var(--color-surface-hover) 50%, var(--color-surface) 75%);
-  background-size: 800px 100%;
-  animation: shimmer 1.4s infinite linear;
-}
-
-.ticketSkeletonInfo {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-}
-
-.ticketSkeletonLine {
-  height: 10px;
-  border-radius: var(--radius-xs);
-  width: 55%;
-  background: linear-gradient(90deg, var(--color-surface) 25%, var(--color-surface-hover) 50%, var(--color-surface) 75%);
-  background-size: 800px 100%;
-  animation: shimmer 1.4s infinite linear;
-}
-
-.ticketSkeletonLineLg { width: 80%; height: 12px; }
-.ticketSkeletonLineSm { width: 40%; height: 9px; }
-
 .upcomingSkeletonItem {
   display: flex;
   align-items: center;
@@ -164,7 +126,6 @@
   display: grid;
   grid-template-columns: 1fr 340px;
   gap: 1.5rem;
-  align-items: stretch;
 }
 
 .mainZoneLeft {
@@ -175,6 +136,11 @@
   display: flex;
   flex-direction: column;
   min-width: 0;
+  /* 기본값(stretch)을 쓰면 좌측 "인기 공연" 그리드 높이에 맞춰 우측 패널이
+     늘어나면서, 티켓팅 일정이 5건 미만이거나 좌측 카드가 유독 클 때 박스
+     하단에 빈 공간이 남는다. align-self:start로 그리드 행 높이를 무시하고
+     패널 자체 콘텐츠(최대 5건 + 전체 보기 행) 높이만큼만 차지하도록 한다. */
+  align-self: start;
 }
 
 /* 인기 공연 — 빈 상태 */
@@ -217,8 +183,16 @@
   line-height: 1.5;
 }
 
+/* ===========================
+   예매 일정 패널 — 임박도 타임라인
+   좌측 "인기 공연" 그리드 높이를 따라가지 않고(.mainZoneRight의
+   align-self:start), 실제 콘텐츠(항목 수 + "전체 보기" 행) 높이만큼만
+   차지한다. 이전엔 min-height를 고정값(260px)으로 줬는데, 일정이 1~2건뿐일
+   때 콘텐츠가 그 높이에 못 미쳐 박스 하단(혹은 "전체 보기" 행 주변)에
+   용도를 알 수 없는 빈 공백이 남는 문제가 있었다 — min-height를 제거해
+   박스가 항상 콘텐츠 높이에 맞게 줄어들도록 한다.
+   =========================== */
 .ticketingPanel {
-  flex: 1;
   display: flex;
   flex-direction: column;
   padding: 1.25rem;
@@ -228,140 +202,305 @@
   overflow: hidden;
 }
 
-/* ===========================
-   예매 일정 패널
-   =========================== */
-.ticketingPanelList {
-  flex: 1;
-  min-height: 0;
+.timelineList {
+  position: relative;
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
-  padding: 4px 0;
-  margin: -4px 0;
-  overflow-y: auto;
-  scrollbar-width: none;
+  min-height: 0;
 }
 
-.ticketingPanelList::-webkit-scrollbar {
-  display: none;
+.timelineRow {
+  display: flex;
+  gap: 0.8rem;
+  padding: 0 0.4rem;
+  margin: 0 -0.4rem;
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+  color: inherit;
+  transition: background-color 0.15s;
+}
+
+.timelineRow:hover {
+  background: var(--color-surface-hover);
+}
+
+/* 행 사이 세로 간격을 .timelineRow의 padding-bottom이 아니라 여기서 준다 —
+   .timelineRail이 (align-items:stretch로) 행의 전체 높이만큼 늘어나야
+   .timelineRailSegment가 다음 행의 dot까지 빈틈없이 이어지기 때문이다. */
+.timelineInfo {
+  flex: 1;
+  min-width: 0;
+  padding-bottom: 1.1rem;
+}
+
+.timelineRow:last-child .timelineInfo {
+  padding-bottom: 0;
+}
+
+.timelineRail {
+  position: relative;
+  flex: 0 0 auto;
+  width: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 0.2rem;
+}
+
+.timelineDot {
+  position: relative;
+  z-index: 1;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex: 0 0 auto;
+}
+
+/* dot 바로 아래에서 다음 행의 dot까지 이어지는 세그먼트. 색은 항상 JS의
+   getUrgencyRailColor(HomePage.jsx)로 이 dot·다음 dot의 실제 urgency에서
+   계산해 그라데이션으로 넣는다 — 위치 기반 고정 그라데이션을 쓰면 dot
+   색(urgency 기준)과 레일 색(리스트 내 위치 기준)의 기준이 서로 달라
+   일정이 몇 건 안 되거나 normal 구간이 몰려 있을 때 어긋나 보였다. */
+.timelineRailSegment {
+  width: 1.5px;
+  flex: 1;
+  margin-top: 2px;
+}
+
+/* 고스트/전체 보기 행(.timelineRailSingle)은 dot 앞에도 세그먼트를 둬서
+   이전 행에서 내려오는 레일과 이어지게 하는데, 이 "선행" 세그먼트까지
+   margin-top:2px를 그대로 받으면 이전 행 rail의 바로 아래 경계에서 2px
+   빈틈이 생겨 선이 끊겨 보인다. dot 앞에 오는 세그먼트만 margin을 없애
+   경계에 딱 붙게 한다. */
+.timelineRail > .timelineRailSegment:first-child {
+  margin-top: 0;
+}
+
+/* 전체 보기 행은 아래로 이어질 것이 없어 실제 레일 선을 그리지 않지만,
+   dot 뒤에도 이 자리표시자를 둬서 위 세그먼트와 대칭을 이뤄 고스트 행과
+   동일한 위치에 dot이 오도록(수직 중앙) 맞춘다. */
+.timelineRailSpacer {
+  width: 1.5px;
+  flex: 1;
+  margin-top: 2px;
+}
+
+/* 이 dot들 앞(위)에도 레일이 지나가므로, 배경을 투명하게 두면 선이 점
+   한가운데를 뚫고 나온 것처럼 겹쳐 보인다(실측). 패널 배경색으로 채워
+   선을 가리면 점은 그대로 "빈 고리"처럼 보이면서 선과의 겹침만 사라진다. */
+.timelineDotGhost {
+  background: var(--color-surface);
+  border: 1.5px dashed var(--color-border);
+}
+
+.timelineDotCta {
+  background: var(--color-surface);
+  border: 1.5px dashed var(--color-text-muted);
+}
+
+.timelineRow:hover .timelineDotGhost,
+.timelineRow:hover .timelineDotCta {
+  background: var(--color-surface-hover);
+}
+
+/* 고스트/전체 보기 행은 일정 행과 달리 텍스트가 1줄뿐이라, 일정 행에서
+   "3줄 블록의 첫 줄(D-day)"에 맞춰 튜닝된 .timelineRail의 padding-top 고정값을
+   그대로 쓰면 점이 텍스트보다 위로 떠 보인다(실측). 대신 dot 앞뒤에 동일한
+   flex:1 세그먼트/자리표시자를 둬서 행 전체 높이 기준 수직 중앙에 점이
+   오도록 하면 1줄 텍스트와 항상 정확히 같은 줄에 맞는다. */
+.timelineRailSingle {
+  padding-top: 0;
+}
+
+
+.timelineTop {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+  margin-bottom: 0.15rem;
+}
+
+.timelineDday {
+  font-size: 0.75rem;
+  font-weight: 800;
+  /* 임박도 "normal"(8일 이상 남음) 구간 — 텍스트 전용 톤(--ticketing-dday-*,
+     index.css)을 사용해 모든 일정이 주황 계열로 보이도록 한다. */
+  color: var(--ticketing-dday-far);
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+.timelineRowSoon .timelineDday {
+  color: var(--ticketing-dday-mid);
+}
+
+.timelineRowCritical .timelineDday {
+  color: var(--ticketing-dday-near);
+}
+
+.timelineArtist {
+  font-size: 0.625rem;
+  font-weight: 700;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.timelineTitle {
+  margin: 0 0 0.2rem;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--color-text);
+  line-height: 1.35;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.timelineMeta {
+  margin: 0;
+  font-size: 0.6875rem;
+  color: var(--color-text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.timelineGhostText {
+  margin: 0;
+  padding-top: 0.1rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+
+.timelineCtaText {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  padding-top: 0.1rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--color-text-muted);
+}
+
+.timelineCtaRow:hover .timelineCtaText {
+  color: var(--color-accent);
 }
 
 /* 예매 일정 없을 때 */
-.ticketingEmpty {
+.ticketingEmptyCentered {
   flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
   text-align: center;
-  padding: 2rem 1rem;
+  padding: 1rem;
 }
 
-.ticketingEmptyIcon {
+.ticketingEmptyRing {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 48px;
-  height: 48px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
-  background: var(--color-accent-dim);
-  color: var(--color-accent);
-  opacity: 0.6;
+  border: 1.5px dashed var(--color-border);
+  color: var(--color-text-muted);
+  margin-bottom: 0.6rem;
 }
 
-.ticketingEmptyText {
-  margin: 0;
+.ticketingEmptyTitle {
+  margin: 0 0 0.2rem;
   font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.ticketingEmptySub {
+  margin: 0 0 1rem;
+  font-size: 0.75rem;
   color: var(--color-text-muted);
   line-height: 1.5;
 }
 
-/* 티켓 카드 */
-.ticketCard {
-  display: flex;
+.ticketingEmptyCta {
+  display: inline-flex;
   align-items: center;
-  gap: 0.875rem;
-  padding: 0.875rem 1rem;
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  text-decoration: none;
-  color: inherit;
-  transition: box-shadow 0.15s, transform 0.15s;
-}
-
-.ticketCard:hover {
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.07);
-  transform: translateY(-1px);
-}
-
-.ticketCardCritical {
-  background: color-mix(in srgb, var(--ticketing-upcoming) 6%, var(--color-surface));
-}
-
-.ticketDday {
-  flex: 0 0 52px;
-  height: 52px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: var(--radius-md);
-  background: var(--color-accent-dim);
-  font-size: 0.8125rem;
-  font-weight: 900;
-  color: var(--color-accent);
-  letter-spacing: -0.03em;
-  text-align: center;
-  line-height: 1.2;
-}
-
-.ticketCardSoon .ticketDday {
-  background: transparent;
-  color: var(--ticketing-upcoming);
-  box-shadow: 0 0 0 1.5px color-mix(in srgb, var(--ticketing-upcoming) 45%, transparent);
-}
-
-.ticketCardCritical .ticketDday {
-  background: var(--ticketing-upcoming);
-  color: #fff;
-}
-
-.ticketInfo {
-  flex: 1;
-  min-width: 0;
-}
-
-.ticketArtist {
-  margin: 0 0 0.125rem;
-  font-size: 0.6875rem;
-  font-weight: 600;
-  color: var(--color-text-muted);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-}
-
-.ticketTitle {
-  margin: 0 0 0.25rem;
-  font-size: 0.875rem;
+  gap: 0.25rem;
+  font-size: 0.75rem;
   font-weight: 700;
-  color: var(--color-text);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  color: var(--color-accent);
+  border: 1px solid var(--color-accent-border);
+  border-radius: var(--radius-full);
+  padding: 0.45rem 0.9rem;
+  text-decoration: none;
+  transition: background-color 0.15s;
 }
 
-.ticketOpenDate {
-  margin: 0;
+.ticketingEmptyCta:hover {
+  background: var(--color-accent-hover-bg);
+}
+
+/* 타임라인 스켈레톤 */
+.timelineSkeletonRow {
   display: flex;
+  gap: 0.8rem;
+  padding-bottom: 1.1rem;
+}
+
+.timelineSkeletonRow:last-child {
+  padding-bottom: 0;
+}
+
+.timelineSkeletonRow:last-child .timelineSkeletonLine {
+  display: none;
+}
+
+.timelineSkeletonRail {
+  flex: 0 0 auto;
+  width: 10px;
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 0.3rem;
-  font-size: 0.6875rem;
-  color: var(--color-text-muted);
+  padding-top: 0.2rem;
+}
+
+.timelineSkeletonDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: linear-gradient(90deg, var(--color-surface) 25%, var(--color-surface-hover) 50%, var(--color-surface) 75%);
+  background-size: 800px 100%;
+  animation: shimmer 1.4s infinite linear;
+}
+
+.timelineSkeletonLine {
+  width: 1.5px;
+  flex: 1;
+  min-height: 20px;
+  background: var(--color-border);
+  margin-top: 3px;
+}
+
+.timelineSkeletonInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding-top: 0.1rem;
+}
+
+.timelineSkeletonText {
+  height: 10px;
+  border-radius: var(--radius-xs);
+  background: linear-gradient(90deg, var(--color-surface) 25%, var(--color-surface-hover) 50%, var(--color-surface) 75%);
+  background-size: 800px 100%;
+  animation: shimmer 1.4s infinite linear;
 }
 
 /* ===========================
@@ -825,8 +964,8 @@
    반응형
    =========================== */
 
-/* 1100px 이하: 예매 일정 패널 폭 축소 + discoveryGrid 단열 */
-@media (max-width: 1100px) {
+/* 1279px 이하: 예매 일정 패널 폭 축소 + discoveryGrid 단열 */
+@media (max-width: 1279px) {
   .mainZoneInner {
     grid-template-columns: 1fr 300px;
     gap: 1.25rem;

@@ -48,6 +48,11 @@
   overflow: hidden;
 }
 
+.menuAlignLeft {
+  right: auto;
+  left: 0;
+}
+
 .option {
   display: block;
   width: 100%;

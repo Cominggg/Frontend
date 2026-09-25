@@ -1,0 +1,68 @@
+.tabs {
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  /* overflow가 y축까지 잘라내므로, 44px로 확장한 탭 히트 영역(::before, 상하 6.25px)이
+     잘리지 않게 상하 여백을 확보하고 음수 margin으로 기존 레이아웃 높이를 유지한다. */
+  padding-block: 6.25px;
+  margin-block: -6.25px -2.25px;
+  scrollbar-width: none;
+  flex: 1;
+  min-width: 0;
+}
+
+.tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.tab {
+  position: relative;
+  flex-shrink: 0;
+  padding: 0.375rem 1rem;
+  border-radius: var(--radius-full);
+  font-size: 0.875rem;
+  font-weight: 500;
+  border: 1.5px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text-muted);
+  transition: border-color 0.15s, color 0.15s, background-color 0.15s;
+  white-space: nowrap;
+}
+
+/* 시각 크기는 유지하고 히트 영역만 44px로 확장 (WCAG 2.5.5) */
+.tab::before {
+  content: '';
+  position: absolute;
+  top: -6.25px;
+  bottom: -6.25px;
+  left: 0;
+  right: 0;
+}
+
+.tab:hover {
+  border-color: var(--color-accent-border);
+  color: var(--color-accent);
+}
+
+.tabActive {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: var(--color-on-accent);
+  font-weight: 600;
+  box-shadow: 0 2px 8px var(--color-accent-shadow);
+}
+
+.tabActive:hover {
+  color: var(--color-on-accent);
+}
+
+@media (max-width: 767px) {
+  .tabs {
+    gap: 0.375rem;
+  }
+
+  .tab {
+    padding: 0.3rem 0.75rem;
+    font-size: 0.8125rem;
+  }
+}

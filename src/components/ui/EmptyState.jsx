@@ -13,7 +13,9 @@ export default function EmptyState({ icon, message, action, compact }) {
       {action && (
         action.href
           ? <a href={action.href} className={styles.action} target="_blank" rel="noopener noreferrer">{action.label}</a>
-          : <Link to={action.to} className={styles.action}>{action.label}</Link>
+          : action.onClick
+            ? <button type="button" className={styles.action} onClick={action.onClick}>{action.label}</button>
+            : <Link to={action.to} className={styles.action}>{action.label}</Link>
       )}
     </div>
   );

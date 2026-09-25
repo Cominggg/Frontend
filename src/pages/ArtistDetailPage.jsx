@@ -110,7 +110,7 @@ function ArtistDetailPage() {
     image: artist?.imageUrl,
   })
 
-  const { data: concertsData, isLoading: concertsLoading } = useQuery({
+  const { data: concertsData, isLoading: concertsLoading, isPlaceholderData: concertsIsPlaceholder } = useQuery({
     queryKey: ['artist-concerts', artistId, concertTab, concertPage],
     queryFn: () => getArtistConcerts(artistId, { tab: concertTab, page: concertPage - 1, size: CONCERT_PAGE_SIZE }),
     enabled: !!artist,
@@ -124,7 +124,7 @@ function ArtistDetailPage() {
     enabled: !!artist?.hasUpcomingConcert,
   })
 
-  const { data: releasesData, isLoading: releasesLoading } = useQuery({
+  const { data: releasesData, isLoading: releasesLoading, isPlaceholderData: releasesIsPlaceholder } = useQuery({
     queryKey: ['artist-releases', artistId, releasePage],
     queryFn: () => getArtistReleases(artistId, { page: releasePage - 1, size: RELEASE_PAGE_SIZE }),
     enabled: !!artist,
@@ -218,6 +218,13 @@ function ArtistDetailPage() {
   const nextConcert = ddayConcertsData?.content?.[0] ?? null
   const dday = nextConcert ? calcDday(nextConcert.startDate) : null
   const showDday = dday !== null && dday >= 0
+
+  // 디스코그래피·공연 이력이 둘 다 없으면(전체 탭 기준) 개별 섹션 대신
+  // 통합 안내 하나로 압축 — 빈 섹션 문구가 연이어 나열되는 걸 방지한다.
+  // placeholderData는 이전 결과라서(예: 빈 '지난 공연' 탭 → '전체' 전환 직후) 판정에서 뺀다.
+  const hasNoDiscography = !releasesLoading && !releasesIsPlaceholder && releases.length === 0
+  const hasNoConcertHistory = !concertsLoading && !concertsIsPlaceholder && concertTab === 'all' && concerts.length === 0
+  const showCombinedEmpty = hasNoDiscography && hasNoConcertHistory
 
   return (
     <>
@@ -334,6 +341,23 @@ function ArtistDetailPage() {
           </Link>
         )}
 
+        {/* 디스코그래피 · 내한 공연 내역이 둘 다 없으면 통합 안내로 압축 */}
+        {showCombinedEmpty ? (
+          <section className={styles.section}>
+            <EmptyState
+              compact
+              icon={(
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <circle cx="12" cy="12" r="10" />
+                  <line x1="12" y1="8" x2="12" y2="12" />
+                  <line x1="12" y1="16" x2="12.01" y2="16" />
+                </svg>
+              )}
+              message="아직 등록된 활동 정보가 없어요"
+            />
+          </section>
+        ) : (
+        <>
         {/* 디스코그래피 */}
         <section className={styles.section}>
           <h2 className={styles.sectionTitle}>
@@ -478,6 +502,8 @@ function ArtistDetailPage() {
             />
           )}
         </section>
+        </>
+        )}
 
         {/* 관련 게시글 */}
         <RelatedPostsSection entityType="ARTIST" entityId={id} limit={10} />

@@ -106,6 +106,7 @@
 }
 
 .tab {
+  flex-shrink: 0;
   padding: 0.625rem 1.125rem;
   font-size: 0.9375rem;
   font-weight: 500;
@@ -114,6 +115,7 @@
   border: none;
   border-bottom: 2px solid transparent;
   margin-bottom: -1px;
+  white-space: nowrap;
   transition: color 0.15s, border-color 0.15s;
 }
 
@@ -294,7 +296,7 @@
 .skeletonTitle,
 .skeletonDetail {
   border-radius: var(--radius-sm);
-  background: linear-gradient(90deg, var(--color-border) 25%, var(--color-surface-alt, #f0f0f0) 50%, var(--color-border) 75%);
+  background: linear-gradient(90deg, var(--color-border) 25%, var(--color-surface-hover) 50%, var(--color-border) 75%);
   background-size: 200% 100%;
   animation: shimmer 1.4s infinite;
 }
@@ -520,7 +522,7 @@
 .inquiryDetail {
   padding: 0.875rem 1.25rem 1rem;
   border-top: 1px solid var(--color-border);
-  background: var(--color-surface-raised, var(--color-surface));
+  background: var(--color-surface-raised);
   animation: inquiryDetailIn 0.18s ease;
 }
 
@@ -924,7 +926,34 @@
 
   .profileEditBtn {
     font-size: 0.75rem;
-    padding: 0.375rem 0.75rem;
+    padding: 0.625rem 0.875rem;
+  }
+
+  .unfollowBtn {
+    padding: 0.625rem 0.875rem;
+  }
+
+  .modalInput {
+    font-size: 16px;
+  }
+
+  .modalOverlay {
+    align-items: flex-end;
+    padding: 0;
+  }
+
+  .modalBox {
+    max-width: none;
+    max-height: 90vh;
+    overflow-y: auto;
+    border-radius: 20px 20px 0 0;
+  }
+
+  .modalCloseBtn {
+    top: calc(1rem - 6px);
+    right: calc(1rem - 6px);
+    width: 44px;
+    height: 44px;
   }
 
   .artistRow {

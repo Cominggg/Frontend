@@ -23,10 +23,12 @@
 }
 
 .action {
+  font-family: inherit;
   font-size: 0.9375rem;
   font-weight: 600;
   color: var(--color-accent);
   text-decoration: none;
+  background: none;
   padding: 0.5rem 1.25rem;
   border-radius: var(--radius-full);
   border: 1.5px solid var(--color-accent-border);

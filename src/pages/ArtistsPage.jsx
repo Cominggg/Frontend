@@ -4,7 +4,10 @@ import { useQuery } from '@tanstack/react-query'
 
 import ArtistCard from '@/components/artist/ArtistCard'
 import ArtistCardSkeleton from '@/components/artist/ArtistCardSkeleton'
+import PageHeader from '@/components/layout/PageHeader'
 import EmptyState from '@/components/ui/EmptyState'
+import FilterTabs from '@/components/ui/FilterTabs'
+import FilterToggle from '@/components/ui/FilterToggle'
 import Pagination from '@/components/ui/Pagination'
 import SortDropdown from '@/components/ui/SortDropdown'
 import { getArtists } from '@/services/artistApi'
@@ -14,7 +17,7 @@ import usePageMeta from '@/hooks/usePageMeta'
 import { trackEvent } from '@/utils/analytics'
 import styles from './ArtistsPage.module.css'
 
-const PAGE_SIZE = 25
+const PAGE_SIZE = 20
 const DEFAULT_SORT = 'sortName,asc'
 const SORT_OPTIONS = [
   { value: DEFAULT_SORT, label: '이름순' },
@@ -158,12 +161,11 @@ function ArtistsPage() {
       <div className={styles.inner}>
 
         {/* 헤더 */}
-        <div className={styles.pageHeader}>
-          <h1 className={styles.pageTitle}>아티스트</h1>
+        <PageHeader title="아티스트">
           <p className={styles.pageCount}>
             {isLoading ? '' : `${totalElements.toLocaleString()}명`}
           </p>
-        </div>
+        </PageHeader>
 
         {/* 검색 */}
         <div className={styles.searchWrap}>
@@ -197,36 +199,28 @@ function ArtistsPage() {
 
         {/* 필터 행 */}
         <div className={styles.filterRow}>
-          <div className={styles.filterBar} role="tablist" aria-label="아티스트 필터">
-            <button
-              role="tab"
-              aria-selected={!isComing}
-              className={`${styles.filterTab} ${!isComing ? styles.filterTabActive : ''}`}
-              onClick={() => handleIsComingChange(false)}
-            >
-              전체
-            </button>
-            <button
-              role="tab"
-              aria-selected={isComing}
-              className={`${styles.filterTab} ${isComing ? styles.filterTabActive : ''}`}
-              onClick={() => handleIsComingChange(true)}
-            >
-              COMING
-            </button>
-          </div>
+          <FilterTabs
+            ariaLabel="아티스트 필터"
+            options={[
+              { value: false, label: '전체' },
+              { value: true, label: 'COMING' },
+            ]}
+            value={isComing}
+            onChange={handleIsComingChange}
+          />
           <div className={styles.controls}>
             <SortDropdown options={SORT_OPTIONS} value={sort} onChange={handleSortChange} ariaLabel="아티스트 정렬" />
-            <button
-              className={`${styles.followedToggle} ${effectiveFollowedOnly ? styles.followedToggleActive : ''}`}
+            <FilterToggle
+              pressed={effectiveFollowedOnly}
               onClick={handleFollowedToggle}
-              aria-pressed={effectiveFollowedOnly}
+              icon={
+                <svg width="14" height="14" viewBox="0 0 24 24" fill={effectiveFollowedOnly ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                </svg>
+              }
             >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill={effectiveFollowedOnly ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-              </svg>
               관심 아티스트만
-            </button>
+            </FilterToggle>
           </div>
         </div>
 
