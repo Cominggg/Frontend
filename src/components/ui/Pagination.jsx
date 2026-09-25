@@ -85,7 +85,7 @@ function Pagination({ currentPage, totalPages, onPageChange }) {
         </button>
       </div>
 
-      {totalPages > (isMobile ? GROUP_SIZE_MOBILE : GROUP_SIZE) && (
+      {totalPages > 1 && (
         <form className={styles.jumpForm} onSubmit={handleJumpSubmit}>
           <input
             type="text"
