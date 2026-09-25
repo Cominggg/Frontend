@@ -16,7 +16,7 @@ import useEdgeFade from '@/hooks/useEdgeFade'
 import { trackEvent } from '@/utils/analytics'
 import styles from './ArtistsPage.module.css'
 
-const PAGE_SIZE = 25
+const PAGE_SIZE = 20
 const DEFAULT_SORT = 'sortName,asc'
 const SORT_OPTIONS = [
   { value: DEFAULT_SORT, label: '이름순' },
