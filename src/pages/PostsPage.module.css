@@ -223,4 +223,13 @@
   .searchInput {
     font-size: 16px;
   }
+
+  .filterBar {
+    gap: 0.375rem;
+  }
+
+  .filterTab {
+    padding: 0.3rem 0.75rem;
+    font-size: 0.8125rem;
+  }
 }

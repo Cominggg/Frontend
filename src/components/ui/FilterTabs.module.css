@@ -52,3 +52,14 @@
 .tabActive:hover {
   color: var(--color-on-accent);
 }
+
+@media (max-width: 767px) {
+  .tabs {
+    gap: 0.375rem;
+  }
+
+  .tab {
+    padding: 0.3rem 0.75rem;
+    font-size: 0.8125rem;
+  }
+}
