@@ -153,15 +153,6 @@ function Header() {
               </button>
               {dropdownOpen && (
                 <div className={styles.dropdown}>
-                  <div className={styles.dropdownToggleRow}>
-                    <span className={styles.dropdownToggleLabel}>다크 모드</span>
-                    <Switch
-                      checked={theme === 'dark'}
-                      onChange={toggleTheme}
-                      ariaLabel={themeLabel}
-                      size="sm"
-                    />
-                  </div>
                   {accountItems.map((item) =>
                     item.type === 'link' ? (
                       <Link
@@ -178,6 +169,15 @@ function Header() {
                       </button>
                     )
                   )}
+                  <div className={styles.dropdownToggleRow}>
+                    <span className={styles.dropdownToggleLabel}>다크 모드</span>
+                    <Switch
+                      checked={theme === 'dark'}
+                      onChange={toggleTheme}
+                      ariaLabel={themeLabel}
+                      size="sm"
+                    />
+                  </div>
                 </div>
               )}
             </div>
