@@ -8,6 +8,7 @@
 }
 
 .pageBtn {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -49,8 +50,10 @@
     gap: 0.375rem;
   }
 
-  .pageBtn {
-    min-width: 44px;
-    height: 44px;
+  /* 시각 크기는 유지하고 탭 영역만 44px로 확대 (hit-slop) */
+  .pageBtn::before {
+    content: '';
+    position: absolute;
+    inset: -4px;
   }
 }

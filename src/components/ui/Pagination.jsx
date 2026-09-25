@@ -1,17 +1,37 @@
+import { useEffect, useState } from 'react'
+
 import styles from './Pagination.module.css'
 
 const GROUP_SIZE = 10
+const GROUP_SIZE_MOBILE = 3
 
-function getGroupPages(currentPage, totalPages) {
-  const groupStart = Math.floor((currentPage - 1) / GROUP_SIZE) * GROUP_SIZE + 1
-  const groupEnd = Math.min(groupStart + GROUP_SIZE - 1, totalPages)
+function getGroupPages(currentPage, totalPages, groupSize) {
+  const groupStart = Math.floor((currentPage - 1) / groupSize) * groupSize + 1
+  const groupEnd = Math.min(groupStart + groupSize - 1, totalPages)
   return Array.from({ length: groupEnd - groupStart + 1 }, (_, i) => groupStart + i)
 }
 
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(
+    () => typeof window !== 'undefined' && window.matchMedia('(max-width: 767px)').matches
+  )
+
+  useEffect(() => {
+    const mql = window.matchMedia('(max-width: 767px)')
+    const handleChange = (e) => setIsMobile(e.matches)
+    mql.addEventListener('change', handleChange)
+    return () => mql.removeEventListener('change', handleChange)
+  }, [])
+
+  return isMobile
+}
+
 function Pagination({ currentPage, totalPages, onPageChange }) {
+  const isMobile = useIsMobile()
+
   if (!totalPages || totalPages < 1) return null
 
-  const pages = getGroupPages(currentPage, totalPages)
+  const pages = getGroupPages(currentPage, totalPages, isMobile ? GROUP_SIZE_MOBILE : GROUP_SIZE)
 
   return (
     <div className={styles.pagination} aria-label="페이지 네비게이션">
