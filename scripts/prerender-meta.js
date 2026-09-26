@@ -19,11 +19,12 @@ const DETAIL_TYPES = [
   { endpoint: '/releases', buildMeta: buildReleaseMeta, isValid: (item) => item.title },
 ]
 
-async function writePage(template, pathname, meta) {
+async function writePage(template, pathname, meta, { withCanonical }) {
   const html = injectMeta(template, {
     ...meta,
     image: meta.image || SITE_LOGO_URL,
     url: `${SITE_URL}${pathname}`,
+    withCanonical,
   })
   const dir = path.join(DIST_DIR, pathname)
   await mkdir(dir, { recursive: true })
@@ -33,8 +34,10 @@ async function writePage(template, pathname, meta) {
 async function main() {
   const template = await readFile(path.join(DIST_DIR, 'index.html'), 'utf-8')
 
+  // 목록 페이지는 쿼리와 무관하게 같은 파일이 서빙되는데 ?page=N의 canonical은 JS가 따로 지정하므로,
+  // 목록·정적 페이지의 canonical은 JS(usePageMeta)에만 맡긴다.
   for (const [pathname, meta] of Object.entries(STATIC_PAGE_META)) {
-    await writePage(template, pathname, meta)
+    await writePage(template, pathname, meta, { withCanonical: false })
   }
 
   // 한 타입의 수집이 실패해도 나머지는 생성한다. 실패한 타입은 기본 index.html로 fallback.
@@ -42,7 +45,7 @@ async function main() {
   for (const { endpoint, buildMeta, isValid } of DETAIL_TYPES) {
     try {
       const items = (await fetchAllItems(endpoint)).filter(isValid)
-      await Promise.all(items.map((item) => writePage(template, `${endpoint}/${item.id}`, buildMeta(item))))
+      await Promise.all(items.map((item) => writePage(template, `${endpoint}/${item.id}`, buildMeta(item), { withCanonical: true })))
       counts.push(`${endpoint} ${items.length}`)
     } catch (err) {
       console.warn(`[prerender-meta] ${endpoint} 수집 실패, 해당 상세는 기본 HTML로 서빙됩니다: ${err.message}`)

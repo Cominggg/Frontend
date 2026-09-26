@@ -15,7 +15,9 @@ function setMetaContent(html, attr, key, value) {
 }
 
 // 빌드된 index.html의 head를 URL별 메타로 치환한다. canonical·og:image는 템플릿에 없으면 추가한다.
-export function injectMeta(html, { title, description, url, image }) {
+// withCanonical=false면 canonical을 넣지 않는다. 쿼리(?page=N)에 따라 JS가 canonical을 다르게
+// 지정하는 페이지에서 원본 HTML의 canonical을 JS가 바꾸는 충돌(구글 가이드상 잘못된 구현)을 피하기 위함.
+export function injectMeta(html, { title, description, url, image, withCanonical = true }) {
   const t = escapeHtml(title)
   const d = escapeHtml(description)
   const u = escapeHtml(url)
@@ -28,6 +30,6 @@ export function injectMeta(html, { title, description, url, image }) {
   out = setMetaContent(out, 'name', 'twitter:title', t)
   out = setMetaContent(out, 'name', 'twitter:description', d)
   if (image) out = setMetaContent(out, 'property', 'og:image', escapeHtml(image))
-  out = out.replace('</head>', () => `  <link rel="canonical" href="${u}" />\n  </head>`)
+  if (withCanonical) out = out.replace('</head>', () => `  <link rel="canonical" href="${u}" />\n  </head>`)
   return out
 }
