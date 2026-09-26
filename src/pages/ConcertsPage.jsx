@@ -51,7 +51,7 @@ function ConcertsPage() {
   usePageMeta({
     title: 'Jpop 내한일정 - 커밍',
     description: 'Jpop 아티스트의 내한일정과 공연 정보를 한 곳에서 확인하세요. 예정·진행 중인 공연을 상태·아티스트별로 필터링할 수 있습니다.',
-    path: '/concerts',
+    path: currentPage > 1 ? `/concerts?page=${currentPage}` : '/concerts',
   })
 
   useEffect(() => {
@@ -254,6 +254,7 @@ function ConcertsPage() {
             currentPage={currentPage}
             totalPages={totalPages}
             onPageChange={handlePageChange}
+            pageParam="page"
           />
         )}
 

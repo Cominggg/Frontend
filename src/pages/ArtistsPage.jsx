@@ -45,7 +45,7 @@ function ArtistsPage() {
   usePageMeta({
     title: '아티스트 - 커밍',
     description: '내한 소식이 있는 Jpop 아티스트를 한눈에 확인하고, 관심 아티스트를 팔로우해 새 소식을 받아보세요.',
-    path: '/artists',
+    path: currentPage > 1 ? `/artists?page=${currentPage}` : '/artists',
   })
 
   useEffect(() => {
@@ -255,6 +255,7 @@ function ArtistsPage() {
             currentPage={currentPage}
             totalPages={totalPages}
             onPageChange={handlePageChange}
+            pageParam="page"
           />
         )}
 
