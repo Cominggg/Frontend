@@ -100,6 +100,14 @@ describe('injectMeta', () => {
     expect(html).toContain(`<link rel="canonical" href="${META.url}" />\n  </head>`)
   })
 
+  it('withCanonical이 false면 canonical을 추가하지 않고 나머지 메타는 치환', () => {
+    const html = injectMeta(TEMPLATE, { ...META, withCanonical: false })
+
+    expect(countOf(html, 'rel="canonical"')).toBe(0)
+    expect(html).toContain(`<title>${META.title}</title>`)
+    expect(metaContent(html, 'property', 'og:url')).toBe(META.url)
+  })
+
   it('값에 따옴표·script 태그가 있으면 이스케이프해 태그가 깨지지 않음', () => {
     const html = injectMeta(TEMPLATE, {
       ...META,
