@@ -34,7 +34,7 @@ describe('formatDateTime', () => {
 describe('formatRelativeDate', () => {
   beforeEach(() => {
     vi.useFakeTimers()
-    vi.setSystemTime(new Date('2026-09-26T12:00:00'))
+    vi.setSystemTime(new Date('2026-09-26T12:00:00Z'))
   })
 
   afterEach(() => {
@@ -42,11 +42,11 @@ describe('formatRelativeDate', () => {
   })
 
   it.each([
-    ['2026-09-26T09:00:00', '오늘'],
-    ['2026-09-25T12:00:00', '어제'],
-    ['2026-09-23T12:00:00', '3일 전'],
-    ['2026-09-12T12:00:00', '2주 전'],
-    ['2026-07-28T12:00:00', '2개월 전'],
+    ['2026-09-26T09:00:00Z', '오늘'],
+    ['2026-09-25T12:00:00Z', '어제'],
+    ['2026-09-23T12:00:00Z', '3일 전'],
+    ['2026-09-12T12:00:00Z', '2주 전'],
+    ['2026-07-28T12:00:00Z', '2개월 전'],
   ])('%s → %s', (input, expected) => {
     expect(formatRelativeDate(input)).toBe(expected)
   })
