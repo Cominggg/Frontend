@@ -16,8 +16,20 @@ function setMetaByName(name, content) {
   document.querySelector(`meta[name="${name}"]`)?.setAttribute('content', content)
 }
 
+// 구글은 원본 HTML의 canonical을 JS로 바꾸는 것을 잘못된 구현으로 보므로, index.html에는
+// canonical을 두지 않고 여기서만 생성·제거해 페이지당 하나만 존재하게 한다.
 function setCanonicalHref(href) {
-  document.querySelector('link[rel="canonical"]')?.setAttribute('href', href)
+  let link = document.querySelector('link[rel="canonical"]')
+  if (!link) {
+    link = document.createElement('link')
+    link.rel = 'canonical'
+    document.head.appendChild(link)
+  }
+  link.href = href
+}
+
+function removeCanonical() {
+  document.querySelector('link[rel="canonical"]')?.remove()
 }
 
 // SSR/프리렌더링이 없는 CSR 환경이라 JS를 실행하지 않는 공유 미리보기 봇(카카오톡·페이스북 등)에는
@@ -43,7 +55,7 @@ export default function usePageMeta({ title, description, path, image }) {
       setMetaContent('og:url', DEFAULT_URL)
       setMetaContent('og:image', DEFAULT_IMAGE)
       setMetaByName('description', DEFAULT_DESCRIPTION)
-      setCanonicalHref(DEFAULT_URL)
+      removeCanonical()
     }
   }, [title, description, path, image])
 }

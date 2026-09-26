@@ -47,7 +47,7 @@ function ConcertDetailPage() {
 
   useEffect(() => { setActiveTab('info') }, [id])
 
-  const { data: concert, isLoading, isError } = useQuery({
+  const { data: concert, isLoading, isError, error } = useQuery({
     queryKey: ['concert', concertId],
     queryFn: () => getConcert(concertId),
     retry: false,
@@ -128,17 +128,22 @@ function ConcertDetailPage() {
 
   if (isError || !concert) {
     return (
-      <EmptyState
-        icon={
-          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="12" cy="12" r="10" />
-            <line x1="12" y1="8" x2="12" y2="12" />
-            <line x1="12" y1="16" x2="12.01" y2="16" />
-          </svg>
-        }
-        message="공연 정보가 존재하지 않습니다"
-        action={{ to: ROUTES.CONCERTS, label: '공연 목록으로' }}
-      />
+      <>
+        {/* 없는 id로 들어온 URL이 soft 404로 색인되지 않도록. 일시적 API 장애(5xx·타임아웃) 때
+            noindex가 붙으면 멀쩡한 페이지가 색인에서 빠지므로 404일 때만 적용한다. */}
+        {error?.response?.status === 404 && <meta name="robots" content="noindex" />}
+        <EmptyState
+          icon={
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="10" />
+              <line x1="12" y1="8" x2="12" y2="12" />
+              <line x1="12" y1="16" x2="12.01" y2="16" />
+            </svg>
+          }
+          message="공연 정보가 존재하지 않습니다"
+          action={{ to: ROUTES.CONCERTS, label: '공연 목록으로' }}
+        />
+      </>
     )
   }
 
