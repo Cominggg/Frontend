@@ -18,6 +18,7 @@ import { ROUTES } from '@/constants/routes'
 import { formatDate, formatDateTime } from '@/utils/date'
 import { buildConcertEventJsonLd, toSafeJsonLd } from '@/utils/structuredData'
 import { trackEvent } from '@/utils/analytics'
+import { buildConcertMeta } from '@/utils/pageMeta'
 import styles from './ConcertDetailPage.module.css'
 
 function PosterImage({ url, alt }) {
@@ -54,12 +55,8 @@ function ConcertDetailPage() {
   })
 
   usePageMeta({
-    title: concert?.title ? `${concert.title} - 커밍` : undefined,
-    description: concert
-      ? `${(concert.artists ?? []).map((a) => a.name).join(' · ')} · ${concert.venue} · ${formatDate(concert.startDate)}`
-      : undefined,
+    ...(concert?.title && buildConcertMeta(concert)),
     path: `/concerts/${concertId}`,
-    image: concert?.posterUrl,
   })
 
   const { data: setlistData } = useQuery({

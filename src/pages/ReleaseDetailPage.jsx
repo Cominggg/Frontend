@@ -14,6 +14,7 @@ import { ROUTES } from '@/constants/routes'
 import { getArtistColor } from '@/utils/artistColor'
 import { formatDate } from '@/utils/date'
 import { getSpotifyAlbumUrl, getSpotifyTrackUrl } from '@/utils/spotify'
+import { buildReleaseMeta } from '@/utils/pageMeta'
 import styles from './ReleaseDetailPage.module.css'
 
 function fmtMs(ms) {
@@ -58,10 +59,8 @@ function ReleaseDetailPage() {
   }, [hash, release])
 
   usePageMeta({
-    title: release?.title ? `${release.title} - 커밍` : undefined,
-    description: release?.title ? `${release.artistName} · ${release.title} 발매 정보` : undefined,
+    ...(release?.title && buildReleaseMeta(release)),
     path: `/releases/${releaseId}`,
-    image: release?.coverUrl,
   })
 
   function handleBack() {

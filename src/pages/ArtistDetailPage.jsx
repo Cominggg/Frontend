@@ -24,6 +24,7 @@ import { getArtistColor } from '@/utils/artistColor'
 import { formatDate } from '@/utils/date'
 import { getSpotifyAlbumUrl, getSpotifyTrackUrl } from '@/utils/spotify'
 import { trackEvent } from '@/utils/analytics'
+import { buildArtistMeta } from '@/utils/pageMeta'
 import styles from './ArtistDetailPage.module.css'
 
 function formatFollowers(n) {
@@ -104,10 +105,8 @@ function ArtistDetailPage() {
   })
 
   usePageMeta({
-    title: artist?.name ? `${artist.name} - 커밍` : undefined,
-    description: artist?.name ? `${artist.name} 아티스트 프로필 및 내한 공연 정보` : undefined,
+    ...(artist?.name && buildArtistMeta(artist)),
     path: `/artists/${artistId}`,
-    image: artist?.imageUrl,
   })
 
   const { data: concertsData, isLoading: concertsLoading, isPlaceholderData: concertsIsPlaceholder } = useQuery({

@@ -15,6 +15,7 @@ import useAuthStore from '@/stores/authStore'
 import useLoginModalStore from '@/stores/loginModalStore'
 import usePageMeta from '@/hooks/usePageMeta'
 import { trackEvent } from '@/utils/analytics'
+import { STATIC_PAGE_META } from '@/utils/pageMeta'
 import styles from './ArtistsPage.module.css'
 
 const PAGE_SIZE = 20
@@ -43,8 +44,7 @@ function ArtistsPage() {
   const effectiveFollowedOnly = followedOnly && !!user
 
   usePageMeta({
-    title: '아티스트 - 커밍',
-    description: '내한 소식이 있는 Jpop 아티스트를 한눈에 확인하고, 관심 아티스트를 팔로우해 새 소식을 받아보세요.',
+    ...STATIC_PAGE_META['/artists'],
     path: currentPage > 1 ? `/artists?page=${currentPage}` : '/artists',
   })
 
