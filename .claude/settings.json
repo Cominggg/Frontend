@@ -3,16 +3,37 @@
     "frontend-design@claude-plugins-official": true,
     "playwright@claude-plugins-official": true
   },
-  "permissions": {
-    "defaultMode": "bypassPermissions"
-  },
   "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 -c \"import json,sys,os; fp=json.load(sys.stdin).get('tool_input',{}).get('file_path',''); n=os.path.basename(fp); blocked=n=='.env' or (n.startswith('.env.') and n!='.env.example') or 'credentials' in n or '.secret' in n; print(json.dumps({'hookSpecificOutput':{'hookEventName':'PreToolUse','permissionDecision':'deny','permissionDecisionReason':'시크릿 파일 수정 차단: '+fp}})) if blocked else None\"",
+            "statusMessage": "시크릿 파일 검사 중..."
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/check-breakpoint.py\"",
+            "statusMessage": "breakpoint 검사 중..."
+          }
+        ]
+      }
+    ],
     "Stop": [
       {
         "hooks": [
           {
             "type": "command",
-            "command": "find /Users/youhyuk/Coming/Frontend -maxdepth 1 \\( -name '*.png' -o -name '*.jpg' -o -name '*.jpeg' \\) -delete 2>/dev/null || true",
+            "command": "find \"$CLAUDE_PROJECT_DIR\" -maxdepth 1 \\( -name '*.png' -o -name '*.jpg' -o -name '*.jpeg' \\) -delete 2>/dev/null || true",
             "statusMessage": "Playwright 임시 스크린샷 정리 중..."
           }
         ]

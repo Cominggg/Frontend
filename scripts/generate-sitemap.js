@@ -2,10 +2,10 @@ import { writeFile } from 'node:fs/promises'
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
 
+import { fetchAllItems } from './lib/fetchAllItems.js'
+
 const SITE_URL = 'https://www.comingg.com'
-const API_BASE_URL = process.env.SITEMAP_API_BASE_URL || 'https://api.comingg.com/api'
 const OUTPUT_PATH = path.resolve(fileURLToPath(new URL('.', import.meta.url)), '../public/sitemap.xml')
-const PAGE_SIZE = 200
 
 const STATIC_URLS = [
   { loc: '/', changefreq: 'daily', priority: '1.0' },
@@ -17,44 +17,17 @@ const STATIC_URLS = [
   { loc: '/privacy', changefreq: 'yearly', priority: '0.2' },
 ]
 
-// 리스트 엔드포인트를 끝까지 페이지네이션하며 id만 수집. 실패 시 에러를 그대로
-// 던져서 main()이 기존 sitemap.xml을 훼손하지 않고 유지하도록 한다.
-// 페이지 수집 도중 데이터가 추가/삭제되면 offset이 밀리면서 같은 id가 여러 페이지에
-// 걸쳐 중복 수집될 수 있어 Set으로 걸러낸다.
-async function fetchAllIds(endpoint) {
-  const ids = new Set()
-  let page = 0
-
-  while (true) {
-    const res = await fetch(`${API_BASE_URL}${endpoint}?page=${page}&size=${PAGE_SIZE}`, {
-      signal: AbortSignal.timeout(10000),
-    })
-    if (!res.ok) throw new Error(`${endpoint} HTTP ${res.status}`)
-    const data = await res.json()
-
-    for (const item of data.content ?? []) {
-      if (item?.id != null) ids.add(item.id)
-    }
-
-    page += 1
-    if (page >= (data.totalPages ?? 0)) break
-  }
-
-  return [...ids]
-}
-
 function buildUrlEntry({ loc, changefreq, priority }) {
   return `  <url>\n    <loc>${SITE_URL}${loc}</loc>\n    <changefreq>${changefreq}</changefreq>\n    <priority>${priority}</priority>\n  </url>`
 }
 
+// 동적 URL은 공연 상세만 넣는다. 발매(5천여 개)·아티스트(1천여 개)까지 한꺼번에 제출하면
+// 신규 도메인의 크롤링 수요가 분산돼 핵심인 공연 페이지까지 '발견됨 - 색인 미생성'에 머문다.
+// 아티스트·발매 상세는 목록 페이지네이션과 상세 간 링크를 통해 크롤러가 발견하도록 둔다.
 async function main() {
-  let concertIds, artistIds, releaseIds
+  let concertIds
   try {
-    ;[concertIds, artistIds, releaseIds] = await Promise.all([
-      fetchAllIds('/concerts'),
-      fetchAllIds('/artists'),
-      fetchAllIds('/releases'),
-    ])
+    concertIds = (await fetchAllItems('/concerts')).map((concert) => concert.id)
   } catch (err) {
     // 일부 구간만 빠진 채로 sitemap.xml을 덮어쓰면 이미 색인된 URL이 검색엔진에서
     // 통째로 빠질 수 있어, 실패 시에는 파일을 건드리지 않고 기존 버전을 유지한다.
@@ -62,17 +35,13 @@ async function main() {
     return
   }
 
-  const dynamicUrls = [
-    ...concertIds.map((id) => ({ loc: `/concerts/${id}`, changefreq: 'weekly', priority: '0.6' })),
-    ...artistIds.map((id) => ({ loc: `/artists/${id}`, changefreq: 'weekly', priority: '0.6' })),
-    ...releaseIds.map((id) => ({ loc: `/releases/${id}`, changefreq: 'weekly', priority: '0.5' })),
-  ]
+  const dynamicUrls = concertIds.map((id) => ({ loc: `/concerts/${id}`, changefreq: 'weekly', priority: '0.6' }))
 
   const body = [...STATIC_URLS, ...dynamicUrls].map(buildUrlEntry).join('\n')
   const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${body}\n</urlset>\n`
 
   await writeFile(OUTPUT_PATH, xml, 'utf-8')
-  console.log(`[sitemap] 생성 완료 — 정적 ${STATIC_URLS.length}개 + 동적 ${dynamicUrls.length}개 (콘서트 ${concertIds.length} · 아티스트 ${artistIds.length} · 릴리즈 ${releaseIds.length})`)
+  console.log(`[sitemap] 생성 완료 — 정적 ${STATIC_URLS.length}개 + 동적 ${dynamicUrls.length}개 (콘서트 ${concertIds.length})`)
 }
 
 main()
