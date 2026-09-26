@@ -217,7 +217,7 @@ npm run test:watch  # Vitest watch 모드
 
 ## 프로젝트 구조
 
-```
+```text
 src/
 ├── pages/              # 라우트 단위 페이지
 │   ├── admin/          # 관리자 전용 (AdminRoute 보호)
@@ -260,7 +260,7 @@ Claude Code 에이전트·스킬·훅으로 이슈부터 PR까지 진행합니�
 
 ### 흐름
 
-```
+```text
 /issue → /plan-issue → (web-design) → 구현 → write-tests → npm run test → /fe-review → /simplify → /commit → /pr
 ```
 
@@ -311,7 +311,7 @@ Claude Code 에이전트·스킬·훅으로 이슈부터 PR까지 진행합니�
 | 시점 | 대상 | 동작 |
 |------|------|------|
 | PreToolUse | Write·Edit·MultiEdit | 파일명이 `.env`·`.env.*`이거나 `credentials`·`.secret`을 포함하면 수정 차단 (`.env.example`은 커밋 대상 템플릿이라 허용) |
-| PostToolUse | `.css` 수정 | `@media`에 `767`·`900`·`1279px`(min-width는 `768`·`901`·`1280px`) 외 값이 있으면 줄 번호와 함께 되돌려 수정 요구 ([`check-breakpoint.py`](.claude/hooks/check-breakpoint.py)) |
+| PostToolUse | `.css` 수정 | `@media` 줄의 `max-width`가 `767`·`900`·`1279px`, `min-width`가 `768`·`901`·`1280px` 외 값이면 줄 번호와 함께 되돌려 수정 요구 (width 조건만 검사, 여러 줄에 걸친 쿼리는 첫 줄만 검사) ([`check-breakpoint.py`](.claude/hooks/check-breakpoint.py)) |
 | Stop | 레포 루트 | Playwright로 화면 확인 중 남은 임시 스크린샷(`*.png`·`*.jpg`) 정리 |
 
 ---

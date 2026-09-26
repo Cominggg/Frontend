@@ -24,7 +24,7 @@ src/
   pages/        # 라우트 단위 페이지
     admin/      # 관리자 전용 페이지 (AdminRoute로 보호)
   stores/       # Zustand 스토어 (authStore·loginModalStore·themeStore)
-  services/     # api.js 단일 파일 — Axios 인스턴스 및 인터셉터 중앙 관리
+  services/     # api.js(Axios 인스턴스·인터셉터 중앙 관리) + 도메인별 {domain}Api.js
   mocks/        # followedArtistMocks.js만 존재; 대부분 목 데이터는 각 페이지에 인라인 선언
   hooks/        # 커스텀 훅 (현재 빈 디렉터리)
   utils/        # 유틸 함수
