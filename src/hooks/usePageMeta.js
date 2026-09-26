@@ -16,8 +16,9 @@ function setMetaByName(name, content) {
   document.querySelector(`meta[name="${name}"]`)?.setAttribute('content', content)
 }
 
-// 구글은 원본 HTML의 canonical을 JS로 바꾸는 것을 잘못된 구현으로 보므로, index.html에는
-// canonical을 두지 않고 여기서만 생성·제거해 페이지당 하나만 존재하게 한다.
+// 구글은 원본 HTML의 canonical을 JS로 다른 값으로 바꾸는 것을 잘못된 구현으로 본다. 그래서 모든
+// URL의 fallback인 index.html에는 canonical을 두지 않고, 빌드 시 생성된 페이지(scripts/prerender-meta.js)만
+// 같은 값의 canonical을 갖는다. 여기서는 있으면 갱신, 없으면 생성해 페이지당 하나만 존재하게 한다.
 function setCanonicalHref(href) {
   let link = document.querySelector('link[rel="canonical"]')
   if (!link) {
@@ -32,8 +33,9 @@ function removeCanonical() {
   document.querySelector('link[rel="canonical"]')?.remove()
 }
 
-// SSR/프리렌더링이 없는 CSR 환경이라 JS를 실행하지 않는 공유 미리보기 봇(카카오톡·페이스북 등)에는
-// 반영되지 않는다. 브라우저 탭 제목과 JS를 렌더링하는 검색엔진(Googlebot 등) 대상 개선용.
+// 첫 요청의 메타는 빌드 시 생성된 URL별 HTML(scripts/prerender-meta.js)이 담당하고, 이 훅은
+// SPA 내 이동 시 갱신과 배포 이후 추가돼 생성 파일이 없는 항목을 담당한다.
+// 문구는 src/utils/pageMeta.js를 두 곳이 공유한다.
 export default function usePageMeta({ title, description, path, image }) {
   useEffect(() => {
     if (!title) return
