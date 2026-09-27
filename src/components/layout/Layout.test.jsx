@@ -45,7 +45,7 @@ describe('Layout 세션 복원', () => {
     expect(useAuthStore.getState().user).toEqual(USER)
   })
 
-  it('StrictMode로 렌더링해도 refresh는 한 번만 호출', async () => {
+  it('StrictMode로 렌더링해도 세션 복원은 한 번만 실행', async () => {
     localStorage.setItem(SESSION_HINT, '1')
     refreshAccessToken.mockResolvedValue('new-token')
     getMe.mockResolvedValue(USER)

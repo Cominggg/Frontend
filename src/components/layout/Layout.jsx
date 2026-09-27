@@ -14,7 +14,8 @@ function Layout({ children }) {
   const restoreStarted = useRef(false)
 
   useEffect(() => {
-    // StrictMode의 effect 이중 실행으로 refresh가 두 번 나가지 않도록 1회만 실행
+    // StrictMode의 effect 이중 실행으로 세션 복원(getMe 등)이 두 번 돌지 않도록 1회만 실행
+    // (refresh 요청 자체의 중복은 refreshAccessToken이 합친다)
     if (restoreStarted.current) return
     restoreStarted.current = true
 
