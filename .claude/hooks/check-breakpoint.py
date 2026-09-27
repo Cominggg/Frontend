@@ -16,7 +16,7 @@ with open(fp, encoding='utf-8') as f:
     for no, line in enumerate(f, 1):
         if '@media' in line:
             bad += [f'{no}행 {kind}-width: {v}px'
-                    for kind, v in re.findall(r'(max|min)-width:\s*(\d+)px', line)
+                    for kind, v in re.findall(r'(max|min)-width:\s*(\d+(?:\.\d+)?)px', line)
                     if v not in ALLOWED[kind]]
 
 if bad:
