@@ -16,6 +16,7 @@ import { getPosts, getPopularBoardPosts, getSearch } from '@/services/postApi'
 import { ROUTES } from '@/constants/routes'
 import { POST_CATEGORY_LABEL } from '@/constants/post'
 import { trackEvent } from '@/utils/analytics'
+import { STATIC_PAGE_META } from '@/utils/pageMeta'
 import useAuthStore from '@/stores/authStore'
 import useLoginModalStore from '@/stores/loginModalStore'
 import styles from './PostsPage.module.css'
@@ -74,8 +75,7 @@ function PostsPage() {
   const { ref: filterBarRef, style: filterBarFadeStyle } = useHorizontalScrollBar()
 
   usePageMeta({
-    title: '커뮤니티 - 커밍',
-    description: '자유, 정보, 공연 후기 이야기를 나누는 Jpop 팬 커뮤니티입니다.',
+    ...STATIC_PAGE_META['/community'],
     path: '/community',
   })
 

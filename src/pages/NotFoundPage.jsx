@@ -6,6 +6,7 @@ import styles from './NotFoundPage.module.css'
 export default function NotFoundPage() {
   return (
     <main className={styles.page}>
+      <meta name="robots" content="noindex" />
       <div className={styles.inner}>
         <p className={styles.code} aria-hidden="true">
           404

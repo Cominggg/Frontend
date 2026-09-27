@@ -15,6 +15,10 @@ export default defineConfig(({ mode }) => {
     build: {
       sourcemap: false,
     },
+    test: {
+      environment: 'jsdom',
+      setupFiles: './src/test/setup.js',
+    },
     server: {
       proxy: {
         '/api': {

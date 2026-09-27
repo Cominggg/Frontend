@@ -9,6 +9,7 @@ import useAuthStore from '@/stores/authStore'
 import useLoginModalStore from '@/stores/loginModalStore'
 import { isSameDay } from '@/utils/date'
 import { hashStringToIndex } from '@/utils/artistColor'
+import { STATIC_PAGE_META } from '@/utils/pageMeta'
 import usePageMeta from '@/hooks/usePageMeta'
 import styles from './CalendarPage.module.css'
 
@@ -39,8 +40,7 @@ function CalendarPage() {
   const [viewMode, setViewMode] = useState('all') // 'all' | 'my'
 
   usePageMeta({
-    title: '캘린더 - 커밍',
-    description: '월별 캘린더에서 Jpop 아티스트의 공연 일정을 한눈에 확인하고 내 캘린더에 담아보세요.',
+    ...STATIC_PAGE_META['/calendar'],
     path: '/calendar',
   })
 
