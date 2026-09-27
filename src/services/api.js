@@ -10,9 +10,11 @@ const api = axios.create({
 let refreshPromise = null
 
 const REFRESH_LOCK = 'coming-auth-refresh'
+// 응답이 멈추면 Web Lock이 풀리지 않아 다른 탭의 refresh까지 막히므로 제한 시간을 둔다
+const REFRESH_TIMEOUT_MS = 10_000
 
 function requestRefresh() {
-  return axios.post('/api/auth/refresh', null, { withCredentials: true })
+  return axios.post('/api/auth/refresh', null, { withCredentials: true, timeout: REFRESH_TIMEOUT_MS })
 }
 
 // Refresh Token으로 Access Token 재발급. 동시 호출은 진행 중인 요청 하나로 합친다
