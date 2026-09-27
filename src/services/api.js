@@ -9,12 +9,21 @@ const api = axios.create({
 
 let refreshPromise = null
 
+const REFRESH_LOCK = 'coming-auth-refresh'
+
+function requestRefresh() {
+  return axios.post('/api/auth/refresh', null, { withCredentials: true })
+}
+
 // Refresh Token으로 Access Token 재발급. 동시 호출은 진행 중인 요청 하나로 합친다
 // (BE가 RT를 회전하므로 같은 RT로 두 번 요청하면 한쪽이 실패한다)
+// 탭 간에는 Web Locks로 직렬화 — 대기한 탭은 앞 탭이 갱신한 RT 쿠키로 요청한다
 export function refreshAccessToken() {
   if (!refreshPromise) {
-    refreshPromise = axios
-      .post('/api/auth/refresh', null, { withCredentials: true })
+    const request = navigator.locks
+      ? navigator.locks.request(REFRESH_LOCK, requestRefresh)
+      : requestRefresh()
+    refreshPromise = request
       .then(({ data }) => {
         useAuthStore.getState().setAccessToken(data.accessToken)
         return data.accessToken
