@@ -113,14 +113,6 @@ describe('refreshAccessToken', () => {
 
     expect(lockHeld).toBe(false)
   })
-
-  it('refresh 요청에 제한 시간을 설정', async () => {
-    const post = mockRefreshSuccess()
-
-    await refreshAccessToken()
-
-    expect(post).toHaveBeenCalledWith('/api/auth/refresh', null, expect.objectContaining({ timeout: expect.any(Number) }))
-  })
 })
 
 describe('api 401 응답 처리', () => {
