@@ -9,6 +9,21 @@ const api = axios.create({
 
 let refreshPromise = null
 
+// Refresh Token으로 Access Token 재발급. 동시 호출은 진행 중인 요청 하나로 합친다
+// (BE가 RT를 회전하므로 같은 RT로 두 번 요청하면 한쪽이 실패한다)
+export function refreshAccessToken() {
+  if (!refreshPromise) {
+    refreshPromise = axios
+      .post('/api/auth/refresh', null, { withCredentials: true })
+      .then(({ data }) => {
+        useAuthStore.getState().setAccessToken(data.accessToken)
+        return data.accessToken
+      })
+      .finally(() => { refreshPromise = null })
+  }
+  return refreshPromise
+}
+
 // Request interceptor: Access Token 주입 (메모리에서 읽음)
 api.interceptors.request.use((config) => {
   const token = useAuthStore.getState().accessToken
@@ -27,14 +42,8 @@ api.interceptors.response.use(
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true
       try {
-        if (!refreshPromise) {
-          refreshPromise = axios
-            .post('/api/auth/refresh', null, { withCredentials: true })
-            .finally(() => { refreshPromise = null })
-        }
-        const { data } = await refreshPromise
-        useAuthStore.getState().setAccessToken(data.accessToken)
-        originalRequest.headers.Authorization = `Bearer ${data.accessToken}`
+        const accessToken = await refreshAccessToken()
+        originalRequest.headers.Authorization = `Bearer ${accessToken}`
         return api(originalRequest)
       } catch (refreshError) {
         useAuthStore.getState().clearUser()
