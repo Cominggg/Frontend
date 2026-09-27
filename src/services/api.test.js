@@ -88,6 +88,39 @@ describe('refreshAccessToken', () => {
 
     expect(post).toHaveBeenCalledTimes(1)
   })
+
+  it('refresh 응답이 오기 전까지 lock을 놓지 않음', async () => {
+    let resolvePost
+    vi.spyOn(axios, 'post').mockReturnValue(new Promise((resolve) => { resolvePost = resolve }))
+    let lockHeld = false
+    navigator.locks = {
+      request: async (_name, callback) => {
+        lockHeld = true
+        try {
+          return await callback()
+        } finally {
+          lockHeld = false
+        }
+      },
+    }
+
+    const pending = refreshAccessToken()
+    await Promise.resolve()
+    expect(lockHeld).toBe(true)
+
+    resolvePost({ data: { accessToken: 'new-token' } })
+    await pending
+
+    expect(lockHeld).toBe(false)
+  })
+
+  it('refresh 요청에 제한 시간을 설정', async () => {
+    const post = mockRefreshSuccess()
+
+    await refreshAccessToken()
+
+    expect(post).toHaveBeenCalledWith('/api/auth/refresh', null, expect.objectContaining({ timeout: expect.any(Number) }))
+  })
 })
 
 describe('api 401 응답 처리', () => {
