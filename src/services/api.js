@@ -9,6 +9,31 @@ const api = axios.create({
 
 let refreshPromise = null
 
+const REFRESH_LOCK = 'coming-auth-refresh'
+
+// 타임아웃을 두지 않는다 — 서버가 RT를 회전한 뒤 끊으면 새 쿠키를 못 받아 다음 refresh가 재사용으로 판정되고 세션이 폐기된다
+function requestRefresh() {
+  return axios.post('/api/auth/refresh', null, { withCredentials: true })
+}
+
+// Refresh Token으로 Access Token 재발급. 동시 호출은 진행 중인 요청 하나로 합친다
+// (BE가 RT를 회전하므로 같은 RT로 두 번 요청하면 한쪽이 실패한다)
+// 탭 간에는 Web Locks로 직렬화 — 대기한 탭은 앞 탭이 갱신한 RT 쿠키로 요청한다
+export function refreshAccessToken() {
+  if (!refreshPromise) {
+    const request = navigator.locks
+      ? navigator.locks.request(REFRESH_LOCK, requestRefresh)
+      : requestRefresh()
+    refreshPromise = request
+      .then(({ data }) => {
+        useAuthStore.getState().setAccessToken(data.accessToken)
+        return data.accessToken
+      })
+      .finally(() => { refreshPromise = null })
+  }
+  return refreshPromise
+}
+
 // Request interceptor: Access Token 주입 (메모리에서 읽음)
 api.interceptors.request.use((config) => {
   const token = useAuthStore.getState().accessToken
@@ -27,14 +52,8 @@ api.interceptors.response.use(
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true
       try {
-        if (!refreshPromise) {
-          refreshPromise = axios
-            .post('/api/auth/refresh', null, { withCredentials: true })
-            .finally(() => { refreshPromise = null })
-        }
-        const { data } = await refreshPromise
-        useAuthStore.getState().setAccessToken(data.accessToken)
-        originalRequest.headers.Authorization = `Bearer ${data.accessToken}`
+        const accessToken = await refreshAccessToken()
+        originalRequest.headers.Authorization = `Bearer ${accessToken}`
         return api(originalRequest)
       } catch (refreshError) {
         useAuthStore.getState().clearUser()

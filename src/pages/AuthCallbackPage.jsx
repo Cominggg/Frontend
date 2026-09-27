@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import axios from 'axios'
 
 import useAuthStore from '@/stores/authStore'
+import { refreshAccessToken } from '@/services/api'
 import { getMe } from '@/services/authApi'
 import { ROUTES } from '@/constants/routes'
 import { LOGIN_REDIRECT_KEY } from '@/constants/auth'
@@ -17,7 +17,6 @@ const AUTH_ERRORS = {
 function AuthCallbackPage() {
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
-  const setAccessToken = useAuthStore((s) => s.setAccessToken)
   const setUser = useAuthStore((s) => s.setUser)
   const called = useRef(false)
   const [errorMessage, setErrorMessage] = useState(null)
@@ -34,8 +33,7 @@ function AuthCallbackPage() {
       }
 
       try {
-        const { data } = await axios.post('/api/auth/refresh', null, { withCredentials: true })
-        setAccessToken(data.accessToken)
+        await refreshAccessToken()
 
         const user = await getMe()
         setUser(user)
@@ -57,7 +55,7 @@ function AuthCallbackPage() {
     }
 
     handleCallback()
-  }, [navigate, searchParams, setAccessToken, setUser])
+  }, [navigate, searchParams, setUser])
 
   if (errorMessage) {
     return (
