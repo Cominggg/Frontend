@@ -43,13 +43,16 @@ async function main() {
   // 한 타입의 수집이 실패해도 나머지는 생성한다. 실패한 타입은 기본 index.html로 fallback.
   const counts = []
   for (const { endpoint, buildMeta, isValid } of DETAIL_TYPES) {
+    let items
     try {
-      const items = (await fetchAllItems(endpoint)).filter(isValid)
-      await Promise.all(items.map((item) => writePage(template, `${endpoint}/${item.id}`, buildMeta(item), { withCanonical: true })))
-      counts.push(`${endpoint} ${items.length}`)
+      items = await fetchAllItems(endpoint)
     } catch (err) {
       console.warn(`[prerender-meta] ${endpoint} 수집 실패, 해당 상세는 기본 HTML로 서빙됩니다: ${err.message}`)
+      continue
     }
+    items = items.filter(isValid)
+    await Promise.all(items.map((item) => writePage(template, `${endpoint}/${item.id}`, buildMeta(item), { withCanonical: true })))
+    counts.push(`${endpoint} ${items.length}`)
   }
 
   console.log(`[prerender-meta] 생성 완료 — 정적 ${Object.keys(STATIC_PAGE_META).length}개 · ${counts.join(' · ')}`)
