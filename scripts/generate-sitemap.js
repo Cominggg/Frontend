@@ -13,6 +13,7 @@ const STATIC_URLS = [
   { loc: '/concerts', changefreq: 'daily', priority: '0.8' },
   { loc: '/releases', changefreq: 'daily', priority: '0.7' },
   { loc: '/calendar', changefreq: 'weekly', priority: '0.6' },
+  { loc: '/community', changefreq: 'daily', priority: '0.6' },
   { loc: '/terms', changefreq: 'yearly', priority: '0.2' },
   { loc: '/privacy', changefreq: 'yearly', priority: '0.2' },
 ]
