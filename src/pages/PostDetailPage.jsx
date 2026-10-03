@@ -63,7 +63,7 @@ function PostDetailPage() {
 
   usePageMeta({
     title: post ? `${post.title} - 커밍` : undefined,
-    description: '자유, 정보, 공연 후기 이야기를 나누는 Jpop 팬 커뮤니티입니다.',
+    description: post ? `${POST_CATEGORY_LABEL[post.category]} 게시글 · ${post.title} · J-POP 커뮤니티 커밍` : undefined,
     path: `/community/${postId}`,
   })
 

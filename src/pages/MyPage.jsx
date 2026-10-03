@@ -14,6 +14,7 @@ import useAuthStore from '@/stores/authStore'
 import { ROUTES } from '@/constants/routes'
 import { getArtistColor } from '@/utils/artistColor'
 import { formatDate } from '@/utils/date'
+import { HOME_PAGE_META } from '@/utils/pageMeta'
 import useHorizontalScrollBar from '@/hooks/useHorizontalScrollBar'
 import styles from './MyPage.module.css'
 
@@ -363,7 +364,7 @@ function MyPage() {
 
   useEffect(() => {
     document.title = '마이페이지 - 커밍'
-    return () => { document.title = '커밍 - Jpop 아티스트 내한 공연 정보' }
+    return () => { document.title = HOME_PAGE_META.title }
   }, [])
 
   const { data: user } = useQuery({

@@ -21,7 +21,7 @@ function NoticeDetailPage() {
 
   usePageMeta({
     title: notice ? `${notice.title} - 커밍` : undefined,
-    description: '커밍 공지사항입니다.',
+    description: notice ? `커밍 공지사항 · ${notice.title}` : undefined,
     path: `/community/notices/${noticeId}`,
   })
 
