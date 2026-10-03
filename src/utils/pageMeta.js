@@ -1,9 +1,10 @@
 // 페이지 메타(title·description·image) 문구의 단일 출처.
 // 브라우저의 usePageMeta와 빌드 시 URL별 HTML을 생성하는 scripts/prerender-meta.js가 함께 쓰므로
 // Node에서도 import되도록 '@/' alias 없이 상대 경로만 사용한다.
+import { RELEASE_TYPE_LABEL } from '../constants/release.js'
 import { formatDate } from './date.js'
 
-// 홈은 index.html의 기본 head가 그대로 쓰이므로 index.html의 title·description도 이 값과 맞춰 둔다.
+// 홈은 index.html의 기본 head가 그대로 쓰이므로 index.html도 같은 값으로 맞춘다 (pageMeta.test.js가 불일치를 잡는다).
 export const HOME_PAGE_META = {
   title: 'J-POP 내한일정·공연 정보 - 커밍',
   description: 'J-POP 아티스트 내한 공연 일정, 티켓팅 오픈 일정, 신보 발매 소식까지 한곳에 모은 일본 가수 내한 정보',
@@ -40,8 +41,6 @@ export const STATIC_PAGE_META = {
   },
 }
 
-const RELEASE_TYPE_LABEL = { Album: '앨범', Single: '싱글' }
-
 // 화면의 ArtistAliasName과 같은 '원어명(한글명)' 표기. 한글명이 없으면 원어명만 쓴다.
 function formatArtistName(name, koreanName) {
   return koreanName ? `${name}(${koreanName})` : name
@@ -54,7 +53,7 @@ export function buildConcertMeta(concert) {
     : formatDate(concert.startDate)
   return {
     title: `${concert.title} - 커밍`,
-    description: [`${artists} 내한 공연`.trim(), period, concert.venue, '공연 일정·티켓 정보'].filter(Boolean).join(' · '),
+    description: [artists ? `${artists} 내한 공연` : '내한 공연', period, concert.venue, '공연 일정·티켓 정보'].filter(Boolean).join(' · '),
     image: concert.posterUrl,
   }
 }

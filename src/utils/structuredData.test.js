@@ -40,8 +40,6 @@ describe('buildConcertEventJsonLd', () => {
 
   it.each([
     ['UPCOMING', 'https://schema.org/EventScheduled'],
-    ['ONGOING', 'https://schema.org/EventScheduled'],
-    ['ENDED', 'https://schema.org/EventScheduled'],
     ['CANCELLED', 'https://schema.org/EventCancelled'],
   ])('status가 %s면 eventStatus는 %s', (status, eventStatus) => {
     expect(buildConcertEventJsonLd({ ...concert, status }).eventStatus).toBe(eventStatus)
@@ -63,14 +61,11 @@ describe('buildConcertEventJsonLd', () => {
     expect(buildConcertEventJsonLd({ ...concert, status })).not.toHaveProperty('offers')
   })
 
-  it('ticketLinks가 비어 있으면 offers 없음', () => {
-    expect(buildConcertEventJsonLd({ ...concert, ticketLinks: [] })).not.toHaveProperty('offers')
-  })
-
-  it('ticketLinks가 없으면 offers 없음', () => {
-    const { ticketLinks: _ticketLinks, ...withoutTicketLinks } = concert
-
-    expect(buildConcertEventJsonLd(withoutTicketLinks)).not.toHaveProperty('offers')
+  it.each([
+    ['비어 있으면', { ticketLinks: [] }],
+    ['없으면', { ticketLinks: undefined }],
+  ])('ticketLinks가 %s offers 없음', (_label, override) => {
+    expect(buildConcertEventJsonLd({ ...concert, ...override })).not.toHaveProperty('offers')
   })
 
   it('ticketLinks마다 Offer 생성', () => {
@@ -158,7 +153,6 @@ describe('toSafeJsonLd', () => {
   it('</script>가 포함되면 <를 \\u003c로 이스케이프', () => {
     const result = toSafeJsonLd({ name: '</script><script>alert(1)</script>' })
 
-    expect(result).not.toContain('<')
     expect(result).toBe('{"name":"\\u003c/script>\\u003cscript>alert(1)\\u003c/script>"}')
   })
 

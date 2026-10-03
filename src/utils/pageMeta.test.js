@@ -1,3 +1,5 @@
+import { readFileSync } from 'node:fs'
+import { resolve } from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { HOME_PAGE_META, STATIC_PAGE_META, buildArtistMeta, buildConcertMeta, buildReleaseMeta } from './pageMeta'
 
@@ -132,5 +134,17 @@ describe('STATIC_PAGE_META', () => {
     const descriptions = [HOME_PAGE_META, ...Object.values(STATIC_PAGE_META)].map((meta) => meta.description)
 
     expect(new Set(descriptions).size).toBe(descriptions.length)
+  })
+})
+
+describe('HOME_PAGE_META', () => {
+  const indexHtml = readFileSync(resolve(import.meta.dirname, '../../index.html'), 'utf-8')
+
+  it('index.html의 정적 title과 값이 같음', () => {
+    expect(indexHtml).toContain(`<title>${HOME_PAGE_META.title}</title>`)
+  })
+
+  it('index.html의 정적 description과 값이 같음', () => {
+    expect(indexHtml).toContain(`content="${HOME_PAGE_META.description}"`)
   })
 })

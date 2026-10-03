@@ -3,9 +3,6 @@ import { useEffect } from 'react'
 import { SITE_LOGO_URL, SITE_URL } from '@/constants/site'
 import { HOME_PAGE_META } from '@/utils/pageMeta'
 
-const DEFAULT_TITLE = HOME_PAGE_META.title
-const DEFAULT_OG_TITLE = DEFAULT_TITLE
-const DEFAULT_DESCRIPTION = HOME_PAGE_META.description
 const DEFAULT_URL = SITE_URL
 const DEFAULT_IMAGE = SITE_LOGO_URL
 
@@ -45,19 +42,19 @@ export default function usePageMeta({ title, description, path, image }) {
 
     document.title = title
     setMetaContent('og:title', title)
-    setMetaContent('og:description', description || DEFAULT_DESCRIPTION)
+    setMetaContent('og:description', description || HOME_PAGE_META.description)
     setMetaContent('og:url', url)
     setMetaContent('og:image', image || DEFAULT_IMAGE)
-    setMetaByName('description', description || DEFAULT_DESCRIPTION)
+    setMetaByName('description', description || HOME_PAGE_META.description)
     setCanonicalHref(url)
 
     return () => {
-      document.title = DEFAULT_TITLE
-      setMetaContent('og:title', DEFAULT_OG_TITLE)
-      setMetaContent('og:description', DEFAULT_DESCRIPTION)
+      document.title = HOME_PAGE_META.title
+      setMetaContent('og:title', HOME_PAGE_META.title)
+      setMetaContent('og:description', HOME_PAGE_META.description)
       setMetaContent('og:url', DEFAULT_URL)
       setMetaContent('og:image', DEFAULT_IMAGE)
-      setMetaByName('description', DEFAULT_DESCRIPTION)
+      setMetaByName('description', HOME_PAGE_META.description)
       removeCanonical()
     }
   }, [title, description, path, image])
