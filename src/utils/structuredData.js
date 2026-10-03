@@ -1,4 +1,5 @@
 import { SITE_LOGO_URL, SITE_URL } from '@/constants/site'
+import { HOME_PAGE_META } from '@/utils/pageMeta'
 
 const EVENT_STATUS_SCHEMA = {
   UPCOMING: 'https://schema.org/EventScheduled',
@@ -51,7 +52,7 @@ export function buildWebsiteJsonLd() {
     name: '커밍',
     alternateName: 'Coming',
     url: SITE_URL,
-    description: '일본(Jpop) 아티스트 내한일정을 한 곳에서 확인하세요. 공연 정보, 아티스트, 발매 소식까지 통합 제공하는 커밍입니다.',
+    description: HOME_PAGE_META.description,
   }
 }
 

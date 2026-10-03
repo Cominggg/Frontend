@@ -1,10 +1,11 @@
 import { useEffect } from 'react'
 
 import { SITE_LOGO_URL, SITE_URL } from '@/constants/site'
+import { HOME_PAGE_META } from '@/utils/pageMeta'
 
-const DEFAULT_TITLE = '커밍 - Jpop 아티스트 내한일정·공연 정보'
+const DEFAULT_TITLE = HOME_PAGE_META.title
 const DEFAULT_OG_TITLE = DEFAULT_TITLE
-const DEFAULT_DESCRIPTION = 'Jpop 아티스트 내한일정을 한 곳에서 확인하세요. 공연 정보, 아티스트, 발매 소식까지 통합 제공하는 커밍입니다.'
+const DEFAULT_DESCRIPTION = HOME_PAGE_META.description
 const DEFAULT_URL = SITE_URL
 const DEFAULT_IMAGE = SITE_LOGO_URL
 
