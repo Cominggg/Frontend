@@ -151,11 +151,12 @@ function ConcertsPage() {
       <div className={styles.inner}>
 
         {/* 헤더 */}
-        <PageHeader title="공연">
+        <PageHeader title="공연" className={styles.pageHeader}>
           <p className={styles.pageCount}>
             {isLoading ? '' : `${totalElements.toLocaleString()}건`}
           </p>
         </PageHeader>
+        <p className={styles.pageIntro}>J-POP 아티스트 내한 공연 일정 모음. 공연명·아티스트 검색과 공연 상태별 필터</p>
 
         {/* 검색 */}
         <div className={styles.searchWrap}>

@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { useSearchParams } from 'react-router-dom'
+import { RELEASE_TYPE_LABEL } from '@/constants/release'
 import { ROUTES } from '@/constants/routes'
 import { useQuery } from '@tanstack/react-query'
 
@@ -20,7 +21,6 @@ import styles from './ReleasesPage.module.css'
 
 const MAIN_TYPES = ['Album', 'Single']
 const TYPE_FILTERS = ['전체', ...MAIN_TYPES]
-const TYPE_LABELS = { Album: '앨범', Single: '싱글' }
 const PAGE_SIZE = 20
 
 function ReleasesPage() {
@@ -179,7 +179,7 @@ function ReleasesPage() {
         <div className={styles.filterRow}>
           <FilterTabs
             ariaLabel="음반 타입 필터"
-            options={TYPE_FILTERS.map((t) => ({ value: t, label: TYPE_LABELS[t] ?? t }))}
+            options={TYPE_FILTERS.map((t) => ({ value: t, label: RELEASE_TYPE_LABEL[t] ?? t }))}
             value={selectedType}
             onChange={handleTypeChange}
           />
@@ -224,7 +224,7 @@ function ReleasesPage() {
                 : effectiveFollowedOnly
                   ? '관심 아티스트의 음반이 없습니다.'
                   : selectedType !== '전체'
-                    ? `${TYPE_LABELS[selectedType] ?? selectedType} 음반이 없습니다.`
+                    ? `${RELEASE_TYPE_LABEL[selectedType] ?? selectedType} 음반이 없습니다.`
                     : '아직 수집된 음반 정보가 없습니다.'
             }
             action={

@@ -137,6 +137,16 @@ function AlbumCard({ item }) {
   )
 }
 
+// 화면에는 "전체 보기"만 보이고, 검색엔진·스크린리더는 섹션명이 붙은 링크 텍스트로 읽는다.
+function SectionMoreLink({ to, section }) {
+  return (
+    <Link to={to} className={styles.sectionMore}>
+      <span className={styles.srOnly}>{section} </span>전체 보기
+      <Icon name="chevronRight" size={16} />
+    </Link>
+  )
+}
+
 function HomePage() {
   const user = useAuthStore((s) => s.user)
   const isLoggedIn = !!user
@@ -198,10 +208,7 @@ function HomePage() {
           <section className={styles.mainZoneLeft}>
             <div className={styles.sectionHeader}>
               <h2 className={styles.sectionTitle}>인기 공연</h2>
-              <Link to={ROUTES.CONCERTS} className={styles.sectionMore}>
-                전체 보기
-                <Icon name="chevronRight" size={16} />
-              </Link>
+              <SectionMoreLink to={ROUTES.CONCERTS} section="인기 공연" />
             </div>
             {popularLoading ? (
               <div className={styles.gridThree}>
@@ -229,10 +236,7 @@ function HomePage() {
             <div className={styles.sectionHeader}>
               <h2 className={styles.sectionTitle}>티켓팅 일정</h2>
               {!ticketingLoading && ticketingConcerts.length > 0 && (
-                <Link to={ROUTES.CALENDAR} className={styles.sectionMore}>
-                  전체 보기
-                  <Icon name="chevronRight" size={16} />
-                </Link>
+                <SectionMoreLink to={ROUTES.CALENDAR} section="티켓팅 일정" />
               )}
             </div>
             <div className={styles.ticketingPanel}>
@@ -317,10 +321,7 @@ function HomePage() {
             <section className={styles.discoveryLeft}>
               <div className={styles.sectionHeader}>
                 <h2 className={styles.sectionTitle}>다가오는 공연</h2>
-                <Link to={`${ROUTES.CONCERTS}?status=UPCOMING`} className={styles.sectionMore}>
-                  전체 보기
-                  <Icon name="chevronRight" size={16} />
-                </Link>
+                <SectionMoreLink to={`${ROUTES.CONCERTS}?status=UPCOMING`} section="다가오는 공연" />
               </div>
               {upcomingLoading ? (
                 <div className={styles.upcomingList}>
@@ -390,10 +391,7 @@ function HomePage() {
             <section>
               <div className={styles.sectionHeader}>
                 <h2 className={styles.sectionTitle}>새 앨범·싱글</h2>
-                <Link to={ROUTES.RELEASES} className={styles.sectionMore}>
-                  전체 보기
-                  <Icon name="chevronRight" size={16} />
-                </Link>
+                <SectionMoreLink to={ROUTES.RELEASES} section="새 앨범·싱글" />
               </div>
               {releasesLoading ? (
                 <div className={styles.albumStrip}>
@@ -424,10 +422,7 @@ function HomePage() {
           <div className={styles.sectionHeader}>
             <h2 className={styles.sectionTitle}>관심 아티스트 공연</h2>
             {isLoggedIn && !followingLoading && followingConcerts.length > 0 && (
-              <Link to={`${ROUTES.CONCERTS}?followed=true`} className={styles.sectionMore}>
-                전체 보기
-                <Icon name="chevronRight" size={16} />
-              </Link>
+              <SectionMoreLink to={`${ROUTES.CONCERTS}?followed=true`} section="관심 아티스트 공연" />
             )}
           </div>
           {isLoggedIn ? (

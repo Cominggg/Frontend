@@ -26,6 +26,11 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://www.comingg.com/community</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://www.comingg.com/terms</loc>
     <changefreq>yearly</changefreq>
     <priority>0.2</priority>
