@@ -199,7 +199,7 @@ function HomePage() {
             <div className={styles.sectionHeader}>
               <h2 className={styles.sectionTitle}>인기 공연</h2>
               <Link to={ROUTES.CONCERTS} className={styles.sectionMore}>
-                전체 보기
+                <span className={styles.srOnly}>인기 공연 </span>전체 보기
                 <Icon name="chevronRight" size={16} />
               </Link>
             </div>
@@ -230,7 +230,7 @@ function HomePage() {
               <h2 className={styles.sectionTitle}>티켓팅 일정</h2>
               {!ticketingLoading && ticketingConcerts.length > 0 && (
                 <Link to={ROUTES.CALENDAR} className={styles.sectionMore}>
-                  전체 보기
+                  <span className={styles.srOnly}>티켓팅 일정 </span>전체 보기
                   <Icon name="chevronRight" size={16} />
                 </Link>
               )}
@@ -318,7 +318,7 @@ function HomePage() {
               <div className={styles.sectionHeader}>
                 <h2 className={styles.sectionTitle}>다가오는 공연</h2>
                 <Link to={`${ROUTES.CONCERTS}?status=UPCOMING`} className={styles.sectionMore}>
-                  전체 보기
+                  <span className={styles.srOnly}>다가오는 공연 </span>전체 보기
                   <Icon name="chevronRight" size={16} />
                 </Link>
               </div>
@@ -391,7 +391,7 @@ function HomePage() {
               <div className={styles.sectionHeader}>
                 <h2 className={styles.sectionTitle}>새 앨범·싱글</h2>
                 <Link to={ROUTES.RELEASES} className={styles.sectionMore}>
-                  전체 보기
+                  <span className={styles.srOnly}>새 앨범·싱글 </span>전체 보기
                   <Icon name="chevronRight" size={16} />
                 </Link>
               </div>
@@ -425,7 +425,7 @@ function HomePage() {
             <h2 className={styles.sectionTitle}>관심 아티스트 공연</h2>
             {isLoggedIn && !followingLoading && followingConcerts.length > 0 && (
               <Link to={`${ROUTES.CONCERTS}?followed=true`} className={styles.sectionMore}>
-                전체 보기
+                <span className={styles.srOnly}>관심 아티스트 공연 </span>전체 보기
                 <Icon name="chevronRight" size={16} />
               </Link>
             )}
