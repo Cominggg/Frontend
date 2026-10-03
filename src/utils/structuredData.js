@@ -8,6 +8,8 @@ const EVENT_STATUS_SCHEMA = {
   CANCELLED: 'https://schema.org/EventCancelled',
 }
 
+const ON_SALE_STATUSES = new Set(['UPCOMING', 'ONGOING'])
+
 // 공연 상세 페이지용 schema.org/Event 구조화 데이터. 검색 결과 리치 스니펫 노출용.
 export function buildConcertEventJsonLd(concert) {
   const eventStatus = EVENT_STATUS_SCHEMA[concert.status]
@@ -33,7 +35,8 @@ export function buildConcertEventJsonLd(concert) {
       '@type': 'PerformingGroup',
       name: artist.name,
     })),
-    ...(ticketLinks.length > 0 && {
+    // 종료·취소된 공연에 판매 중(InStock) 정보를 내보내지 않도록 예정·진행 중일 때만 offers를 넣는다.
+    ...(ON_SALE_STATUSES.has(concert.status) && ticketLinks.length > 0 && {
       offers: ticketLinks.map((link) => ({
         '@type': 'Offer',
         url: link.url,
