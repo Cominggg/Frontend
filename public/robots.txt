@@ -3,5 +3,8 @@ Allow: /
 Disallow: /admin
 Disallow: /me
 Disallow: /auth/callback
+Disallow: /signup
+Disallow: /community/write
+Disallow: /community/*/edit
 
 Sitemap: https://www.comingg.com/sitemap.xml

@@ -15,6 +15,7 @@ import {
 } from '@/constants/policy'
 import Logo from '@/components/ui/Logo'
 import { trackEvent } from '@/utils/analytics'
+import { HOME_PAGE_META } from '@/utils/pageMeta'
 import styles from './SignupPage.module.css'
 
 const CURRENT_YEAR = new Date().getFullYear()
@@ -118,7 +119,7 @@ function SignupPage() {
 
   useEffect(() => {
     document.title = '회원가입 - 커밍'
-    return () => { document.title = '커밍 - Jpop 아티스트 내한 공연 정보' }
+    return () => { document.title = HOME_PAGE_META.title }
   }, [])
 
   function handleAllAgreed(checked) {

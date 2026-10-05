@@ -96,6 +96,19 @@
   color: var(--color-accent-light);
 }
 
+/* 화면에는 "전체 보기"만 보이고, 검색엔진·스크린리더는 섹션명이 붙은 링크 텍스트로 읽게 한다 */
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 /* ===========================
    그리드 공통
    =========================== */

@@ -1,4 +1,5 @@
 import { SITE_LOGO_URL, SITE_URL } from '@/constants/site'
+import { HOME_PAGE_META } from '@/utils/pageMeta'
 
 const EVENT_STATUS_SCHEMA = {
   UPCOMING: 'https://schema.org/EventScheduled',
@@ -6,6 +7,8 @@ const EVENT_STATUS_SCHEMA = {
   ENDED: 'https://schema.org/EventScheduled',
   CANCELLED: 'https://schema.org/EventCancelled',
 }
+
+const ON_SALE_STATUSES = new Set(['UPCOMING', 'ONGOING'])
 
 // 공연 상세 페이지용 schema.org/Event 구조화 데이터. 검색 결과 리치 스니펫 노출용.
 export function buildConcertEventJsonLd(concert) {
@@ -32,7 +35,8 @@ export function buildConcertEventJsonLd(concert) {
       '@type': 'PerformingGroup',
       name: artist.name,
     })),
-    ...(ticketLinks.length > 0 && {
+    // 종료·취소된 공연에 판매 중(InStock) 정보를 내보내지 않도록 예정·진행 중일 때만 offers를 넣는다.
+    ...(ON_SALE_STATUSES.has(concert.status) && ticketLinks.length > 0 && {
       offers: ticketLinks.map((link) => ({
         '@type': 'Offer',
         url: link.url,
@@ -51,7 +55,7 @@ export function buildWebsiteJsonLd() {
     name: '커밍',
     alternateName: 'Coming',
     url: SITE_URL,
-    description: '일본(Jpop) 아티스트 내한일정을 한 곳에서 확인하세요. 공연 정보, 아티스트, 발매 소식까지 통합 제공하는 커밍입니다.',
+    description: HOME_PAGE_META.description,
   }
 }
 
