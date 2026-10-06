@@ -1,67 +1,64 @@
 const GA_MEASUREMENT_ID = import.meta.env.VITE_GA_MEASUREMENT_ID
-const COLLECT_URL = 'https://www.google-analytics.com/g/collect'
-const CLIENT_ID_KEY = 'ga_client_id'
-const SESSION_KEY = 'ga_session'
-const SESSION_TIMEOUT_MS = 30 * 60 * 1000
 
-// gtag.js를 통한 정상 로드·dataLayer 전달까지는 확인됐지만, 라이브러리
-// 내부 태그 실행 엔진이 히트를 한 건도 전송하지 못하는 문제가 있어(원인 불명,
-// GA4 DebugView에 "config 명령을 기다리는 중" 상태로 계속 멈춰 있음),
-// gtag.js를 거치지 않고 GA4 Measurement Protocol(g/collect)을 직접 호출한다.
-function getClientId() {
-  let clientId = localStorage.getItem(CLIENT_ID_KEY)
-  if (!clientId) {
-    clientId = `${Math.floor(Math.random() * 2147483647)}.${Math.floor(Date.now() / 1000)}`
-    localStorage.setItem(CLIENT_ID_KEY, clientId)
-  }
-  return clientId
+// gtag.js는 dataLayer에 arguments 객체가 들어와야 명령으로 인식하고 일반 배열은
+// 무시한다. rest 파라미터(...args)로 배열을 넣으면 config가 실행되지 않아 히트가
+// 한 건도 전송되지 않는다.
+function gtag() {
+  window.dataLayer.push(arguments)
 }
 
-function getSessionId() {
-  const now = Date.now()
-  const stored = JSON.parse(localStorage.getItem(SESSION_KEY) || 'null')
-  if (stored && now - stored.lastActive < SESSION_TIMEOUT_MS) {
-    localStorage.setItem(SESSION_KEY, JSON.stringify({ id: stored.id, lastActive: now }))
-    return { id: stored.id, isNewSession: false }
-  }
-  const id = Math.floor(now / 1000).toString()
-  localStorage.setItem(SESSION_KEY, JSON.stringify({ id, lastActive: now }))
-  return { id, isNewSession: true }
+// 검색어(q)는 사용자가 자유 텍스트로 입력하는 값이라 이메일·전화번호 등이
+// 섞여 들어올 수 있어 GA4로 전송되는 경로에서 제외한다.
+export function sanitizeSearch(search) {
+  const params = new URLSearchParams(search)
+  params.delete('q')
+  const query = params.toString()
+  return query ? `?${query}` : ''
 }
 
-function sendHit(params) {
+// 같은 사이트에서 새 탭 등으로 진입하면 document.referrer에 검색어가 포함된
+// 전체 URL이 담기므로 정제한다. 외부 유입 경로는 그대로 둔다.
+function sanitizeInitialReferrer() {
+  if (!document.referrer) return null
+  const referrer = new URL(document.referrer)
+  if (referrer.origin !== window.location.origin) return null
+  return `${referrer.origin}${referrer.pathname}${sanitizeSearch(referrer.search)}`
+}
+
+export function initGA() {
   if (!GA_MEASUREMENT_ID) return
 
-  const { id: sessionId, isNewSession } = getSessionId()
-  const search = new URLSearchParams({
-    v: '2',
-    tid: GA_MEASUREMENT_ID,
-    cid: getClientId(),
-    sid: sessionId,
-    ...(isNewSession && { _ss: '1' }),
-    ...params,
-  })
-  const url = `${COLLECT_URL}?${search.toString()}`
+  const script = document.createElement('script')
+  script.async = true
+  script.src = `https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`
+  document.head.appendChild(script)
 
-  if (navigator.sendBeacon) {
-    navigator.sendBeacon(url)
-  } else {
-    fetch(url, { method: 'GET', keepalive: true, mode: 'no-cors' })
-  }
+  window.dataLayer = window.dataLayer || []
+  gtag('js', new Date())
+  // page_view는 PageViewTracker가 검색어를 제거한 경로로 직접 전송한다.
+  // config에 page_location을 넣으면 이후 gtag('set')보다 우선해 이전 주소가 남으므로 넣지 않는다.
+  gtag('config', GA_MEASUREMENT_ID, { send_page_view: false })
 }
 
+let currentPageLocation = null
+
 export function trackPageView(pagePath, pageTitle) {
-  sendHit({
-    en: 'page_view',
-    dl: `${window.location.origin}${pagePath}`,
-    dt: pageTitle,
-  })
+  if (!GA_MEASUREMENT_ID) return
+
+  // gtag.js는 기본적으로 현재 URL(검색어 q 포함)을 page_location으로, SPA 이동 시
+  // 직전 URL을 page_referrer로 모든 이벤트에 붙이므로, 둘 다 정제된 주소로 전역 고정한다.
+  const pageLocation = `${window.location.origin}${pagePath}`
+  if (pageLocation !== currentPageLocation) {
+    const pageReferrer = currentPageLocation ?? sanitizeInitialReferrer()
+    if (pageReferrer) gtag('set', { page_referrer: pageReferrer })
+    currentPageLocation = pageLocation
+  }
+  gtag('set', { page_location: pageLocation, page_title: pageTitle })
+  gtag('event', 'page_view')
 }
 
 export function trackEvent(name, params = {}) {
-  const eventParams = {}
-  Object.entries(params).forEach(([key, value]) => {
-    eventParams[typeof value === 'number' ? `epn.${key}` : `ep.${key}`] = value
-  })
-  sendHit({ en: name, ...eventParams })
+  if (!GA_MEASUREMENT_ID) return
+
+  gtag('event', name, params)
 }
