@@ -209,3 +209,86 @@ describe('trackEvent', () => {
     expect(Object.prototype.toString.call(item)).toBe('[object Arguments]')
   })
 })
+
+describe('sanitizeSearch', () => {
+  it.each([
+    ['q만 있으면 빈 문자열', '?q=yoasobi', ''],
+    ['q와 다른 파라미터가 있으면 q만 제거', '?q=yoasobi&status=ONGOING', '?status=ONGOING'],
+    ['빈 문자열이면 빈 문자열', '', ''],
+  ])('%s', async (_, search, expected) => {
+    const { sanitizeSearch } = await loadAnalytics('G-TEST')
+
+    expect(sanitizeSearch(search)).toBe(expected)
+  })
+})
+
+describe('trackPageView 최초 진입 referrer', () => {
+  beforeEach(() => {
+    window.dataLayer = []
+  })
+
+  afterEach(() => {
+    vi.restoreAllMocks()
+  })
+
+  function stubReferrer(referrer) {
+    vi.spyOn(document, 'referrer', 'get').mockReturnValue(referrer)
+  }
+
+  function pageReferrerCommands() {
+    return pushedCommands().filter(
+      ([command, params]) => command === 'set' && Object.hasOwn(params, 'page_referrer'),
+    )
+  }
+
+  it('같은 origin referrer면 q를 제거한 주소를 page_referrer로 set', async () => {
+    stubReferrer(`${window.location.origin}/concerts?q=secret&status=ONGOING`)
+    const { trackPageView } = await loadAnalytics('G-TEST')
+
+    trackPageView('/concerts/2', 'YOASOBI 내한 공연 | Coming')
+
+    expect(pageReferrerCommands()).toEqual([
+      ['set', { page_referrer: `${window.location.origin}/concerts?status=ONGOING` }],
+    ])
+  })
+
+  it('같은 origin referrer면 검색어가 dataLayer에 남지 않음', async () => {
+    stubReferrer(`${window.location.origin}/concerts?q=secret&status=ONGOING`)
+    const { trackPageView } = await loadAnalytics('G-TEST')
+
+    trackPageView('/concerts/2', 'YOASOBI 내한 공연 | Coming')
+
+    expect(JSON.stringify(pushedCommands())).not.toContain('secret')
+  })
+
+  it('외부 origin referrer면 page_referrer를 set하지 않음', async () => {
+    stubReferrer('https://www.google.com/')
+    const { trackPageView } = await loadAnalytics('G-TEST')
+
+    trackPageView('/artists/1', 'YOASOBI | Coming')
+
+    expect(pageReferrerCommands()).toEqual([])
+  })
+
+  it('referrer가 빈 문자열이면 page_referrer를 set하지 않음', async () => {
+    stubReferrer('')
+    const { trackPageView } = await loadAnalytics('G-TEST')
+
+    trackPageView('/artists/1', 'YOASOBI | Coming')
+
+    expect(pageReferrerCommands()).toEqual([])
+  })
+
+  it('같은 origin referrer로 진입한 뒤 경로를 이동하면 직전 page_location을 page_referrer로 set', async () => {
+    stubReferrer(`${window.location.origin}/concerts?q=secret&status=ONGOING`)
+    const { trackPageView } = await loadAnalytics('G-TEST')
+    trackPageView('/artists/1', 'YOASOBI | Coming')
+    window.dataLayer = []
+
+    trackPageView('/concerts/2', 'YOASOBI 내한 공연 | Coming')
+
+    expect(pageReferrerCommands()).toEqual([
+      ['set', { page_referrer: `${window.location.origin}/artists/1` }],
+    ])
+  })
+})

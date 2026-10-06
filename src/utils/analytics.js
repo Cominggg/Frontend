@@ -7,6 +7,24 @@ function gtag() {
   window.dataLayer.push(arguments)
 }
 
+// 검색어(q)는 사용자가 자유 텍스트로 입력하는 값이라 이메일·전화번호 등이
+// 섞여 들어올 수 있어 GA4로 전송되는 경로에서 제외한다.
+export function sanitizeSearch(search) {
+  const params = new URLSearchParams(search)
+  params.delete('q')
+  const query = params.toString()
+  return query ? `?${query}` : ''
+}
+
+// 같은 사이트에서 새 탭 등으로 진입하면 document.referrer에 검색어가 포함된
+// 전체 URL이 담기므로 정제한다. 외부 유입 경로는 그대로 둔다.
+function sanitizeInitialReferrer() {
+  if (!document.referrer) return null
+  const referrer = new URL(document.referrer)
+  if (referrer.origin !== window.location.origin) return null
+  return `${referrer.origin}${referrer.pathname}${sanitizeSearch(referrer.search)}`
+}
+
 export function initGA() {
   if (!GA_MEASUREMENT_ID) return
 
@@ -31,8 +49,8 @@ export function trackPageView(pagePath, pageTitle) {
   // 직전 URL을 page_referrer로 모든 이벤트에 붙이므로, 둘 다 정제된 주소로 전역 고정한다.
   const pageLocation = `${window.location.origin}${pagePath}`
   if (pageLocation !== currentPageLocation) {
-    // 최초 진입은 외부 유입 경로(document.referrer)를 그대로 둔다
-    if (currentPageLocation) gtag('set', { page_referrer: currentPageLocation })
+    const pageReferrer = currentPageLocation ?? sanitizeInitialReferrer()
+    if (pageReferrer) gtag('set', { page_referrer: pageReferrer })
     currentPageLocation = pageLocation
   }
   gtag('set', { page_location: pageLocation, page_title: pageTitle })
