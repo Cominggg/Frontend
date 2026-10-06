@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
+import { useQuery } from '@tanstack/react-query'
 
 import { ROUTES } from '@/constants/routes'
 import { getAdminNotice, createNotice, updateNotice } from '@/services/adminApi'
@@ -14,19 +15,23 @@ function AdminNoticeFormPage() {
   const navigate = useNavigate()
 
   const [form, setForm] = useState(EMPTY_FORM)
-  const [loadingNotice, setLoadingNotice] = useState(isEdit)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
   const [savedMsg, setSavedMsg] = useState('')
 
-  useEffect(() => {
-    if (!isEdit) return
-    setLoadingNotice(true)
-    getAdminNotice(id).then((notice) => {
-      setForm({ title: notice.title, content: notice.content, active: notice.active })
-    }).catch(() => setError('공지를 찾을 수 없습니다.'))
-      .finally(() => setLoadingNotice(false))
-  }, [id, isEdit])
+  const { data: notice, isLoading: loadingNotice, isError: noticeLoadFailed } = useQuery({
+    queryKey: ['admin', 'notice', id],
+    queryFn: () => getAdminNotice(id),
+    enabled: isEdit,
+    staleTime: 0,
+  })
+
+  // 조회 결과로 폼을 한 번만 채운다 — 이후 refetch가 편집 중인 값을 덮어쓰지 않도록
+  const [filledNoticeId, setFilledNoticeId] = useState(null)
+  if (notice && filledNoticeId !== id) {
+    setFilledNoticeId(id)
+    setForm({ title: notice.title, content: notice.content, active: notice.active })
+  }
 
   function setField(key, value) {
     setForm((prev) => ({ ...prev, [key]: value }))
@@ -102,7 +107,7 @@ function AdminNoticeFormPage() {
           </label>
         </section>
 
-        {error && <p className={styles.errorMsg}>{error}</p>}
+        {(error || noticeLoadFailed) && <p className={styles.errorMsg}>{error || '공지를 찾을 수 없습니다.'}</p>}
 
         <div className={styles.formFooter}>
           {savedMsg && <span className={styles.savedMsg}>{savedMsg}</span>}
