@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 
@@ -41,12 +41,16 @@ function ConcertDetailPage() {
 
   const [posterFailed, setPosterFailed] = useState(false)
   const [activeTab, setActiveTab] = useState('info')
+  const [prevId, setPrevId] = useState(id)
   const [inquiryType, setInquiryType] = useState(null)
 
   const user = useAuthStore((s) => s.user)
   const openLoginModal = useLoginModalStore((s) => s.open)
 
-  useEffect(() => { setActiveTab('info') }, [id])
+  if (id !== prevId) {
+    setPrevId(id)
+    setActiveTab('info')
+  }
 
   const { data: concert, isLoading, isError, error } = useQuery({
     queryKey: ['concert', concertId],

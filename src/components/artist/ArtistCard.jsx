@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 
@@ -15,14 +15,16 @@ import styles from './ArtistCard.module.css'
 function ArtistCard({ artist }) {
   const { id, name, koreanName, imageUrl, hasUpcomingConcert, spotifyUrl } = artist
   const [isFollowing, setIsFollowing] = useState(artist.isFollowing)
+  const [prevIsFollowingProp, setPrevIsFollowingProp] = useState(artist.isFollowing)
   const [imgFailed, setImgFailed] = useState(false)
   const user = useAuthStore((s) => s.user)
   const openLoginModal = useLoginModalStore((s) => s.open)
   const queryClient = useQueryClient()
 
-  useEffect(() => {
+  if (artist.isFollowing !== prevIsFollowingProp) {
+    setPrevIsFollowingProp(artist.isFollowing)
     setIsFollowing(artist.isFollowing)
-  }, [artist.isFollowing])
+  }
 
   const showPlaceholder = !imageUrl || imgFailed
   const [colorFrom, colorTo] = getArtistColor(name)

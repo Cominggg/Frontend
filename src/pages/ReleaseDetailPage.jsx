@@ -33,7 +33,7 @@ function ReleaseDetailPage() {
   const { id } = useParams()
   const releaseId = Number(id)
   const [coverFailed, setCoverFailed] = useState(false)
-  const [highlightedTrackAnchor, setHighlightedTrackAnchor] = useState(null)
+  const [expiredHighlightHash, setExpiredHighlightHash] = useState(null)
   const navigate = useNavigate()
   const { key: locationKey, hash } = useLocation()
 
@@ -53,10 +53,11 @@ function ReleaseDetailPage() {
     if (!el) return
 
     el.scrollIntoView({ behavior: 'smooth', block: 'center' })
-    setHighlightedTrackAnchor(anchorId)
-    const timer = setTimeout(() => setHighlightedTrackAnchor(null), TRACK_HIGHLIGHT_DURATION_MS)
+    const timer = setTimeout(() => setExpiredHighlightHash(hash), TRACK_HIGHLIGHT_DURATION_MS)
     return () => clearTimeout(timer)
   }, [hash, release])
+
+  const highlightedTrackAnchor = hash && release && hash !== expiredHighlightHash ? hash.slice(1) : null
 
   usePageMeta({
     ...(release?.title && buildReleaseMeta(release)),

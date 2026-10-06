@@ -34,17 +34,25 @@ function InquiryModal({ isOpen, onClose, type, targetId }) {
   const [checking, setChecking] = useState(false)
   const [alreadyExists, setAlreadyExists] = useState(false)
   const [checkFailed, setCheckFailed] = useState(false)
+  const checkKey = isOpen && type && targetId ? `${type}-${targetId}` : null
+  const [prevCheckKey, setPrevCheckKey] = useState(null)
   const modalRef = useModalA11y(onClose, {
     isOpen,
     contentKey: `${checking}-${alreadyExists}-${submitted}`,
   })
 
+  if (checkKey !== prevCheckKey) {
+    setPrevCheckKey(checkKey)
+    if (checkKey) {
+      setChecking(true)
+      setAlreadyExists(false)
+      setCheckFailed(false)
+    }
+  }
+
   useEffect(() => {
     if (!isOpen || !type || !targetId) return
     let cancelled = false
-    setChecking(true)
-    setAlreadyExists(false)
-    setCheckFailed(false)
     checkInquiryExists(type, targetId)
       .then(({ exists }) => { if (!cancelled) setAlreadyExists(exists) })
       .catch(() => { if (!cancelled) setCheckFailed(true) })
