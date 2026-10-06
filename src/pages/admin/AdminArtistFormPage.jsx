@@ -141,14 +141,14 @@ function AdminArtistFormPage() {
   const navigate = useNavigate()
 
   const [form, setForm] = useState({ name: '', aliases: EMPTY_ALIASES, imageUrl: '', links: [] })
-  const [imgBroken, setImgBroken] = useState(false)
+  const [brokenImageUrl, setBrokenImageUrl] = useState(null)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
   const [savedMsg, setSavedMsg] = useState('')
   const [triggering, setTriggering] = useState(false)
   const [triggerMsg, setTriggerMsg] = useState('')
 
-  useEffect(() => { setImgBroken(false) }, [form.imageUrl])
+  const imgBroken = brokenImageUrl === form.imageUrl
 
   useEffect(() => {
     if (!id) { navigate(ROUTES.ADMIN, { replace: true }); return }
@@ -260,7 +260,7 @@ function AdminArtistFormPage() {
                   src={form.imageUrl.trim()}
                   alt="아티스트 이미지 미리보기"
                   className={styles.imagePreview}
-                  onError={() => setImgBroken(true)}
+                  onError={() => setBrokenImageUrl(form.imageUrl)}
                 />
               )}
             </div>
