@@ -1,5 +1,6 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 
 import Pagination from '@/components/ui/Pagination'
 import AddArtistModal from '@/components/concert/AddArtistModal'
@@ -131,40 +132,26 @@ function ExcludedConcertCard({ concert, onRefresh, onRemoved }) {
 }
 
 function AdminExcludedConcertsPage() {
-  const [concerts, setConcerts] = useState([])
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState(false)
+  const queryClient = useQueryClient()
   const [page, setPage] = useState(1)
-  const [totalPages, setTotalPages] = useState(0)
 
-  const fetchExcluded = useCallback(async () => {
-    setLoading(true)
-    setError(false)
-    try {
-      const data = await getExcludedConcerts({ page: page - 1, size: 10 })
-      setConcerts(data.content)
-      setTotalPages(data.totalPages)
-    } catch {
-      setError(true)
-      setConcerts([])
-    } finally {
-      setLoading(false)
-    }
-  }, [page])
-
-  useEffect(() => {
-    fetchExcluded()
-  }, [fetchExcluded])
+  const queryKey = ['admin', 'excluded-concerts', page]
+  const { data, isLoading: loading, isError: error, refetch } = useQuery({
+    queryKey,
+    queryFn: () => getExcludedConcerts({ page: page - 1, size: 10 }),
+    staleTime: 0,
+  })
+  const concerts = data?.content ?? []
+  const totalPages = data?.totalPages ?? 0
 
   function handleConcertRemoved(concertId) {
-    setConcerts((prev) => {
-      const next = prev.filter((c) => c.id !== concertId)
-      if (next.length === 0) {
-        if (page > 1) setPage((p) => p - 1)
-        setTotalPages((t) => Math.max(0, t - 1))
-      }
-      return next
+    const next = concerts.filter((c) => c.id !== concertId)
+    queryClient.setQueryData(queryKey, (old) => old && {
+      ...old,
+      content: next,
+      totalPages: next.length === 0 ? Math.max(0, old.totalPages - 1) : old.totalPages,
     })
+    if (next.length === 0 && page > 1) setPage((p) => p - 1)
   }
 
   return (
@@ -185,7 +172,7 @@ function AdminExcludedConcertsPage() {
       ) : error ? (
         <div className={styles.empty}>
           <p className={styles.emptyText}>목록을 불러오지 못했습니다.</p>
-          <button type="button" className={styles.retryBtn} onClick={fetchExcluded}>다시 시도</button>
+          <button type="button" className={styles.retryBtn} onClick={() => refetch()}>다시 시도</button>
         </div>
       ) : concerts.length === 0 ? (
         <div className={styles.empty}><p className={styles.emptyText}>EXCLUDED 상태의 공연이 없습니다.</p></div>
@@ -195,7 +182,7 @@ function AdminExcludedConcertsPage() {
             <ExcludedConcertCard
               key={concert.id}
               concert={concert}
-              onRefresh={fetchExcluded}
+              onRefresh={() => refetch()}
               onRemoved={() => handleConcertRemoved(concert.id)}
             />
           ))}
