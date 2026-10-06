@@ -1,4 +1,5 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect } from 'react'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 
 import { getInquiries, getInquiry, updateInquiryStatus } from '@/services/adminApi'
 import styles from './AdminInquiriesPage.module.css'
@@ -116,9 +117,6 @@ function DetailModal({ id, onClose, onStatusChange }) {
 }
 
 function AdminInquiriesPage() {
-  const [items, setItems] = useState([])
-  const [loading, setLoading] = useState(false)
-  const [totalElements, setTotalElements] = useState(0)
   const [page, setPage] = useState(0)
   const [statusFilter, setStatusFilter] = useState('전체')
   const [typeFilter, setTypeFilter] = useState('전체')
@@ -126,25 +124,20 @@ function AdminInquiriesPage() {
 
   const PAGE_SIZE = 20
 
-  const fetchInquiries = useCallback(async () => {
-    setLoading(true)
-    try {
+  const queryClient = useQueryClient()
+  const queryKey = ['admin', 'inquiries', { page, statusFilter, typeFilter }]
+  const { data, isLoading: loading } = useQuery({
+    queryKey,
+    queryFn: () => {
       const params = { page, size: PAGE_SIZE }
       if (statusFilter !== '전체') params.status = statusFilter
       if (typeFilter !== '전체') params.type = typeFilter
-      const data = await getInquiries(params)
-      setItems(data.content)
-      setTotalElements(data.totalElements)
-    } catch {
-      setItems([])
-    } finally {
-      setLoading(false)
-    }
-  }, [page, statusFilter, typeFilter])
-
-  useEffect(() => {
-    fetchInquiries()
-  }, [fetchInquiries])
+      return getInquiries(params)
+    },
+    staleTime: 0,
+  })
+  const items = data?.content ?? []
+  const totalElements = data?.totalElements ?? 0
 
   function handleFilterChange(setter) {
     return (value) => {
@@ -154,9 +147,10 @@ function AdminInquiriesPage() {
   }
 
   function handleStatusChange(id, newStatus) {
-    setItems((prev) =>
-      prev.map((it) => it.id === id ? { ...it, status: newStatus } : it)
-    )
+    queryClient.setQueryData(queryKey, (old) => old && {
+      ...old,
+      content: old.content.map((it) => it.id === id ? { ...it, status: newStatus } : it),
+    })
   }
 
   const pendingCount = totalElements > 0
