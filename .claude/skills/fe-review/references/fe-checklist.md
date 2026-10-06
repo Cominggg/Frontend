@@ -58,7 +58,7 @@ grep -n "MOCK_" {검토 대상 .js/.jsx 파일}
 - 이번 변경에서 API 연동을 완료했는데 기존 `MOCK_*` 선언·참조를 제거하지 않음
 
 ### 🔵 suggestion
-- 목 데이터를 페이지 외부 파일에 새로 선언 (예외: 기존 `src/mocks/followedArtistMocks.js`)
+- 목 데이터를 페이지 외부 파일에 새로 선언
 - 이름이 `MOCK_*_MAP` 형식이 아님
 
 ---
