@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
 
 import ArtistAliasName from '@/components/artist/ArtistAliasName'
@@ -26,6 +27,25 @@ function CheckIcon() {
     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
       <polyline points="20 6 9 17 4 12" />
     </svg>
+  )
+}
+
+// 포스터가 없거나 로드에 실패하면 이미지 없이 .poster 배경만 남긴다
+function DayConcertPoster({ posterUrl, title }) {
+  const [imgFailed, setImgFailed] = useState(false)
+
+  return (
+    <div className={styles.poster}>
+      {posterUrl && !imgFailed && (
+        <img
+          src={posterUrl}
+          alt={title}
+          loading="lazy"
+          decoding="async"
+          onError={() => setImgFailed(true)}
+        />
+      )}
+    </div>
   )
 }
 
@@ -72,15 +92,7 @@ function DayConcertList({ selectedDate, events, onCalendarToggle }) {
                     }}
                   />
 
-                  <div className={styles.poster}>
-                    <img
-                      src={ev.posterUrl || '/assets/poster-placeholder.png'}
-                      alt={ev.title}
-                      onError={(e) => {
-                        e.target.src = '/assets/poster-placeholder.png'
-                      }}
-                    />
-                  </div>
+                  <DayConcertPoster posterUrl={ev.posterUrl} title={ev.title} />
 
                   <div className={styles.info}>
                     <p className={styles.artist}>
