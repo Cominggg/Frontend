@@ -190,7 +190,7 @@ function ConcertDetailPage() {
                   src={posterUrl}
                   alt={artistDisplayName}
                   className={styles.thumbnail}
-                  loading="lazy"
+                  fetchPriority="high"
                   decoding="async"
                   onError={() => setPosterFailed(true)}
                 />

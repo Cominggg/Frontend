@@ -22,7 +22,8 @@ function getTicketDday(ticketOpenAt) {
   return `D-${diff}`
 }
 
-function ConcertCard({ concert }) {
+// priority: 첫 화면에 바로 보이는 카드(LCP 후보)는 지연 로드하지 않고 먼저 받는다
+function ConcertCard({ concert, priority = false }) {
   const { id, posterUrl, artists = [], title, startDate, endDate, venue, status, ticketOpenAt, averageRating } = concert
   const [imgFailed, setImgFailed] = useState(false)
   const showPlaceholder = !posterUrl || imgFailed
@@ -51,7 +52,8 @@ function ConcertCard({ concert }) {
             src={posterUrl}
             alt={title}
             className={styles.poster}
-            loading="lazy"
+            loading={priority ? 'eager' : 'lazy'}
+            fetchPriority={priority ? 'high' : 'auto'}
             decoding="async"
             onError={() => setImgFailed(true)}
           />

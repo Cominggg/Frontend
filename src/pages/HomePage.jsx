@@ -225,7 +225,7 @@ function HomePage() {
             ) : (
               <div className={styles.gridThree}>
                 {popularConcerts.slice(0, 3).map((concert) => (
-                  <ConcertCard key={concert.id} concert={concert} />
+                  <ConcertCard key={concert.id} concert={concert} priority />
                 ))}
               </div>
             )}
