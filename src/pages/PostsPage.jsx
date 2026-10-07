@@ -119,6 +119,7 @@ function PostsPage() {
           size: ITEMS_PER_PAGE,
         })),
     enabled: !isQueryTooShort,
+    placeholderData: (prev) => prev,
   })
 
   const posts = data?.content ?? []
