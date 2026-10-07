@@ -21,6 +21,8 @@ import styles from './ConcertsPage.module.css'
 
 const STATUS_FILTERS = ['ALL', 'UPCOMING', 'ONGOING', 'ENDED', 'CANCELLED']
 const ITEMS_PER_PAGE = 20
+// 첫 화면에 보이는 카드 수(모바일 2열 × 2행). 이 카드들의 포스터는 LCP 후보라 먼저 받는다.
+const PRIORITY_CARD_COUNT = 4
 
 function getConcertEmptyMessage(urlQuery, statusParam, effectiveFollowedOnly) {
   if (urlQuery && statusParam) return `'${urlQuery}' · ${CONCERT_STATUS_LABEL[statusParam]} 검색 결과가 없습니다.`
@@ -230,8 +232,8 @@ function ConcertsPage() {
           </div>
         ) : concerts.length > 0 ? (
           <div className={styles.grid}>
-            {concerts.map((concert) => (
-              <ConcertCard key={concert.id} concert={concert} />
+            {concerts.map((concert, i) => (
+              <ConcertCard key={concert.id} concert={concert} priority={i < PRIORITY_CARD_COUNT} />
             ))}
           </div>
         ) : (
