@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { lazy, Suspense, useEffect } from 'react'
 import { Routes, Route } from 'react-router-dom'
 import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/react'
@@ -11,22 +11,7 @@ import Layout from '@/components/layout/Layout'
 import PageViewTracker from '@/components/layout/PageViewTracker'
 import PrivateRoute from '@/components/layout/PrivateRoute'
 import ScrollToTop from '@/components/layout/ScrollToTop'
-import AuthCallbackPage from '@/pages/AuthCallbackPage'
-import SignupPage from '@/pages/SignupPage'
-import ArtistDetailPage from '@/pages/ArtistDetailPage'
-import ArtistsPage from '@/pages/ArtistsPage'
-import CalendarPage from '@/pages/CalendarPage'
-import ConcertDetailPage from '@/pages/ConcertDetailPage'
-import ConcertsPage from '@/pages/ConcertsPage'
-import ReleaseDetailPage from '@/pages/ReleaseDetailPage'
-import ReleasesPage from '@/pages/ReleasesPage'
-import PostDetailPage from '@/pages/PostDetailPage'
-import PostsPage from '@/pages/PostsPage'
-import PostWritePage from '@/pages/PostWritePage'
-import NoticeDetailPage from '@/pages/NoticeDetailPage'
 import HomePage from '@/pages/HomePage'
-import MyPage from '@/pages/MyPage'
-import NotFoundPage from '@/pages/NotFoundPage'
 import AdminPage from '@/pages/admin/AdminPage'
 import AdminArtistFormPage from '@/pages/admin/AdminArtistFormPage'
 import AdminConcertFormPage from '@/pages/admin/AdminConcertFormPage'
@@ -38,9 +23,26 @@ import AdminNoticeFormPage from '@/pages/admin/AdminNoticeFormPage'
 import AdminPendingConcertsPage from '@/pages/admin/AdminPendingConcertsPage'
 import AdminExcludedConcertsPage from '@/pages/admin/AdminExcludedConcertsPage'
 import AdminPolicyPage from '@/pages/admin/AdminPolicyPage'
-import PolicyPage from '@/pages/PolicyPage'
 import { TERMS_VERSIONS, PRIVACY_VERSIONS } from '@/constants/policy'
 import { ROUTES } from '@/constants/routes'
+
+// 첫 진입 화면(HomePage)을 제외한 페이지는 라우트 단위로 분할해 초기 번들에서 뺀다
+const AuthCallbackPage = lazy(() => import('@/pages/AuthCallbackPage'))
+const SignupPage = lazy(() => import('@/pages/SignupPage'))
+const ArtistDetailPage = lazy(() => import('@/pages/ArtistDetailPage'))
+const ArtistsPage = lazy(() => import('@/pages/ArtistsPage'))
+const CalendarPage = lazy(() => import('@/pages/CalendarPage'))
+const ConcertDetailPage = lazy(() => import('@/pages/ConcertDetailPage'))
+const ConcertsPage = lazy(() => import('@/pages/ConcertsPage'))
+const ReleaseDetailPage = lazy(() => import('@/pages/ReleaseDetailPage'))
+const ReleasesPage = lazy(() => import('@/pages/ReleasesPage'))
+const PostDetailPage = lazy(() => import('@/pages/PostDetailPage'))
+const PostsPage = lazy(() => import('@/pages/PostsPage'))
+const PostWritePage = lazy(() => import('@/pages/PostWritePage'))
+const NoticeDetailPage = lazy(() => import('@/pages/NoticeDetailPage'))
+const MyPage = lazy(() => import('@/pages/MyPage'))
+const NotFoundPage = lazy(() => import('@/pages/NotFoundPage'))
+const PolicyPage = lazy(() => import('@/pages/PolicyPage'))
 
 function App() {
   const clearUser = useAuthStore((s) => s.clearUser)
@@ -61,6 +63,7 @@ function App() {
     <script type="application/ld+json">{toSafeJsonLd(buildOrganizationJsonLd())}</script>
     <Layout>
       <ScrollToTop />
+      <Suspense fallback={null}>
       <Routes>
         <Route path={ROUTES.AUTH_CALLBACK} element={<AuthCallbackPage />} />
         <Route path={ROUTES.SIGNUP} element={<SignupPage />} />
@@ -106,6 +109,7 @@ function App() {
 
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
+      </Suspense>
       <PageViewTracker />
       <Analytics />
       <SpeedInsights />
