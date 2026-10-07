@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { Navigate, useNavigate } from 'react-router-dom'
 
 import useAuthStore from '@/stores/authStore'
-import { register, checkNickname } from '@/services/authApi'
+import { register, checkNickname, getMe } from '@/services/authApi'
 import { ROUTES } from '@/constants/routes'
 import { LOGIN_REDIRECT_KEY } from '@/constants/auth'
 import {
@@ -200,7 +200,6 @@ function SignupPage() {
         agreedMarketing: consents.agreedMarketing,
       })
       setAccessToken(accessToken)
-      const { getMe } = await import('@/services/authApi')
       const user = await getMe()
       setUser(user)
       trackEvent('sign_up')
