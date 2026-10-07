@@ -65,7 +65,8 @@ function App() {
     <script type="application/ld+json">{toSafeJsonLd(buildOrganizationJsonLd())}</script>
     <Layout>
       <ScrollToTop />
-      <Suspense fallback={null}>
+      {/* 페이지 청크를 받는 동안 푸터가 화면 안으로 올라왔다가 밀려나지 않도록(CLS) 페이지 최소 높이만큼 비워 둔다 */}
+      <Suspense fallback={<div style={{ minHeight: 'calc(100svh - var(--header-height))' }} />}>
       <Routes>
         <Route path={ROUTES.AUTH_CALLBACK} element={<AuthCallbackPage />} />
         <Route path={ROUTES.SIGNUP} element={<SignupPage />} />
