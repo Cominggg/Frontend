@@ -6,7 +6,7 @@ import SpotifyIcon from '@/components/ui/SpotifyIcon'
 import StarRating from '@/components/ui/StarRating'
 import { ROUTES } from '@/constants/routes'
 import { getArtistColor } from '@/utils/artistColor'
-import { getSpotifyAlbumUrl } from '@/utils/spotify'
+import { getSpotifyAlbumUrl, getSpotifyCoverThumbnail } from '@/utils/spotify'
 import styles from './ReleaseCard.module.css'
 
 const RELEASE_TYPE_COLOR = {
@@ -21,7 +21,8 @@ function isNewRelease(dateStr) {
   return (Date.now() - d.getTime()) / 86400000 <= 30
 }
 
-function ReleaseCard({ release }) {
+// priority: 첫 화면에 바로 보이는 카드(LCP 후보)는 지연 로드하지 않고 먼저 받는다
+function ReleaseCard({ release, priority = false }) {
   const { id, coverUrl, artistName, artistKoreanName, title, releaseDate, type, spotifyId, averageRating } = release
   const [imgFailed, setImgFailed] = useState(false)
   const showPlaceholder = !coverUrl || imgFailed
@@ -43,10 +44,11 @@ function ReleaseCard({ release }) {
           </div>
         ) : (
           <img
-            src={coverUrl}
+            src={getSpotifyCoverThumbnail(coverUrl)}
             alt={title}
             className={styles.cover}
-            loading="lazy"
+            loading={priority ? 'eager' : 'lazy'}
+            fetchPriority={priority ? 'high' : 'auto'}
             decoding="async"
             onError={() => setImgFailed(true)}
           />

@@ -10,9 +10,11 @@ import { ROUTES } from '@/constants/routes'
 import { getArtistColor } from '@/utils/artistColor'
 import { followArtist, unfollowArtist } from '@/services/artistApi'
 import { trackEvent } from '@/utils/analytics'
+import { getSpotifyArtistThumbnail } from '@/utils/spotify'
 import styles from './ArtistCard.module.css'
 
-function ArtistCard({ artist }) {
+// priority: 첫 화면에 바로 보이는 카드(LCP 후보)는 지연 로드하지 않고 먼저 받는다
+function ArtistCard({ artist, priority = false }) {
   const { id, name, koreanName, imageUrl, hasUpcomingConcert, spotifyUrl } = artist
   const [isFollowing, setIsFollowing] = useState(artist.isFollowing)
   const [prevIsFollowingProp, setPrevIsFollowingProp] = useState(artist.isFollowing)
@@ -66,10 +68,11 @@ function ArtistCard({ artist }) {
             </div>
           ) : (
             <img
-              src={imageUrl}
+              src={getSpotifyArtistThumbnail(imageUrl)}
               alt={name}
               className={styles.avatar}
-              loading="lazy"
+              loading={priority ? 'eager' : 'lazy'}
+              fetchPriority={priority ? 'high' : 'auto'}
               decoding="async"
               onError={() => setImgFailed(true)}
             />

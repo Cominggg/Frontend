@@ -9,6 +9,21 @@ import './index.css'
 
 initGA()
 
+// 재배포로 이전 빌드의 lazy 청크가 사라지면 새로고침해 새 빌드를 받는다.
+// 네트워크 장애처럼 새로고침해도 실패하는 경우 무한 새로고침을 막기 위해 10초에 한 번만 시도한다.
+const CHUNK_RELOAD_KEY = 'chunk-reload-at'
+window.addEventListener('vite:preloadError', (event) => {
+  try {
+    const last = Number(sessionStorage.getItem(CHUNK_RELOAD_KEY))
+    if (Date.now() - last < 10_000) return
+    sessionStorage.setItem(CHUNK_RELOAD_KEY, String(Date.now()))
+  } catch {
+    return
+  }
+  event.preventDefault()
+  window.location.reload()
+})
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {

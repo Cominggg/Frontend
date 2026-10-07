@@ -1,4 +1,20 @@
-const GA_MEASUREMENT_ID = import.meta.env.VITE_GA_MEASUREMENT_ID
+const INTERNAL_PARAM = 'ga_internal'
+const INTERNAL_STORAGE_KEY = 'ga-internal'
+
+// 운영자 기기는 ?ga_internal=1로 한 번 접속하면 이후 GA를 로드하지 않는다(=0으로 해제).
+// IP 기반 내부 트래픽 필터는 모바일처럼 IP가 자주 바뀌는 기기를 걸러내지 못한다.
+function isInternalDevice() {
+  try {
+    const flag = new URLSearchParams(window.location.search).get(INTERNAL_PARAM)
+    if (flag === '1') localStorage.setItem(INTERNAL_STORAGE_KEY, '1')
+    if (flag === '0') localStorage.removeItem(INTERNAL_STORAGE_KEY)
+    return localStorage.getItem(INTERNAL_STORAGE_KEY) === '1'
+  } catch {
+    return false
+  }
+}
+
+const GA_MEASUREMENT_ID = isInternalDevice() ? null : import.meta.env.VITE_GA_MEASUREMENT_ID
 
 // gtag.js는 dataLayer에 arguments 객체가 들어와야 명령으로 인식하고 일반 배열은
 // 무시한다. rest 파라미터(...args)로 배열을 넣으면 config가 실행되지 않아 히트가

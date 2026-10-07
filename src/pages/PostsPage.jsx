@@ -103,12 +103,14 @@ function PostsPage() {
     return () => clearTimeout(timer)
   }, [inputValue, setSearchParams])
 
+  const listKey = isSearching
+    ? ['search', urlQuery]
+    : isPopular
+      ? ['posts', 'popular-board']
+      : ['posts', selectedCategory]
+
   const { data, isLoading } = useQuery({
-    queryKey: isSearching
-      ? ['search', urlQuery, currentPage]
-      : isPopular
-        ? ['posts', 'popular-board', currentPage]
-        : ['posts', selectedCategory, currentPage],
+    queryKey: [...listKey, currentPage],
     queryFn: () => (isSearching
       ? getSearch({ q: urlQuery, page: currentPage - 1, size: ITEMS_PER_PAGE })
       : isPopular
@@ -119,6 +121,9 @@ function PostsPage() {
           size: ITEMS_PER_PAGE,
         })),
     enabled: !isQueryTooShort,
+    // 페이지만 바뀔 때 이전 목록을 유지한다. 카테고리·검색어가 바뀌면 다른 목록이 비치지 않도록 스켈레톤을 보인다
+    placeholderData: (prev, prevQuery) =>
+      listKey.every((part, i) => part === prevQuery?.queryKey[i]) ? prev : undefined,
   })
 
   const posts = data?.content ?? []

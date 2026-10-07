@@ -1,46 +1,50 @@
-import { useEffect } from 'react'
+import { lazy, Suspense, useEffect } from 'react'
 import { Routes, Route } from 'react-router-dom'
 import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/react'
 
 import useAuthStore, { SESSION_HINT } from '@/stores/authStore'
 import { buildOrganizationJsonLd, buildWebsiteJsonLd, toSafeJsonLd } from '@/utils/structuredData'
-import AdminLayout from '@/components/layout/AdminLayout'
 import AdminRoute from '@/components/layout/AdminRoute'
 import Layout from '@/components/layout/Layout'
 import PageViewTracker from '@/components/layout/PageViewTracker'
 import PrivateRoute from '@/components/layout/PrivateRoute'
 import ScrollToTop from '@/components/layout/ScrollToTop'
-import AuthCallbackPage from '@/pages/AuthCallbackPage'
-import SignupPage from '@/pages/SignupPage'
-import ArtistDetailPage from '@/pages/ArtistDetailPage'
-import ArtistsPage from '@/pages/ArtistsPage'
-import CalendarPage from '@/pages/CalendarPage'
-import ConcertDetailPage from '@/pages/ConcertDetailPage'
-import ConcertsPage from '@/pages/ConcertsPage'
-import ReleaseDetailPage from '@/pages/ReleaseDetailPage'
-import ReleasesPage from '@/pages/ReleasesPage'
-import PostDetailPage from '@/pages/PostDetailPage'
-import PostsPage from '@/pages/PostsPage'
-import PostWritePage from '@/pages/PostWritePage'
-import NoticeDetailPage from '@/pages/NoticeDetailPage'
 import HomePage from '@/pages/HomePage'
-import MyPage from '@/pages/MyPage'
-import NotFoundPage from '@/pages/NotFoundPage'
-import AdminPage from '@/pages/admin/AdminPage'
-import AdminArtistFormPage from '@/pages/admin/AdminArtistFormPage'
-import AdminConcertFormPage from '@/pages/admin/AdminConcertFormPage'
-import AdminConcertCreatePage from '@/pages/admin/AdminConcertCreatePage'
-import AdminInquiriesPage from '@/pages/admin/AdminInquiriesPage'
-import AdminReportsPage from '@/pages/admin/AdminReportsPage'
-import AdminNoticesPage from '@/pages/admin/AdminNoticesPage'
-import AdminNoticeFormPage from '@/pages/admin/AdminNoticeFormPage'
-import AdminPendingConcertsPage from '@/pages/admin/AdminPendingConcertsPage'
-import AdminExcludedConcertsPage from '@/pages/admin/AdminExcludedConcertsPage'
-import AdminPolicyPage from '@/pages/admin/AdminPolicyPage'
-import PolicyPage from '@/pages/PolicyPage'
 import { TERMS_VERSIONS, PRIVACY_VERSIONS } from '@/constants/policy'
 import { ROUTES } from '@/constants/routes'
+
+// 첫 진입 화면(HomePage)을 제외한 페이지는 라우트 단위로 분할해 초기 번들에서 뺀다
+const AuthCallbackPage = lazy(() => import('@/pages/AuthCallbackPage'))
+const SignupPage = lazy(() => import('@/pages/SignupPage'))
+const ArtistDetailPage = lazy(() => import('@/pages/ArtistDetailPage'))
+const ArtistsPage = lazy(() => import('@/pages/ArtistsPage'))
+const CalendarPage = lazy(() => import('@/pages/CalendarPage'))
+const ConcertDetailPage = lazy(() => import('@/pages/ConcertDetailPage'))
+const ConcertsPage = lazy(() => import('@/pages/ConcertsPage'))
+const ReleaseDetailPage = lazy(() => import('@/pages/ReleaseDetailPage'))
+const ReleasesPage = lazy(() => import('@/pages/ReleasesPage'))
+const PostDetailPage = lazy(() => import('@/pages/PostDetailPage'))
+const PostsPage = lazy(() => import('@/pages/PostsPage'))
+const PostWritePage = lazy(() => import('@/pages/PostWritePage'))
+const NoticeDetailPage = lazy(() => import('@/pages/NoticeDetailPage'))
+const MyPage = lazy(() => import('@/pages/MyPage'))
+const NotFoundPage = lazy(() => import('@/pages/NotFoundPage'))
+const PolicyPage = lazy(() => import('@/pages/PolicyPage'))
+
+// 관리자 화면 — 일반 사용자 번들에 react-datepicker 등이 섞이지 않도록 분리
+const AdminLayout = lazy(() => import('@/components/layout/AdminLayout'))
+const AdminPage = lazy(() => import('@/pages/admin/AdminPage'))
+const AdminArtistFormPage = lazy(() => import('@/pages/admin/AdminArtistFormPage'))
+const AdminConcertFormPage = lazy(() => import('@/pages/admin/AdminConcertFormPage'))
+const AdminConcertCreatePage = lazy(() => import('@/pages/admin/AdminConcertCreatePage'))
+const AdminInquiriesPage = lazy(() => import('@/pages/admin/AdminInquiriesPage'))
+const AdminReportsPage = lazy(() => import('@/pages/admin/AdminReportsPage'))
+const AdminNoticesPage = lazy(() => import('@/pages/admin/AdminNoticesPage'))
+const AdminNoticeFormPage = lazy(() => import('@/pages/admin/AdminNoticeFormPage'))
+const AdminPendingConcertsPage = lazy(() => import('@/pages/admin/AdminPendingConcertsPage'))
+const AdminExcludedConcertsPage = lazy(() => import('@/pages/admin/AdminExcludedConcertsPage'))
+const AdminPolicyPage = lazy(() => import('@/pages/admin/AdminPolicyPage'))
 
 function App() {
   const clearUser = useAuthStore((s) => s.clearUser)
@@ -61,6 +65,8 @@ function App() {
     <script type="application/ld+json">{toSafeJsonLd(buildOrganizationJsonLd())}</script>
     <Layout>
       <ScrollToTop />
+      {/* 페이지 청크를 받는 동안 푸터가 화면 안으로 올라왔다가 밀려나지 않도록(CLS) 페이지 최소 높이만큼 비워 둔다 */}
+      <Suspense fallback={<div style={{ minHeight: 'calc(100svh - var(--header-height))' }} />}>
       <Routes>
         <Route path={ROUTES.AUTH_CALLBACK} element={<AuthCallbackPage />} />
         <Route path={ROUTES.SIGNUP} element={<SignupPage />} />
@@ -106,6 +112,7 @@ function App() {
 
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
+      </Suspense>
       <PageViewTracker />
       <Analytics />
       <SpeedInsights />

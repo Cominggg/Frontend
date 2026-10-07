@@ -4,7 +4,7 @@ function Logo({ size = 'md' }) {
   return (
     <span className={`${styles.root} ${styles[size]}`}>
       <img
-        src="/logo.png"
+        src="/logo-144.png"
         alt=""
         className={styles.icon}
         aria-hidden="true"

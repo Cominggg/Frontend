@@ -14,6 +14,7 @@ import useAuthStore from '@/stores/authStore'
 import useLoginModalStore from '@/stores/loginModalStore'
 import { getArtistColor } from '@/utils/artistColor'
 import { formatDate } from '@/utils/date'
+import { getSpotifyCoverThumbnail } from '@/utils/spotify'
 import styles from './HomePage.module.css'
 
 
@@ -120,9 +121,11 @@ function AlbumCard({ item }) {
       >
         {showImg && (
           <img
-            src={item.coverUrl}
+            src={getSpotifyCoverThumbnail(item.coverUrl)}
             alt={item.title}
             className={styles.albumCoverImg}
+            loading="lazy"
+            decoding="async"
             onError={() => setImgFailed(true)}
           />
         )}
@@ -225,7 +228,7 @@ function HomePage() {
             ) : (
               <div className={styles.gridThree}>
                 {popularConcerts.slice(0, 3).map((concert) => (
-                  <ConcertCard key={concert.id} concert={concert} />
+                  <ConcertCard key={concert.id} concert={concert} priority />
                 ))}
               </div>
             )}

@@ -49,6 +49,36 @@
 .skeletonMd { width: 70%; }
 .skeletonLg { width: 55%; height: 24px; }
 
+/* 디스코그래피·공연 목록 로딩 자리 */
+.skeletonSectionTitle {
+  width: 120px;
+  height: 20px;
+  margin-bottom: 1rem;
+}
+
+.skeletonRowList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.skeletonRow {
+  height: 44px;
+  border-radius: var(--radius-md);
+  background: linear-gradient(90deg, var(--color-surface) 25%, var(--color-surface-hover) 50%, var(--color-surface) 75%);
+  background-size: 800px 100%;
+  animation: shimmer 1.4s infinite linear;
+}
+
+/* 목록 로딩 중 숨기는 아래 영역. 보일 때는 래퍼가 레이아웃에 끼지 않게 한다 */
+.deferred {
+  display: none;
+}
+
+.deferredShown {
+  display: contents;
+}
+
 .inner {
   max-width: var(--max-width);
   margin: 0 auto;
@@ -267,6 +297,11 @@
   text-decoration: none;
   cursor: pointer;
   transition: background-color 0.15s, border-color 0.15s;
+}
+
+/* 배너 데이터가 오기 전 자리표시 — 같은 구조로 높이만 맞춘다 */
+.ddayPlaceholder {
+  pointer-events: none;
 }
 
 .ddayBanner:hover {

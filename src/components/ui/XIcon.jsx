@@ -1,5 +1,5 @@
-import logoBlack from '@/assets/x/logo-black.png'
-import logoWhite from '@/assets/x/logo-white.png'
+import logoBlack from '@/assets/x/logo-black.svg'
+import logoWhite from '@/assets/x/logo-white.svg'
 import BrandIcon from './BrandIcon'
 
 function XIcon({ size = 20 }) {
