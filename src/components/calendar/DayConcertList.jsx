@@ -5,6 +5,7 @@ import ArtistAliasName from '@/components/artist/ArtistAliasName'
 import { ROUTES } from '@/constants/routes'
 import { CONCERT_STATUS_COLOR, CONCERT_STATUS_LABEL } from '@/constants/concert'
 import { formatDate } from '@/utils/date'
+import { toKopisHttpsUrl } from '@/utils/kopis'
 import styles from './DayConcertList.module.css'
 
 const WEEKDAY_NAMES = ['일', '월', '화', '수', '목', '금', '토']
@@ -38,7 +39,7 @@ function DayConcertPoster({ posterUrl, title }) {
     <div className={styles.poster}>
       {posterUrl && !imgFailed && (
         <img
-          src={posterUrl}
+          src={toKopisHttpsUrl(posterUrl)}
           alt={title}
           loading="lazy"
           decoding="async"

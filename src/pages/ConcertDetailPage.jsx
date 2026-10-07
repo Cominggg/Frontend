@@ -19,6 +19,7 @@ import { formatDate, formatDateTime } from '@/utils/date'
 import { buildConcertEventJsonLd, toSafeJsonLd } from '@/utils/structuredData'
 import { trackEvent } from '@/utils/analytics'
 import { buildConcertMeta } from '@/utils/pageMeta'
+import { toKopisHttpsUrl } from '@/utils/kopis'
 import styles from './ConcertDetailPage.module.css'
 
 function PosterImage({ url, alt }) {
@@ -26,7 +27,7 @@ function PosterImage({ url, alt }) {
   if (failed) return <div className={styles.posterImgFailed} role="img" aria-label={alt} />
   return (
     <img
-      src={url}
+      src={toKopisHttpsUrl(url)}
       alt={alt}
       className={styles.posterImg}
       loading="lazy"
@@ -193,7 +194,7 @@ function ConcertDetailPage() {
                 </div>
               ) : (
                 <img
-                  src={posterUrl}
+                  src={toKopisHttpsUrl(posterUrl)}
                   alt={artistDisplayName}
                   className={styles.thumbnail}
                   fetchPriority="high"

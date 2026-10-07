@@ -7,6 +7,7 @@ import StarRating from '@/components/ui/StarRating'
 import { ROUTES } from '@/constants/routes'
 import { formatDate } from '@/utils/date'
 import { getArtistColor } from '@/utils/artistColor'
+import { toKopisHttpsUrl } from '@/utils/kopis'
 import styles from './ConcertCard.module.css'
 
 function getTicketDday(ticketOpenAt) {
@@ -49,7 +50,7 @@ function ConcertCard({ concert, priority = false }) {
           </div>
         ) : (
           <img
-            src={posterUrl}
+            src={toKopisHttpsUrl(posterUrl)}
             alt={title}
             className={styles.poster}
             loading={priority ? 'eager' : 'lazy'}
