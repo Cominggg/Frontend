@@ -116,7 +116,7 @@ function ArtistDetailPage() {
   })
 
   // D-day 전용 — 탭·페이지와 무관하게 항상 가장 빠른 예정 공연 1건만 조회
-  const { data: ddayConcertsData } = useQuery({
+  const { data: ddayConcertsData, isLoading: ddayLoading } = useQuery({
     queryKey: ['artist-concerts-dday', artistId],
     queryFn: () => getArtistConcerts(artistId, { tab: 'upcoming', page: 0, size: 1 }),
     enabled: !!artist?.hasUpcomingConcert,
@@ -227,6 +227,9 @@ function ArtistDetailPage() {
   const hasNoDiscography = !releasesLoading && !releasesIsPlaceholder && releases.length === 0
   const hasNoConcertHistory = !concertsLoading && !concertsIsPlaceholder && concertTab === 'all' && concerts.length === 0
   const showCombinedEmpty = hasNoDiscography && hasNoConcertHistory
+  // 목록이 도착하며 높이가 바뀌어 아래 영역이 밀리지 않도록(CLS) 두 목록이 모두 올 때까지 하나의 스켈레톤으로 대신하고,
+  // 아래 영역(관련 게시글·문의·출처)은 숨겨 둔다. 숨겨도 마운트는 해서 관련 게시글 요청은 함께 시작한다.
+  const sectionsLoading = releasesLoading || concertsLoading
 
   return (
     <>
@@ -328,7 +331,19 @@ function ArtistDetailPage() {
           </div>
         </section>
 
-        {/* D-day 배너 */}
+        {/* D-day 배너 — 예정 공연이 있으면 배너 데이터가 오기 전에도 같은 높이의 자리를 잡아 둔다(CLS) */}
+        {ddayLoading && (
+          <div className={`${styles.ddayBanner} ${styles.ddayPlaceholder}`} aria-hidden="true">
+            <div className={styles.ddayContent}>
+              <span className={styles.ddayLabel}>&nbsp;</span>
+              <div className={styles.ddayInfo}>
+                <span className={styles.ddayTitle}>&nbsp;</span>
+                <span className={styles.ddayDate}>&nbsp;</span>
+              </div>
+            </div>
+            <div className={styles.ddayCount}>&nbsp;</div>
+          </div>
+        )}
         {showDday && (
           <Link to={ROUTES.CONCERT_DETAIL(nextConcert.id)} className={styles.ddayBanner}>
             <div className={styles.ddayContent}>
@@ -345,7 +360,16 @@ function ArtistDetailPage() {
         )}
 
         {/* 디스코그래피 · 내한 공연 내역이 둘 다 없으면 통합 안내로 압축 */}
-        {showCombinedEmpty ? (
+        {sectionsLoading ? (
+          <section key="sections-skeleton" className={styles.section} aria-busy="true">
+            <div className={`${styles.skeletonLine} ${styles.skeletonSectionTitle}`} />
+            <div className={styles.skeletonRowList}>
+              {Array.from({ length: 4 }).map((_, i) => (
+                <div key={i} className={styles.skeletonRow} />
+              ))}
+            </div>
+          </section>
+        ) : showCombinedEmpty ? (
           <section className={styles.section}>
             <EmptyState
               compact
@@ -367,9 +391,7 @@ function ArtistDetailPage() {
             디스코그래피
             {releasesTotalElements > 0 && <span className={styles.sectionCount}>{releasesTotalElements}</span>}
           </h2>
-          {releasesLoading ? (
-            <div className={styles.releaseList} aria-busy="true" />
-          ) : releases.length > 0 ? (
+          {releases.length > 0 ? (
             <>
               <div className={styles.releaseList}>
                 {releases.map((rel) => {
@@ -477,9 +499,7 @@ function ArtistDetailPage() {
             ))}
           </div>
 
-          {concertsLoading ? (
-            <div aria-busy="true" />
-          ) : concerts.length > 0 ? (
+          {concerts.length > 0 ? (
             <>
               <div className={styles.concertList}>
                 {concerts.map((concert) => (
@@ -508,6 +528,7 @@ function ArtistDetailPage() {
         </>
         )}
 
+        <div className={sectionsLoading ? styles.deferred : styles.deferredShown}>
         {/* 관련 게시글 */}
         <RelatedPostsSection entityType="ARTIST" entityId={id} limit={10} />
 
@@ -529,6 +550,7 @@ function ArtistDetailPage() {
           linkHref="https://creativecommons.org/licenses/by-nc-sa/3.0/"
           linkText="CC BY-NC-SA 3.0"
         />
+        </div>
 
       </div>
     </div>
