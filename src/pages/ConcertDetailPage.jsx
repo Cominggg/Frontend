@@ -42,6 +42,7 @@ function ConcertDetailPage() {
   const queryClient = useQueryClient()
 
   const [posterFailed, setPosterFailed] = useState(false)
+  const [posterLoaded, setPosterLoaded] = useState(false)
   const [activeTab, setActiveTab] = useState('info')
   const [prevId, setPrevId] = useState(id)
   const [inquiryType, setInquiryType] = useState(null)
@@ -52,6 +53,7 @@ function ConcertDetailPage() {
   if (id !== prevId) {
     setPrevId(id)
     setActiveTab('info')
+    setPosterLoaded(false)
   }
 
   const { data: concert, isLoading, isError, error } = useQuery({
@@ -159,6 +161,8 @@ function ConcertDetailPage() {
   const setlist = setlistData?.tracks ?? []
   const setlistSourceUrl = setlistData?.sourceUrl
   const showPosterPlaceholder = !posterUrl || posterFailed
+  // 소개 이미지는 수 MB라 대표 포스터(LCP)와 동시에 받으면 포스터가 늦게 뜬다. 포스터가 끝난 뒤에 그린다.
+  const showIntroImages = showPosterPlaceholder || posterLoaded
 
   const dateRange = endDate && endDate !== startDate
     ? `${formatDate(startDate)} ~ ${formatDate(endDate)}`
@@ -194,6 +198,7 @@ function ConcertDetailPage() {
                   className={styles.thumbnail}
                   fetchPriority="high"
                   decoding="async"
+                  onLoad={() => setPosterLoaded(true)}
                   onError={() => setPosterFailed(true)}
                 />
               )}
@@ -413,7 +418,7 @@ function ConcertDetailPage() {
             </div>
           )}
 
-          {activeTab === 'info' && (
+          {activeTab === 'info' && showIntroImages && (
             <div className={styles.tabPanel}>
               {imageUrls && imageUrls.length > 0 ? (
                 <div className={styles.posterList}>
