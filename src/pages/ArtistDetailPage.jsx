@@ -112,7 +112,6 @@ function ArtistDetailPage() {
   const { data: concertsData, isLoading: concertsLoading, isPlaceholderData: concertsIsPlaceholder } = useQuery({
     queryKey: ['artist-concerts', artistId, concertTab, concertPage],
     queryFn: () => getArtistConcerts(artistId, { tab: concertTab, page: concertPage - 1, size: CONCERT_PAGE_SIZE }),
-    enabled: !!artist,
     placeholderData: (prev) => prev,
   })
 
@@ -126,7 +125,6 @@ function ArtistDetailPage() {
   const { data: releasesData, isLoading: releasesLoading, isPlaceholderData: releasesIsPlaceholder } = useQuery({
     queryKey: ['artist-releases', artistId, releasePage],
     queryFn: () => getArtistReleases(artistId, { page: releasePage - 1, size: RELEASE_PAGE_SIZE }),
-    enabled: !!artist,
     placeholderData: (prev) => prev,
   })
 
