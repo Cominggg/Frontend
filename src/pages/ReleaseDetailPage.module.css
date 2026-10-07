@@ -394,6 +394,10 @@
     justify-content: center;
   }
 
+  .spotifyBtn {
+    align-self: center;
+  }
+
   .body {
     padding: 1.5rem 1rem 3rem;
   }
