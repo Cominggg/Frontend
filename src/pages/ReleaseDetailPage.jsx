@@ -157,6 +157,7 @@ function ReleaseDetailPage() {
                   src={coverUrl}
                   alt={`${title} 커버`}
                   className={styles.coverImg}
+                  fetchPriority="high"
                   onError={() => setCoverFailed(true)}
                 />
               )}

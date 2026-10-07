@@ -261,6 +261,7 @@ function ArtistDetailPage() {
                 src={imageUrl}
                 alt={name}
                 className={styles.avatar}
+                fetchPriority="high"
                 onError={() => setImgFailed(true)}
               />
             )}
