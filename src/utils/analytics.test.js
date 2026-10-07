@@ -210,6 +210,58 @@ describe('trackEvent', () => {
   })
 })
 
+describe('내부 기기 제외', () => {
+  afterEach(() => {
+    vi.restoreAllMocks()
+    localStorage.clear()
+    window.history.replaceState(null, '', '/')
+  })
+
+  it('?ga_internal=1로 접속하면 스크립트를 삽입하지 않음', async () => {
+    window.history.replaceState(null, '', '/?ga_internal=1')
+    const { initGA } = await loadAnalytics('G-TEST')
+
+    initGA()
+
+    expect(document.head.querySelector('script')).toBeNull()
+  })
+
+  it('?ga_internal=1로 한 번 접속하면 이후 파라미터 없이 접속해도 제외', async () => {
+    window.history.replaceState(null, '', '/?ga_internal=1')
+    await loadAnalytics('G-TEST')
+    window.history.replaceState(null, '', '/artists/1')
+    const { initGA, trackPageView, trackEvent } = await loadAnalytics('G-TEST')
+
+    initGA()
+    trackPageView('/artists/1', 'YOASOBI | Coming')
+    trackEvent('search')
+
+    expect(window.dataLayer).toBeUndefined()
+  })
+
+  it('?ga_internal=0으로 접속하면 제외를 해제', async () => {
+    window.history.replaceState(null, '', '/?ga_internal=1')
+    await loadAnalytics('G-TEST')
+    window.history.replaceState(null, '', '/?ga_internal=0')
+    const { initGA } = await loadAnalytics('G-TEST')
+
+    initGA()
+
+    expect(document.head.querySelector('script').src).toBe(GTAG_SRC)
+  })
+
+  it('localStorage 접근이 실패하면 GA를 그대로 로드', async () => {
+    vi.spyOn(Storage.prototype, 'getItem').mockImplementation(() => {
+      throw new Error('SecurityError')
+    })
+    const { initGA } = await loadAnalytics('G-TEST')
+
+    initGA()
+
+    expect(document.head.querySelector('script').src).toBe(GTAG_SRC)
+  })
+})
+
 describe('sanitizeSearch', () => {
   it.each([
     ['q만 있으면 빈 문자열', '?q=yoasobi', ''],
