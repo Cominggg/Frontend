@@ -23,8 +23,8 @@ function makeConcert(overrides = {}) {
   }
 }
 
-function renderList(props = {}) {
-  return render(
+function listElement(props = {}) {
+  return (
     <MemoryRouter>
       <DayConcertList
         selectedDate={SELECTED_DATE}
@@ -32,8 +32,12 @@ function renderList(props = {}) {
         onCalendarToggle={vi.fn()}
         {...props}
       />
-    </MemoryRouter>,
+    </MemoryRouter>
   )
+}
+
+function renderList(props = {}) {
+  return render(listElement(props))
 }
 
 describe('DayConcertList', () => {
@@ -172,6 +176,26 @@ describe('DayConcertList', () => {
       if (triggerError) fireEvent.error(screen.getByRole('img'))
 
       expect(container.innerHTML).not.toContain('poster-placeholder')
+    })
+
+    it('같은 이벤트의 posterUrl이 바뀌면 로드 실패 상태를 초기화해 새 이미지 렌더', () => {
+      const { rerender } = renderList({ events: [makeConcert()] })
+      fireEvent.error(screen.getByRole('img', { name: 'YOASOBI ASIA TOUR 2026 in Seoul' }))
+      expect(screen.queryByRole('img')).not.toBeInTheDocument()
+
+      rerender(listElement({ events: [makeConcert({ posterUrl: 'http://www.kopis.or.kr/upload/pfmPoster/PF_PF123456.jpg' })] }))
+
+      expect(screen.getByRole('img', { name: 'YOASOBI ASIA TOUR 2026 in Seoul' }))
+        .toHaveAttribute('src', 'https://kopis.or.kr/upload/pfmPoster/PF_PF123456.jpg')
+    })
+
+    it('posterUrl이 같으면 다시 렌더해도 로드 실패 상태 유지', () => {
+      const { rerender } = renderList({ events: [makeConcert()] })
+      fireEvent.error(screen.getByRole('img', { name: 'YOASOBI ASIA TOUR 2026 in Seoul' }))
+
+      rerender(listElement({ events: [makeConcert({ inMyCalendar: true })] }))
+
+      expect(screen.queryByRole('img')).not.toBeInTheDocument()
     })
   })
 
