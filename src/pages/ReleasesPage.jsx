@@ -22,6 +22,8 @@ import styles from './ReleasesPage.module.css'
 const MAIN_TYPES = ['Album', 'Single']
 const TYPE_FILTERS = ['전체', ...MAIN_TYPES]
 const PAGE_SIZE = 20
+// 첫 화면에 보이는 카드 수(모바일 2열 × 2행). 이 카드들의 이미지는 LCP 후보라 먼저 받는다.
+const PRIORITY_CARD_COUNT = 4
 
 function ReleasesPage() {
   const [searchParams, setSearchParams] = useSearchParams()
@@ -205,8 +207,8 @@ function ReleasesPage() {
           </div>
         ) : releases.length > 0 ? (
           <div className={styles.grid}>
-            {releases.map((release) => (
-              <ReleaseCard key={release.id} release={release} />
+            {releases.map((release, i) => (
+              <ReleaseCard key={release.id} release={release} priority={i < PRIORITY_CARD_COUNT} />
             ))}
           </div>
         ) : (
