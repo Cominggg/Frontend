@@ -14,3 +14,11 @@ const SPOTIFY_COVER_300 = '/image/ab67616d00001e02'
 export function getSpotifyCoverThumbnail(coverUrl) {
   return coverUrl?.replace(SPOTIFY_COVER_640, SPOTIFY_COVER_300)
 }
+
+// 아티스트 이미지도 같은 방식이다 (640: ab6761610000e5eb, 320: ab67616100005174).
+const SPOTIFY_ARTIST_640 = '/image/ab6761610000e5eb'
+const SPOTIFY_ARTIST_320 = '/image/ab67616100005174'
+
+export function getSpotifyArtistThumbnail(imageUrl) {
+  return imageUrl?.replace(SPOTIFY_ARTIST_640, SPOTIFY_ARTIST_320)
+}
