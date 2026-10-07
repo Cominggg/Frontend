@@ -93,7 +93,7 @@ function DayConcertList({ selectedDate, events, onCalendarToggle }) {
                     }}
                   />
 
-                  <DayConcertPoster posterUrl={ev.posterUrl} title={ev.title} />
+                  <DayConcertPoster key={ev.posterUrl} posterUrl={ev.posterUrl} title={ev.title} />
 
                   <div className={styles.info}>
                     <p className={styles.artist}>
