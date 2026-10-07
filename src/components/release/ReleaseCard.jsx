@@ -6,7 +6,7 @@ import SpotifyIcon from '@/components/ui/SpotifyIcon'
 import StarRating from '@/components/ui/StarRating'
 import { ROUTES } from '@/constants/routes'
 import { getArtistColor } from '@/utils/artistColor'
-import { getSpotifyAlbumUrl } from '@/utils/spotify'
+import { getSpotifyAlbumUrl, getSpotifyCoverThumbnail } from '@/utils/spotify'
 import styles from './ReleaseCard.module.css'
 
 const RELEASE_TYPE_COLOR = {
@@ -43,7 +43,7 @@ function ReleaseCard({ release }) {
           </div>
         ) : (
           <img
-            src={coverUrl}
+            src={getSpotifyCoverThumbnail(coverUrl)}
             alt={title}
             className={styles.cover}
             loading="lazy"
