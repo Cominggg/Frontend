@@ -37,6 +37,13 @@ function ReleaseDetailPage() {
   const navigate = useNavigate()
   const { key: locationKey, hash } = useLocation()
 
+  // hash가 바뀌면 만료 기록을 지워, 이전에 만료된 트랙으로 돌아와도 다시 하이라이트되게 한다
+  const [prevHash, setPrevHash] = useState(hash)
+  if (hash !== prevHash) {
+    setPrevHash(hash)
+    setExpiredHighlightHash(null)
+  }
+
   const { data: release, isLoading, isError, error } = useQuery({
     queryKey: ['release', releaseId],
     queryFn: () => getRelease(releaseId),

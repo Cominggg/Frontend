@@ -247,7 +247,10 @@ function AdminArtistFormPage() {
               type="text"
               className={styles.input}
               value={form.imageUrl}
-              onChange={(e) => setForm((prev) => ({ ...prev, imageUrl: e.target.value }))}
+              onChange={(e) => {
+                setForm((prev) => ({ ...prev, imageUrl: e.target.value }))
+                setBrokenImageUrl(null)
+              }}
               placeholder="https://..."
             />
           </label>

@@ -24,6 +24,8 @@ function AdminNoticeFormPage() {
     queryFn: () => getAdminNotice(id),
     enabled: isEdit,
     staleTime: 0,
+    // 캐시된 이전 공지로 폼이 채워지면 이후 refetch가 반영되지 않으므로, 진입할 때마다 새로 조회
+    gcTime: 0,
   })
 
   // 조회 결과로 폼을 한 번만 채운다 — 이후 refetch가 편집 중인 값을 덮어쓰지 않도록
