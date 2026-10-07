@@ -5,24 +5,12 @@ import { SpeedInsights } from '@vercel/speed-insights/react'
 
 import useAuthStore, { SESSION_HINT } from '@/stores/authStore'
 import { buildOrganizationJsonLd, buildWebsiteJsonLd, toSafeJsonLd } from '@/utils/structuredData'
-import AdminLayout from '@/components/layout/AdminLayout'
 import AdminRoute from '@/components/layout/AdminRoute'
 import Layout from '@/components/layout/Layout'
 import PageViewTracker from '@/components/layout/PageViewTracker'
 import PrivateRoute from '@/components/layout/PrivateRoute'
 import ScrollToTop from '@/components/layout/ScrollToTop'
 import HomePage from '@/pages/HomePage'
-import AdminPage from '@/pages/admin/AdminPage'
-import AdminArtistFormPage from '@/pages/admin/AdminArtistFormPage'
-import AdminConcertFormPage from '@/pages/admin/AdminConcertFormPage'
-import AdminConcertCreatePage from '@/pages/admin/AdminConcertCreatePage'
-import AdminInquiriesPage from '@/pages/admin/AdminInquiriesPage'
-import AdminReportsPage from '@/pages/admin/AdminReportsPage'
-import AdminNoticesPage from '@/pages/admin/AdminNoticesPage'
-import AdminNoticeFormPage from '@/pages/admin/AdminNoticeFormPage'
-import AdminPendingConcertsPage from '@/pages/admin/AdminPendingConcertsPage'
-import AdminExcludedConcertsPage from '@/pages/admin/AdminExcludedConcertsPage'
-import AdminPolicyPage from '@/pages/admin/AdminPolicyPage'
 import { TERMS_VERSIONS, PRIVACY_VERSIONS } from '@/constants/policy'
 import { ROUTES } from '@/constants/routes'
 
@@ -43,6 +31,20 @@ const NoticeDetailPage = lazy(() => import('@/pages/NoticeDetailPage'))
 const MyPage = lazy(() => import('@/pages/MyPage'))
 const NotFoundPage = lazy(() => import('@/pages/NotFoundPage'))
 const PolicyPage = lazy(() => import('@/pages/PolicyPage'))
+
+// 관리자 화면 — 일반 사용자 번들에 react-datepicker 등이 섞이지 않도록 분리
+const AdminLayout = lazy(() => import('@/components/layout/AdminLayout'))
+const AdminPage = lazy(() => import('@/pages/admin/AdminPage'))
+const AdminArtistFormPage = lazy(() => import('@/pages/admin/AdminArtistFormPage'))
+const AdminConcertFormPage = lazy(() => import('@/pages/admin/AdminConcertFormPage'))
+const AdminConcertCreatePage = lazy(() => import('@/pages/admin/AdminConcertCreatePage'))
+const AdminInquiriesPage = lazy(() => import('@/pages/admin/AdminInquiriesPage'))
+const AdminReportsPage = lazy(() => import('@/pages/admin/AdminReportsPage'))
+const AdminNoticesPage = lazy(() => import('@/pages/admin/AdminNoticesPage'))
+const AdminNoticeFormPage = lazy(() => import('@/pages/admin/AdminNoticeFormPage'))
+const AdminPendingConcertsPage = lazy(() => import('@/pages/admin/AdminPendingConcertsPage'))
+const AdminExcludedConcertsPage = lazy(() => import('@/pages/admin/AdminExcludedConcertsPage'))
+const AdminPolicyPage = lazy(() => import('@/pages/admin/AdminPolicyPage'))
 
 function App() {
   const clearUser = useAuthStore((s) => s.clearUser)
