@@ -48,6 +48,15 @@ describe('ConcertCard', () => {
     expect(poster).toHaveAttribute('fetchpriority', 'high')
   })
 
+  it('posterUrl이 http KOPIS 주소면 https://kopis.or.kr 주소로 포스터 요청', () => {
+    const concert = makeConcert({ posterUrl: 'http://www.kopis.or.kr/upload/pfmPoster/PF_PF123456.jpg' })
+    renderCard({ concert })
+
+    const poster = screen.getByRole('img', { name: concert.title })
+
+    expect(poster).toHaveAttribute('src', 'https://kopis.or.kr/upload/pfmPoster/PF_PF123456.jpg')
+  })
+
   it.each([false, true])('posterUrl이 없으면 priority가 %s여도 포스터 이미지 없음', (priority) => {
     const concert = makeConcert({ posterUrl: null })
     renderCard({ concert, priority })

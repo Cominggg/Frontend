@@ -171,3 +171,25 @@ describe('ConcertDetailPage 소개 이미지 지연 렌더링', () => {
     expect(screen.getByRole('img', { name: `${CONCERT_2.title} 공연 정보 1` })).toBeInTheDocument()
   })
 })
+
+describe('ConcertDetailPage KOPIS 이미지 주소', () => {
+  it('posterUrl이 http KOPIS 주소면 https://kopis.or.kr 주소로 포스터 요청', async () => {
+    mockConcert({ posterUrl: 'http://www.kopis.or.kr/upload/pfmPoster/PF_PF123456.jpg' })
+    renderPage()
+
+    const poster = await screen.findByRole('img', { name: 'YOASOBI' })
+
+    expect(poster).toHaveAttribute('src', 'https://kopis.or.kr/upload/pfmPoster/PF_PF123456.jpg')
+  })
+
+  it('imageUrls가 http KOPIS 주소면 https://kopis.or.kr 주소로 소개 이미지 요청', async () => {
+    mockConcert({ imageUrls: ['http://www.kopis.or.kr/upload/pfmIntroImage/PF_PF123456_0.jpg'] })
+    renderPage()
+    const poster = await screen.findByRole('img', { name: 'YOASOBI' })
+
+    fireEvent.load(poster)
+
+    expect(screen.getByRole('img', { name: `${CONCERT_1.title} 공연 정보 1` }))
+      .toHaveAttribute('src', 'https://kopis.or.kr/upload/pfmIntroImage/PF_PF123456_0.jpg')
+  })
+})

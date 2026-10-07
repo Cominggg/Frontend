@@ -142,6 +142,13 @@ describe('DayConcertList', () => {
       expect(img).toHaveAttribute('decoding', 'async')
     })
 
+    it('posterUrl이 http KOPIS 주소면 https://kopis.or.kr 주소로 이미지 요청', () => {
+      renderList({ events: [makeConcert({ posterUrl: 'http://www.kopis.or.kr/upload/pfmPoster/PF_PF123456.jpg' })] })
+
+      const img = screen.getByRole('img', { name: 'YOASOBI ASIA TOUR 2026 in Seoul' })
+      expect(img).toHaveAttribute('src', 'https://kopis.or.kr/upload/pfmPoster/PF_PF123456.jpg')
+    })
+
     it('posterUrl이 null이면 이미지를 렌더하지 않음', () => {
       renderList({ events: [makeConcert({ posterUrl: null })] })
 
