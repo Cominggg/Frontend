@@ -29,6 +29,8 @@ function PosterImage({ url, alt }) {
       src={url}
       alt={alt}
       className={styles.posterImg}
+      loading="lazy"
+      decoding="async"
       onError={() => setFailed(true)}
     />
   )
