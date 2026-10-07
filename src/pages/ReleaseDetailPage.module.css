@@ -31,6 +31,27 @@
 .skeletonSm { width: 50%; }
 .skeletonLg { width: 80%; height: 22px; }
 
+/* 히어로 스켈레톤 — 높이(height + margin)를 실제 요소와 맞춘다: 아티스트 24 · 제목 41(모바일 30) · 메타 22 · Spotify 버튼 41 · 별점 98 */
+.heroSkeleton .backLink {
+  color: var(--color-text-muted);
+}
+
+.skeletonHeroArtist { width: 30%; height: 16px; margin: 4px 0; }
+.skeletonHeroTitle { width: 70%; height: 30px; margin: 5.5px 0; }
+.skeletonHeroMeta { width: 40%; height: 14px; margin: 4px 0; }
+
+.skeletonHeroButton {
+  width: 196px;
+  height: 41px;
+  border-radius: var(--radius-full);
+}
+
+.skeletonHeroRating {
+  width: 60%;
+  max-width: 360px;
+  height: 98px;
+}
+
 .skeletonTrackList {
   display: flex;
   flex-direction: column;
@@ -356,6 +377,17 @@
 
   .heroTitle {
     font-size: 1.625rem;
+  }
+
+  /* 실제 heroInfo는 내용 너비로 가운데 정렬되므로, % 너비 자리표시가 0으로 줄지 않게 폭을 채우고 가운데로 모은다 */
+  .heroSkeleton .heroInfo {
+    width: 100%;
+    align-items: center;
+  }
+
+  .skeletonHeroTitle {
+    height: 22px;
+    margin: 4px 0;
   }
 
   .heroMeta {

@@ -77,14 +77,19 @@ function ReleaseDetailPage() {
 
   if (isLoading) return (
     <div className={styles.page}>
-      <section className={`${styles.hero} ${styles.heroSkeleton}`}>
+      {/* 데이터 도착 후 아래 본문이 밀리지 않도록(CLS) 히어로 각 요소의 높이를 실제 화면과 맞춘다.
+          key: 실제 히어로가 스켈레톤 DOM을 재사용하면 첫 div가 heroBlur로 바뀌며 이동으로 집계되므로 새로 그리게 한다 */}
+      <section key="skeleton" className={`${styles.hero} ${styles.heroSkeleton}`}>
         <div className={styles.heroInner}>
+          <button className={styles.backLink} onClick={handleBack}>← 뒤로</button>
           <div className={styles.heroContent}>
             <div className={`${styles.coverWrap} ${styles.skeletonBlock}`} />
             <div className={styles.heroInfo}>
-              <div className={`${styles.skeletonLine} ${styles.skeletonXs}`} />
-              <div className={`${styles.skeletonLine} ${styles.skeletonLg}`} />
-              <div className={`${styles.skeletonLine} ${styles.skeletonSm}`} />
+              <div className={`${styles.skeletonLine} ${styles.skeletonHeroArtist}`} />
+              <div className={`${styles.skeletonLine} ${styles.skeletonHeroTitle}`} />
+              <div className={`${styles.skeletonLine} ${styles.skeletonHeroMeta}`} />
+              <div className={`${styles.skeletonBlock} ${styles.skeletonHeroButton}`} />
+              <div className={`${styles.skeletonBlock} ${styles.skeletonHeroRating}`} />
             </div>
           </div>
         </div>
