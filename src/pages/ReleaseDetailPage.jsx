@@ -33,9 +33,16 @@ function ReleaseDetailPage() {
   const { id } = useParams()
   const releaseId = Number(id)
   const [coverFailed, setCoverFailed] = useState(false)
-  const [highlightedTrackAnchor, setHighlightedTrackAnchor] = useState(null)
+  const [expiredHighlightHash, setExpiredHighlightHash] = useState(null)
   const navigate = useNavigate()
   const { key: locationKey, hash } = useLocation()
+
+  // hash가 바뀌면 만료 기록을 지워, 이전에 만료된 트랙으로 돌아와도 다시 하이라이트되게 한다
+  const [prevHash, setPrevHash] = useState(hash)
+  if (hash !== prevHash) {
+    setPrevHash(hash)
+    setExpiredHighlightHash(null)
+  }
 
   const { data: release, isLoading, isError, error } = useQuery({
     queryKey: ['release', releaseId],
@@ -53,10 +60,11 @@ function ReleaseDetailPage() {
     if (!el) return
 
     el.scrollIntoView({ behavior: 'smooth', block: 'center' })
-    setHighlightedTrackAnchor(anchorId)
-    const timer = setTimeout(() => setHighlightedTrackAnchor(null), TRACK_HIGHLIGHT_DURATION_MS)
+    const timer = setTimeout(() => setExpiredHighlightHash(hash), TRACK_HIGHLIGHT_DURATION_MS)
     return () => clearTimeout(timer)
   }, [hash, release])
+
+  const highlightedTrackAnchor = hash && release && hash !== expiredHighlightHash ? hash.slice(1) : null
 
   usePageMeta({
     ...(release?.title && buildReleaseMeta(release)),

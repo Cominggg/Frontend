@@ -1,5 +1,6 @@
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 
 import { getReports, getReport, updateReportStatus } from '@/services/adminApi'
 import { REPORT_REASON_LABEL, REPORT_STATUS_LABEL } from '@/constants/post'
@@ -145,55 +146,33 @@ function DetailModal({ id, onClose, onStatusChange }) {
 }
 
 function AdminReportsPage() {
-  const [items, setItems] = useState([])
-  const [loading, setLoading] = useState(false)
-  const [loadError, setLoadError] = useState('')
-  const [totalElements, setTotalElements] = useState(0)
+  const queryClient = useQueryClient()
   const [page, setPage] = useState(0)
   const [statusFilter, setStatusFilter] = useState('전체')
   const [targetTypeFilter, setTargetTypeFilter] = useState('전체')
   const [selectedId, setSelectedId] = useState(null)
-  const [pendingTotal, setPendingTotal] = useState(0)
-  const requestIdRef = useRef(0)
 
-  const fetchReports = useCallback(async () => {
-    const requestId = ++requestIdRef.current
-    setLoading(true)
-    setLoadError('')
-    try {
+  const queryKey = ['admin', 'reports', { page, statusFilter, targetTypeFilter }]
+  const { data, isLoading: loading, isError, refetch } = useQuery({
+    queryKey,
+    queryFn: () => {
       const params = { page, size: PAGE_SIZE }
       if (statusFilter !== '전체') params.status = statusFilter
       if (targetTypeFilter !== '전체') params.targetType = targetTypeFilter
-      const data = await getReports(params)
-      if (requestId !== requestIdRef.current) return
-      setItems(data.content)
-      setTotalElements(data.totalElements)
-    } catch {
-      if (requestId !== requestIdRef.current) return
-      setItems([])
-      setTotalElements(0)
-      setLoadError('신고 목록을 불러오지 못했습니다.')
-    } finally {
-      if (requestId === requestIdRef.current) setLoading(false)
-    }
-  }, [page, statusFilter, targetTypeFilter])
+      return getReports(params)
+    },
+    staleTime: 0,
+  })
+  const items = data?.content ?? []
+  const totalElements = data?.totalElements ?? 0
+  const loadError = isError ? '신고 목록을 불러오지 못했습니다.' : ''
 
-  const fetchPendingTotal = useCallback(async () => {
-    try {
-      const data = await getReports({ status: 'PENDING', page: 0, size: 1 })
-      setPendingTotal(data.totalElements)
-    } catch {
-      // 배지 표시용 보조 값이므로 실패 시 이전 값을 유지한다
-    }
-  }, [])
-
-  useEffect(() => {
-    fetchReports()
-  }, [fetchReports])
-
-  useEffect(() => {
-    fetchPendingTotal()
-  }, [fetchPendingTotal])
+  // 배지 표시용 보조 값이므로 실패 시 이전 값을 유지한다 (React Query가 에러 시 이전 data 유지)
+  const { data: pendingTotal = 0 } = useQuery({
+    queryKey: ['admin', 'reports', 'pending-total'],
+    queryFn: () => getReports({ status: 'PENDING', page: 0, size: 1 }).then((d) => d.totalElements),
+    staleTime: 0,
+  })
 
   function handleFilterChange(setter) {
     return (value) => {
@@ -204,13 +183,14 @@ function AdminReportsPage() {
 
   function handleStatusChange(id, newStatus) {
     const shouldRemove = statusFilter === 'PENDING' && newStatus !== 'PENDING'
-    setItems((prev) =>
-      shouldRemove
-        ? prev.filter((it) => it.id !== id)
-        : prev.map((it) => it.id === id ? { ...it, status: newStatus } : it)
-    )
-    if (shouldRemove) setTotalElements((prev) => Math.max(prev - 1, 0))
-    fetchPendingTotal()
+    queryClient.setQueryData(queryKey, (old) => old && {
+      ...old,
+      content: shouldRemove
+        ? old.content.filter((it) => it.id !== id)
+        : old.content.map((it) => it.id === id ? { ...it, status: newStatus } : it),
+      totalElements: shouldRemove ? Math.max(old.totalElements - 1, 0) : old.totalElements,
+    })
+    queryClient.invalidateQueries({ queryKey: ['admin', 'reports', 'pending-total'] })
   }
 
   const totalPages = Math.ceil(totalElements / PAGE_SIZE)
@@ -259,7 +239,7 @@ function AdminReportsPage() {
       ) : loadError ? (
         <div className={styles.empty}>
           <p className={styles.emptyText}>{loadError}</p>
-          <button type="button" className={styles.pageBtn} onClick={fetchReports}>다시 시도</button>
+          <button type="button" className={styles.pageBtn} onClick={() => refetch()}>다시 시도</button>
         </div>
       ) : items.length === 0 ? (
         <div className={styles.empty}><p className={styles.emptyText}>해당 조건의 신고가 없습니다.</p></div>

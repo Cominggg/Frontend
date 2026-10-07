@@ -61,7 +61,11 @@ function PostsPage() {
   const urlQueryRef = useRef(urlQuery)
   useEffect(() => { urlQueryRef.current = urlQuery })
   const [inputValue, setInputValue] = useState(urlQuery)
-  useEffect(() => { setInputValue(urlQuery) }, [urlQuery])
+  const [prevUrlQuery, setPrevUrlQuery] = useState(urlQuery)
+  if (urlQuery !== prevUrlQuery) {
+    setPrevUrlQuery(urlQuery)
+    setInputValue(urlQuery)
+  }
 
   const selectedCategory = CATEGORY_FILTERS.includes(searchParams.get('category'))
     ? searchParams.get('category')

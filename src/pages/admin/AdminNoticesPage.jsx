@@ -1,5 +1,6 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 
 import { ROUTES } from '@/constants/routes'
 import { getAdminNotices, updateNotice, deleteNotice } from '@/services/adminApi'
@@ -8,39 +9,25 @@ import styles from './AdminNoticesPage.module.css'
 const PAGE_SIZE = 20
 
 function AdminNoticesPage() {
-  const [items, setItems] = useState([])
-  const [loading, setLoading] = useState(false)
-  const [loadError, setLoadError] = useState('')
-  const [totalElements, setTotalElements] = useState(0)
+  const queryClient = useQueryClient()
   const [page, setPage] = useState(0)
   const [togglingId, setTogglingId] = useState(null)
   const [deletingId, setDeletingId] = useState(null)
 
-  const fetchNotices = useCallback(async () => {
-    setLoading(true)
-    setLoadError('')
-    try {
-      const data = await getAdminNotices({ page, size: PAGE_SIZE })
-      setItems(data.content)
-      setTotalElements(data.totalElements)
-    } catch {
-      setItems([])
-      setTotalElements(0)
-      setLoadError('공지 목록을 불러오지 못했습니다.')
-    } finally {
-      setLoading(false)
-    }
-  }, [page])
-
-  useEffect(() => {
-    fetchNotices()
-  }, [fetchNotices])
+  const { data, isLoading: loading, isError, refetch } = useQuery({
+    queryKey: ['admin', 'notices', page],
+    queryFn: () => getAdminNotices({ page, size: PAGE_SIZE }),
+    staleTime: 0,
+  })
+  const items = data?.content ?? []
+  const totalElements = data?.totalElements ?? 0
+  const loadError = isError ? '공지 목록을 불러오지 못했습니다.' : ''
 
   async function handleToggleActive(notice) {
     setTogglingId(notice.id)
     try {
       await updateNotice(notice.id, { active: !notice.active })
-      setItems((prev) => prev.map((n) => n.id === notice.id ? { ...n, active: !n.active } : n))
+      await queryClient.invalidateQueries({ queryKey: ['admin', 'notices'] })
     } finally {
       setTogglingId(null)
     }
@@ -51,8 +38,7 @@ function AdminNoticesPage() {
     setDeletingId(notice.id)
     try {
       await deleteNotice(notice.id)
-      setItems((prev) => prev.filter((n) => n.id !== notice.id))
-      setTotalElements((prev) => prev - 1)
+      await queryClient.invalidateQueries({ queryKey: ['admin', 'notices'] })
     } finally {
       setDeletingId(null)
     }
@@ -75,7 +61,7 @@ function AdminNoticesPage() {
       ) : loadError ? (
         <div className={styles.empty}>
           <p className={styles.emptyText}>{loadError}</p>
-          <button type="button" className={styles.pageBtn} onClick={fetchNotices}>다시 시도</button>
+          <button type="button" className={styles.pageBtn} onClick={() => refetch()}>다시 시도</button>
         </div>
       ) : items.length === 0 ? (
         <div className={styles.empty}><p className={styles.emptyText}>등록된 공지가 없습니다.</p></div>

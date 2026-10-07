@@ -1,6 +1,11 @@
-import { useState, useRef } from 'react'
+import { useState } from 'react'
 import styles from './AdminFormPage.module.css'
 import concertStyles from './AdminConcertFormPage.module.css'
+
+function resizeIds(ids, length) {
+  if (ids.length > length) return ids.slice(0, length)
+  return [...ids, ...Array.from({ length: length - ids.length }, () => crypto.randomUUID())]
+}
 
 function ImagePreview({ url }) {
   const [failed, setFailed] = useState(false)
@@ -16,20 +21,18 @@ function ImagePreview({ url }) {
 }
 
 export function ImageUrlsEditor({ urls, onChange }) {
-  const idsRef = useRef(urls.map(() => crypto.randomUUID()))
+  const [ids, setIds] = useState(() => urls.map(() => crypto.randomUUID()))
 
-  if (idsRef.current.length < urls.length) {
-    while (idsRef.current.length < urls.length) idsRef.current.push(crypto.randomUUID())
-  } else if (idsRef.current.length > urls.length) {
-    idsRef.current = idsRef.current.slice(0, urls.length)
+  if (ids.length !== urls.length) {
+    setIds(resizeIds(ids, urls.length))
   }
 
   function add() {
-    idsRef.current = [...idsRef.current, crypto.randomUUID()]
+    setIds([...ids, crypto.randomUUID()])
     onChange([...urls, ''])
   }
   function remove(i) {
-    idsRef.current = idsRef.current.filter((_, idx) => idx !== i)
+    setIds(ids.filter((_, idx) => idx !== i))
     onChange(urls.filter((_, idx) => idx !== i))
   }
   function update(i, value) {
@@ -39,7 +42,7 @@ export function ImageUrlsEditor({ urls, onChange }) {
   return (
     <div className={concertStyles.imageUrls}>
       {urls.map((url, i) => (
-        <div key={idsRef.current[i]} className={concertStyles.imageUrlRow}>
+        <div key={ids[i]} className={concertStyles.imageUrlRow}>
           {url && <ImagePreview url={url} />}
           <input
             type="url"
@@ -63,20 +66,18 @@ export function ImageUrlsEditor({ urls, onChange }) {
 }
 
 export function BookingLinksEditor({ links, onChange }) {
-  const idsRef = useRef(links.map(() => crypto.randomUUID()))
+  const [ids, setIds] = useState(() => links.map(() => crypto.randomUUID()))
 
-  if (idsRef.current.length < links.length) {
-    while (idsRef.current.length < links.length) idsRef.current.push(crypto.randomUUID())
-  } else if (idsRef.current.length > links.length) {
-    idsRef.current = idsRef.current.slice(0, links.length)
+  if (ids.length !== links.length) {
+    setIds(resizeIds(ids, links.length))
   }
 
   function add() {
-    idsRef.current = [...idsRef.current, crypto.randomUUID()]
+    setIds([...ids, crypto.randomUUID()])
     onChange([...links, { name: '', url: '' }])
   }
   function remove(i) {
-    idsRef.current = idsRef.current.filter((_, idx) => idx !== i)
+    setIds(ids.filter((_, idx) => idx !== i))
     onChange(links.filter((_, idx) => idx !== i))
   }
   function update(i, key, value) {
@@ -86,7 +87,7 @@ export function BookingLinksEditor({ links, onChange }) {
   return (
     <div className={concertStyles.bookingLinks}>
       {links.map((link, i) => (
-        <div key={idsRef.current[i]} className={concertStyles.bookingLinkRow}>
+        <div key={ids[i]} className={concertStyles.bookingLinkRow}>
           <input
             type="text"
             className={styles.input}

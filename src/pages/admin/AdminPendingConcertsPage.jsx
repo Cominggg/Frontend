@@ -1,5 +1,6 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 
 import ArtistAliasName from '@/components/artist/ArtistAliasName'
 import Pagination from '@/components/ui/Pagination'
@@ -241,37 +242,30 @@ function ConcertCard({ concert, onRemoved, onCandidateRemoved, onCandidateAdded 
 }
 
 function AdminPendingConcertsPage() {
-  const [concerts, setConcerts] = useState([])
-  const [loading, setLoading] = useState(false)
+  const queryClient = useQueryClient()
   const [page, setPage] = useState(1)
-  const [totalPages, setTotalPages] = useState(0)
 
-  const fetchPending = useCallback(async () => {
-    setLoading(true)
-    try {
-      const data = await getPendingConcerts({ page: page - 1, size: 10 })
-      setConcerts(data.content)
-      setTotalPages(data.totalPages)
-    } catch {
-      setConcerts([])
-    } finally {
-      setLoading(false)
-    }
-  }, [page])
+  const queryKey = ['admin', 'pending-concerts', page]
+  const { data, isLoading: loading } = useQuery({
+    queryKey,
+    queryFn: () => getPendingConcerts({ page: page - 1, size: 10 }),
+    staleTime: 0,
+  })
+  const concerts = data?.content ?? []
+  const totalPages = data?.totalPages ?? 0
 
-  useEffect(() => {
-    fetchPending()
-  }, [fetchPending])
+  function setConcerts(updater) {
+    queryClient.setQueryData(queryKey, (old) => old && { ...old, content: updater(old.content) })
+  }
 
   function handleConcertRemoved(concertId) {
-    setConcerts((prev) => {
-      const next = prev.filter((c) => c.id !== concertId)
-      if (next.length === 0) {
-        if (page > 1) setPage((p) => p - 1)
-        setTotalPages((t) => Math.max(0, t - 1))
-      }
-      return next
+    const next = concerts.filter((c) => c.id !== concertId)
+    queryClient.setQueryData(queryKey, (old) => old && {
+      ...old,
+      content: next,
+      totalPages: next.length === 0 ? Math.max(0, old.totalPages - 1) : old.totalPages,
     })
+    if (next.length === 0 && page > 1) setPage((p) => p - 1)
   }
 
   function handleCandidateRemoved(concertId, artistId) {
