@@ -28,8 +28,6 @@
 }
 
 .skeletonXs { width: 30%; height: 10px; }
-.skeletonSm { width: 50%; }
-.skeletonLg { width: 80%; height: 22px; }
 
 /* 히어로 스켈레톤 — 높이(height + margin)를 실제 요소와 맞춘다: 아티스트 24 · 제목 41(모바일 30) · 메타 22 · Spotify 버튼 41 · 별점 98 */
 .heroSkeleton .backLink {
