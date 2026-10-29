@@ -5,6 +5,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { getReports, getReport, updateReportStatus } from '@/services/adminApi'
 import { REPORT_REASON_LABEL, REPORT_STATUS_LABEL } from '@/constants/post'
 import { ROUTES } from '@/constants/routes'
+import { SUSPENSION_PERIODS, formatSuspensionPeriod } from '@/constants/suspension'
 import styles from './AdminReportsPage.module.css'
 
 const TARGET_TYPE_LABEL = { POST: '게시글', COMMENT: '댓글' }
@@ -12,10 +13,24 @@ const STATUS_FILTERS = ['전체', 'PENDING', 'RESOLVED', 'REJECTED']
 const TARGET_TYPE_FILTERS = ['전체', 'POST', 'COMMENT']
 const PAGE_SIZE = 20
 
+const ACTION_ERRORS = {
+  REPORT_TARGET_NOT_FOUND: '신고 대상이 삭제되어 작성자를 정지할 수 없습니다.',
+  USER_NOT_FOUND: '작성자가 탈퇴한 회원이라 정지할 수 없습니다.',
+}
+
+function authorLabel(item) {
+  if (item.targetAuthorId == null) return '알 수 없음 (대상 삭제)'
+  if (item.targetAuthorNickname == null) return '탈퇴 회원'
+  return item.targetAuthorNickname
+}
+
 function DetailModal({ id, onClose, onStatusChange }) {
   const [item, setItem] = useState(null)
   const [note, setNote] = useState('')
   const [deleteTarget, setDeleteTarget] = useState(false)
+  const [suspendPeriod, setSuspendPeriod] = useState('')
+  const [suspendReason, setSuspendReason] = useState('')
+  const [suspendDetail, setSuspendDetail] = useState('')
   const [processing, setProcessing] = useState(false)
   const [error, setError] = useState('')
 
@@ -23,27 +38,33 @@ function DetailModal({ id, onClose, onStatusChange }) {
     getReport(id).then((data) => {
       setItem(data)
       setNote(data.adminNote ?? '')
+      setSuspendReason(data.reason)
     }).catch(() => setError('신고를 불러오지 못했습니다.'))
   }, [id])
 
   async function handleAction(status) {
     setProcessing(true)
     setError('')
+    const period = SUSPENSION_PERIODS.find((p) => p.value === suspendPeriod)
     try {
       await updateReportStatus(id, {
         status,
         adminNote: note.trim() || undefined,
         deleteTarget: status === 'RESOLVED' && deleteTarget,
+        suspend: status === 'RESOLVED' && period
+          ? { days: period.days, reason: suspendReason, detail: suspendDetail.trim() || undefined }
+          : undefined,
       })
       onStatusChange(id, status)
       onClose()
-    } catch {
-      setError('처리에 실패했습니다.')
+    } catch (err) {
+      setError(ACTION_ERRORS[err.response?.data?.code] ?? '처리에 실패했습니다.')
       setProcessing(false)
     }
   }
 
   const isPending = item?.status === 'PENDING'
+  const canSuspend = item?.targetAuthorId != null && item?.targetAuthorNickname != null
 
   return (
     <div className={styles.modalOverlay} onClick={onClose}>
@@ -85,7 +106,18 @@ function DetailModal({ id, onClose, onStatusChange }) {
                   )}
                 </dd>
               </div>
-              <div><dt>신고자</dt><dd>{item.reporterNickname || '탈퇴한 사용자'}</dd></div>
+              <div>
+                <dt>작성자</dt>
+                <dd>
+                  {authorLabel(item)}
+                  {item.targetAuthorSuspended && (
+                    <span className={styles.suspendedBadge}>
+                      {formatSuspensionPeriod(item.targetAuthorSuspendedUntil)}
+                    </span>
+                  )}
+                </dd>
+              </div>
+              <div><dt>신고자</dt><dd>{item.reporterNickname || '탈퇴 회원'}</dd></div>
               <div><dt>접수일</dt><dd>{item.createdAt}</dd></div>
             </dl>
 
@@ -116,6 +148,47 @@ function DetailModal({ id, onClose, onStatusChange }) {
                 />
                 처리완료 시 신고 대상 {TARGET_TYPE_LABEL[item.targetType]} 함께 삭제
               </label>
+            )}
+
+            {isPending && canSuspend && (
+              <fieldset className={styles.suspendBox}>
+                <legend className={styles.suspendLegend}>처리완료 시 작성자 정지</legend>
+                <div className={styles.suspendRow}>
+                  <select
+                    className={styles.suspendSelect}
+                    value={suspendPeriod}
+                    onChange={(e) => setSuspendPeriod(e.target.value)}
+                    aria-label="정지 기간"
+                  >
+                    <option value="">정지 안 함</option>
+                    {SUSPENSION_PERIODS.map((p) => (
+                      <option key={p.value} value={p.value}>{p.label}</option>
+                    ))}
+                  </select>
+                  <select
+                    className={styles.suspendSelect}
+                    value={suspendReason}
+                    onChange={(e) => setSuspendReason(e.target.value)}
+                    disabled={!suspendPeriod}
+                    aria-label="정지 사유"
+                  >
+                    {Object.entries(REPORT_REASON_LABEL).map(([value, label]) => (
+                      <option key={value} value={value}>{label}</option>
+                    ))}
+                  </select>
+                </div>
+                <input
+                  className={styles.noteInput}
+                  value={suspendDetail}
+                  onChange={(e) => setSuspendDetail(e.target.value)}
+                  placeholder="상세 사유 (정지 안내 메일에 포함, 선택)"
+                  disabled={!suspendPeriod}
+                  aria-label="정지 상세 사유"
+                />
+                {suspendPeriod && item.targetAuthorSuspended && (
+                  <p className={styles.suspendHint}>이미 정지 중인 회원입니다. 새 기간·사유로 덮어씁니다.</p>
+                )}
+              </fieldset>
             )}
 
             {error && <p className={styles.modalError}>{error}</p>}
@@ -262,7 +335,7 @@ function AdminReportsPage() {
                   <span className={styles.rowDate}>{item.createdAt}</span>
                 </div>
                 <p className={styles.rowTitle}>{REPORT_REASON_LABEL[item.reason]}</p>
-                <p className={styles.rowTarget}>대상 ID {item.targetId} · 신고자 {item.reporterNickname || '탈퇴한 사용자'}</p>
+                <p className={styles.rowTarget}>대상 ID {item.targetId} · 신고자 {item.reporterNickname || '탈퇴 회원'}</p>
               </div>
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={styles.rowChevron} aria-hidden="true">
                 <path d="m9 18 6-6-6-6" />

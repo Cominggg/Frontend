@@ -3,9 +3,9 @@ import { Link } from 'react-router-dom'
 import Button from '@/components/ui/Button'
 import { ROUTES } from '@/constants/routes'
 import { REPORT_REASON_LABEL } from '@/constants/post'
+import { formatSuspensionPeriod } from '@/constants/suspension'
 import useModalA11y from '@/hooks/useModalA11y'
 import useSuspensionStore from '@/stores/suspensionStore'
-import { formatDateTime } from '@/utils/date'
 import styles from './SuspensionNoticeModal.module.css'
 
 const SUPPORT_EMAIL = 'coming0626@gmail.com'
@@ -17,8 +17,7 @@ function SuspensionNoticeModal() {
 
   if (!notice) return null
 
-  // suspendedUntil은 오프셋 없는 KST 시각이므로 Date로 변환하지 않고 문자열 그대로 표시한다
-  const period = notice.suspendedUntil ? `${formatDateTime(notice.suspendedUntil)}까지` : '영구 정지'
+  const period = formatSuspensionPeriod(notice.suspendedUntil)
   const reason = REPORT_REASON_LABEL[notice.reason] ?? '운영정책 위반'
 
   return (
