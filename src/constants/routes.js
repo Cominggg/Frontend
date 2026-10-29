@@ -33,4 +33,5 @@ export const ROUTES = {
   ADMIN_POLICIES: '/admin/policies',
   TERMS: '/terms',
   PRIVACY: '/privacy',
+  OPERATION_POLICY: '/operation-policy',
 }

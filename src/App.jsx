@@ -11,7 +11,7 @@ import PageViewTracker from '@/components/layout/PageViewTracker'
 import PrivateRoute from '@/components/layout/PrivateRoute'
 import ScrollToTop from '@/components/layout/ScrollToTop'
 import HomePage from '@/pages/HomePage'
-import { TERMS_VERSIONS, PRIVACY_VERSIONS } from '@/constants/policy'
+import { TERMS_VERSIONS, PRIVACY_VERSIONS, OPERATION_VERSIONS } from '@/constants/policy'
 import { ROUTES } from '@/constants/routes'
 
 // 첫 진입 화면(HomePage)을 제외한 페이지는 라우트 단위로 분할해 초기 번들에서 뺀다
@@ -85,6 +85,7 @@ function App() {
         <Route path="/community/:id" element={<PostDetailPage />} />
         <Route path={ROUTES.TERMS} element={<PolicyPage title="서비스 이용약관" versions={TERMS_VERSIONS} />} />
         <Route path={ROUTES.PRIVACY} element={<PolicyPage title="개인정보처리방침" versions={PRIVACY_VERSIONS} />} />
+        <Route path={ROUTES.OPERATION_POLICY} element={<PolicyPage title="운영정책" versions={OPERATION_VERSIONS} />} />
         <Route path={ROUTES.ME} element={<PrivateRoute><MyPage /></PrivateRoute>} />
         <Route path={ROUTES.ME_UPCOMING} element={<PrivateRoute><MyPage /></PrivateRoute>} />
         <Route path={ROUTES.ME_HISTORY} element={<PrivateRoute><MyPage /></PrivateRoute>} />
