@@ -79,7 +79,7 @@ function CommentSection({ postId, commentCount }) {
     mutationFn: ({ id }) => deleteComment(id),
     onSuccess: (_res, { id, parentId }) => {
       function softDelete(c) {
-        return c.id === id ? { ...c, authorNickname: null, isAuthor: false, content: '삭제된 댓글입니다', likeCount: 0, isLiked: false } : c
+        return c.id === id ? { ...c, isDeleted: true, isAuthor: false, content: '삭제된 댓글입니다', isLiked: null } : c
       }
       setActionError(null)
       setItems((prev) =>
