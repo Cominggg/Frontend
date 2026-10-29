@@ -46,6 +46,7 @@ const AdminNoticeFormPage = lazy(() => import('@/pages/admin/AdminNoticeFormPage
 const AdminPendingConcertsPage = lazy(() => import('@/pages/admin/AdminPendingConcertsPage'))
 const AdminExcludedConcertsPage = lazy(() => import('@/pages/admin/AdminExcludedConcertsPage'))
 const AdminPolicyPage = lazy(() => import('@/pages/admin/AdminPolicyPage'))
+const AdminUsersPage = lazy(() => import('@/pages/admin/AdminUsersPage'))
 
 function App() {
   const clearUser = useAuthStore((s) => s.clearUser)
@@ -107,6 +108,7 @@ function App() {
           <Route path="concerts/:id/edit" element={<AdminConcertFormPage />} />
           <Route path="inquiries" element={<AdminInquiriesPage />} />
           <Route path="reports" element={<AdminReportsPage />} />
+          <Route path="users" element={<AdminUsersPage />} />
           <Route path="notices" element={<AdminNoticesPage />} />
           <Route path="notices/new" element={<AdminNoticeFormPage />} />
           <Route path="notices/:id/edit" element={<AdminNoticeFormPage />} />
