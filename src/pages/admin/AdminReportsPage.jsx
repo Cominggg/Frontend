@@ -112,7 +112,7 @@ function DetailModal({ id, onClose, onStatusChange }) {
                   {authorLabel(item)}
                   {item.targetAuthorSuspended && (
                     <span className={styles.suspendedBadge}>
-                      {formatSuspensionPeriod(item.targetAuthorSuspendedUntil)}
+                      정지 · {formatSuspensionPeriod(item.targetAuthorSuspendedUntil)}
                     </span>
                   )}
                 </dd>
