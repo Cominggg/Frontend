@@ -31,6 +31,7 @@ const NoticeDetailPage = lazy(() => import('@/pages/NoticeDetailPage'))
 const MyPage = lazy(() => import('@/pages/MyPage'))
 const NotFoundPage = lazy(() => import('@/pages/NotFoundPage'))
 const PolicyPage = lazy(() => import('@/pages/PolicyPage'))
+const AccountDeletePage = lazy(() => import('@/pages/AccountDeletePage'))
 
 // 관리자 화면 — 일반 사용자 번들에 react-datepicker 등이 섞이지 않도록 분리
 const AdminLayout = lazy(() => import('@/components/layout/AdminLayout'))
@@ -86,6 +87,7 @@ function App() {
         <Route path={ROUTES.TERMS} element={<PolicyPage title="서비스 이용약관" versions={TERMS_VERSIONS} />} />
         <Route path={ROUTES.PRIVACY} element={<PolicyPage title="개인정보처리방침" versions={PRIVACY_VERSIONS} />} />
         <Route path={ROUTES.OPERATION_POLICY} element={<PolicyPage title="운영정책" versions={OPERATION_VERSIONS} />} />
+        <Route path={ROUTES.ACCOUNT_DELETE} element={<AccountDeletePage />} />
         <Route path={ROUTES.ME} element={<PrivateRoute><MyPage /></PrivateRoute>} />
         <Route path={ROUTES.ME_UPCOMING} element={<PrivateRoute><MyPage /></PrivateRoute>} />
         <Route path={ROUTES.ME_HISTORY} element={<PrivateRoute><MyPage /></PrivateRoute>} />

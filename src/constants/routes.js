@@ -34,4 +34,5 @@ export const ROUTES = {
   TERMS: '/terms',
   PRIVACY: '/privacy',
   OPERATION_POLICY: '/operation-policy',
+  ACCOUNT_DELETE: '/account/delete',
 }
