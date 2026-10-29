@@ -5,6 +5,7 @@ import userEvent from '@testing-library/user-event'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
 import AuthCallbackPage from './AuthCallbackPage'
 import useAuthStore from '@/stores/authStore'
+import useSuspensionStore from '@/stores/suspensionStore'
 import { refreshAccessToken } from '@/services/api'
 import { getMe } from '@/services/authApi'
 import { trackEvent } from '@/utils/analytics'
@@ -40,6 +41,7 @@ function renderCallback(query = '', { strict = false } = {}) {
 
 beforeEach(() => {
   useAuthStore.setState(useAuthStore.getInitialState(), true)
+  useSuspensionStore.setState(useSuspensionStore.getInitialState(), true)
   localStorage.clear()
   vi.clearAllMocks()
 })
@@ -155,6 +157,30 @@ describe('AuthCallbackPage', () => {
       await user.click(await screen.findByRole('button', { name: '홈으로 이동' }))
 
       expect(screen.getByText('홈 화면')).toBeInTheDocument()
+    })
+
+    it('error=USER_SUSPENDED이면 정지 안내를 열고 홈으로 이동', async () => {
+      renderCallback('?error=USER_SUSPENDED&suspendedUntil=2026-11-05T14:30:00&reason=ABUSE')
+
+      expect(await screen.findByText('홈 화면')).toBeInTheDocument()
+      expect(useSuspensionStore.getState().notice).toEqual({
+        suspendedUntil: '2026-11-05T14:30:00',
+        reason: 'ABUSE',
+      })
+    })
+
+    it('error=USER_SUSPENDED이면 토큰 재발급을 시도하지 않음', async () => {
+      renderCallback('?error=USER_SUSPENDED&suspendedUntil=2026-11-05T14:30:00&reason=ABUSE')
+
+      await screen.findByText('홈 화면')
+      expect(refreshAccessToken).not.toHaveBeenCalled()
+    })
+
+    it('error=USER_SUSPENDED에 suspendedUntil이 없으면 영구 정지로 저장', async () => {
+      renderCallback('?error=USER_SUSPENDED&reason=ABUSE')
+
+      await screen.findByText('홈 화면')
+      expect(useSuspensionStore.getState().notice.suspendedUntil).toBeNull()
     })
   })
 
