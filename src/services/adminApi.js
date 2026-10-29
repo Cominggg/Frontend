@@ -57,6 +57,24 @@ export async function updateReportStatus(id, body) {
   return data
 }
 
+export async function searchUsers(params) {
+  const { data } = await api.get('/admin/users', { params })
+  return data
+}
+
+// body: { days: 7 | 30 | null(영구), reason, detail? }
+export async function suspendUser(id, body) {
+  await api.post(`/admin/users/${id}/suspension`, body)
+}
+
+export async function liftSuspension(id) {
+  await api.delete(`/admin/users/${id}/suspension`)
+}
+
+export async function withdrawUser(id) {
+  await api.delete(`/admin/users/${id}`)
+}
+
 export async function getAdminNotices(params) {
   const { data } = await api.get('/admin/notices', { params })
   return data
