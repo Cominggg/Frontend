@@ -1,6 +1,7 @@
 import axios from 'axios'
 import useAuthStore from '@/stores/authStore'
 import useLoginModalStore from '@/stores/loginModalStore'
+import useSuspensionStore from '@/stores/suspensionStore'
 
 const api = axios.create({
   baseURL: '/api',
@@ -8,6 +9,17 @@ const api = axios.create({
 })
 
 let refreshPromise = null
+
+// 정지 회원은 refresh와 쓰기 요청이 403 USER_SUSPENDED로 거절된다 — 로그인 모달 대신 정지 안내를 띄운다
+function isSuspendedError(error) {
+  return error.response?.status === 403 && error.response.data?.code === 'USER_SUSPENDED'
+}
+
+function openSuspensionNotice(error) {
+  const { suspendedUntil, reason } = error.response.data
+  useAuthStore.getState().clearUser()
+  useSuspensionStore.getState().open({ suspendedUntil, reason })
+}
 
 const REFRESH_LOCK = 'coming-auth-refresh'
 
@@ -29,6 +41,10 @@ export function refreshAccessToken() {
         useAuthStore.getState().setAccessToken(data.accessToken)
         return data.accessToken
       })
+      .catch((error) => {
+        if (isSuspendedError(error)) openSuspensionNotice(error)
+        throw error
+      })
       .finally(() => { refreshPromise = null })
   }
   return refreshPromise
@@ -43,7 +59,7 @@ api.interceptors.request.use((config) => {
   return config
 })
 
-// Response interceptor: 401 → refresh → 재시도
+// Response interceptor: 401 → refresh → 재시도, 403 USER_SUSPENDED → 정지 안내
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
@@ -56,11 +72,15 @@ api.interceptors.response.use(
         originalRequest.headers.Authorization = `Bearer ${accessToken}`
         return api(originalRequest)
       } catch (refreshError) {
-        useAuthStore.getState().clearUser()
-        useLoginModalStore.getState().open(window.location.pathname + window.location.search)
+        if (!isSuspendedError(refreshError)) {
+          useAuthStore.getState().clearUser()
+          useLoginModalStore.getState().open(window.location.pathname + window.location.search)
+        }
         return Promise.reject(refreshError)
       }
     }
+
+    if (isSuspendedError(error)) openSuspensionNotice(error)
 
     return Promise.reject(error)
   },
