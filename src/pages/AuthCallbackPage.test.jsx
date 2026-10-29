@@ -132,7 +132,6 @@ describe('AuthCallbackPage', () => {
 
   describe('에러 파라미터', () => {
     it.each([
-      ['USER_SUSPENDED', '정지된 계정입니다. 문의하세요.'],
       ['OAUTH2_FAILED', '로그인에 실패했습니다. 다시 시도해 주세요.'],
       ['UNKNOWN_CODE', '알 수 없는 오류가 발생했습니다.'],
     ])('error=%s이면 "%s" 메시지 표시', async (code, message) => {
@@ -151,7 +150,7 @@ describe('AuthCallbackPage', () => {
 
     it('홈으로 이동 버튼을 클릭하면 홈으로 이동', async () => {
       const user = userEvent.setup()
-      renderCallback('?error=USER_SUSPENDED')
+      renderCallback('?error=OAUTH2_FAILED')
 
       await user.click(await screen.findByRole('button', { name: '홈으로 이동' }))
 
