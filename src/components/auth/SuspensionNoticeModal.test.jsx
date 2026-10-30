@@ -73,6 +73,12 @@ describe('SuspensionNoticeModal', () => {
       )
     })
 
+    it('정지 중에는 탈퇴를 메일로 요청하도록 안내', () => {
+      renderModal()
+
+      expect(screen.getByText(/탈퇴를 원하시면 같은 주소로 요청/)).toBeInTheDocument()
+    })
+
     it('운영정책 보기 링크는 운영정책 페이지를 가리킴', () => {
       renderModal()
 

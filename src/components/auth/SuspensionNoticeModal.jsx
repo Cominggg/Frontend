@@ -47,6 +47,7 @@ function SuspensionNoticeModal() {
         <p className={styles.appeal}>
           안내를 받은 날로부터 7일 이내에 가입한 소셜 계정의 이메일로{' '}
           <a href={`mailto:${SUPPORT_EMAIL}`} className={styles.link}>{SUPPORT_EMAIL}</a>에 이의를 신청할 수 있습니다.
+          정지 기간에는 직접 탈퇴할 수 없으니, 탈퇴를 원하시면 같은 주소로 요청해 주세요.
         </p>
 
         <div className={styles.actions}>
