@@ -215,3 +215,41 @@ describe('정지 회원 403 처리', () => {
     expect(useSuspensionStore.getState().notice).toEqual({ suspendedUntil: null, reason: 'ABUSE' })
   })
 })
+
+describe('탈퇴 회원 404 처리', () => {
+  const LOGGED_IN = { user: { id: 1, nickname: '테스트유저' }, accessToken: 'token' }
+
+  function notFound(config, data) {
+    return new AxiosError('Not Found', 'ERR_BAD_REQUEST', config, null, {
+      status: 404, data, headers: {}, config,
+    })
+  }
+
+  it('로그인 상태에서 USER_NOT_FOUND로 404이면 로그아웃하고 reject', async () => {
+    useAuthStore.setState(LOGGED_IN)
+    const adapter = (config) => Promise.reject(notFound(config, { code: 'USER_NOT_FOUND' }))
+
+    await expect(api.post('/posts', {}, { adapter })).rejects.toMatchObject({ response: { status: 404 } })
+
+    expect(useAuthStore.getState().user).toBeNull()
+    expect(useAuthStore.getState().accessToken).toBeNull()
+  })
+
+  it('code가 USER_NOT_FOUND가 아닌 404이면 로그인 상태 유지', async () => {
+    useAuthStore.setState(LOGGED_IN)
+    const adapter = (config) => Promise.reject(notFound(config, { code: 'POST_NOT_FOUND' }))
+
+    await expect(api.get('/posts/1', { adapter })).rejects.toBeInstanceOf(AxiosError)
+
+    expect(useAuthStore.getState().user).toEqual(LOGGED_IN.user)
+  })
+
+  it('관리자 API의 USER_NOT_FOUND는 로그인 상태 유지', async () => {
+    useAuthStore.setState(LOGGED_IN)
+    const adapter = (config) => Promise.reject(notFound(config, { code: 'USER_NOT_FOUND' }))
+
+    await expect(api.delete('/admin/users/9', { adapter })).rejects.toBeInstanceOf(AxiosError)
+
+    expect(useAuthStore.getState().user).toEqual(LOGGED_IN.user)
+  })
+})

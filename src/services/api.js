@@ -21,6 +21,14 @@ function openSuspensionNotice(error) {
   useSuspensionStore.getState().open({ suspendedUntil, reason })
 }
 
+// 다른 기기에서 탈퇴한 뒤 남은 토큰으로 요청하면 404 USER_NOT_FOUND가 온다 — 로그인 상태를 해제한다
+// 관리자 API의 USER_NOT_FOUND는 대상 회원이 없다는 뜻이므로 제외한다
+function isWithdrawnError(error) {
+  return error.response?.status === 404
+    && error.response.data?.code === 'USER_NOT_FOUND'
+    && !error.config?.url?.startsWith('/admin')
+}
+
 const REFRESH_LOCK = 'coming-auth-refresh'
 
 // 타임아웃을 두지 않는다 — 서버가 RT를 회전한 뒤 끊으면 새 쿠키를 못 받아 다음 refresh가 재사용으로 판정되고 세션이 폐기된다
@@ -59,7 +67,7 @@ api.interceptors.request.use((config) => {
   return config
 })
 
-// Response interceptor: 401 → refresh → 재시도, 403 USER_SUSPENDED → 정지 안내
+// Response interceptor: 401 → refresh → 재시도, 403 USER_SUSPENDED → 정지 안내, 404 USER_NOT_FOUND → 로그아웃
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
@@ -81,6 +89,7 @@ api.interceptors.response.use(
     }
 
     if (isSuspendedError(error)) openSuspensionNotice(error)
+    if (isWithdrawnError(error) && useAuthStore.getState().accessToken) useAuthStore.getState().clearUser()
 
     return Promise.reject(error)
   },
