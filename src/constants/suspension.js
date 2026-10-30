@@ -7,6 +7,12 @@ export const SUSPENSION_PERIODS = [
   { value: 'PERMANENT', label: '영구', days: null },
 ]
 
+// 선택한 기간 값으로 정지 API body를 만든다. 기간을 고르지 않았으면 null
+export function toSuspendBody(periodValue, reason, detail) {
+  const period = SUSPENSION_PERIODS.find((p) => p.value === periodValue)
+  return period ? { days: period.days, reason, detail: detail.trim() || undefined } : null
+}
+
 // suspendedUntil은 오프셋 없는 KST 시각이므로 Date로 변환하지 않고 문자열 그대로 표시한다
 export function formatSuspensionPeriod(suspendedUntil) {
   return suspendedUntil ? `${formatDateTime(suspendedUntil)}까지` : '영구 정지'

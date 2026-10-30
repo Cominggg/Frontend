@@ -13,11 +13,15 @@ function LikeIcon() {
   )
 }
 
+// isDeleted가 없는 응답(BE 배포 전)은 기존처럼 닉네임 null을 삭제로 본다
+function isCommentDeleted(comment) {
+  return comment.isDeleted ?? comment.authorNickname == null
+}
+
 function CommentItem({ comment, isLoggedIn, onRequireLogin, onReply, onToggleLike, onToggleReplyLike, onDelete, onDeleteReply }) {
   const [showReplyBox, setShowReplyBox] = useState(false)
   const [reportTargetId, setReportTargetId] = useState(null)
-  // isDeleted가 없는 응답(BE 배포 전)은 기존처럼 닉네임 null을 삭제로 본다
-  const isDeleted = comment.isDeleted ?? comment.authorNickname == null
+  const isDeleted = isCommentDeleted(comment)
 
   function guard(action) {
     if (!isLoggedIn) {
@@ -107,7 +111,7 @@ function CommentItem({ comment, isLoggedIn, onRequireLogin, onReply, onToggleLik
         {comment.replies.length > 0 && (
           <div className={styles.replyList}>
             {comment.replies.map((reply) => {
-              const replyDeleted = reply.isDeleted ?? reply.authorNickname == null
+              const replyDeleted = isCommentDeleted(reply)
               return (
                 <div key={reply.id} className={styles.reply}>
                   <div className={styles.body}>

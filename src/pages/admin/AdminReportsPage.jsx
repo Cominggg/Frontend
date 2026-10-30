@@ -5,7 +5,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { getReports, getReport, updateReportStatus } from '@/services/adminApi'
 import { REPORT_REASON_LABEL, REPORT_STATUS_LABEL } from '@/constants/post'
 import { ROUTES } from '@/constants/routes'
-import { SUSPENSION_PERIODS, formatSuspensionPeriod } from '@/constants/suspension'
+import { SUSPENSION_PERIODS, formatSuspensionPeriod, toSuspendBody } from '@/constants/suspension'
 import styles from './AdminReportsPage.module.css'
 
 const TARGET_TYPE_LABEL = { POST: '게시글', COMMENT: '댓글' }
@@ -45,15 +45,12 @@ function DetailModal({ id, onClose, onStatusChange }) {
   async function handleAction(status) {
     setProcessing(true)
     setError('')
-    const period = SUSPENSION_PERIODS.find((p) => p.value === suspendPeriod)
     try {
       await updateReportStatus(id, {
         status,
         adminNote: note.trim() || undefined,
         deleteTarget: status === 'RESOLVED' && deleteTarget,
-        suspend: status === 'RESOLVED' && period
-          ? { days: period.days, reason: suspendReason, detail: suspendDetail.trim() || undefined }
-          : undefined,
+        suspend: (status === 'RESOLVED' && toSuspendBody(suspendPeriod, suspendReason, suspendDetail)) || undefined,
       })
       onStatusChange(id, status)
       onClose()

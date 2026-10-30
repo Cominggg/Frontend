@@ -2,11 +2,11 @@ import { Link, useNavigate } from 'react-router-dom'
 
 import Button from '@/components/ui/Button'
 import { ROUTES } from '@/constants/routes'
+import { SUPPORT_EMAIL } from '@/constants/site'
 import useAuthStore from '@/stores/authStore'
 import useLoginModalStore from '@/stores/loginModalStore'
 import styles from './AccountDeletePage.module.css'
 
-const SUPPORT_EMAIL = 'coming0626@gmail.com'
 const MAIL_SUBJECT = encodeURIComponent('[커밍] 회원 탈퇴 요청')
 
 const RETAINED_ITEMS = [

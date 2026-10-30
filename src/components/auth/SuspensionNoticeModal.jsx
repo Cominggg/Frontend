@@ -3,12 +3,11 @@ import { Link } from 'react-router-dom'
 import Button from '@/components/ui/Button'
 import { ROUTES } from '@/constants/routes'
 import { REPORT_REASON_LABEL } from '@/constants/post'
+import { SUPPORT_EMAIL } from '@/constants/site'
 import { formatSuspensionPeriod } from '@/constants/suspension'
 import useModalA11y from '@/hooks/useModalA11y'
 import useSuspensionStore from '@/stores/suspensionStore'
 import styles from './SuspensionNoticeModal.module.css'
-
-const SUPPORT_EMAIL = 'coming0626@gmail.com'
 
 function SuspensionNoticeModal() {
   const notice = useSuspensionStore((s) => s.notice)

@@ -3,7 +3,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query'
 
 import { searchUsers, suspendUser, liftSuspension, withdrawUser } from '@/services/adminApi'
 import { REPORT_REASON_LABEL } from '@/constants/post'
-import { SUSPENSION_PERIODS, formatSuspensionPeriod } from '@/constants/suspension'
+import { SUSPENSION_PERIODS, formatSuspensionPeriod, toSuspendBody } from '@/constants/suspension'
 import useModalA11y from '@/hooks/useModalA11y'
 import styles from './AdminUsersPage.module.css'
 
@@ -12,7 +12,7 @@ const PROVIDER_LABEL = { google: 'Google', kakao: 'Kakao', apple: 'Apple' }
 
 function SuspendModal({ user, onClose, onDone }) {
   const [period, setPeriod] = useState(SUSPENSION_PERIODS[0].value)
-  const [reason, setReason] = useState('SPAM')
+  const [reason, setReason] = useState(Object.keys(REPORT_REASON_LABEL)[0])
   const [detail, setDetail] = useState('')
   const [processing, setProcessing] = useState(false)
   const [error, setError] = useState('')
@@ -23,8 +23,7 @@ function SuspendModal({ user, onClose, onDone }) {
     setProcessing(true)
     setError('')
     try {
-      const { days } = SUSPENSION_PERIODS.find((p) => p.value === period)
-      await suspendUser(user.id, { days, reason, detail: detail.trim() || undefined })
+      await suspendUser(user.id, toSuspendBody(period, reason, detail))
       onDone()
     } catch {
       setError('정지 처리에 실패했습니다.')
@@ -183,12 +182,12 @@ function AdminUsersPage() {
                 {user.role !== 'ADMIN' && (
                   <div className={styles.rowActions}>
                     {suspended ? (
-                      <button type="button" className={styles.btn} onClick={() => handleLift(user)}>정지 해제</button>
+                      <>
+                        <button type="button" className={styles.btn} onClick={() => handleLift(user)}>정지 해제</button>
+                        <button type="button" className={styles.btn} onClick={() => setSuspendTarget(user)}>기간 변경</button>
+                      </>
                     ) : (
                       <button type="button" className={styles.btn} onClick={() => setSuspendTarget(user)}>정지</button>
-                    )}
-                    {suspended && (
-                      <button type="button" className={styles.btn} onClick={() => setSuspendTarget(user)}>기간 변경</button>
                     )}
                     <button type="button" className={`${styles.btn} ${styles.btnDanger}`} onClick={() => handleWithdraw(user)}>
                       대리 탈퇴
