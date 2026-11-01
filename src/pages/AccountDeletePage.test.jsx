@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
@@ -19,10 +19,20 @@ function renderAccountDeletePage() {
   )
 }
 
+// 개인정보처리방침 v1.2 시행일(2026-12-02 KST) 전후로 시스템 시간을 고정한다 — userEvent 타이머는 건드리지 않도록 Date만 가짜로 둔다
+function setSystemTime(isoUtc) {
+  vi.useFakeTimers({ toFake: ['Date'] })
+  vi.setSystemTime(new Date(isoUtc))
+}
+
 beforeEach(() => {
   useAuthStore.setState(useAuthStore.getInitialState(), true)
   useLoginModalStore.setState(useLoginModalStore.getInitialState(), true)
   localStorage.clear()
+})
+
+afterEach(() => {
+  vi.useRealTimers()
 })
 
 describe('AccountDeletePage', () => {
@@ -67,13 +77,10 @@ describe('AccountDeletePage', () => {
     )
   })
 
-  it.each([
-    ['운영정책 보기', '/operation-policy'],
-    ['개인정보처리방침', '/privacy'],
-  ])('%s 링크는 %s로 연결', (name, href) => {
+  it('개인정보처리방침 링크는 /privacy로 연결', () => {
     renderAccountDeletePage()
 
-    expect(screen.getByRole('link', { name })).toHaveAttribute('href', href)
+    expect(screen.getByRole('link', { name: '개인정보처리방침' })).toHaveAttribute('href', '/privacy')
   })
 
   it('이용 정지 회원의 이메일 요청 안내 표시', () => {
@@ -86,5 +93,59 @@ describe('AccountDeletePage', () => {
     renderAccountDeletePage()
 
     expect(screen.getByRole('heading', { name: '게시글·댓글은 삭제되지 않습니다' })).toBeInTheDocument()
+  })
+
+  describe('개인정보처리방침 v1.2 시행 전', () => {
+    beforeEach(() => {
+      setSystemTime('2026-11-15T03:00:00Z') // 2026-11-15 12:00 KST
+    })
+
+    it.each(['서비스 이용 기록', '신고 접수·처리 기록'])('보관 후 파기 목록에 %s 표시', (item) => {
+      renderAccountDeletePage()
+
+      expect(screen.getByText(item)).toBeInTheDocument()
+    })
+
+    it('보관 후 파기 목록에 소셜 로그인 식별자 미표시', () => {
+      renderAccountDeletePage()
+
+      expect(screen.queryByText('소셜 로그인 식별자')).not.toBeInTheDocument()
+    })
+
+    it('정지 중 탈퇴 시 재가입 제한 안내 미표시', () => {
+      renderAccountDeletePage()
+
+      expect(screen.queryByText(/이용 정지 중에 탈퇴하면 일정 기간 다시 가입할 수 없습니다/)).not.toBeInTheDocument()
+    })
+
+    it('운영정책 보기 링크 미표시', () => {
+      renderAccountDeletePage()
+
+      expect(screen.queryByRole('link', { name: '운영정책 보기' })).not.toBeInTheDocument()
+    })
+  })
+
+  describe('개인정보처리방침 v1.2 시행 후', () => {
+    beforeEach(() => {
+      setSystemTime('2026-12-02T03:00:00Z') // 2026-12-02 12:00 KST
+    })
+
+    it.each(['서비스 이용 기록', '신고 접수·처리 기록', '소셜 로그인 식별자'])('보관 후 파기 목록에 %s 표시', (item) => {
+      renderAccountDeletePage()
+
+      expect(screen.getByText(item)).toBeInTheDocument()
+    })
+
+    it('정지 중 탈퇴 시 재가입 제한 안내 표시', () => {
+      renderAccountDeletePage()
+
+      expect(screen.getByText(/이용 정지 중에 탈퇴하면 일정 기간 다시 가입할 수 없습니다/)).toBeInTheDocument()
+    })
+
+    it('운영정책 보기 링크는 /operation-policy로 연결', () => {
+      renderAccountDeletePage()
+
+      expect(screen.getByRole('link', { name: '운영정책 보기' })).toHaveAttribute('href', '/operation-policy')
+    })
   })
 })

@@ -108,10 +108,11 @@ function AdminUsersPage() {
     setPage(0)
   }
 
-  async function runAction(action, failMessage) {
+  async function runAction(action, failMessage, onSuccess) {
     setActionError('')
     try {
       await action()
+      onSuccess?.()
       refresh()
     } catch {
       setActionError(failMessage)
@@ -126,7 +127,10 @@ function AdminUsersPage() {
   function handleWithdraw(user) {
     const message = `${user.nickname ?? user.email}(${user.email ?? '이메일 없음'})을 탈퇴 처리하시겠습니까?\n개인정보와 평점이 삭제되며 되돌릴 수 없습니다.`
     if (!window.confirm(message)) return
-    runAction(() => withdrawUser(user.id), '탈퇴 처리에 실패했습니다.')
+    // 탈퇴 회원은 검색에서 빠지므로, 페이지의 마지막 회원을 탈퇴시키면 이전 페이지로 이동한다
+    runAction(() => withdrawUser(user.id), '탈퇴 처리에 실패했습니다.', () => {
+      if (users.length === 1 && page > 0) setPage((p) => p - 1)
+    })
   }
 
   return (

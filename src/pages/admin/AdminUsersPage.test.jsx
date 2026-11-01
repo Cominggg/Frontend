@@ -290,5 +290,41 @@ describe('AdminUsersPage', () => {
 
       expect(await screen.findByText('탈퇴 처리에 실패했습니다.')).toBeInTheDocument()
     })
+
+    async function openSecondPage(user, secondPageUsers) {
+      searchUsers.mockImplementation(({ page }) =>
+        Promise.resolve(pageOf(page === 0 ? [ACTIVE_USER] : secondPageUsers, 2)),
+      )
+      renderPage()
+      await user.click(await screen.findByRole('button', { name: '다음' }))
+      await screen.findByText('2 / 2')
+      searchUsers.mockClear()
+    }
+
+    it('2페이지의 마지막 회원을 탈퇴시키면 이전 페이지 조회', async () => {
+      const user = userEvent.setup()
+      vi.spyOn(window, 'confirm').mockReturnValue(true)
+      withdrawUser.mockResolvedValue()
+      await openSecondPage(user, [SUSPENDED_USER])
+      const row = await findRow('유키')
+
+      await user.click(within(row).getByRole('button', { name: '대리 탈퇴' }))
+
+      await waitFor(() => expect(searchUsers).toHaveBeenCalledWith({ keyword: undefined, page: 0, size: 20 }))
+    })
+
+    it('2페이지의 마지막 회원 탈퇴가 실패하면 페이지 유지', async () => {
+      const user = userEvent.setup()
+      vi.spyOn(window, 'confirm').mockReturnValue(true)
+      withdrawUser.mockRejectedValue(new Error('Server Error'))
+      await openSecondPage(user, [SUSPENDED_USER])
+      const row = await findRow('유키')
+
+      await user.click(within(row).getByRole('button', { name: '대리 탈퇴' }))
+
+      expect(await screen.findByText('탈퇴 처리에 실패했습니다.')).toBeInTheDocument()
+      expect(screen.getByText('2 / 2')).toBeInTheDocument()
+      expect(searchUsers).not.toHaveBeenCalledWith({ keyword: undefined, page: 0, size: 20 })
+    })
   })
 })

@@ -1,6 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom'
 
 import Button from '@/components/ui/Button'
+import { PRIVACY_VERSIONS, getCurrentVersionIndex } from '@/constants/policy'
 import { ROUTES } from '@/constants/routes'
 import { SUPPORT_EMAIL } from '@/constants/site'
 import useAuthStore from '@/stores/authStore'
@@ -12,11 +13,18 @@ const MAIL_SUBJECT = encodeURIComponent('[커밍] 회원 탈퇴 요청')
 const RETAINED_ITEMS = [
   { item: '서비스 이용 기록', period: '3개월', basis: '통신비밀보호법' },
   { item: '신고 접수·처리 기록', period: '처리 완료일로부터 1년', basis: '부정 신고 확인·분쟁 대응' },
-  { item: '소셜 로그인 식별자', period: '탈퇴일로부터 30일 (이용 정지 중 탈퇴 시 연장)', basis: '재가입 남용 방지' },
 ]
+const IDENTIFIER_RETAINED_ITEM = { item: '소셜 로그인 식별자', period: '탈퇴일로부터 30일 (이용 정지 중 탈퇴 시 연장)', basis: '재가입 남용 방지' }
+
+// 소셜 로그인 식별자 보관과 정지 중 탈퇴 시 재가입 제한은 개인정보처리방침 v1.2 시행일부터 적용된다
+function isRejoinLimitEffective() {
+  return getCurrentVersionIndex(PRIVACY_VERSIONS) <= PRIVACY_VERSIONS.findIndex((v) => v.version === '1.2')
+}
 
 function AccountDeletePage() {
   const navigate = useNavigate()
+  const rejoinLimitEffective = isRejoinLimitEffective()
+  const retainedItems = rejoinLimitEffective ? [...RETAINED_ITEMS, IDENTIFIER_RETAINED_ITEM] : RETAINED_ITEMS
   const user = useAuthStore((s) => s.user)
   const openLoginModal = useLoginModalStore((s) => s.open)
 
@@ -83,7 +91,7 @@ function AccountDeletePage() {
 
           <h3 className={styles.blockTitle}>일정 기간 보관 후 파기</h3>
           <dl className={styles.retained}>
-            {RETAINED_ITEMS.map(({ item, period, basis }) => (
+            {retainedItems.map(({ item, period, basis }) => (
               <div key={item} className={styles.retainedRow}>
                 <dt className={styles.retainedItem}>{item}</dt>
                 <dd className={styles.retainedPeriod}>{period}</dd>
@@ -98,10 +106,12 @@ function AccountDeletePage() {
           <p className={styles.text}>
             같은 소셜 계정으로 다시 가입할 수 있습니다. 새 회원으로 가입되며 이전 계정의 정보는 이어지지 않습니다.
           </p>
-          <p className={styles.notice}>
-            이용 정지 중에 탈퇴하면 일정 기간 다시 가입할 수 없습니다.{' '}
-            <Link to={ROUTES.OPERATION_POLICY} className={styles.inlineLink}>운영정책 보기</Link>
-          </p>
+          {rejoinLimitEffective && (
+            <p className={styles.notice}>
+              이용 정지 중에 탈퇴하면 일정 기간 다시 가입할 수 없습니다.{' '}
+              <Link to={ROUTES.OPERATION_POLICY} className={styles.inlineLink}>운영정책 보기</Link>
+            </p>
+          )}
         </section>
 
         <p className={styles.footnote}>

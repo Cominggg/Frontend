@@ -16,6 +16,8 @@ const STATIC_URLS = [
   { loc: '/community', changefreq: 'daily', priority: '0.6' },
   { loc: '/terms', changefreq: 'yearly', priority: '0.2' },
   { loc: '/privacy', changefreq: 'yearly', priority: '0.2' },
+  { loc: '/operation-policy', changefreq: 'yearly', priority: '0.2' },
+  { loc: '/account/delete', changefreq: 'yearly', priority: '0.2' },
 ]
 
 function buildUrlEntry({ loc, changefreq, priority }) {
