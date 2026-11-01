@@ -128,8 +128,10 @@ function AdminUsersPage() {
     const message = `${user.nickname ?? user.email}(${user.email ?? '이메일 없음'})을 탈퇴 처리하시겠습니까?\n개인정보와 평점이 삭제되며 되돌릴 수 없습니다.`
     if (!window.confirm(message)) return
     // 탈퇴 회원은 검색에서 빠지므로, 페이지의 마지막 회원을 탈퇴시키면 이전 페이지로 이동한다
+    // 요청 중 다른 페이지로 옮겼으면 그대로 둔다
+    const withdrawnPage = page
     runAction(() => withdrawUser(user.id), '탈퇴 처리에 실패했습니다.', () => {
-      if (users.length === 1 && page > 0) setPage((p) => p - 1)
+      if (users.length === 1 && withdrawnPage > 0) setPage((p) => (p === withdrawnPage ? p - 1 : p))
     })
   }
 

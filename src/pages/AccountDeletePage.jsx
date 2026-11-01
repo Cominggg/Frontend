@@ -15,8 +15,11 @@ const RETAINED_ITEMS = [
   { item: '신고 접수·처리 기록', period: '처리 완료일로부터 1년', basis: '부정 신고 확인·분쟁 대응' },
 ]
 const IDENTIFIER_RETAINED_ITEM = { item: '소셜 로그인 식별자', period: '탈퇴일로부터 30일 (이용 정지 중 탈퇴 시 연장)', basis: '재가입 남용 방지' }
+// v1.1에만 있는 항목 — v1.2에서 적용 대상이 아니라는 이유로 삭제됐다
+const DISPUTE_RETAINED_ITEM = { item: '소비자 불만·분쟁 처리 기록', period: '3년', basis: '전자상거래법' }
 
 // 소셜 로그인 식별자 보관과 정지 중 탈퇴 시 재가입 제한은 개인정보처리방침 v1.2 시행일부터 적용된다
+// 소비자 불만·분쟁 처리 기록 보관은 그 전날까지만 적용된다
 function isRejoinLimitEffective() {
   return getCurrentVersionIndex(PRIVACY_VERSIONS) <= PRIVACY_VERSIONS.findIndex((v) => v.version === '1.2')
 }
@@ -24,7 +27,7 @@ function isRejoinLimitEffective() {
 function AccountDeletePage() {
   const navigate = useNavigate()
   const rejoinLimitEffective = isRejoinLimitEffective()
-  const retainedItems = rejoinLimitEffective ? [...RETAINED_ITEMS, IDENTIFIER_RETAINED_ITEM] : RETAINED_ITEMS
+  const retainedItems = [...RETAINED_ITEMS, rejoinLimitEffective ? IDENTIFIER_RETAINED_ITEM : DISPUTE_RETAINED_ITEM]
   const user = useAuthStore((s) => s.user)
   const openLoginModal = useLoginModalStore((s) => s.open)
 

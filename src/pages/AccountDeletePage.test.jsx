@@ -100,7 +100,7 @@ describe('AccountDeletePage', () => {
       setSystemTime('2026-11-15T03:00:00Z') // 2026-11-15 12:00 KST
     })
 
-    it.each(['서비스 이용 기록', '신고 접수·처리 기록'])('보관 후 파기 목록에 %s 표시', (item) => {
+    it.each(['서비스 이용 기록', '신고 접수·처리 기록', '소비자 불만·분쟁 처리 기록'])('보관 후 파기 목록에 %s 표시', (item) => {
       renderAccountDeletePage()
 
       expect(screen.getByText(item)).toBeInTheDocument()
@@ -134,6 +134,12 @@ describe('AccountDeletePage', () => {
       renderAccountDeletePage()
 
       expect(screen.getByText(item)).toBeInTheDocument()
+    })
+
+    it('보관 후 파기 목록에 소비자 불만·분쟁 처리 기록 미표시', () => {
+      renderAccountDeletePage()
+
+      expect(screen.queryByText('소비자 불만·분쟁 처리 기록')).not.toBeInTheDocument()
     })
 
     it('정지 중 탈퇴 시 재가입 제한 안내 표시', () => {

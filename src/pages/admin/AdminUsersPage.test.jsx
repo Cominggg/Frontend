@@ -326,5 +326,23 @@ describe('AdminUsersPage', () => {
       expect(screen.getByText('2 / 2')).toBeInTheDocument()
       expect(searchUsers).not.toHaveBeenCalledWith({ keyword: undefined, page: 0, size: 20 })
     })
+
+    it('탈퇴 처리 중에 이전 페이지로 이동하면 완료 후 음수 페이지를 조회하지 않음', async () => {
+      const user = userEvent.setup()
+      vi.spyOn(window, 'confirm').mockReturnValue(true)
+      let resolveWithdraw
+      withdrawUser.mockReturnValue(new Promise((resolve) => { resolveWithdraw = resolve }))
+      await openSecondPage(user, [SUSPENDED_USER])
+      const row = await findRow('유키')
+      await user.click(within(row).getByRole('button', { name: '대리 탈퇴' }))
+      await user.click(screen.getByRole('button', { name: '이전' }))
+      await screen.findByText('1 / 2')
+
+      resolveWithdraw()
+
+      await waitFor(() => expect(searchUsers).toHaveBeenCalledTimes(2))
+      expect(searchUsers.mock.calls.every(([params]) => params.page >= 0)).toBe(true)
+      expect(screen.getByText('1 / 2')).toBeInTheDocument()
+    })
   })
 })
