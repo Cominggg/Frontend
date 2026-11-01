@@ -289,7 +289,10 @@ function WithdrawalModal({ isOpen, onClose, onWithdraw }) {
 
         <h2 id="withdrawal-title" className={styles.modalTitle}>정말 탈퇴하시겠습니까?</h2>
         <p className={styles.withdrawalDesc}>
-          탈퇴하면 관심 아티스트, 캘린더, 문의 내역 등 모든 데이터가 삭제되며 복구할 수 없습니다.
+          탈퇴하면 개인정보와 평점, 관심 아티스트, 캘린더, 문의 내역이 삭제되며 복구할 수 없습니다.
+          단, 서비스 이용 기록·신고 처리 기록 등 법령과 개인정보처리방침에 따라 보관하는 정보는 정해진 기간이 지난 뒤 파기됩니다.
+          작성한 게시글·댓글은 삭제되지 않고 &quot;탈퇴 회원&quot;으로 표시되니, 원하면 탈퇴 전에 직접 삭제해 주세요.{' '}
+          <Link to={ROUTES.ACCOUNT_DELETE} className={styles.withdrawalLink}>자세히 보기</Link>
         </p>
 
         <div className={styles.modalActions}>

@@ -888,6 +888,11 @@
   text-align: center;
 }
 
+.withdrawalLink {
+  color: var(--color-accent);
+  font-weight: 600;
+}
+
 .withdrawalConfirmBtn {
   flex: 1;
   padding: 0.6875rem 1rem;

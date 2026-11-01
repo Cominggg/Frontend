@@ -41,6 +41,16 @@
     <priority>0.2</priority>
   </url>
   <url>
+    <loc>https://www.comingg.com/operation-policy</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  <url>
+    <loc>https://www.comingg.com/account/delete</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  <url>
     <loc>https://www.comingg.com/concerts/224</loc>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>

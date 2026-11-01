@@ -1,0 +1,202 @@
+.page {
+  padding: 3rem 2rem 6rem;
+}
+
+.inner {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.title {
+  margin: 0;
+  font-size: 1.625rem;
+  font-weight: 700;
+  color: var(--color-text);
+  letter-spacing: -0.02em;
+}
+
+.lead {
+  margin: 0.5rem 0 0;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--color-text-muted);
+}
+
+.section {
+  margin-top: 2.5rem;
+}
+
+.sectionTitle {
+  margin: 0 0 1rem;
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.methods {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  padding: 1.25rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.cardLabel {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-accent);
+}
+
+.cardTitle {
+  margin: 0.25rem 0 0.75rem;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.steps {
+  margin: 0 0 1.25rem;
+  padding-left: 1.25rem;
+  font-size: 0.875rem;
+  line-height: 1.8;
+  color: var(--color-text-muted);
+}
+
+.cardBtn {
+  margin-top: auto;
+  align-self: flex-start;
+}
+
+.cardText {
+  margin: 0 0 0.5rem;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: var(--color-text-muted);
+}
+
+.mailLink {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--color-accent);
+  word-break: break-all;
+}
+
+.cardHint {
+  margin: 0.5rem 0 0;
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  color: var(--color-text-muted);
+}
+
+.notice {
+  margin: 0 0 1rem;
+  padding: 0.75rem 1rem;
+  border-left: 3px solid var(--color-accent);
+  border-radius: var(--radius-sm);
+  background: var(--color-accent-dim);
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: var(--color-text);
+}
+
+.notice .blockTitle {
+  margin-top: 0;
+}
+
+.blockTitle {
+  margin: 1.5rem 0 0.5rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.blockText {
+  margin: 0;
+}
+
+.list {
+  margin: 0;
+  padding-left: 1.25rem;
+  font-size: 0.875rem;
+  line-height: 1.8;
+  color: var(--color-text-muted);
+}
+
+.retained {
+  margin: 0;
+}
+
+.retainedRow {
+  display: grid;
+  grid-template-columns: 10rem 1fr auto;
+  gap: 1rem;
+  padding: 0.625rem 0;
+  border-bottom: 1px solid var(--color-border);
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+.retainedItem {
+  font-weight: 500;
+  color: var(--color-text);
+}
+
+.retainedPeriod {
+  margin: 0;
+  color: var(--color-text-muted);
+}
+
+.retainedBasis {
+  margin: 0;
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+}
+
+.text {
+  margin: 0 0 1rem;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: var(--color-text-muted);
+}
+
+.inlineLink {
+  color: var(--color-accent);
+  font-weight: 600;
+}
+
+.footnote {
+  margin: 2.5rem 0 0;
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+}
+
+@media (max-width: 767px) {
+  .page {
+    padding: 2rem 1rem 4rem;
+  }
+
+  .title {
+    font-size: 1.375rem;
+  }
+
+  .methods {
+    grid-template-columns: 1fr;
+  }
+
+  .cardBtn {
+    align-self: stretch;
+    min-height: 44px;
+  }
+
+  .retainedRow {
+    grid-template-columns: 1fr;
+    gap: 0.125rem;
+  }
+}

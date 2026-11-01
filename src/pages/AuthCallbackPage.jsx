@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 
 import useAuthStore from '@/stores/authStore'
+import useSuspensionStore from '@/stores/suspensionStore'
 import { refreshAccessToken } from '@/services/api'
 import { getMe } from '@/services/authApi'
 import { ROUTES } from '@/constants/routes'
@@ -10,7 +11,6 @@ import { trackEvent } from '@/utils/analytics'
 import styles from './AuthCallbackPage.module.css'
 
 const AUTH_ERRORS = {
-  USER_SUSPENDED: '정지된 계정입니다. 문의하세요.',
   OAUTH2_FAILED: '로그인에 실패했습니다. 다시 시도해 주세요.',
 }
 
@@ -18,6 +18,7 @@ function AuthCallbackPage() {
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const setUser = useAuthStore((s) => s.setUser)
+  const openSuspensionNotice = useSuspensionStore((s) => s.open)
   const called = useRef(false)
   const [errorMessage, setErrorMessage] = useState(null)
 
@@ -27,6 +28,15 @@ function AuthCallbackPage() {
 
     async function handleCallback() {
       const error = searchParams.get('error')
+      // 정지 회원 — suspendedUntil이 없으면 영구 정지
+      if (error === 'USER_SUSPENDED') {
+        openSuspensionNotice({
+          suspendedUntil: searchParams.get('suspendedUntil'),
+          reason: searchParams.get('reason'),
+        })
+        navigate(ROUTES.HOME, { replace: true })
+        return
+      }
       if (error) {
         setErrorMessage(AUTH_ERRORS[error] ?? '알 수 없는 오류가 발생했습니다.')
         return
@@ -55,7 +65,7 @@ function AuthCallbackPage() {
     }
 
     handleCallback()
-  }, [navigate, searchParams, setUser])
+  }, [navigate, searchParams, setUser, openSuspensionNotice])
 
   if (errorMessage) {
     return (

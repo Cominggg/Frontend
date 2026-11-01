@@ -11,7 +11,7 @@ import PageViewTracker from '@/components/layout/PageViewTracker'
 import PrivateRoute from '@/components/layout/PrivateRoute'
 import ScrollToTop from '@/components/layout/ScrollToTop'
 import HomePage from '@/pages/HomePage'
-import { TERMS_VERSIONS, PRIVACY_VERSIONS } from '@/constants/policy'
+import { TERMS_VERSIONS, PRIVACY_VERSIONS, OPERATION_VERSIONS } from '@/constants/policy'
 import { ROUTES } from '@/constants/routes'
 
 // 첫 진입 화면(HomePage)을 제외한 페이지는 라우트 단위로 분할해 초기 번들에서 뺀다
@@ -31,6 +31,7 @@ const NoticeDetailPage = lazy(() => import('@/pages/NoticeDetailPage'))
 const MyPage = lazy(() => import('@/pages/MyPage'))
 const NotFoundPage = lazy(() => import('@/pages/NotFoundPage'))
 const PolicyPage = lazy(() => import('@/pages/PolicyPage'))
+const AccountDeletePage = lazy(() => import('@/pages/AccountDeletePage'))
 
 // 관리자 화면 — 일반 사용자 번들에 react-datepicker 등이 섞이지 않도록 분리
 const AdminLayout = lazy(() => import('@/components/layout/AdminLayout'))
@@ -45,6 +46,7 @@ const AdminNoticeFormPage = lazy(() => import('@/pages/admin/AdminNoticeFormPage
 const AdminPendingConcertsPage = lazy(() => import('@/pages/admin/AdminPendingConcertsPage'))
 const AdminExcludedConcertsPage = lazy(() => import('@/pages/admin/AdminExcludedConcertsPage'))
 const AdminPolicyPage = lazy(() => import('@/pages/admin/AdminPolicyPage'))
+const AdminUsersPage = lazy(() => import('@/pages/admin/AdminUsersPage'))
 
 function App() {
   const clearUser = useAuthStore((s) => s.clearUser)
@@ -85,6 +87,8 @@ function App() {
         <Route path="/community/:id" element={<PostDetailPage />} />
         <Route path={ROUTES.TERMS} element={<PolicyPage title="서비스 이용약관" versions={TERMS_VERSIONS} />} />
         <Route path={ROUTES.PRIVACY} element={<PolicyPage title="개인정보처리방침" versions={PRIVACY_VERSIONS} />} />
+        <Route path={ROUTES.OPERATION_POLICY} element={<PolicyPage title="운영정책" versions={OPERATION_VERSIONS} />} />
+        <Route path={ROUTES.ACCOUNT_DELETE} element={<AccountDeletePage />} />
         <Route path={ROUTES.ME} element={<PrivateRoute><MyPage /></PrivateRoute>} />
         <Route path={ROUTES.ME_UPCOMING} element={<PrivateRoute><MyPage /></PrivateRoute>} />
         <Route path={ROUTES.ME_HISTORY} element={<PrivateRoute><MyPage /></PrivateRoute>} />
@@ -104,6 +108,7 @@ function App() {
           <Route path="concerts/:id/edit" element={<AdminConcertFormPage />} />
           <Route path="inquiries" element={<AdminInquiriesPage />} />
           <Route path="reports" element={<AdminReportsPage />} />
+          <Route path="users" element={<AdminUsersPage />} />
           <Route path="notices" element={<AdminNoticesPage />} />
           <Route path="notices/new" element={<AdminNoticeFormPage />} />
           <Route path="notices/:id/edit" element={<AdminNoticeFormPage />} />

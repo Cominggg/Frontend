@@ -3,6 +3,7 @@ import axios, { AxiosError } from 'axios'
 import api, { refreshAccessToken } from './api'
 import useAuthStore, { SESSION_HINT } from '@/stores/authStore'
 import useLoginModalStore from '@/stores/loginModalStore'
+import useSuspensionStore from '@/stores/suspensionStore'
 
 function mockRefreshSuccess(accessToken = 'new-token') {
   return vi.spyOn(axios, 'post').mockResolvedValue({ data: { accessToken } })
@@ -14,9 +15,18 @@ function unauthorized(config) {
   })
 }
 
+function forbidden(config, data) {
+  return new AxiosError('Forbidden', 'ERR_BAD_REQUEST', config, null, {
+    status: 403, data, headers: {}, config,
+  })
+}
+
+const SUSPENDED_BODY = { code: 'USER_SUSPENDED', suspendedUntil: '2026-11-05T12:00:00', reason: 'SPAM' }
+
 beforeEach(() => {
   useAuthStore.setState(useAuthStore.getInitialState(), true)
   useLoginModalStore.setState(useLoginModalStore.getInitialState(), true)
+  useSuspensionStore.setState(useSuspensionStore.getInitialState(), true)
   localStorage.clear()
 })
 
@@ -150,5 +160,96 @@ describe('api 401 응답 처리', () => {
     await expect(api.get('/auth/me', { adapter })).rejects.toBeInstanceOf(AxiosError)
 
     expect(post).toHaveBeenCalledTimes(1)
+  })
+})
+
+describe('정지 회원 403 처리', () => {
+  const LOGGED_IN = { user: { id: 1, nickname: '테스트유저' }, accessToken: 'token' }
+
+  it('refresh가 USER_SUSPENDED로 실패하면 로그아웃 후 정지 안내 오픈', async () => {
+    const error = forbidden({}, SUSPENDED_BODY)
+    vi.spyOn(axios, 'post').mockRejectedValue(error)
+    useAuthStore.setState(LOGGED_IN)
+
+    await expect(refreshAccessToken()).rejects.toBe(error)
+
+    expect(useAuthStore.getState().user).toBeNull()
+    expect(useSuspensionStore.getState().notice).toEqual({ suspendedUntil: '2026-11-05T12:00:00', reason: 'SPAM' })
+  })
+
+  it('401 후 refresh가 USER_SUSPENDED로 실패하면 로그인 모달 대신 정지 안내만 오픈', async () => {
+    vi.spyOn(axios, 'post').mockRejectedValue(forbidden({}, SUSPENDED_BODY))
+    useAuthStore.setState(LOGGED_IN)
+    const adapter = (config) => Promise.reject(unauthorized(config))
+
+    await expect(api.get('/auth/me', { adapter })).rejects.toBeInstanceOf(AxiosError)
+
+    expect(useLoginModalStore.getState().isOpen).toBe(false)
+    expect(useSuspensionStore.getState().notice).not.toBeNull()
+  })
+
+  it('일반 요청이 USER_SUSPENDED로 403이면 로그아웃 후 정지 안내 오픈하고 reject', async () => {
+    useAuthStore.setState(LOGGED_IN)
+    const adapter = (config) => Promise.reject(forbidden(config, SUSPENDED_BODY))
+
+    await expect(api.post('/posts', {}, { adapter })).rejects.toMatchObject({ response: { status: 403 } })
+
+    expect(useAuthStore.getState().user).toBeNull()
+    expect(useSuspensionStore.getState().notice).toEqual({ suspendedUntil: '2026-11-05T12:00:00', reason: 'SPAM' })
+  })
+
+  it('code가 USER_SUSPENDED가 아닌 403이면 정지 안내를 열지 않음', async () => {
+    useAuthStore.setState(LOGGED_IN)
+    const adapter = (config) => Promise.reject(forbidden(config, { code: 'ACCESS_DENIED' }))
+
+    await expect(api.post('/posts', {}, { adapter })).rejects.toBeInstanceOf(AxiosError)
+
+    expect(useSuspensionStore.getState().notice).toBeNull()
+  })
+
+  it('suspendedUntil이 없는 영구 정지 응답이면 notice.suspendedUntil이 null', async () => {
+    const adapter = (config) => Promise.reject(forbidden(config, { code: 'USER_SUSPENDED', reason: 'ABUSE' }))
+
+    await expect(api.post('/posts', {}, { adapter })).rejects.toBeInstanceOf(AxiosError)
+
+    expect(useSuspensionStore.getState().notice).toEqual({ suspendedUntil: null, reason: 'ABUSE' })
+  })
+})
+
+describe('탈퇴 회원 404 처리', () => {
+  const LOGGED_IN = { user: { id: 1, nickname: '테스트유저' }, accessToken: 'token' }
+
+  function notFound(config, data) {
+    return new AxiosError('Not Found', 'ERR_BAD_REQUEST', config, null, {
+      status: 404, data, headers: {}, config,
+    })
+  }
+
+  it('로그인 상태에서 USER_NOT_FOUND로 404이면 로그아웃하고 reject', async () => {
+    useAuthStore.setState(LOGGED_IN)
+    const adapter = (config) => Promise.reject(notFound(config, { code: 'USER_NOT_FOUND' }))
+
+    await expect(api.post('/posts', {}, { adapter })).rejects.toMatchObject({ response: { status: 404 } })
+
+    expect(useAuthStore.getState().user).toBeNull()
+    expect(useAuthStore.getState().accessToken).toBeNull()
+  })
+
+  it('code가 USER_NOT_FOUND가 아닌 404이면 로그인 상태 유지', async () => {
+    useAuthStore.setState(LOGGED_IN)
+    const adapter = (config) => Promise.reject(notFound(config, { code: 'POST_NOT_FOUND' }))
+
+    await expect(api.get('/posts/1', { adapter })).rejects.toBeInstanceOf(AxiosError)
+
+    expect(useAuthStore.getState().user).toEqual(LOGGED_IN.user)
+  })
+
+  it('관리자 API의 USER_NOT_FOUND는 로그인 상태 유지', async () => {
+    useAuthStore.setState(LOGGED_IN)
+    const adapter = (config) => Promise.reject(notFound(config, { code: 'USER_NOT_FOUND' }))
+
+    await expect(api.delete('/admin/users/9', { adapter })).rejects.toBeInstanceOf(AxiosError)
+
+    expect(useAuthStore.getState().user).toEqual(LOGGED_IN.user)
   })
 })

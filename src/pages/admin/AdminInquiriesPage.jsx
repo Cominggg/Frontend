@@ -62,7 +62,7 @@ function DetailModal({ id, onClose, onStatusChange }) {
           <>
             <dl className={styles.modalMeta}>
               <div><dt>대상 ID</dt><dd>{item.targetId ?? '-'}</dd></div>
-              <div><dt>제출자</dt><dd>{item.userNickname}</dd></div>
+              <div><dt>제출자</dt><dd>{item.userNickname || '탈퇴 회원'}</dd></div>
               <div><dt>제출일</dt><dd>{item.createdAt}</dd></div>
             </dl>
 
@@ -220,7 +220,7 @@ function AdminInquiriesPage() {
                   <span className={styles.rowDate}>{item.createdAt}</span>
                 </div>
                 <p className={styles.rowTitle}>{item.title}</p>
-                <p className={styles.rowTarget}>{item.userNickname}</p>
+                <p className={styles.rowTarget}>{item.userNickname || '탈퇴 회원'}</p>
               </div>
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={styles.rowChevron} aria-hidden="true">
                 <path d="m9 18 6-6-6-6" />
