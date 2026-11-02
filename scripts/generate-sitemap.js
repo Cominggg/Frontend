@@ -24,14 +24,15 @@ function buildUrlEntry({ loc, changefreq, priority }) {
   return `  <url>\n    <loc>${SITE_URL}${loc}</loc>\n    <changefreq>${changefreq}</changefreq>\n    <priority>${priority}</priority>\n  </url>`
 }
 
-// 동적 URL은 공연 상세와 내한 공연이 있는 아티스트 상세만 넣는다. 발매(5천여 개)·전체 아티스트(1천여 개)까지
-// 한꺼번에 제출하면 신규 도메인의 크롤링 수요가 분산돼 핵심인 공연 페이지까지 '발견됨 - 색인 미생성'에 머문다.
-// 내한 공연 아티스트는 백여 개 수준이고 "{아티스트} 내한" 검색을 받는 페이지라 포함한다.
-// 나머지 아티스트·발매 상세는 목록 페이지네이션과 상세 간 링크를 통해 크롤러가 발견하도록 둔다.
+// 동적 URL은 공연·아티스트·발매 상세를 모두 넣는다. 핵심인 공연 상세의 우선순위를 가장 높게 둔다.
 async function main() {
-  let concerts
+  let concerts, artists, releases
   try {
-    concerts = await fetchAllItems('/concerts')
+    ;[concerts, artists, releases] = await Promise.all([
+      fetchAllItems('/concerts'),
+      fetchAllItems('/artists'),
+      fetchAllItems('/releases'),
+    ])
   } catch (err) {
     // 일부 구간만 빠진 채로 sitemap.xml을 덮어쓰면 이미 색인된 URL이 검색엔진에서
     // 통째로 빠질 수 있어, 실패 시에는 파일을 건드리지 않고 기존 버전을 유지한다.
@@ -40,15 +41,15 @@ async function main() {
   }
 
   const concertUrls = concerts.map(({ id }) => ({ loc: `/concerts/${id}`, changefreq: 'weekly', priority: '0.6' }))
-  const artistIds = new Set(concerts.flatMap((concert) => (concert.artists ?? []).map((artist) => artist.artistId)))
-  const artistUrls = [...artistIds].map((id) => ({ loc: `/artists/${id}`, changefreq: 'weekly', priority: '0.5' }))
-  const dynamicUrls = [...concertUrls, ...artistUrls]
+  const artistUrls = artists.map(({ id }) => ({ loc: `/artists/${id}`, changefreq: 'weekly', priority: '0.5' }))
+  const releaseUrls = releases.map(({ id }) => ({ loc: `/releases/${id}`, changefreq: 'monthly', priority: '0.4' }))
+  const dynamicUrls = [...concertUrls, ...artistUrls, ...releaseUrls]
 
   const body = [...STATIC_URLS, ...dynamicUrls].map(buildUrlEntry).join('\n')
   const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${body}\n</urlset>\n`
 
   await writeFile(OUTPUT_PATH, xml, 'utf-8')
-  console.log(`[sitemap] 생성 완료 — 정적 ${STATIC_URLS.length}개 + 동적 ${dynamicUrls.length}개 (공연 ${concertUrls.length} · 아티스트 ${artistUrls.length})`)
+  console.log(`[sitemap] 생성 완료 — 정적 ${STATIC_URLS.length}개 + 동적 ${dynamicUrls.length}개 (공연 ${concertUrls.length} · 아티스트 ${artistUrls.length} · 발매 ${releaseUrls.length})`)
 }
 
 main()
