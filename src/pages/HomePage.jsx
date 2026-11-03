@@ -6,6 +6,7 @@ import ArtistAliasName from '@/components/artist/ArtistAliasName'
 import ConcertCard from '@/components/concert/ConcertCard'
 import ConcertCardSkeleton from '@/components/concert/ConcertCardSkeleton'
 import ReleaseCardSkeleton from '@/components/release/ReleaseCardSkeleton'
+import EmptyState from '@/components/ui/EmptyState'
 import Icon from '@/components/ui/Icon'
 import { ROUTES } from '@/constants/routes'
 import { getPopularConcerts, getConcerts, getTicketingConcerts } from '@/services/concertApi'
@@ -218,13 +219,7 @@ function HomePage() {
                 {Array.from({ length: 3 }).map((_, i) => <ConcertCardSkeleton key={i} />)}
               </div>
             ) : popularConcerts.length === 0 ? (
-              <div className={styles.popularEmpty}>
-                <div className={styles.popularEmptyIcon} aria-hidden="true">
-                  <Icon name="calendar" size={24} />
-                </div>
-                <p className={styles.popularEmptyTitle}>인기 공연이 없어요</p>
-                <p className={styles.popularEmptySub}>현재 집계된 인기 공연 정보가 없습니다</p>
-              </div>
+              <EmptyState compact message="집계된 인기 공연이 없습니다." />
             ) : (
               <div className={styles.gridThree}>
                 {popularConcerts.slice(0, 3).map((concert) => (
@@ -260,17 +255,11 @@ function HomePage() {
                   ))}
                 </div>
               ) : displayedTicketing.length === 0 ? (
-                <div className={styles.ticketingEmptyCentered}>
-                  <div className={styles.ticketingEmptyRing} aria-hidden="true">
-                    <Icon name="calendar" size={18} />
-                  </div>
-                  <p className={styles.ticketingEmptyTitle}>가까운 티켓팅 일정이 없어요</p>
-                  <p className={styles.ticketingEmptySub}>새 예매가 열리면 이곳에 표시돼요</p>
-                  <Link to={ROUTES.CALENDAR} className={styles.ticketingEmptyCta}>
-                    캘린더에서 전체 일정 보기
-                    <Icon name="chevronRight" size={14} />
-                  </Link>
-                </div>
+                <EmptyState
+                  compact
+                  message="예정된 티켓팅 일정이 없습니다."
+                  action={{ to: ROUTES.CALENDAR, label: '캘린더 보기' }}
+                />
               ) : (
                 <div className={styles.timelineList}>
                   {ticketingItems.map((item, i) => (
@@ -343,13 +332,7 @@ function HomePage() {
                   ))}
                 </div>
               ) : upcomingConcerts.length === 0 ? (
-                <div className={styles.upcomingEmpty}>
-                  <div className={styles.upcomingEmptyIcon} aria-hidden="true">
-                    <Icon name="calendar" size={24} />
-                  </div>
-                  <p className={styles.upcomingEmptyTitle}>예정된 공연이 없어요</p>
-                  <p className={styles.upcomingEmptySub}>가까운 시일 내 내한 공연 정보가 없습니다</p>
-                </div>
+                <EmptyState compact message="예정된 내한 공연이 없습니다." />
               ) : (
                 <div className={styles.upcomingList}>
                   {upcomingConcerts.map((concert) => {
@@ -401,13 +384,7 @@ function HomePage() {
                   {Array.from({ length: 4 }).map((_, i) => <ReleaseCardSkeleton key={i} />)}
                 </div>
               ) : newReleases.length === 0 ? (
-                <div className={styles.albumEmpty}>
-                  <div className={styles.albumEmptyIcon} aria-hidden="true">
-                    <Icon name="music" size={24} />
-                  </div>
-                  <p className={styles.albumEmptyTitle}>아직 등록된 앨범·싱글이 없어요</p>
-                  <p className={styles.albumEmptySub}>새로운 릴리즈 정보가 추가되면 여기에 표시됩니다</p>
-                </div>
+                <EmptyState compact message="등록된 앨범·싱글이 없습니다." />
               ) : (
                 <div className={styles.albumStrip}>
                   {newReleases.map((item) => <AlbumCard key={item.id} item={item} />)}
@@ -434,19 +411,11 @@ function HomePage() {
                 {Array.from({ length: 5 }).map((_, i) => <ConcertCardSkeleton key={i} />)}
               </div>
             ) : followingConcerts.length === 0 ? (
-              <div className={styles.followEmpty}>
-                <div className={styles.followEmptyIcon} aria-hidden="true">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                    <circle cx="9" cy="7" r="4" />
-                    <line x1="19" y1="8" x2="19" y2="14" />
-                    <line x1="22" y1="11" x2="16" y2="11" />
-                  </svg>
-                </div>
-                <p className={styles.followEmptyTitle}>아직 팔로우한 아티스트가 없어요</p>
-                <p className={styles.followEmptySub}>관심 아티스트를 팔로우하면 새 공연 소식을 한눈에 볼 수 있어요</p>
-                <Link to={ROUTES.ARTISTS} className={styles.followEmptyLink}>아티스트 둘러보기</Link>
-              </div>
+              <EmptyState
+                compact
+                message="팔로우한 아티스트의 공연이 여기에 표시됩니다."
+                action={{ to: ROUTES.ARTISTS, label: '아티스트 둘러보기' }}
+              />
             ) : (
               <div className={styles.gridFive}>
                 {followingConcerts.map((concert) => (
@@ -455,18 +424,11 @@ function HomePage() {
               </div>
             )
           ) : (
-            <div className={styles.loginTeaser}>
-              <div className={styles.loginTeaserIcon} aria-hidden="true">
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-                </svg>
-              </div>
-              <p className={styles.loginTeaserTitle}>팔로우한 아티스트의 내한 공연을 한눈에</p>
-              <p className={styles.loginTeaserSub}>로그인하면 관심 아티스트의 새 공연 소식을 바로 확인할 수 있어요.</p>
-              <button className={styles.loginTeaserBtn} onClick={() => openLoginModal(window.location.pathname)}>
-                로그인 / 회원가입
-              </button>
-            </div>
+            <EmptyState
+              compact
+              message="로그인하면 팔로우한 아티스트의 공연을 볼 수 있습니다."
+              action={{ onClick: () => openLoginModal(window.location.pathname + window.location.search), label: '로그인 / 회원가입' }}
+            />
           )}
         </div>
       </div>
