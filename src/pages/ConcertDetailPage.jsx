@@ -294,8 +294,8 @@ function ConcertDetailPage() {
               />
             </div>
 
-            {/* 예매처 링크 */}
-            {ticketLinks && ticketLinks.length > 0 && (
+            {/* 예매처 링크 (종료된 공연은 예매를 유도하지 않음) */}
+            {status !== 'ENDED' && ticketLinks && ticketLinks.length > 0 && (
               <div className={styles.ticketSection}>
                 <p className={styles.ticketLabel}>예매처</p>
                 <div className={styles.ticketLinks}>

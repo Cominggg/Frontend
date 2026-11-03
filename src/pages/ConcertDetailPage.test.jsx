@@ -220,6 +220,19 @@ describe('ConcertDetailPage 예매처 링크', () => {
     expect(screen.queryByText('예매처')).not.toBeInTheDocument()
   })
 
+  it('종료된 공연이면 ticketLinks가 있어도 예매처 미렌더링', async () => {
+    mockConcert({
+      status: 'ENDED',
+      ticketLinks: [{ id: 1, label: '인터파크', url: 'https://tickets.example.com/yoasobi' }],
+    })
+    renderPage()
+
+    await screen.findByRole('heading', { name: CONCERT_1.title })
+
+    expect(screen.queryByText('예매처')).not.toBeInTheDocument()
+    expect(screen.queryByRole('link', { name: '인터파크' })).not.toBeInTheDocument()
+  })
+
   it('ticketLinks가 비어 있어도 캘린더 버튼 렌더링', async () => {
     mockConcert({ ticketLinks: [] })
     renderPage()
