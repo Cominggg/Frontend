@@ -1,10 +1,12 @@
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { fireEvent, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { MemoryRouter, Route, Routes, useNavigate } from 'react-router-dom'
 import ConcertDetailPage from './ConcertDetailPage'
 import { getConcert } from '@/services/concertApi'
+import useAuthStore from '@/stores/authStore'
+import { ROUTES } from '@/constants/routes'
 
 vi.mock('@/services/concertApi', () => ({
   getConcert: vi.fn(),
@@ -74,6 +76,10 @@ function renderPage(route = '/concerts/1') {
 function mockConcert(overrides = {}) {
   getConcert.mockImplementation((id) => Promise.resolve({ ...CONCERTS[id], ...overrides }))
 }
+
+beforeEach(() => {
+  useAuthStore.setState(useAuthStore.getInitialState(), true)
+})
 
 afterEach(() => {
   vi.clearAllMocks()
@@ -191,5 +197,59 @@ describe('ConcertDetailPage KOPIS 이미지 주소', () => {
 
     expect(screen.getByRole('img', { name: `${CONCERT_1.title} 공연 정보 1` }))
       .toHaveAttribute('src', 'https://kopis.or.kr/upload/pfmIntroImage/PF_PF123456_0.jpg')
+  })
+})
+
+describe('ConcertDetailPage 예매처 링크', () => {
+  it('ticketLinks가 있으면 예매처 링크가 캘린더 버튼보다 문서 순서상 앞에 위치', async () => {
+    mockConcert({ ticketLinks: [{ id: 1, label: '인터파크', url: 'https://tickets.example.com/yoasobi' }] })
+    renderPage()
+
+    const ticketLink = await screen.findByRole('link', { name: '인터파크' })
+    const calendarButton = screen.getByRole('button', { name: '내 캘린더에 추가' })
+
+    expect(ticketLink.compareDocumentPosition(calendarButton) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+  })
+
+  it('ticketLinks가 비어 있으면 예매처 미렌더링', async () => {
+    mockConcert({ ticketLinks: [] })
+    renderPage()
+
+    await screen.findByRole('heading', { name: CONCERT_1.title })
+
+    expect(screen.queryByText('예매처')).not.toBeInTheDocument()
+  })
+
+  it('ticketLinks가 비어 있어도 캘린더 버튼 렌더링', async () => {
+    mockConcert({ ticketLinks: [] })
+    renderPage()
+
+    expect(await screen.findByRole('button', { name: '내 캘린더에 추가' })).toBeInTheDocument()
+  })
+})
+
+describe('ConcertDetailPage 관리자 수정 링크', () => {
+  function loginAs(role) {
+    useAuthStore.setState({ user: { id: 1, nickname: '테스트유저', role }, accessToken: 'token', isInitialized: true })
+  }
+
+  it('ADMIN이면 관리자 수정 링크가 해당 공연 수정 경로로 연결', async () => {
+    loginAs('ADMIN')
+    mockConcert()
+    renderPage()
+
+    const editLink = await screen.findByRole('link', { name: '관리자 수정' })
+
+    expect(editLink).toHaveAttribute('href', ROUTES.ADMIN_CONCERT_EDIT(1))
+  })
+
+  it('일반 사용자면 관리자 수정 링크 미렌더링', async () => {
+    loginAs('USER')
+    mockConcert()
+    renderPage()
+
+    await screen.findByRole('heading', { name: CONCERT_1.title })
+
+    expect(screen.queryByRole('link', { name: '관리자 수정' })).not.toBeInTheDocument()
   })
 })
