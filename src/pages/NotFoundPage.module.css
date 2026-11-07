@@ -28,20 +28,7 @@
   line-height: 1;
   letter-spacing: -0.04em;
   margin: 0;
-
-  /* accent 그라디언트로 임팩트 강화 */
-  background: linear-gradient(
-    135deg,
-    var(--color-accent) 0%,
-    var(--color-accent-light) 100%
-  );
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-
-  /* 아주 미세한 텍스트 섀도우 효과 (배경-clip과 병용 불가 → filter로 대체) */
-  filter: drop-shadow(0 4px 24px var(--color-accent-shadow));
-
+  color: var(--color-text-muted);
   user-select: none;
 }
 
@@ -108,15 +95,31 @@
   outline: 2px solid var(--color-accent);
 }
 
+/* ── 공연 목록 링크 ── */
+.actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+}
+
+.concertsLink {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.concertsLink:hover {
+  color: var(--color-text);
+}
+
 /* ── 모바일 ── */
 @media (max-width: 767px) {
   .inner {
     gap: 1.25rem;
-  }
-
-  /* 줄바꿈 태그는 모바일에서 숨겨 자연스럽게 흘러가게 */
-  .br {
-    display: none;
   }
 
   .homeButton {

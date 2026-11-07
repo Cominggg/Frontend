@@ -128,16 +128,19 @@
   line-height: 1.25;
 }
 
-/* ── 공연 정보 테이블 ── */
+/* ── 공연 정보 카드 (정보 테이블 + 별점) ── */
+.infoCard {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--color-surface);
+}
+
 .infoList {
   display: flex;
   flex-direction: column;
   gap: 0;
   margin: 0;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-  background: var(--color-surface);
 }
 
 .infoRow {
@@ -187,13 +190,12 @@
   align-items: center;
   padding: 0.5rem 1rem;
   border-radius: var(--radius-md);
-  font-size: 0.875rem;
-  font-weight: 600;
+  font-size: 0.8125rem;
+  font-weight: 500;
   border: 1.5px solid var(--color-border);
   color: var(--color-text-muted);
   background: transparent;
   text-decoration: none;
-  margin-bottom: 0.5rem;
   transition: border-color 0.15s, color 0.15s;
 }
 
@@ -254,7 +256,7 @@
   align-items: center;
   gap: 0.375rem;
   padding: 0.625rem 1.25rem;
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-md);
   font-size: 0.9375rem;
   font-weight: 600;
   text-decoration: none;
@@ -280,7 +282,6 @@
   display: inline-flex;
   align-items: center;
   gap: 0.375rem;
-  align-self: flex-start;
   padding: 0.5rem 1rem;
   border-radius: var(--radius-md);
   font-size: 0.8125rem;
@@ -463,8 +464,21 @@
     font-size: 1.375rem;
   }
 
-  .inquiryBtn {
+  .inquiryBtn,
+  .adminEditBtn {
     min-height: 44px;
+  }
+
+  .calendarBtn {
+    width: 100%;
+    min-height: 44px;
+    justify-content: center;
+  }
+
+  .ticketBtn {
+    flex: 1 1 auto;
+    min-height: 44px;
+    justify-content: center;
   }
 
   .tabBtn {

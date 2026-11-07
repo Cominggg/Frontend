@@ -156,46 +156,6 @@
   align-self: start;
 }
 
-/* 인기 공연 — 빈 상태 */
-.popularEmpty {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 0.375rem;
-  padding: 3rem 1.5rem;
-  text-align: center;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-}
-
-.popularEmptyIcon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  background: var(--color-accent-dim);
-  color: var(--color-accent);
-  margin-bottom: 0.5rem;
-  opacity: 0.7;
-}
-
-.popularEmptyTitle {
-  margin: 0;
-  font-size: 0.9375rem;
-  font-weight: 700;
-  color: var(--color-text);
-}
-
-.popularEmptySub {
-  margin: 0;
-  font-size: 0.8125rem;
-  color: var(--color-text-muted);
-  line-height: 1.5;
-}
-
 /* ===========================
    예매 일정 패널 — 임박도 타임라인
    좌측 "인기 공연" 그리드 높이를 따라가지 않고(.mainZoneRight의
@@ -352,11 +312,9 @@
 }
 
 .timelineArtist {
-  font-size: 0.625rem;
+  font-size: 0.6875rem;
   font-weight: 700;
   color: var(--color-text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -402,61 +360,6 @@
 
 .timelineCtaRow:hover .timelineCtaText {
   color: var(--color-accent);
-}
-
-/* 예매 일정 없을 때 */
-.ticketingEmptyCentered {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 1rem;
-}
-
-.ticketingEmptyRing {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  border: 1.5px dashed var(--color-border);
-  color: var(--color-text-muted);
-  margin-bottom: 0.6rem;
-}
-
-.ticketingEmptyTitle {
-  margin: 0 0 0.2rem;
-  font-size: 0.8125rem;
-  font-weight: 700;
-  color: var(--color-text);
-}
-
-.ticketingEmptySub {
-  margin: 0 0 1rem;
-  font-size: 0.75rem;
-  color: var(--color-text-muted);
-  line-height: 1.5;
-}
-
-.ticketingEmptyCta {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.25rem;
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: var(--color-accent);
-  border: 1px solid var(--color-accent-border);
-  border-radius: var(--radius-full);
-  padding: 0.45rem 0.9rem;
-  text-decoration: none;
-  transition: background-color 0.15s;
-}
-
-.ticketingEmptyCta:hover {
-  background: var(--color-accent-hover-bg);
 }
 
 /* 타임라인 스켈레톤 */
@@ -613,8 +516,6 @@
   font-size: 0.6875rem;
   font-weight: 600;
   color: var(--color-text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -662,46 +563,6 @@
   box-shadow: none;
 }
 
-/* 다가오는 공연 — 빈 상태 */
-.upcomingEmpty {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 0.375rem;
-  padding: 3rem 1.5rem;
-  text-align: center;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-}
-
-.upcomingEmptyIcon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  background: var(--color-accent-dim);
-  color: var(--color-accent);
-  margin-bottom: 0.5rem;
-  opacity: 0.7;
-}
-
-.upcomingEmptyTitle {
-  margin: 0;
-  font-size: 0.9375rem;
-  font-weight: 700;
-  color: var(--color-text);
-}
-
-.upcomingEmptySub {
-  margin: 0;
-  font-size: 0.8125rem;
-  color: var(--color-text-muted);
-  line-height: 1.5;
-}
-
 /* ===========================
    followZone — 관심 아티스트 공연
    =========================== */
@@ -729,44 +590,6 @@
     grid-template-columns: repeat(2, 1fr);
     gap: 0.75rem;
   }
-}
-
-/* 새 앨범·싱글 — 빈 상태 */
-.albumEmpty {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 0.375rem;
-  padding: 3.5rem 1.5rem;
-  text-align: center;
-}
-
-.albumEmptyIcon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  background: var(--color-accent-dim);
-  color: var(--color-accent);
-  margin-bottom: 0.5rem;
-  opacity: 0.7;
-}
-
-.albumEmptyTitle {
-  margin: 0;
-  font-size: 1rem;
-  font-weight: 700;
-  color: var(--color-text);
-}
-
-.albumEmptySub {
-  margin: 0;
-  font-size: 0.875rem;
-  color: var(--color-text-muted);
-  line-height: 1.5;
 }
 
 /* ===========================
@@ -852,125 +675,6 @@
   margin: 0;
   font-size: 0.75rem;
   color: var(--color-text-muted);
-}
-
-/* 관심 아티스트 — 팔로우 없을 때 빈 상태 */
-.followEmpty {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.375rem;
-  padding: 3rem 1.5rem;
-  text-align: center;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-xl);
-}
-
-.followEmptyIcon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 52px;
-  height: 52px;
-  border-radius: 50%;
-  background: var(--color-accent-dim);
-  color: var(--color-accent);
-  margin-bottom: 0.5rem;
-  opacity: 0.75;
-}
-
-.followEmptyTitle {
-  margin: 0;
-  font-size: 1rem;
-  font-weight: 700;
-  color: var(--color-text);
-}
-
-.followEmptySub {
-  margin: 0 0 1.25rem;
-  font-size: 0.875rem;
-  color: var(--color-text-muted);
-  line-height: 1.6;
-  max-width: 380px;
-}
-
-.followEmptyLink {
-  display: inline-flex;
-  align-items: center;
-  padding: 0.5625rem 1.5rem;
-  border-radius: var(--radius-full);
-  font-size: 0.9375rem;
-  font-weight: 600;
-  color: var(--color-on-accent);
-  background: var(--color-accent);
-  text-decoration: none;
-  transition: opacity 0.15s, transform 0.15s;
-}
-
-.followEmptyLink:hover {
-  opacity: 0.88;
-  transform: translateY(-1px);
-}
-
-/* ===========================
-   관심 아티스트 — 로그인 유도
-   =========================== */
-.loginTeaser {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  padding: 2.5rem 2rem;
-  border: 1px solid var(--color-accent-border);
-  border-radius: var(--radius-xl);
-  background: var(--color-accent-dim);
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
-}
-
-.loginTeaserIcon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  background: var(--color-accent-dim);
-  color: var(--color-accent);
-  margin-bottom: 0.5rem;
-}
-
-.loginTeaserTitle {
-  margin: 0 0 0.5rem;
-  font-size: 1rem;
-  font-weight: 700;
-  color: var(--color-text);
-}
-
-.loginTeaserSub {
-  margin: 0 0 1.5rem;
-  font-size: 0.875rem;
-  color: var(--color-text-muted);
-  max-width: 420px;
-  line-height: 1.6;
-}
-
-.loginTeaserBtn {
-  display: inline-flex;
-  align-items: center;
-  padding: 0.6875rem 1.75rem;
-  border-radius: var(--radius-full);
-  font-size: 0.9375rem;
-  font-weight: 600;
-  color: var(--color-on-accent);
-  background: var(--color-accent);
-  border: none;
-  cursor: pointer;
-  transition: opacity 0.15s, transform 0.15s;
-}
-
-.loginTeaserBtn:hover {
-  opacity: 0.88;
-  transform: translateY(-1px);
 }
 
 /* ===========================
