@@ -4,6 +4,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 import PostEditor from '@/components/post/editor/PostEditor'
 import { extractEntityTags, isContentEmpty } from '@/components/post/editor/extractEntityTags'
+import { isContentJsonTooLong } from '@/components/post/editor/postContentLength'
 import BackButton from '@/components/ui/BackButton'
 import Button from '@/components/ui/Button'
 import EmptyState from '@/components/ui/EmptyState'
@@ -92,6 +93,10 @@ function PostWritePage() {
     }
     if (contentLength > POST_CONTENT_MAX_LENGTH) {
       setError(`본문은 ${POST_CONTENT_MAX_LENGTH.toLocaleString()}자를 초과할 수 없습니다.`)
+      return
+    }
+    if (isContentJsonTooLong(contentJson)) {
+      setError('본문 데이터가 너무 큽니다. 언급 카드나 서식을 줄여주세요.')
       return
     }
     if (entityTags.length > POST_ENTITY_TAG_MAX_COUNT) {
