@@ -9,12 +9,13 @@ export const MENTION_TYPE_OPTIONS = [
 
 // 즉시 실행되는 서식 커맨드 — 엔티티 타입과 달리 검색 단계로 넘어가지 않고
 // 선택과 동시에 블록 서식을 적용한다
+// 라벨은 앱 툴바와 같고, shortcut은 같은 결과를 내는 단축 입력이다
 export const FORMAT_OPTIONS = [
-  { stage: 'format', format: 'heading2', label: '제목 2', icon: 'H2' },
-  { stage: 'format', format: 'heading3', label: '제목 3', icon: 'H3' },
-  { stage: 'format', format: 'bulletList', label: '글머리 기호 목록', icon: '•' },
-  { stage: 'format', format: 'orderedList', label: '번호 매기기 목록', icon: '1.' },
-  { stage: 'format', format: 'blockquote', label: '인용', icon: '"' },
+  { stage: 'format', format: 'heading2', label: '큰 소제목', icon: 'H2', shortcut: '#' },
+  { stage: 'format', format: 'heading3', label: '작은 소제목', icon: 'H3', shortcut: '##' },
+  { stage: 'format', format: 'bulletList', label: '글머리 목록', icon: '•', shortcut: '-' },
+  { stage: 'format', format: 'orderedList', label: '번호 목록', icon: '1.', shortcut: '1.' },
+  { stage: 'format', format: 'blockquote', label: '인용', icon: '"', shortcut: '>' },
 ]
 
 const TYPE_LABEL_TO_TYPE = { 공연: 'CONCERT', 아티스트: 'ARTIST', 음악: 'RELEASE', 트랙: 'TRACK' }

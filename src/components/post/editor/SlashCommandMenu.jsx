@@ -1,9 +1,17 @@
-import { forwardRef, useImperativeHandle, useRef, useState } from 'react'
+import { Fragment, forwardRef, useImperativeHandle, useRef, useState } from 'react'
 
 import { parseSlashQuery, searchMentions } from './mentionSearch'
 import styles from './SlashCommandMenu.module.css'
 
 const SCROLL_THRESHOLD_PX = 48
+
+const GROUP_LABEL = { format: '서식', type: '언급' }
+
+function itemKey(item) {
+  if (item.stage === 'format') return item.format
+  if (item.stage === 'type') return item.type
+  return `${item.type}-${item.id}`
+}
 
 const SlashCommandMenu = forwardRef(function SlashCommandMenu({ items, query, command }, ref) {
   const [selectedIndex, setSelectedIndex] = useState(0)
@@ -82,33 +90,38 @@ const SlashCommandMenu = forwardRef(function SlashCommandMenu({ items, query, co
   return (
     <div className={styles.menu} onScroll={handleScroll}>
       {allItems.map((item, i) => (
-        <button
-          key={item.stage === 'format' ? item.format : item.stage === 'type' ? item.type : `${item.type}-${item.id}`}
-          type="button"
-          className={i === selectedIndex ? styles.itemActive : styles.item}
-          onMouseEnter={() => setSelectedIndex(i)}
-          onClick={() => selectItem(i)}
-        >
-          {item.stage === 'format' ? (
-            <>
-              <span className={styles.formatIcon}>{item.icon}</span>
-              <span className={styles.typeLabel}>{item.label}</span>
-            </>
-          ) : item.stage === 'type' ? (
-            <span className={styles.typeLabel}>{item.label}</span>
-          ) : (
-            <>
-              <span
-                className={`${styles.thumb} ${item.type === 'CONCERT' ? styles.thumbPortrait : item.type === 'ARTIST' ? styles.thumbCircle : styles.thumbSquare}`}
-                style={item.thumbnailUrl ? { backgroundImage: `url(${item.thumbnailUrl})` } : undefined}
-              />
-              <span className={styles.resultTxt}>
-                <span className={styles.resultTitle}>{item.title}</span>
-                {item.subtitle && <span className={styles.resultSub}>{item.subtitle}</span>}
-              </span>
-            </>
+        <Fragment key={itemKey(item)}>
+          {GROUP_LABEL[item.stage] && allItems[i - 1]?.stage !== item.stage && (
+            <div className={styles.group} role="presentation">{GROUP_LABEL[item.stage]}</div>
           )}
-        </button>
+          <button
+            type="button"
+            className={i === selectedIndex ? styles.itemActive : styles.item}
+            onMouseEnter={() => setSelectedIndex(i)}
+            onClick={() => selectItem(i)}
+          >
+            {item.stage === 'format' ? (
+              <>
+                <span className={styles.formatIcon}>{item.icon}</span>
+                <span className={styles.typeLabel}>{item.label}</span>
+                <kbd className={styles.shortcut}>{item.shortcut}</kbd>
+              </>
+            ) : item.stage === 'type' ? (
+              <span className={styles.typeLabel}>{item.label}</span>
+            ) : (
+              <>
+                <span
+                  className={`${styles.thumb} ${item.type === 'CONCERT' ? styles.thumbPortrait : item.type === 'ARTIST' ? styles.thumbCircle : styles.thumbSquare}`}
+                  style={item.thumbnailUrl ? { backgroundImage: `url(${item.thumbnailUrl})` } : undefined}
+                />
+                <span className={styles.resultTxt}>
+                  <span className={styles.resultTitle}>{item.title}</span>
+                  {item.subtitle && <span className={styles.resultSub}>{item.subtitle}</span>}
+                </span>
+              </>
+            )}
+          </button>
+        </Fragment>
       ))}
       {isLoadingMore && <div className={styles.loadingMore}>불러오는 중...</div>}
     </div>
