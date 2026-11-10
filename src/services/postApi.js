@@ -20,11 +20,6 @@ export async function getPopularBoardPosts(params) {
   return data
 }
 
-export async function getTrendingTags(params) {
-  const { data } = await api.get('/posts/trending-tags', { params })
-  return data
-}
-
 export async function getEntityPosts(entityType, entityId, params) {
   const { data } = await api.get(`/entities/${entityType}/${entityId}/posts`, { params })
   return data
