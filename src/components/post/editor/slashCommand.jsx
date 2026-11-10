@@ -68,7 +68,7 @@ const SlashCommand = Extension.create({
           }
 
           const mentionNode = {
-            type: props.type === 'ARTIST' ? 'entityMentionChip' : 'entityMentionCard',
+            type: 'entityMentionCard',
             attrs: {
               entityType: props.type,
               entityId: props.id,
@@ -82,11 +82,7 @@ const SlashCommand = Extension.create({
           // 블록 카드는 뒤에 빈 문단이 없으면 삽입 후 커서가 카드 자체를 선택한
           // 상태(NodeSelection)로 남아, 곧바로 타이핑하면 카드가 지워지고 텍스트로
           // 치환돼버린다 — 항상 빈 문단을 함께 넣어 텍스트 커서 위치를 보장한다
-          const content = mentionNode.type === 'entityMentionCard'
-            ? [mentionNode, { type: 'paragraph' }]
-            : [mentionNode]
-
-          editor.chain().focus().insertContentAt(range, content).run()
+          editor.chain().focus().insertContentAt(range, [mentionNode, { type: 'paragraph' }]).run()
         },
       },
     }

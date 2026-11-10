@@ -5,7 +5,7 @@ import Blockquote from '@tiptap/extension-blockquote'
 import Heading from '@tiptap/extension-heading'
 import { ListItem, OrderedList } from '@tiptap/extension-list'
 
-import { EntityMentionCard, EntityMentionChip } from './entityMentionExtensions'
+import { EntityMentionCard } from './entityMentionExtensions'
 
 // 본문 스키마 (Specification spec/client/post-content.md) — 웹·앱·BE 공통 계약.
 // 에디터와 PostContentView가 같은 목록을 써서, 허용 밖 서식은 입력도 렌더링도 되지 않게 한다
@@ -90,6 +90,5 @@ export const postContentExtensions = [
   ParagraphOnlyBlockquote,
   StartOnlyOrderedList,
   EntityMentionCard,
-  EntityMentionChip,
   PlainTextPaste,
 ]

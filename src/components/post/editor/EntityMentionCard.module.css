@@ -104,31 +104,19 @@
   border-radius: var(--radius-sm);
 }
 
-/* ── 아티스트: 원형 아바타 인라인 칩 ── */
+/* ── 아티스트: 원형 사진과 이름만 (사진 48 + 위아래 여백 12 ≈ 72) ── */
 .artist {
-  display: inline-flex;
   align-items: center;
-  gap: 0.375rem;
-  max-width: none;
-  width: auto;
-  margin: 0 0.0625rem;
-  padding: 0.125rem 0.625rem 0.125rem 0.1875rem;
-  border-radius: var(--radius-full);
-  vertical-align: middle;
-}
-
-.artist:hover {
-  border-color: var(--color-border);
-  background: var(--color-surface-hover);
+  gap: 0.75rem;
 }
 
 .artist .thumb {
-  width: 22px;
-  height: 22px;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
 }
 
 .artist .name {
-  font-size: inherit;
-  font-weight: 700;
+  font-size: 0.875rem;
+  font-weight: 600;
 }
