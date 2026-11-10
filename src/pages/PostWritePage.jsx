@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
+import CoverConcertPicker from '@/components/post/CoverConcertPicker'
 import PostEditor from '@/components/post/editor/PostEditor'
 import { extractEntityTags, isContentEmpty } from '@/components/post/editor/extractEntityTags'
 import { isContentJsonTooLong } from '@/components/post/editor/postContentLength'
@@ -21,6 +22,16 @@ import styles from './PostWritePage.module.css'
 
 const CATEGORIES = ['FREE', 'INFO', 'REVIEW']
 
+// 공연 카드가 이만큼 있어야 대표 공연을 고를 의미가 있다 (1개면 그 카드가 곧 기본 대표)
+const COVER_PICKER_MIN_CONCERTS = 2
+
+const SUBMIT_ERROR_MESSAGE = {
+  POST_CONTENT_INVALID_FORMAT: '지원하지 않는 서식이 있어요. 붙여넣은 내용을 확인해주세요.',
+  POST_CONTENT_TOO_LONG: '본문이 너무 길어요. 글자 수를 줄여주세요.',
+  POST_CONCERT_TAG_HIDDEN: '지금은 언급할 수 없는 공연이 있어요. 해당 공연 카드를 지워주세요.',
+  POST_COVER_CONCERT_NOT_TAGGED: '대표 공연이 본문에 없어요. 대표 공연을 다시 골라주세요.',
+}
+
 function PostWritePage() {
   const { id } = useParams()
   const isEditMode = Boolean(id)
@@ -32,6 +43,10 @@ function PostWritePage() {
   const [contentJson, setContentJson] = useState(null)
   const [contentLength, setContentLength] = useState(0)
   const [error, setError] = useState(null)
+  // 사용자가 직접 고른 대표 공연. 고르지 않았으면 요청에 coverConcertId를 보내지 않는다
+  // (같은 값을 다시 보내면 그사이 숨겨진 공연일 때 400이 나기 때문)
+  const [coverConcertId, setCoverConcertId] = useState(null)
+  const [coverTouched, setCoverTouched] = useState(false)
   const [formReady, setFormReady] = useState(!isEditMode)
 
   const { data: existingPost, isLoading: isLoadingPost, isError: isPostError } = useQuery({
@@ -46,9 +61,14 @@ function PostWritePage() {
     setTitle(existingPost.title)
     setCategory(existingPost.category)
     setContentJson(existingPost.content)
+    setCoverConcertId(existingPost.coverConcertId ?? null)
   }
 
   const entityTags = useMemo(() => extractEntityTags(contentJson), [contentJson])
+  const concertTags = entityTags.filter((tag) => tag.entityType === 'CONCERT')
+  // 선택한 공연 카드를 본문에서 지우면 선택도 풀린다 (기본값인 본문 첫 공연 카드로 돌아감)
+  const selectedCoverId = concertTags.some((tag) => tag.entityId === coverConcertId) ? coverConcertId : null
+  const isContentTooLong = contentLength > POST_CONTENT_MAX_LENGTH
   const backFallback = isEditMode ? ROUTES.COMMUNITY_DETAIL(postId) : ROUTES.COMMUNITY
 
   usePageMeta({
@@ -63,8 +83,8 @@ function PostWritePage() {
       queryClient.invalidateQueries({ queryKey: ['posts'] })
       navigate(ROUTES.COMMUNITY_DETAIL(newId))
     },
-    onError: () => {
-      setError('게시글 등록에 실패했습니다. 잠시 후 다시 시도해주세요.')
+    onError: (err) => {
+      setError(SUBMIT_ERROR_MESSAGE[err.response?.data?.code] ?? '게시글 등록에 실패했습니다. 잠시 후 다시 시도해주세요.')
     },
   })
 
@@ -75,8 +95,8 @@ function PostWritePage() {
       queryClient.invalidateQueries({ queryKey: ['posts'] })
       navigate(ROUTES.COMMUNITY_DETAIL(postId))
     },
-    onError: () => {
-      setError('게시글 수정에 실패했습니다. 잠시 후 다시 시도해주세요.')
+    onError: (err) => {
+      setError(SUBMIT_ERROR_MESSAGE[err.response?.data?.code] ?? '게시글 수정에 실패했습니다. 잠시 후 다시 시도해주세요.')
     },
   })
 
@@ -91,7 +111,7 @@ function PostWritePage() {
       setError('본문을 입력해주세요.')
       return
     }
-    if (contentLength > POST_CONTENT_MAX_LENGTH) {
+    if (isContentTooLong) {
       setError(`본문은 ${POST_CONTENT_MAX_LENGTH.toLocaleString()}자를 초과할 수 없습니다.`)
       return
     }
@@ -109,7 +129,8 @@ function PostWritePage() {
       category,
       title: title.trim(),
       content: contentJson,
-      entityTags: entityTags.map(({ entityType, entityId }) => ({ entityType, entityId })),
+      // entityTags는 BE가 본문 카드에서 추출한다
+      ...(coverTouched && selectedCoverId != null && { coverConcertId: selectedCoverId }),
     }
 
     if (isEditMode) {
@@ -195,7 +216,7 @@ function PostWritePage() {
 
           <div
             className={
-              contentLength > POST_CONTENT_MAX_LENGTH ? styles.contentCountOver : styles.contentCount
+              isContentTooLong ? styles.contentCountOver : styles.contentCount
             }
           >
             {contentLength.toLocaleString()} / {POST_CONTENT_MAX_LENGTH.toLocaleString()}자
@@ -227,6 +248,17 @@ function PostWritePage() {
             )}
           </div>
 
+          {concertTags.length >= COVER_PICKER_MIN_CONCERTS && (
+            <CoverConcertPicker
+              concerts={concertTags}
+              selectedId={selectedCoverId}
+              onSelect={(concertId) => {
+                setCoverConcertId(concertId)
+                setCoverTouched(true)
+              }}
+            />
+          )}
+
           {error && <p className={styles.error}>{error}</p>}
 
           <div className={styles.submitRow}>
@@ -234,7 +266,7 @@ function PostWritePage() {
               type="button"
               size="md"
               onClick={handleSubmit}
-              disabled={isSubmitting}
+              disabled={isSubmitting || isContentTooLong}
             >
               {isSubmitting ? '저장 중...' : isEditMode ? '수정 완료' : '등록'}
             </Button>
