@@ -14,7 +14,14 @@ const isHttpUrl = (url) => /^https?:\/\//i.test(url)
 
 // 중첩 목록·인용 안 목록 없음 — listItem·blockquote 안에는 paragraph만 둔다.
 // heading·언급 카드는 이 두 노드 안에 들어갈 수 없어 자연히 최상위에만 남는다
-const ParagraphOnlyListItem = ListItem.extend({ content: 'paragraph+' })
+const ParagraphOnlyListItem = ListItem.extend({
+  content: 'paragraph+',
+  // 기본 Tab(sinkListItem)은 중첩 목록을 만들려다 스키마 오류를 던지므로 아무 동작 없이 소비한다
+  // (포커스가 에디터 밖으로 빠지지 않게 true 반환)
+  addKeyboardShortcuts() {
+    return { ...this.parent?.(), Tab: () => true }
+  },
+})
 const ParagraphOnlyBlockquote = Blockquote.extend({ content: 'paragraph+' })
 
 // 번호 목록은 start만 저장한다 (type attr 제거)

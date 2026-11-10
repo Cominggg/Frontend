@@ -94,6 +94,19 @@ describe('postContentExtensions', () => {
     })
   })
 
+  it('목록 안에서 Tab을 눌러도 오류 없이 중첩 목록이 생기지 않음', () => {
+    createEditor('<ul><li><p>a</p></li><li><p>b</p></li></ul>')
+    editor.commands.setTextSelection(9)
+    const before = editor.getJSON()
+
+    const handled = editor.view.someProp('handleKeyDown', (f) =>
+      f(editor.view, new KeyboardEvent('keydown', { key: 'Tab' })),
+    )
+
+    expect(handled).toBe(true)
+    expect(editor.getJSON()).toEqual(before)
+  })
+
   it('blockquote 안 소제목·목록은 paragraph만 남음', () => {
     createEditor('<blockquote><h2>a</h2><ul><li>b</li></ul><p>c</p></blockquote>')
 
