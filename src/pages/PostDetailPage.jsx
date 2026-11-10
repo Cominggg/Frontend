@@ -3,8 +3,8 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 
 import BackButton from '@/components/ui/BackButton'
-import Button from '@/components/ui/Button'
 import EmptyState from '@/components/ui/EmptyState'
+import PostActionMenu from '@/components/post/PostActionMenu'
 import PostContentView from '@/components/post/PostContentView'
 import ReportModal from '@/components/post/ReportModal'
 import CommentSection from '@/components/post/comment/CommentSection'
@@ -127,7 +127,6 @@ function PostDetailPage() {
   }
 
   function handleDelete() {
-    if (!window.confirm('게시글을 삭제하시겠습니까?')) return
     deleteMutation.mutate()
   }
 
@@ -150,20 +149,13 @@ function PostDetailPage() {
 
           <div className={styles.authorRow}>
             <span className={styles.author}>{post.authorNickname ?? '탈퇴 회원'}</span>
-            {post.isAuthor && (
-              <div className={styles.authorActions}>
-                <Button type="button" variant="outline" size="xs" onClick={handleEdit}>수정</Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="xs"
-                  onClick={handleDelete}
-                  disabled={deleteMutation.isPending}
-                >
-                  {deleteMutation.isPending ? '삭제 중...' : '삭제'}
-                </Button>
-              </div>
-            )}
+            <PostActionMenu
+              isAuthor={post.isAuthor}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+              onReport={handleReportClick}
+              isDeleting={deleteMutation.isPending}
+            />
           </div>
 
           <PostContentView content={post.content} />
@@ -180,13 +172,6 @@ function PostDetailPage() {
                 <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3" />
               </svg>
               추천 {recommendCount.toLocaleString()}
-            </button>
-            <button
-              type="button"
-              className={styles.reportBtn}
-              onClick={handleReportClick}
-            >
-              신고
             </button>
           </div>
 
