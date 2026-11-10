@@ -1,12 +1,9 @@
 import { EditorContent, useEditor } from '@tiptap/react'
-import StarterKit from '@tiptap/starter-kit'
-import Color from '@tiptap/extension-color'
-import { TextStyle } from '@tiptap/extension-text-style'
 import Placeholder from '@tiptap/extension-placeholder'
 import CharacterCount from '@tiptap/extension-character-count'
 
-import { EntityMentionCard, EntityMentionChip } from './entityMentionExtensions'
 import EditorBubbleMenu from './EditorBubbleMenu'
+import { postContentExtensions } from './postExtensions'
 import SlashCommand from './slashCommand'
 import { POST_CONTENT_MAX_LENGTH } from '@/constants/post'
 import styles from './PostEditor.module.css'
@@ -14,11 +11,7 @@ import styles from './PostEditor.module.css'
 function PostEditor({ content, onChange, onCharacterCountChange }) {
   const editor = useEditor({
     extensions: [
-      StarterKit.configure({ link: { openOnClick: false } }),
-      TextStyle,
-      Color,
-      EntityMentionCard,
-      EntityMentionChip,
+      ...postContentExtensions,
       SlashCommand,
       Placeholder.configure({
         placeholder: ({ editor: e, node }) =>

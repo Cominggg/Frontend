@@ -6,7 +6,6 @@ import { filterTypeOptions, parseSlashQuery, searchMentions } from './mentionSea
 import SlashCommandMenu from './SlashCommandMenu'
 
 const FORMAT_APPLIERS = {
-  heading1: (chain) => chain.setNode('heading', { level: 1 }),
   heading2: (chain) => chain.setNode('heading', { level: 2 }),
   heading3: (chain) => chain.setNode('heading', { level: 3 }),
   bulletList: (chain) => chain.toggleBulletList(),

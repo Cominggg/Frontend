@@ -10,7 +10,6 @@ export const MENTION_TYPE_OPTIONS = [
 // 즉시 실행되는 서식 커맨드 — 엔티티 타입과 달리 검색 단계로 넘어가지 않고
 // 선택과 동시에 블록 서식을 적용한다
 export const FORMAT_OPTIONS = [
-  { stage: 'format', format: 'heading1', label: '제목 1', icon: 'H1' },
   { stage: 'format', format: 'heading2', label: '제목 2', icon: 'H2' },
   { stage: 'format', format: 'heading3', label: '제목 3', icon: 'H3' },
   { stage: 'format', format: 'bulletList', label: '글머리 기호 목록', icon: '•' },
