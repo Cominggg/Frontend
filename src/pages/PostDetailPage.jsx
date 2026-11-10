@@ -191,7 +191,7 @@ function PostDetailPage() {
           </div>
 
           <div className={styles.commentsWrap}>
-            <CommentSection postId={postId} commentCount={post.commentCount} />
+            <CommentSection postId={postId} commentCount={post.commentCount} isPostAuthor={post.isAuthor} />
           </div>
         </div>
 

@@ -13,6 +13,16 @@ function LikeIcon() {
   )
 }
 
+// 게시글 작성자(isPostAuthor)와 본인(isAuthor)은 뜻이 달라 두 라벨이 함께 붙을 수 있다
+function AuthorLabels({ comment }) {
+  return (
+    <>
+      {comment.isPostAuthor && <span className={styles.postAuthorLabel}>작성자</span>}
+      {comment.isAuthor && <span className={styles.meLabel}>나</span>}
+    </>
+  )
+}
+
 // isDeleted가 없는 응답(BE 배포 전)은 기존처럼 닉네임 null을 삭제로 본다
 function isCommentDeleted(comment) {
   return comment.isDeleted ?? comment.authorNickname == null
@@ -66,6 +76,7 @@ function CommentItem({ comment, isLoggedIn, onRequireLogin, onReply, onToggleLik
       <div className={styles.body}>
         <div className={styles.top}>
           <span className={styles.name}>{comment.authorNickname ?? '탈퇴 회원'}</span>
+          {!isDeleted && <AuthorLabels comment={comment} />}
           <span className={styles.time}>{formatRelativeDate(comment.createdAt)}</span>
         </div>
         <p className={isDeleted ? `${styles.text} ${styles.deletedText}` : styles.text}>{comment.content}</p>
@@ -117,6 +128,7 @@ function CommentItem({ comment, isLoggedIn, onRequireLogin, onReply, onToggleLik
                   <div className={styles.body}>
                     <div className={styles.top}>
                       <span className={styles.replyName}>{reply.authorNickname ?? '탈퇴 회원'}</span>
+                      {!replyDeleted && <AuthorLabels comment={reply} />}
                       <span className={styles.time}>{formatRelativeDate(reply.createdAt)}</span>
                     </div>
                     <p className={replyDeleted ? `${styles.text} ${styles.deletedText}` : styles.text}>
