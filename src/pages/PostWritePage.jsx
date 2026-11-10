@@ -13,7 +13,6 @@ import usePageMeta from '@/hooks/usePageMeta'
 import { createPost, getPost, updatePost } from '@/services/postApi'
 import { ROUTES } from '@/constants/routes'
 import {
-  MENTION_TYPE_LABEL,
   POST_CATEGORY_LABEL,
   POST_CONTENT_MAX_LENGTH,
   POST_ENTITY_TAG_MAX_COUNT,
@@ -21,6 +20,9 @@ import {
 import styles from './PostWritePage.module.css'
 
 const CATEGORIES = ['FREE', 'INFO', 'REVIEW']
+const TITLE_MAX_LENGTH = 100
+// 이 글자 수부터 상태줄 글자 수를 강조해 한도가 가까움을 알린다
+const CONTENT_NEAR_LIMIT_LENGTH = 9000
 
 // 공연 카드가 이만큼 있어야 대표 공연을 고를 의미가 있다 (1개면 그 카드가 곧 기본 대표)
 const COVER_PICKER_MIN_CONCERTS = 2
@@ -69,6 +71,8 @@ function PostWritePage() {
   // 선택한 공연 카드를 본문에서 지우면 선택도 풀린다 (기본값인 본문 첫 공연 카드로 돌아감)
   const selectedCoverId = concertTags.some((tag) => tag.entityId === coverConcertId) ? coverConcertId : null
   const isContentTooLong = contentLength > POST_CONTENT_MAX_LENGTH
+  const isContentNearLimit = contentLength >= CONTENT_NEAR_LIMIT_LENGTH
+  const isTagOver = entityTags.length > POST_ENTITY_TAG_MAX_COUNT
   const backFallback = isEditMode ? ROUTES.COMMUNITY_DETAIL(postId) : ROUTES.COMMUNITY
 
   usePageMeta({
@@ -119,7 +123,7 @@ function PostWritePage() {
       setError('본문 데이터가 너무 큽니다. 언급 카드나 서식을 줄여주세요.')
       return
     }
-    if (entityTags.length > POST_ENTITY_TAG_MAX_COUNT) {
+    if (isTagOver) {
       setError(`태그는 최대 ${POST_ENTITY_TAG_MAX_COUNT}개까지 추가할 수 있습니다.`)
       return
     }
@@ -166,8 +170,10 @@ function PostWritePage() {
           <div className={styles.skeletonTitle} />
           <div className={styles.skeletonBar} />
           <div className={styles.card}>
-            <div className={styles.skeletonInput} />
-            <div className={styles.skeletonBody} />
+            <div className={styles.editorBody}>
+              <div className={styles.skeletonInput} />
+              <div className={styles.skeletonBody} />
+            </div>
           </div>
         </div>
       </div>
@@ -181,96 +187,92 @@ function PostWritePage() {
 
         <div className={styles.pageHeader}>
           <h1 className={styles.pageTitle}>{isEditMode ? '게시글 수정' : '게시글 작성'}</h1>
-        </div>
-
-        <div className={styles.categoryBar} role="tablist" aria-label="카테고리 선택">
-          {CATEGORIES.map((c) => (
-            <button
-              key={c}
-              type="button"
-              role="tab"
-              aria-selected={category === c}
-              className={category === c ? styles.categoryTabActive : styles.categoryTab}
-              onClick={() => setCategory(c)}
-            >
-              {POST_CATEGORY_LABEL[c]}
-            </button>
-          ))}
+          {/* 한 가지를 고르는 입력이라 탭 대신 라디오 그룹 (방향키 이동은 브라우저 기본 동작) */}
+          <div className={styles.segment} role="radiogroup" aria-label="카테고리">
+            {CATEGORIES.map((c) => (
+              <label key={c} className={category === c ? styles.segmentItemActive : styles.segmentItem}>
+                <input
+                  type="radio"
+                  name="category"
+                  value={c}
+                  className={styles.segmentRadio}
+                  checked={category === c}
+                  onChange={() => setCategory(c)}
+                />
+                {POST_CATEGORY_LABEL[c]}
+              </label>
+            ))}
+          </div>
         </div>
 
         <div className={styles.card}>
-          <input
-            type="text"
-            className={styles.titleInput}
-            placeholder="제목을 입력하세요"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            maxLength={100}
-          />
-
-          <PostEditor
-            content={contentJson}
-            onChange={setContentJson}
-            onCharacterCountChange={setContentLength}
-          />
-
-          <div
-            className={
-              isContentTooLong ? styles.contentCountOver : styles.contentCount
-            }
-          >
-            {contentLength.toLocaleString()} / {POST_CONTENT_MAX_LENGTH.toLocaleString()}자
-          </div>
-
-          <div className={styles.tagRow}>
-            <span className={styles.tagRowLabel}>
-              태그된 항목{' '}
-              <span
-                className={
-                  entityTags.length > POST_ENTITY_TAG_MAX_COUNT
-                    ? styles.tagCountOver
-                    : styles.tagCount
-                }
-              >
-                ({entityTags.length}/{POST_ENTITY_TAG_MAX_COUNT})
-              </span>
-            </span>
-            {entityTags.length > 0 ? (
-              <div className={styles.tagList}>
-                {entityTags.map((tag) => (
-                  <span key={`${tag.entityType}:${tag.entityId}`} className={styles.tagChip}>
-                    {MENTION_TYPE_LABEL[tag.entityType]} · {tag.title}
-                  </span>
-                ))}
-              </div>
-            ) : (
-              <span className={styles.tagRowEmpty}>아직 태그한 항목이 없어요</span>
-            )}
-          </div>
-
-          {concertTags.length >= COVER_PICKER_MIN_CONCERTS && (
-            <CoverConcertPicker
-              concerts={concertTags}
-              selectedId={selectedCoverId}
-              onSelect={(concertId) => {
-                setCoverConcertId(concertId)
-                setCoverTouched(true)
-              }}
+          <div className={styles.titleRow}>
+            <input
+              type="text"
+              className={styles.titleInput}
+              placeholder="제목을 입력하세요"
+              aria-label="제목"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              maxLength={TITLE_MAX_LENGTH}
             />
-          )}
-
-          {error && <p className={styles.error}>{error}</p>}
-
-          <div className={styles.submitRow}>
-            <Button
-              type="button"
-              size="md"
-              onClick={handleSubmit}
-              disabled={isSubmitting || isContentTooLong}
-            >
-              {isSubmitting ? '저장 중...' : isEditMode ? '수정 완료' : '등록'}
-            </Button>
+            <span className={styles.titleCount} aria-hidden="true">
+              {title.length}/{TITLE_MAX_LENGTH}
+            </span>
           </div>
+
+          <div className={styles.editorBody}>
+            <PostEditor
+              content={contentJson}
+              onChange={setContentJson}
+              onCharacterCountChange={setContentLength}
+            />
+          </div>
+
+          <div className={styles.statusBar}>
+            <span className={styles.statusHint}>/ 를 입력해 서식과 공연을 넣을 수 있어요</span>
+            <span className={isTagOver ? styles.statusOver : undefined}>
+              언급 {entityTags.length}/{POST_ENTITY_TAG_MAX_COUNT}
+            </span>
+            <span
+              className={
+                isContentTooLong ? styles.statusOver : isContentNearLimit ? styles.statusNear : undefined
+              }
+            >
+              {contentLength.toLocaleString()} / {POST_CONTENT_MAX_LENGTH.toLocaleString()}자
+            </span>
+          </div>
+        </div>
+
+        {concertTags.length >= COVER_PICKER_MIN_CONCERTS && (
+          <CoverConcertPicker
+            concerts={concertTags}
+            selectedId={selectedCoverId}
+            onSelect={(concertId) => {
+              setCoverConcertId(concertId)
+              setCoverTouched(true)
+            }}
+          />
+        )}
+
+        {isContentTooLong && (
+          <p className={styles.overNotice} role="status">
+            본문이 {POST_CONTENT_MAX_LENGTH.toLocaleString()}자를 넘었어요.{' '}
+            {(contentLength - POST_CONTENT_MAX_LENGTH).toLocaleString()}자를 줄이면 등록할 수 있어요.
+          </p>
+        )}
+
+        {error && <p className={styles.error}>{error}</p>}
+
+        <div className={styles.submitRow}>
+          <Button
+            type="button"
+            size="md"
+            onClick={handleSubmit}
+            disabled={isSubmitting || isContentTooLong}
+          >
+            {isSubmitting ? '저장 중...' : isEditMode ? '수정 완료' : '등록'}
+          </Button>
         </div>
       </div>
     </div>
