@@ -17,31 +17,36 @@
   margin-bottom: 0;
 }
 
-.prose :global(h1),
+/* 본문 스키마 표시 규칙 (spec/client/post-content.md): 큰 소제목 20/700, 작은 소제목 17/700 */
 .prose :global(h2),
 .prose :global(h3) {
   margin: 1.5rem 0 0.75rem;
   font-weight: 700;
-  line-height: 1.35;
+  line-height: 1.4;
   color: var(--color-text);
 }
 
-.prose :global(h1:first-child),
 .prose :global(h2:first-child),
 .prose :global(h3:first-child) {
   margin-top: 0;
 }
 
-.prose :global(h1) {
-  font-size: 1.5rem;
-}
-
 .prose :global(h2) {
-  font-size: 1.3125rem;
+  font-size: 1.25rem;
 }
 
 .prose :global(h3) {
-  font-size: 1.1875rem;
+  font-size: 1.0625rem;
+}
+
+.prose :global(strong) {
+  font-weight: 700;
+}
+
+/* 취소선은 선만 긋고 글자색은 그대로 둔다 */
+.prose :global(s) {
+  color: inherit;
+  text-decoration-thickness: 1.5px;
 }
 
 .prose :global(ul),
@@ -71,7 +76,7 @@
   text-underline-offset: 2px;
 }
 
-/* 엔티티 멘션 카드·칩은 NodeViewWrapper로 감싸진 자체 링크 스타일을 쓰므로
+/* 엔티티 언급 카드는 NodeViewWrapper로 감싸진 자체 링크 스타일을 쓰므로
    위 범용 링크 스타일(빨간 밑줄)이 덮어쓰지 않도록 분리한다 */
 .prose :global([data-node-view-wrapper] a) {
   color: inherit;
