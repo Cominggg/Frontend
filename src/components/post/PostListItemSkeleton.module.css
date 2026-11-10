@@ -3,28 +3,28 @@
   100% { background-position: 400px 0; }
 }
 
+/* PostListItem과 같은 행 구조 */
 .row {
-  display: flex;
+  display: grid;
+  grid-template-columns: 2.75rem minmax(0, 1fr) auto;
+  grid-template-areas:
+    'category title stats'
+    'category meta stats';
   align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  padding: 1rem;
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
+  column-gap: 0.75rem;
+  row-gap: 0.5rem;
+  padding: 0.8125rem 1rem;
+  border-bottom: 1px solid var(--color-border);
 }
 
-.main {
-  display: flex;
-  align-items: center;
-  gap: 0.625rem;
-  flex: 1;
-  min-width: 0;
+.row:last-child {
+  border-bottom: none;
 }
 
-.badge,
+.category,
 .title,
-.meta {
+.meta,
+.stats {
   border-radius: var(--radius-sm);
   background: linear-gradient(
     90deg,
@@ -36,31 +36,54 @@
   animation: shimmer 1.4s infinite linear;
 }
 
-.badge {
-  width: 40px;
-  height: 18px;
-  flex-shrink: 0;
+.category {
+  grid-area: category;
+  width: 28px;
+  height: 14px;
 }
 
 .title {
+  grid-area: title;
   width: 55%;
   height: 15px;
 }
 
 .meta {
+  grid-area: meta;
   width: 140px;
-  height: 13px;
-  flex-shrink: 0;
+  height: 12px;
+}
+
+.stats {
+  grid-area: stats;
+  width: 48px;
+  height: 28px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .category,
+  .title,
+  .meta,
+  .stats {
+    animation: none;
+  }
 }
 
 @media (max-width: 767px) {
   .row {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.625rem;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-areas:
+      'title title title'
+      'category meta stats';
+    column-gap: 0.5rem;
+    padding: 0.75rem 0.875rem;
   }
 
-  .meta {
-    align-self: flex-start;
+  .title {
+    width: 85%;
+  }
+
+  .stats {
+    height: 12px;
   }
 }
