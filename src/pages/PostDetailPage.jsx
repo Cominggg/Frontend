@@ -72,11 +72,11 @@ function PostDetailPage() {
       <div className={styles.page}>
         <div className={styles.inner}>
           <BackButton fallback={ROUTES.COMMUNITY} />
-          <div className={styles.card}>
+          <article className={styles.article}>
             <div className={styles.skeletonMeta} />
             <div className={styles.skeletonTitle} />
             <div className={styles.skeletonBody} />
-          </div>
+          </article>
         </div>
       </div>
     )
@@ -135,7 +135,7 @@ function PostDetailPage() {
       <div className={styles.inner}>
         <BackButton fallback={ROUTES.COMMUNITY} />
 
-        <div className={styles.card}>
+        <article className={styles.article}>
           <div className={styles.meta}>
             <span className={styles.badge}>
               {POST_CATEGORY_LABEL[post.category]}
@@ -178,7 +178,7 @@ function PostDetailPage() {
           <div className={styles.commentsWrap}>
             <CommentSection postId={postId} commentCount={post.commentCount} isPostAuthor={post.isAuthor} />
           </div>
-        </div>
+        </article>
 
       </div>
 

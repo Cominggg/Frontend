@@ -1,5 +1,4 @@
 .prose {
-  max-width: 42rem;
   font-size: 0.9375rem;
   line-height: 1.8;
   color: var(--color-text);
@@ -15,6 +14,11 @@
 
 .prose :global(p:last-child) {
   margin-bottom: 0;
+}
+
+/* 언급 카드 뒤에 함께 저장되는 빈 문단(편집 시 커서 자리)은 읽기 화면에서 한 줄을 차지하지 않게 숨긴다 */
+.prose :global(p:has(> .ProseMirror-trailingBreak:only-child)) {
+  display: none;
 }
 
 /* 본문 스키마 표시 규칙 (spec/client/post-content.md): 큰 소제목 20/700, 작은 소제목 17/700 */
