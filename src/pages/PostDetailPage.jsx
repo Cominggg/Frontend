@@ -60,6 +60,7 @@ function PostDetailPage() {
       navigate(ROUTES.COMMUNITY)
     },
   })
+  const deleteError = deleteMutation.isError ? '삭제하지 못했어요. 잠시 후 다시 시도해주세요.' : null
 
   usePageMeta({
     title: post ? `${post.title} - 커밍` : undefined,
@@ -155,6 +156,7 @@ function PostDetailPage() {
               onDelete={handleDelete}
               onReport={handleReportClick}
               isDeleting={deleteMutation.isPending}
+              deleteError={deleteError}
             />
           </div>
 

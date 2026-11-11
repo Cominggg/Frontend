@@ -4,6 +4,7 @@
 }
 
 .trigger {
+  position: relative;
   display: grid;
   place-items: center;
   width: 32px;
@@ -12,6 +13,13 @@
   border-radius: var(--radius-md);
   background: var(--color-surface);
   color: var(--color-text-muted);
+}
+
+/* 보이는 크기는 32px로 두고 누를 수 있는 영역만 44px로 넓힌다 */
+.trigger::before {
+  content: '';
+  position: absolute;
+  inset: -6px;
 }
 
 .trigger:hover {
@@ -73,6 +81,12 @@
   white-space: nowrap;
 }
 
+.confirmError {
+  margin: 0 0 0.5rem;
+  font-size: 0.75rem;
+  color: var(--color-destructive);
+}
+
 .confirmActions {
   display: flex;
   gap: 0.375rem;
@@ -99,6 +113,7 @@
   color: var(--color-on-accent);
 }
 
+.confirmCancel:disabled,
 .confirmDelete:disabled {
   opacity: 0.6;
 }

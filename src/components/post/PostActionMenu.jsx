@@ -1,13 +1,16 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useId, useRef, useState } from 'react'
 
 import styles from './PostActionMenu.module.css'
 
 // 게시글 수정·삭제·신고를 작성자 줄의 ⋯ 메뉴 하나로 모은다.
-// 작성자에게는 수정·삭제, 그 외에는 신고만 보이고, 삭제는 메뉴 안에서 한 번 더 확인한다
-function PostActionMenu({ isAuthor, onEdit, onDelete, onReport, isDeleting = false }) {
+// 작성자에게는 수정·삭제, 그 외에는 신고만 보이고, 삭제는 메뉴 안에서 한 번 더 확인한다.
+// 항목이 1~2개뿐이고 삭제 확인 단계가 섞여 있어 ARIA menu(방향키 이동) 대신 펼침 버튼 + 버튼 묶음으로 둔다
+function PostActionMenu({ isAuthor, onEdit, onDelete, onReport, isDeleting = false, deleteError = null }) {
   const [isOpen, setIsOpen] = useState(false)
   const [isConfirmingDelete, setIsConfirmingDelete] = useState(false)
   const wrapperRef = useRef(null)
+  const triggerRef = useRef(null)
+  const panelId = useId()
 
   function close() {
     setIsOpen(false)
@@ -20,7 +23,9 @@ function PostActionMenu({ isAuthor, onEdit, onDelete, onReport, isDeleting = fal
       if (!wrapperRef.current?.contains(e.target)) close()
     }
     function handleEscape(e) {
-      if (e.key === 'Escape') close()
+      if (e.key !== 'Escape') return
+      close()
+      triggerRef.current?.focus()
     }
     document.addEventListener('mousedown', handleClickOutside)
     document.addEventListener('keydown', handleEscape)
@@ -38,11 +43,12 @@ function PostActionMenu({ isAuthor, onEdit, onDelete, onReport, isDeleting = fal
   return (
     <div className={styles.wrapper} ref={wrapperRef}>
       <button
+        ref={triggerRef}
         type="button"
         className={styles.trigger}
         onClick={() => (isOpen ? close() : setIsOpen(true))}
-        aria-haspopup="menu"
         aria-expanded={isOpen}
+        aria-controls={panelId}
         aria-label="게시글 메뉴"
       >
         <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -53,23 +59,18 @@ function PostActionMenu({ isAuthor, onEdit, onDelete, onReport, isDeleting = fal
       </button>
 
       {isOpen && (
-        <div className={styles.menu} role="menu">
+        <div id={panelId} className={styles.menu} role="group" aria-label="게시글 작업">
           {!isAuthor && (
-            <button type="button" role="menuitem" className={styles.item} onClick={() => select(onReport)}>
+            <button type="button" className={styles.item} onClick={() => select(onReport)}>
               신고
             </button>
           )}
           {isAuthor && !isConfirmingDelete && (
             <>
-              <button type="button" role="menuitem" className={styles.item} onClick={() => select(onEdit)}>
+              <button type="button" className={styles.item} onClick={() => select(onEdit)}>
                 수정
               </button>
-              <button
-                type="button"
-                role="menuitem"
-                className={styles.dangerItem}
-                onClick={() => setIsConfirmingDelete(true)}
-              >
+              <button type="button" className={styles.dangerItem} onClick={() => setIsConfirmingDelete(true)}>
                 삭제
               </button>
             </>
@@ -77,17 +78,23 @@ function PostActionMenu({ isAuthor, onEdit, onDelete, onReport, isDeleting = fal
           {isAuthor && isConfirmingDelete && (
             <div className={styles.confirm}>
               <p className={styles.confirmText}>게시글을 삭제할까요?</p>
+              {deleteError && (
+                <p className={styles.confirmError} role="alert">
+                  {deleteError}
+                </p>
+              )}
               <div className={styles.confirmActions}>
-                <button type="button" className={styles.confirmCancel} onClick={() => setIsConfirmingDelete(false)}>
-                  취소
-                </button>
                 <button
                   type="button"
-                  className={styles.confirmDelete}
-                  onClick={() => select(onDelete)}
+                  className={styles.confirmCancel}
+                  onClick={() => setIsConfirmingDelete(false)}
                   disabled={isDeleting}
                 >
-                  삭제
+                  취소
+                </button>
+                {/* 요청이 끝날 때까지 메뉴를 열어 두어 진행·실패를 이 자리에서 보여준다 (성공하면 페이지가 이동) */}
+                <button type="button" className={styles.confirmDelete} onClick={onDelete} disabled={isDeleting}>
+                  {isDeleting ? '삭제 중...' : '삭제'}
                 </button>
               </div>
             </div>
