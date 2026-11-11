@@ -14,10 +14,12 @@ vi.mock('@/services/postApi', () => ({
 vi.mock('@/utils/analytics', () => ({ trackEvent: vi.fn() }))
 
 // Tiptap 에디터 대신 최신 props를 보관해 테스트가 onChange·onCharacterCountChange를 직접 호출한다
-const editor = vi.hoisted(() => ({ props: null }))
+// ref에는 insertTrigger만 노출해 힌트 버튼 호출을 검증한다 (React 19는 ref를 props로 전달)
+const editor = vi.hoisted(() => ({ props: null, insertTrigger: vi.fn() }))
 vi.mock('@/components/post/editor/PostEditor', () => ({
   default: (props) => {
     editor.props = props
+    if (props.ref) props.ref.current = { insertTrigger: editor.insertTrigger }
     return null
   },
 }))
@@ -178,6 +180,26 @@ describe('PostWritePage', () => {
       expect(updatePost).toHaveBeenCalledTimes(1)
       expect(updatePost.mock.calls[0][0]).toBe(5)
       expect(updatePost.mock.calls[0][1]).not.toHaveProperty('coverConcertId')
+    })
+  })
+
+  describe('힌트 버튼', () => {
+    it.each(['/ 서식', '@ 태그'])('%s 버튼 렌더', (name) => {
+      renderPage()
+
+      expect(screen.getByRole('button', { name })).toBeInTheDocument()
+    })
+
+    it.each([
+      ['/ 서식', '/'],
+      ['@ 태그', '@'],
+    ])('%s 버튼을 클릭하면 insertTrigger(%s) 호출', async (name, char) => {
+      const user = userEvent.setup()
+      renderPage()
+
+      await user.click(screen.getByRole('button', { name }))
+
+      expect(editor.insertTrigger).toHaveBeenCalledWith(char)
     })
   })
 })

@@ -1,54 +1,76 @@
 import { searchMentions as apiSearchMentions } from '@/services/postApi'
+import { POST_ENTITY_TAG_MAX_COUNT } from '@/constants/post'
+import { entityTagKey } from './extractEntityTags'
 
-export const MENTION_TYPE_OPTIONS = [
-  { stage: 'type', type: 'CONCERT', label: '공연' },
-  { stage: 'type', type: 'ARTIST', label: '아티스트' },
-  { stage: 'type', type: 'RELEASE', label: '음악' },
-  { stage: 'type', type: 'TRACK', label: '트랙' },
-]
-
-// 즉시 실행되는 서식 커맨드 — 엔티티 타입과 달리 검색 단계로 넘어가지 않고
-// 선택과 동시에 블록 서식을 적용한다
+// '/' 메뉴의 서식 커맨드 — 선택과 동시에 블록 서식을 적용한다
 // 라벨은 앱 툴바와 같고, shortcut은 같은 결과를 내는 단축 입력이다
 export const FORMAT_OPTIONS = [
-  { stage: 'format', format: 'heading2', label: '큰 소제목', icon: 'H2', shortcut: '#' },
-  { stage: 'format', format: 'heading3', label: '작은 소제목', icon: 'H3', shortcut: '##' },
-  { stage: 'format', format: 'bulletList', label: '글머리 목록', icon: '•', shortcut: '-' },
-  { stage: 'format', format: 'orderedList', label: '번호 목록', icon: '1.', shortcut: '1.' },
-  { stage: 'format', format: 'blockquote', label: '인용', icon: '"', shortcut: '>' },
+  { format: 'heading2', label: '큰 소제목', icon: 'H2', shortcut: '#' },
+  { format: 'heading3', label: '작은 소제목', icon: 'H3', shortcut: '##' },
+  { format: 'bulletList', label: '글머리 목록', icon: '•', shortcut: '-' },
+  { format: 'orderedList', label: '번호 목록', icon: '1.', shortcut: '1.' },
+  { format: 'blockquote', label: '인용', icon: '"', shortcut: '>' },
 ]
 
-const TYPE_LABEL_TO_TYPE = { 공연: 'CONCERT', 아티스트: 'ARTIST', 음악: 'RELEASE', 트랙: 'TRACK' }
-
-// '/공연 vaundy' 형태의 슬래시 커맨드 쿼리를 단계별로 해석한다
-// 1단계(type): 타입/서식 선택 전 — 입력값으로 목록을 좁혀 보여준다
-// 2단계(search): '{엔티티 타입} ' 뒤로 검색어를 입력하면 해당 타입 내에서 검색한다
-export function parseSlashQuery(query) {
-  const spaceIdx = query.indexOf(' ')
-  if (spaceIdx === -1) return { stage: 'type', typeQuery: query }
-
-  const typeToken = query.slice(0, spaceIdx)
-  const type = TYPE_LABEL_TO_TYPE[typeToken]
-  if (!type) return { stage: 'type', typeQuery: query }
-
-  return { stage: 'search', type, searchTerm: query.slice(spaceIdx + 1) }
+export function filterFormatOptions(query) {
+  if (!query) return FORMAT_OPTIONS
+  return FORMAT_OPTIONS.filter((o) => o.label.includes(query))
 }
 
-export function filterTypeOptions(typeQuery) {
-  const options = [...FORMAT_OPTIONS, ...MENTION_TYPE_OPTIONS]
-  if (!typeQuery) return options
-  return options.filter((o) => o.label.includes(typeQuery))
-}
+// 후보 정렬의 동순위 순서이자 '더 찾기' 탭 순서
+export const MENTION_TYPES = ['CONCERT', 'ARTIST', 'RELEASE', 'TRACK']
 
 const MENTION_SEARCH_LIMIT = 20
+const TAG_QUERY_MAX_LENGTH = 30
+const SUGGESTION_COUNT = 5
 
-// items 배열에 hasMore를 얹어 반환한다 — Tiptap Suggestion의 items()는 배열을 기대하므로
-// 페이지 메타(hasMore)는 배열 자체의 부가 속성으로 실어 SlashCommandMenu의 무한 스크롤에 전달한다
+// '@검색어'의 검색어가 검색할 만한지 (앱 PostEditorText.tagQuery()와 같은 규칙)
+// 한 글자 이상, 첫 글자는 공백이 아님, 공백 두 칸이 들어가면 끝난 것으로 봄, 30자까지
+export function isTagQuery(query) {
+  return (
+    query.length > 0 &&
+    query.length <= TAG_QUERY_MAX_LENGTH &&
+    !/^\s/.test(query) &&
+    !query.includes('  ')
+  )
+}
+
+// items 배열에 hasMore를 얹어 반환한다 — 페이지 메타는 배열의 부가 속성으로 실어 무한 스크롤에 전달한다
 export async function searchMentions(type, term, page = 0) {
   const q = term.trim()
   if (!q) return []
   const { content, totalPages } = await apiSearchMentions({ type, q, limit: MENTION_SEARCH_LIMIT, page })
-  const items = content.map((item) => ({ stage: 'search', ...item }))
-  items.hasMore = page + 1 < totalPages
-  return items
+  // 응답 배열을 건드리지 않게 복사본에 얹는다
+  return Object.assign([...content], { hasMore: page + 1 < totalPages })
+}
+
+// 언급이 한도만큼 차 있으면 이미 넣은 엔티티만 후보로 남긴다.
+// 남은 게 없는데 원래 후보가 있었다면 limitReached로 한도 안내를 띄우게 한다
+export function applyTagLimit(results, tags) {
+  if (tags.length < POST_ENTITY_TAG_MAX_COUNT) return { results, limitReached: false }
+  const tagged = new Set(tags.map((t) => entityTagKey(t.entityType, t.entityId)))
+  const usable = results.filter((r) => tagged.has(entityTagKey(r.type, r.id)))
+  return { results: usable, limitReached: usable.length === 0 && results.length > 0 }
+}
+
+// '@검색어' 후보 — 네 종류를 따로 불러 합친다 (통합 검색 API가 생기면 한 번으로 바꾼다).
+// 이름이 검색어로 시작하는 것을 먼저, 같으면 공연·아티스트·음악·트랙 순서로 5개까지.
+// 일부 종류만 실패하면 성공한 것만 보여 주고, 모두 실패했을 때만 failed로 알린다
+export async function searchTagSuggestions(query, tags) {
+  const q = query.trim()
+  const settled = await Promise.allSettled(
+    MENTION_TYPES.map((type) => apiSearchMentions({ type, q, limit: SUGGESTION_COUNT, page: 0 })),
+  )
+  if (settled.every((s) => s.status === 'rejected')) {
+    return Object.assign([], { failed: true, limitReached: false })
+  }
+
+  const lower = q.toLowerCase()
+  const found = settled.flatMap((s) => (s.status === 'fulfilled' ? s.value.content : []))
+  // sort는 안정 정렬이라 같은 순위 안에서는 MENTION_TYPES 순서가 유지된다
+  const ranked = found.sort(
+    (a, b) => Number(!a.title.toLowerCase().startsWith(lower)) - Number(!b.title.toLowerCase().startsWith(lower)),
+  )
+  const { results, limitReached } = applyTagLimit(ranked, tags)
+  return Object.assign(results.slice(0, SUGGESTION_COUNT), { failed: false, limitReached })
 }

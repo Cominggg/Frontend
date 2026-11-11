@@ -1,74 +1,30 @@
-import { Fragment, forwardRef, useImperativeHandle, useRef, useState } from 'react'
+import { forwardRef, useImperativeHandle, useState } from 'react'
 
-import { parseSlashQuery, searchMentions } from './mentionSearch'
 import styles from './SlashCommandMenu.module.css'
 
-const SCROLL_THRESHOLD_PX = 48
-
-const GROUP_LABEL = { format: '서식', type: '언급' }
-
-function itemKey(item) {
-  if (item.stage === 'format') return item.format
-  if (item.stage === 'type') return item.type
-  return `${item.type}-${item.id}`
-}
-
-const SlashCommandMenu = forwardRef(function SlashCommandMenu({ items, query, command }, ref) {
+const SlashCommandMenu = forwardRef(function SlashCommandMenu({ items, command }, ref) {
   const [selectedIndex, setSelectedIndex] = useState(0)
   const [prevItems, setPrevItems] = useState(items)
-  const [allItems, setAllItems] = useState(items)
-  const [hasMore, setHasMore] = useState(items.hasMore ?? false)
-  const [page, setPage] = useState(0)
-  const [isLoadingMore, setIsLoadingMore] = useState(false)
-  const loadingMoreRef = useRef(false)
-  const queryRef = useRef(query)
-  queryRef.current = query
 
   if (items !== prevItems) {
     setPrevItems(items)
     setSelectedIndex(0)
-    setAllItems(items)
-    setHasMore(items.hasMore ?? false)
-    setPage(0)
   }
 
   function selectItem(index) {
-    const item = allItems[index]
+    const item = items[index]
     if (item) command(item)
-  }
-
-  async function handleScroll(event) {
-    if (!hasMore || loadingMoreRef.current) return
-    const { scrollTop, scrollHeight, clientHeight } = event.currentTarget
-    if (scrollHeight - scrollTop - clientHeight > SCROLL_THRESHOLD_PX) return
-
-    const parsed = parseSlashQuery(query)
-    if (parsed.stage !== 'search') return
-
-    loadingMoreRef.current = true
-    setIsLoadingMore(true)
-    try {
-      const nextPage = page + 1
-      const more = await searchMentions(parsed.type, parsed.searchTerm, nextPage)
-      if (queryRef.current !== query) return
-      setAllItems((prev) => [...prev, ...more])
-      setHasMore(more.hasMore ?? false)
-      setPage(nextPage)
-    } finally {
-      setIsLoadingMore(false)
-      loadingMoreRef.current = false
-    }
   }
 
   useImperativeHandle(ref, () => ({
     onKeyDown({ event }) {
-      if (allItems.length === 0) return false
+      if (items.length === 0) return false
       if (event.key === 'ArrowUp') {
-        setSelectedIndex((i) => (i + allItems.length - 1) % allItems.length)
+        setSelectedIndex((i) => (i + items.length - 1) % items.length)
         return true
       }
       if (event.key === 'ArrowDown') {
-        setSelectedIndex((i) => (i + 1) % allItems.length)
+        setSelectedIndex((i) => (i + 1) % items.length)
         return true
       }
       if (event.key === 'Enter') {
@@ -79,51 +35,30 @@ const SlashCommandMenu = forwardRef(function SlashCommandMenu({ items, query, co
     },
   }))
 
-  if (allItems.length === 0) {
+  if (items.length === 0) {
     return (
       <div className={styles.menu}>
-        <div className={styles.empty}>검색 결과가 없습니다</div>
+        <div className={styles.empty}>맞는 서식이 없어요</div>
       </div>
     )
   }
 
   return (
-    <div className={styles.menu} onScroll={handleScroll}>
-      {allItems.map((item, i) => (
-        <Fragment key={itemKey(item)}>
-          {GROUP_LABEL[item.stage] && allItems[i - 1]?.stage !== item.stage && (
-            <div className={styles.group} role="presentation">{GROUP_LABEL[item.stage]}</div>
-          )}
-          <button
-            type="button"
-            className={i === selectedIndex ? styles.itemActive : styles.item}
-            onMouseEnter={() => setSelectedIndex(i)}
-            onClick={() => selectItem(i)}
-          >
-            {item.stage === 'format' ? (
-              <>
-                <span className={styles.formatIcon}>{item.icon}</span>
-                <span className={styles.typeLabel}>{item.label}</span>
-                <kbd className={styles.shortcut}>{item.shortcut}</kbd>
-              </>
-            ) : item.stage === 'type' ? (
-              <span className={styles.typeLabel}>{item.label}</span>
-            ) : (
-              <>
-                <span
-                  className={`${styles.thumb} ${item.type === 'CONCERT' ? styles.thumbPortrait : item.type === 'ARTIST' ? styles.thumbCircle : styles.thumbSquare}`}
-                  style={item.thumbnailUrl ? { backgroundImage: `url(${item.thumbnailUrl})` } : undefined}
-                />
-                <span className={styles.resultTxt}>
-                  <span className={styles.resultTitle}>{item.title}</span>
-                  {item.subtitle && <span className={styles.resultSub}>{item.subtitle}</span>}
-                </span>
-              </>
-            )}
-          </button>
-        </Fragment>
+    <div className={styles.menu}>
+      <div className={styles.group} role="presentation">서식</div>
+      {items.map((item, i) => (
+        <button
+          key={item.format}
+          type="button"
+          className={i === selectedIndex ? styles.itemActive : styles.item}
+          onMouseEnter={() => setSelectedIndex(i)}
+          onClick={() => selectItem(i)}
+        >
+          <span className={styles.formatIcon}>{item.icon}</span>
+          <span className={styles.typeLabel}>{item.label}</span>
+          <kbd className={styles.shortcut}>{item.shortcut}</kbd>
+        </button>
       ))}
-      {isLoadingMore && <div className={styles.loadingMore}>불러오는 중...</div>}
     </div>
   )
 })

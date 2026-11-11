@@ -86,3 +86,10 @@
   color: var(--color-text-muted);
   pointer-events: none;
 }
+
+/* 치고 있는 '@검색어' — 태그 후보와 이어진 입력임을 알린다 */
+.prose :global(.mention-tag-query) {
+  border-radius: var(--radius-xs);
+  background: var(--color-accent-dim);
+  color: var(--color-accent);
+}

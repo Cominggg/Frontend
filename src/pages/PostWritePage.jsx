@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
@@ -50,6 +50,7 @@ function PostWritePage() {
   const [coverConcertId, setCoverConcertId] = useState(null)
   const [coverTouched, setCoverTouched] = useState(false)
   const [formReady, setFormReady] = useState(!isEditMode)
+  const editorRef = useRef(null)
 
   const { data: existingPost, isLoading: isLoadingPost, isError: isPostError } = useQuery({
     queryKey: ['post', postId],
@@ -223,6 +224,7 @@ function PostWritePage() {
 
           <div className={styles.editorBody}>
             <PostEditor
+              ref={editorRef}
               content={contentJson}
               onChange={setContentJson}
               onCharacterCountChange={setContentLength}
@@ -230,7 +232,25 @@ function PostWritePage() {
           </div>
 
           <div className={styles.statusBar}>
-            <span className={styles.statusHint}>/ 를 입력해 서식과 공연을 넣을 수 있어요</span>
+            {/* 누르면 커서 자리에 '/'·'@'를 넣어 메뉴를 연다 (마우스 사용자용 툴바 역할) */}
+            <span className={styles.statusHint}>
+              <button
+                type="button"
+                className={styles.hintButton}
+                onMouseDown={(e) => e.preventDefault()}
+                onClick={() => editorRef.current?.insertTrigger('/')}
+              >
+                <kbd className={styles.hintKey}>/</kbd> 서식
+              </button>
+              <button
+                type="button"
+                className={styles.hintButton}
+                onMouseDown={(e) => e.preventDefault()}
+                onClick={() => editorRef.current?.insertTrigger('@')}
+              >
+                <kbd className={styles.hintKey}>@</kbd> 태그
+              </button>
+            </span>
             <span className={isTagOver ? styles.statusOver : undefined}>
               언급 {entityTags.length}/{POST_ENTITY_TAG_MAX_COUNT}
             </span>
