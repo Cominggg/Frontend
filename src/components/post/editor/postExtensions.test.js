@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it } from 'vitest'
 import { Editor } from '@tiptap/core'
+import { DOMParser } from '@tiptap/pm/model'
 import { postContentExtensions } from './postExtensions'
 
 let editor
@@ -185,6 +186,55 @@ describe('postContentExtensions', () => {
       const handled = paste(editor, '<h2 data-pm-slice="0 0 []">x</h2>', 'x')
 
       expect(handled).toBeFalsy()
+    })
+  })
+  describe('언급 카드 HTML 왕복', () => {
+    function roundTripCardAttrs(attrs) {
+      createEditor({ type: 'doc', content: [{ type: 'entityMentionCard', attrs }] })
+      const div = document.createElement('div')
+      div.innerHTML = editor.getHTML()
+
+      const doc = DOMParser.fromSchema(editor.schema).parse(div).toJSON()
+      return doc.content.find((node) => node.type === 'entityMentionCard').attrs
+    }
+
+    it('숫자 모양 title·subtitle이면 문자열 유지, entityId는 숫자 유지', () => {
+      const attrs = roundTripCardAttrs({
+        entityType: 'RELEASE',
+        entityId: 5,
+        title: '1989',
+        subtitle: '2024',
+        thumbnailUrl: null,
+        releaseGroupId: null,
+      })
+
+      expect(attrs).toMatchObject({ entityType: 'RELEASE', entityId: 5, title: '1989', subtitle: '2024' })
+    })
+
+    it('TRACK 카드면 releaseGroupId는 숫자, thumbnailUrl은 문자열로 복원', () => {
+      const attrs = roundTripCardAttrs({
+        entityType: 'TRACK',
+        entityId: 7,
+        title: '夜に駆ける',
+        subtitle: 'YOASOBI',
+        thumbnailUrl: 'https://img/1.jpg',
+        releaseGroupId: 42,
+      })
+
+      expect(attrs).toMatchObject({ entityType: 'TRACK', entityId: 7, releaseGroupId: 42, thumbnailUrl: 'https://img/1.jpg' })
+    })
+
+    it('subtitle·thumbnailUrl·releaseGroupId가 null이면 null 유지', () => {
+      const attrs = roundTripCardAttrs({
+        entityType: 'ARTIST',
+        entityId: 1,
+        title: 'YOASOBI',
+        subtitle: null,
+        thumbnailUrl: null,
+        releaseGroupId: null,
+      })
+
+      expect(attrs).toMatchObject({ subtitle: null, thumbnailUrl: null, releaseGroupId: null })
     })
   })
 })
