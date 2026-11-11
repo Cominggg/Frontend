@@ -2,12 +2,22 @@ import { useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 
+import PostEditor from '@/components/post/editor/PostEditor'
+import { isContentEmpty } from '@/components/post/editor/extractEntityTags'
+import { isContentJsonTooLong } from '@/components/post/editor/postContentLength'
+import { POST_CONTENT_MAX_LENGTH } from '@/constants/post'
 import { ROUTES } from '@/constants/routes'
 import { getAdminNotice, createNotice, updateNotice } from '@/services/adminApi'
 import styles from './AdminFormPage.module.css'
 import noticeStyles from './AdminNoticeFormPage.module.css'
 
-const EMPTY_FORM = { title: '', content: '', active: true }
+// content는 게시글과 같은 Tiptap JSON (spec/client/post-content.md)
+const EMPTY_FORM = { title: '', content: null, active: true }
+
+const SUBMIT_ERROR_MESSAGE = {
+  CONTENT_INVALID_FORMAT: '지원하지 않는 서식이 있어요. 붙여넣은 내용을 확인해주세요.',
+  CONTENT_TOO_LONG: '본문이 너무 길어요. 글자 수를 줄여주세요.',
+}
 
 function AdminNoticeFormPage() {
   const { id } = useParams()
@@ -18,6 +28,7 @@ function AdminNoticeFormPage() {
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
   const [savedMsg, setSavedMsg] = useState('')
+  const [contentLength, setContentLength] = useState(0)
 
   const { data: notice, isLoading: loadingNotice, isError: noticeLoadFailed } = useQuery({
     queryKey: ['admin', 'notice', id],
@@ -42,6 +53,14 @@ function AdminNoticeFormPage() {
 
   async function handleSubmit(e) {
     e.preventDefault()
+    if (contentLength > POST_CONTENT_MAX_LENGTH) {
+      setError(`내용은 ${POST_CONTENT_MAX_LENGTH.toLocaleString()}자를 넘을 수 없습니다.`)
+      return
+    }
+    if (isContentJsonTooLong(form.content)) {
+      setError('내용 데이터가 너무 큽니다. 언급 카드나 서식을 줄여주세요.')
+      return
+    }
     setSaving(true)
     setError('')
     try {
@@ -52,8 +71,8 @@ function AdminNoticeFormPage() {
       }
       setSavedMsg('저장되었습니다.')
       setTimeout(() => navigate(ROUTES.ADMIN_NOTICES), 600)
-    } catch {
-      setError('저장에 실패했습니다. 다시 시도해주세요.')
+    } catch (err) {
+      setError(SUBMIT_ERROR_MESSAGE[err.response?.data?.code] ?? '저장에 실패했습니다. 다시 시도해주세요.')
     } finally {
       setSaving(false)
     }
@@ -69,7 +88,7 @@ function AdminNoticeFormPage() {
           공지사항 관리
         </Link>
         <h1 className={styles.pageTitle}>{isEdit ? '공지 수정' : '새 공지 작성'}</h1>
-        <p className={styles.pageDesc}>공지 내용은 일반 텍스트로 저장됩니다.</p>
+        <p className={styles.pageDesc}>게시글과 같은 서식과 공연·아티스트·음악 카드를 쓸 수 있습니다.</p>
       </div>
 
       <form onSubmit={handleSubmit} className={styles.form}>
@@ -86,17 +105,25 @@ function AdminNoticeFormPage() {
             />
           </label>
 
-          <label className={styles.field} style={{ marginTop: '1rem' }}>
-            <span className={styles.fieldLabel}>내용 <span className={styles.required}>*</span></span>
-            <textarea
-              className={styles.textarea}
-              rows={10}
-              value={form.content}
-              onChange={(e) => setField('content', e.target.value)}
-              placeholder="공지 내용을 입력하세요"
-              disabled={loadingNotice}
-            />
-          </label>
+          <div className={styles.field} style={{ marginTop: '1rem' }}>
+            <span className={styles.fieldLabel} id="notice-content-label">내용 <span className={styles.required}>*</span></span>
+            {/* 에디터는 처음 받은 content로만 초기화되므로, 수정 모드는 조회가 끝난 뒤에 띄운다 */}
+            {isEdit && !filledNoticeId ? (
+              <div className={noticeStyles.editorPlaceholder} aria-busy="true" />
+            ) : (
+              <div className={noticeStyles.editor} role="group" aria-labelledby="notice-content-label">
+                <PostEditor
+                  content={form.content}
+                  onChange={(json) => setField('content', json)}
+                  onCharacterCountChange={setContentLength}
+                  tagLimit={false}
+                />
+                <span className={contentLength > POST_CONTENT_MAX_LENGTH ? noticeStyles.countOver : noticeStyles.count}>
+                  {contentLength.toLocaleString()} / {POST_CONTENT_MAX_LENGTH.toLocaleString()}자
+                </span>
+              </div>
+            )}
+          </div>
 
           <label className={noticeStyles.activeToggle}>
             <input
@@ -116,7 +143,7 @@ function AdminNoticeFormPage() {
           <button
             type="submit"
             className={styles.btnSubmit}
-            disabled={loadingNotice || saving || Boolean(savedMsg) || !form.title.trim() || !form.content.trim()}
+            disabled={loadingNotice || saving || Boolean(savedMsg) || !form.title.trim() || isContentEmpty(form.content)}
           >
             {saving ? '저장 중...' : '저장'}
           </button>

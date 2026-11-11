@@ -139,7 +139,7 @@ describe('PostWritePage', () => {
     })
 
     it.each([
-      ['POST_CONTENT_INVALID_FORMAT', '지원하지 않는 서식이 있어요. 붙여넣은 내용을 확인해주세요.'],
+      ['CONTENT_INVALID_FORMAT', '지원하지 않는 서식이 있어요. 붙여넣은 내용을 확인해주세요.'],
       ['POST_COVER_CONCERT_NOT_TAGGED', '대표 공연이 본문에 없어요. 대표 공연을 다시 골라주세요.'],
       ['UNKNOWN_ERROR', '게시글 등록에 실패했습니다. 잠시 후 다시 시도해주세요.'],
     ])('등록 실패 코드가 %s이면 안내 문구 표시', async (code, message) => {

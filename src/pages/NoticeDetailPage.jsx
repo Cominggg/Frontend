@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { useParams } from 'react-router-dom'
 
+import PostContentView from '@/components/post/PostContentView'
 import BackButton from '@/components/ui/BackButton'
 import EmptyState from '@/components/ui/EmptyState'
 import usePageMeta from '@/hooks/usePageMeta'
@@ -62,7 +63,7 @@ function NoticeDetailPage() {
 
           <h1 className={styles.title}>{notice.title}</h1>
 
-          <p className={styles.content}>{notice.content}</p>
+          <PostContentView content={notice.content} />
         </div>
       </div>
     </div>

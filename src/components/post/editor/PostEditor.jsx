@@ -9,12 +9,12 @@ import { postContentExtensions } from './postExtensions'
 import SlashCommand from './slashCommand'
 import styles from './PostEditor.module.css'
 
-const PostEditor = forwardRef(function PostEditor({ content, onChange, onCharacterCountChange }, ref) {
+const PostEditor = forwardRef(function PostEditor({ content, onChange, onCharacterCountChange, tagLimit = true }, ref) {
   const editor = useEditor({
     extensions: [
       ...postContentExtensions,
       SlashCommand,
-      MentionTag,
+      MentionTag.configure({ tagLimit }),
       Placeholder.configure({
         placeholder: ({ editor: e, node }) =>
           e.isEmpty && node.type.name === 'paragraph'

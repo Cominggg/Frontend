@@ -28,8 +28,8 @@ const CONTENT_NEAR_LIMIT_LENGTH = 9000
 const COVER_PICKER_MIN_CONCERTS = 2
 
 const SUBMIT_ERROR_MESSAGE = {
-  POST_CONTENT_INVALID_FORMAT: '지원하지 않는 서식이 있어요. 붙여넣은 내용을 확인해주세요.',
-  POST_CONTENT_TOO_LONG: '본문이 너무 길어요. 글자 수를 줄여주세요.',
+  CONTENT_INVALID_FORMAT: '지원하지 않는 서식이 있어요. 붙여넣은 내용을 확인해주세요.',
+  CONTENT_TOO_LONG: '본문이 너무 길어요. 글자 수를 줄여주세요.',
   POST_CONCERT_TAG_HIDDEN: '지금은 언급할 수 없는 공연이 있어요. 해당 공연 카드를 지워주세요.',
   POST_COVER_CONCERT_NOT_TAGGED: '대표 공연이 본문에 없어요. 대표 공연을 다시 골라주세요.',
 }

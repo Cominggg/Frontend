@@ -22,7 +22,7 @@ function fullWidthPosition(editor, container) {
   }
 }
 
-function renderTagMenu(onDismiss) {
+function renderTagMenu(currentTags, onDismiss) {
   let root
   let container
   let unmount
@@ -31,7 +31,7 @@ function renderTagMenu(onDismiss) {
 
   // 문서를 JSON으로 바꿔 훑는 일이라, 메뉴가 다시 그려질 때(행 hover 등)마다가 아니라 갱신마다 한 번만 한다
   const render = (props) => {
-    const tags = extractEntityTags(props.editor.getJSON())
+    const tags = currentTags(props.editor)
     root.render(
       <MentionTagMenu
         ref={menuRef}
@@ -77,7 +77,14 @@ function renderTagMenu(onDismiss) {
 const MentionTag = Extension.create({
   name: 'mentionTag',
 
+  addOptions() {
+    // 공지처럼 카드를 태그로 저장하지 않는 본문은 고유 카드 10개 제한을 끈다
+    return { tagLimit: true }
+  },
+
   addProseMirrorPlugins() {
+    const { tagLimit } = this.options
+    const currentTags = (editor) => (tagLimit ? extractEntityTags(editor.getJSON()) : [])
     // Esc로 닫은 검색어. 한 글자라도 바뀌면 다시 연다
     let dismissedQuery = null
 
@@ -101,10 +108,10 @@ const MentionTag = Extension.create({
         shouldResetDismissed: ({ match }) => match.query !== dismissedQuery,
         items: ({ query, editor }) => {
           dismissedQuery = null
-          return searchTagSuggestions(query, extractEntityTags(editor.getJSON()))
+          return searchTagSuggestions(query, currentTags(editor))
         },
         render: () =>
-          renderTagMenu((query) => {
+          renderTagMenu(currentTags, (query) => {
             dismissedQuery = query
           }),
         command: ({ editor, range, props }) => {

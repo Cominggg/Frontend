@@ -15,3 +15,42 @@
   accent-color: var(--color-accent);
   cursor: pointer;
 }
+
+/* 게시글 에디터를 폼 입력칸처럼 감싼다 (AdminFormPage .textarea와 같은 테두리) */
+.editor {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.75rem 0.875rem 0.5rem;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-md);
+  transition: border-color 0.15s;
+}
+
+.editor:focus-within {
+  border-color: var(--color-accent);
+}
+
+.editor :global(.ProseMirror) {
+  min-height: 220px;
+}
+
+.editorPlaceholder {
+  height: 260px;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-raised);
+}
+
+.count,
+.countOver {
+  align-self: flex-end;
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.countOver {
+  color: var(--color-accent);
+  font-weight: 700;
+}
