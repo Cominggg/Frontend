@@ -67,10 +67,9 @@ export async function searchTagSuggestions(query, tags) {
 
   const lower = q.toLowerCase()
   const found = settled.flatMap((s) => (s.status === 'fulfilled' ? s.value.content : []))
+  const rank = (item) => Number(!(item.title ?? '').toLowerCase().startsWith(lower))
   // sort는 안정 정렬이라 같은 순위 안에서는 MENTION_TYPES 순서가 유지된다
-  const ranked = found.sort(
-    (a, b) => Number(!a.title.toLowerCase().startsWith(lower)) - Number(!b.title.toLowerCase().startsWith(lower)),
-  )
+  const ranked = found.sort((a, b) => rank(a) - rank(b))
   const { results, limitReached } = applyTagLimit(ranked, tags)
   return Object.assign(results.slice(0, SUGGESTION_COUNT), { failed: false, limitReached })
 }

@@ -19,7 +19,7 @@ function CardInner({ entityType, title, subtitle, thumbnailUrl }) {
       <>
         <div
           className={styles.thumb}
-          style={thumbnailUrl ? { backgroundImage: `url(${thumbnailUrl})` } : undefined}
+          style={thumbnailUrl ? { backgroundImage: `url("${thumbnailUrl}")` } : undefined}
         />
         <span className={styles.name}>{title}</span>
       </>
@@ -30,7 +30,7 @@ function CardInner({ entityType, title, subtitle, thumbnailUrl }) {
     <>
       <div
         className={styles.thumb}
-        style={thumbnailUrl ? { backgroundImage: `url(${thumbnailUrl})` } : undefined}
+        style={thumbnailUrl ? { backgroundImage: `url("${thumbnailUrl}")` } : undefined}
       />
       <div className={styles.txt}>
         <span className={styles.type}>{MENTION_TYPE_LABEL[entityType]}</span>

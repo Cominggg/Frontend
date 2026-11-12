@@ -198,6 +198,16 @@ describe('PostActionMenu', () => {
     expect(queryPanel()).not.toBeInTheDocument()
   })
 
+  it('삭제를 눌러 확인 단계에 들어가면 onDeleteConfirmStart 1회 호출', async () => {
+    const user = userEvent.setup()
+    const onDeleteConfirmStart = vi.fn()
+    renderMenu({ isAuthor: true, onDeleteConfirmStart })
+
+    await openDeleteConfirm(user)
+
+    expect(onDeleteConfirmStart).toHaveBeenCalledTimes(1)
+  })
+
   it('삭제 확인 중 닫았다가 다시 열면 확인 상태가 초기화됨', async () => {
     const user = userEvent.setup()
     renderMenu({ isAuthor: true })

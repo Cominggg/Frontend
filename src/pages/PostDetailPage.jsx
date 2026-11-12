@@ -155,6 +155,7 @@ function PostDetailPage() {
               onEdit={handleEdit}
               onDelete={handleDelete}
               onReport={handleReportClick}
+              onDeleteConfirmStart={deleteMutation.reset}
               isDeleting={deleteMutation.isPending}
               deleteError={deleteError}
             />

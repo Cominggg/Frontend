@@ -151,6 +151,19 @@ describe('searchTagSuggestions', () => {
     expect(result.map((r) => r.type)).toEqual(['ARTIST', 'TRACK', 'CONCERT', 'RELEASE'])
   })
 
+  it('제목이 null인 후보가 있어도 예외 없이 뒤로 정렬', async () => {
+    apiSearchMentions.mockImplementation(
+      byType({
+        CONCERT: [{ type: 'CONCERT', id: 1, title: null }],
+        ARTIST: [{ type: 'ARTIST', id: 1, title: 'YOASOBI' }],
+      }),
+    )
+
+    const result = await searchTagSuggestions('YOASOBI', [])
+
+    expect(result.map((r) => r.type)).toEqual(['ARTIST', 'CONCERT'])
+  })
+
   it('결과가 5개를 넘으면 5개까지만 반환', async () => {
     apiSearchMentions.mockImplementation(({ type }) =>
       Promise.resolve({ content: [1, 2].map((id) => ({ type, id, title: `YOASOBI ${id}` })) }),

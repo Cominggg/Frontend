@@ -181,6 +181,20 @@ describe('PostWritePage', () => {
       expect(updatePost.mock.calls[0][0]).toBe(5)
       expect(updatePost.mock.calls[0][1]).not.toHaveProperty('coverConcertId')
     })
+
+    // 기존 대표 공연 카드가 본문에서 빠지면 BE가 대표 공연을 비운다 (spec/api/posts.md PATCH 비고)
+    it('기존 대표 공연 카드를 본문에서 지우고 수정하면 payload에 coverConcertId 없음', async () => {
+      const user = userEvent.setup()
+      renderPage('/community/5/edit')
+      await screen.findByRole('radio', { name: 'Ado WORLD TOUR 2026' })
+
+      typeContent(ONE_CONCERT_DOC)
+      await user.click(screen.getByRole('button', { name: '수정 완료' }))
+
+      expect(updatePost).toHaveBeenCalledTimes(1)
+      expect(updatePost.mock.calls[0][1]).not.toHaveProperty('coverConcertId')
+      expect(updatePost.mock.calls[0][1].content).toEqual(ONE_CONCERT_DOC)
+    })
   })
 
   describe('힌트 버튼', () => {

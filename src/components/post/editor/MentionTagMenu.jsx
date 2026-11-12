@@ -12,6 +12,7 @@ const QUERY_DEBOUNCE_MS = 300
 const THUMB_CLASS = { CONCERT: styles.thumbPortrait, ARTIST: styles.thumbCircle }
 
 function Highlighted({ text, query }) {
+  if (!text) return null
   const start = text.toLowerCase().indexOf(query.trim().toLowerCase())
   if (!query.trim() || start < 0) return text
   const end = start + query.trim().length
@@ -35,7 +36,7 @@ function ResultRow({ item, query, active, showType, onHover, onPick }) {
     >
       <span
         className={`${styles.thumb} ${THUMB_CLASS[item.type] ?? styles.thumbSquare}`}
-        style={item.thumbnailUrl ? { backgroundImage: `url(${item.thumbnailUrl})` } : undefined}
+        style={item.thumbnailUrl ? { backgroundImage: `url("${item.thumbnailUrl}")` } : undefined}
       />
       <span className={styles.resultTxt}>
         <span className={styles.resultTitle}>

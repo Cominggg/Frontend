@@ -24,7 +24,7 @@ function CoverConcertPicker({ concerts, selectedId, onSelect }) {
             />
             <span
               className={styles.poster}
-              style={concert.thumbnailUrl ? { backgroundImage: `url(${concert.thumbnailUrl})` } : undefined}
+              style={concert.thumbnailUrl ? { backgroundImage: `url("${concert.thumbnailUrl}")` } : undefined}
               aria-hidden="true"
             />
             <span className={styles.title}>{concert.title}</span>

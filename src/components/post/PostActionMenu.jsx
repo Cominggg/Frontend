@@ -5,7 +5,15 @@ import styles from './PostActionMenu.module.css'
 // 게시글 수정·삭제·신고를 작성자 줄의 ⋯ 메뉴 하나로 모은다.
 // 작성자에게는 수정·삭제, 그 외에는 신고만 보이고, 삭제는 메뉴 안에서 한 번 더 확인한다.
 // 항목이 1~2개뿐이고 삭제 확인 단계가 섞여 있어 ARIA menu(방향키 이동) 대신 펼침 버튼 + 버튼 묶음으로 둔다
-function PostActionMenu({ isAuthor, onEdit, onDelete, onReport, isDeleting = false, deleteError = null }) {
+function PostActionMenu({
+  isAuthor,
+  onEdit,
+  onDelete,
+  onReport,
+  onDeleteConfirmStart,
+  isDeleting = false,
+  deleteError = null,
+}) {
   const [isOpen, setIsOpen] = useState(false)
   const [isConfirmingDelete, setIsConfirmingDelete] = useState(false)
   const wrapperRef = useRef(null)
@@ -34,6 +42,12 @@ function PostActionMenu({ isAuthor, onEdit, onDelete, onReport, isDeleting = fal
       document.removeEventListener('keydown', handleEscape)
     }
   }, [isOpen])
+
+  // 확인 단계에 들어올 때마다 지난 삭제 실패 문구를 지워, 다시 열었을 때 이전 오류가 보이지 않게 한다
+  function startDeleteConfirm() {
+    onDeleteConfirmStart?.()
+    setIsConfirmingDelete(true)
+  }
 
   function select(action) {
     close()
@@ -70,7 +84,7 @@ function PostActionMenu({ isAuthor, onEdit, onDelete, onReport, isDeleting = fal
               <button type="button" className={styles.item} onClick={() => select(onEdit)}>
                 수정
               </button>
-              <button type="button" className={styles.dangerItem} onClick={() => setIsConfirmingDelete(true)}>
+              <button type="button" className={styles.dangerItem} onClick={startDeleteConfirm}>
                 삭제
               </button>
             </>
