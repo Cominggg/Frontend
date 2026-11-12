@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { EditorContent, useEditor } from '@tiptap/react'
 
 import { postContentExtensions } from './editor/postExtensions'
@@ -11,6 +12,12 @@ function PostContentView({ content }) {
     content,
     editable: false,
   })
+
+  // 에디터는 처음 받은 content로만 만들어지므로, 다시 조회해 본문이 바뀌면 화면도 맞춘다
+  useEffect(() => {
+    if (!editor || editor.isDestroyed) return
+    editor.commands.setContent(content, { emitUpdate: false })
+  }, [editor, content])
 
   if (!editor) return null
 

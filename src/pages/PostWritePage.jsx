@@ -45,10 +45,9 @@ function PostWritePage() {
   const [contentJson, setContentJson] = useState(null)
   const [contentLength, setContentLength] = useState(0)
   const [error, setError] = useState(null)
-  // 사용자가 직접 고른 대표 공연. 고르지 않았으면 요청에 coverConcertId를 보내지 않는다
+  // 사용자가 직접 고른 대표 공연. 기존 대표(수정)와 같거나 고르지 않았으면 요청에 보내지 않는다
   // (같은 값을 다시 보내면 그사이 숨겨진 공연일 때 400이 나기 때문)
   const [coverConcertId, setCoverConcertId] = useState(null)
-  const [coverTouched, setCoverTouched] = useState(false)
   const [formReady, setFormReady] = useState(!isEditMode)
   const editorRef = useRef(null)
 
@@ -64,13 +63,19 @@ function PostWritePage() {
     setTitle(existingPost.title)
     setCategory(existingPost.category)
     setContentJson(existingPost.content)
-    setCoverConcertId(existingPost.coverConcertId ?? null)
   }
 
   const entityTags = useMemo(() => extractEntityTags(contentJson), [contentJson])
   const concertTags = entityTags.filter((tag) => tag.entityType === 'CONCERT')
-  // 선택한 공연 카드를 본문에서 지우면 선택도 풀린다 (기본값인 본문 첫 공연 카드로 돌아감)
-  const selectedCoverId = concertTags.some((tag) => tag.entityId === coverConcertId) ? coverConcertId : null
+  const isConcertTagged = (concertId) => concertTags.some((tag) => tag.entityId === concertId)
+  // 고른 공연 카드를 본문에서 지우면 선택도 푼다. 같은 카드를 다시 넣어도 선택이 되살아나지 않게 저장된 값 자체를 비운다
+  if (coverConcertId != null && !isConcertTagged(coverConcertId)) {
+    setCoverConcertId(null)
+  }
+  // 고르지 않았으면 BE가 유지하는 기존 대표(본문에 남아 있을 때만), 그것도 없으면 본문 첫 공연 카드(Picker 기본값)
+  const initialCoverId = existingPost?.coverConcertId ?? null
+  const selectedCoverId = coverConcertId ?? (isConcertTagged(initialCoverId) ? initialCoverId : null)
+  const isCoverChanged = coverConcertId != null && coverConcertId !== initialCoverId
   const isContentTooLong = contentLength > POST_CONTENT_MAX_LENGTH
   const isContentNearLimit = contentLength >= CONTENT_NEAR_LIMIT_LENGTH
   const isTagOver = entityTags.length > POST_ENTITY_TAG_MAX_COUNT
@@ -135,7 +140,7 @@ function PostWritePage() {
       title: title.trim(),
       content: contentJson,
       // entityTags는 BE가 본문 카드에서 추출한다
-      ...(coverTouched && selectedCoverId != null && { coverConcertId: selectedCoverId }),
+      ...(isCoverChanged && { coverConcertId }),
     }
 
     if (isEditMode) {
@@ -268,10 +273,7 @@ function PostWritePage() {
           <CoverConcertPicker
             concerts={concertTags}
             selectedId={selectedCoverId}
-            onSelect={(concertId) => {
-              setCoverConcertId(concertId)
-              setCoverTouched(true)
-            }}
+            onSelect={setCoverConcertId}
           />
         )}
 

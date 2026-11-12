@@ -16,8 +16,8 @@
   margin-bottom: 0;
 }
 
-/* 언급 카드 뒤에 함께 저장되는 빈 문단(편집 시 커서 자리)은 읽기 화면에서 한 줄을 차지하지 않게 숨긴다 */
-.prose :global(p:has(> .ProseMirror-trailingBreak:only-child)) {
+/* 언급 카드 바로 뒤에 함께 저장되는 빈 문단(편집 시 커서 자리)만 읽기 화면에서 숨긴다. 작성자가 일부러 둔 빈 줄은 남긴다 */
+.prose :global(.node-entityMentionCard + p:has(> .ProseMirror-trailingBreak:only-child)) {
   display: none;
 }
 

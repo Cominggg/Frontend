@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it } from 'vitest'
 import { Editor } from '@tiptap/core'
 import { DOMParser } from '@tiptap/pm/model'
+import { __parseFromClipboard as parseFromClipboard } from '@tiptap/pm/view'
 import { postContentExtensions } from './postExtensions'
 
 let editor
@@ -180,12 +181,56 @@ describe('postContentExtensions', () => {
       )
     })
 
-    it('data-pm-slice가 있는 HTML이면 기본 처리로 넘김', () => {
+    // 실제 복사처럼 에디터가 슬라이스를 직렬화(transformCopied 포함)하고, 붙여넣을 때처럼 HTML을 다시 파싱한다
+    function copyAll(target) {
+      const { state } = target
+      const slice = state.doc.slice(0, state.doc.content.size)
+      const { dom, text } = target.view.serializeForClipboard(slice)
+      return { html: dom.innerHTML, text }
+    }
+
+    function pasteParsed(target, html, plain) {
+      const slice = parseFromClipboard(target.view, plain, html, false, target.state.selection.$from)
+      return target.view.someProp('handlePaste', (f) => f(target.view, pasteEvent(html, plain), slice))
+    }
+
+    const FORMATTED_DOC = {
+      type: 'doc',
+      content: [{ type: 'heading', attrs: { level: 2 }, content: [{ type: 'text', text: '소제목' }] }],
+    }
+
+    it('이 에디터에서 복사한 내용이면 기본 처리로 넘겨 서식 유지', () => {
+      createEditor(FORMATTED_DOC)
+      const { html, text } = copyAll(editor)
+
+      expect(html).toContain('data-pm-slice')
+      expect(pasteParsed(editor, html, text)).toBeFalsy()
+    })
+
+    it('다른 ProseMirror 에디터에서 복사한 내용이면 data-pm-slice가 있어도 일반 텍스트로 붙여넣음', () => {
+      const other = new Editor({ extensions: postContentExtensions, content: FORMATTED_DOC })
+      const { html, text } = copyAll(other)
+      other.destroy()
       createEditor()
 
-      const handled = paste(editor, '<h2 data-pm-slice="0 0 []">x</h2>', 'x')
+      expect(pasteParsed(editor, html, text)).toBe(true)
+      expect(editor.getJSON().content).toEqual([{ type: 'paragraph', content: [{ type: 'text', text: '소제목' }] }])
+    })
 
-      expect(handled).toBeFalsy()
+    it('text/plain 없이 HTML만 오면 HTML의 글자만 일반 텍스트로 붙여넣음', () => {
+      createEditor()
+
+      const handled = paste(editor, '<h2><strong>굵은 소제목</strong></h2>', '')
+
+      expect(handled).toBe(true)
+      expect(editor.getJSON().content).toEqual([{ type: 'paragraph', content: [{ type: 'text', text: '굵은 소제목' }] }])
+    })
+
+    it('HTML에 글자가 하나도 없으면 아무것도 넣지 않고 처리 완료', () => {
+      createEditor()
+
+      expect(paste(editor, '<img src="x">', '')).toBe(true)
+      expect(editor.isEmpty).toBe(true)
     })
   })
   describe('언급 카드 HTML 왕복', () => {

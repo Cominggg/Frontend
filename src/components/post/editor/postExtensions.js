@@ -44,24 +44,35 @@ const PostHeading = Heading.extend({
   },
 }).configure({ levels: [2, 3] })
 
-// 외부에서 붙여넣은 내용은 일반 텍스트로 받는다. ProseMirror가 복사한 HTML에는
-// data-pm-slice가 붙으므로, 같은 에디터에서 복사한 슬라이스만 서식을 유지한다.
+// 외부에서 붙여넣은 내용은 일반 텍스트로 받는다. 다른 ProseMirror 에디터에서 복사한 HTML에도
+// data-pm-slice가 붙으므로, 이 에디터가 마지막으로 복사·잘라낸 슬라이스와 내용이 같을 때만 서식을 유지한다.
 // pasteText는 일반 붙여넣기 흐름을 그대로 타서 줄바꿈은 문단으로, URL은 자동 링크가 된다
+const htmlToText = (html) => new DOMParser().parseFromString(html, 'text/html').body.textContent ?? ''
+
 const PlainTextPaste = Extension.create({
   name: 'plainTextPaste',
   addProseMirrorPlugins() {
     // pasteText도 handlePaste를 다시 거치므로, 재진입한 호출은 기본 처리로 넘긴다
     let pastingText = false
+    let lastCopied = null
     return [
       new Plugin({
         props: {
-          handlePaste(view, event) {
+          transformCopied(slice) {
+            lastCopied = slice
+            return slice
+          },
+          handlePaste(view, event, slice) {
             if (pastingText) return false
             const html = event.clipboardData?.getData('text/html')
-            if (!html || html.includes('data-pm-slice')) return false
+            if (!html) return false
+            if (lastCopied && slice?.content.eq(lastCopied.content)) return false
+            // text/plain 없이 HTML만 온 경우도 서식 없이 글자만 넣는다
+            const text = event.clipboardData.getData('text/plain') || htmlToText(html)
+            if (!text) return true
             pastingText = true
             try {
-              return view.pasteText(event.clipboardData.getData('text/plain'), event)
+              return view.pasteText(text, event)
             } finally {
               pastingText = false
             }

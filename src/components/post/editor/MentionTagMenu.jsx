@@ -11,6 +11,22 @@ const QUERY_DEBOUNCE_MS = 300
 
 const THUMB_CLASS = { CONCERT: styles.thumbPortrait, ARTIST: styles.thumbCircle }
 
+// 펼친 목록의 첫 화면을 불러온다. 태그 한도에 걸려 고를 수 있는 후보가 하나도 없는 페이지는
+// 스크롤할 행이 없어 다음 페이지를 부를 길이 막히므로, 고를 후보가 나오거나 페이지가 끝날 때까지 이어 부른다
+async function fetchFirstUsablePage(type, query, tags) {
+  let items = []
+  let page = -1
+  let hasMore = true
+  while (hasMore) {
+    page += 1
+    const result = await searchMentions(type, query, page)
+    items = [...items, ...result]
+    hasMore = result.hasMore ?? false
+    if (items.length === 0 || applyTagLimit(items, tags).results.length > 0) break
+  }
+  return { items, hasMore, page }
+}
+
 function Highlighted({ text, query }) {
   if (!text) return null
   const start = text.toLowerCase().indexOf(query.trim().toLowerCase())
@@ -62,6 +78,13 @@ const MentionTagMenu = forwardRef(function MentionTagMenu({ items, loading, quer
   const [isLoadingMore, setIsLoadingMore] = useState(false)
   const loadingMoreRef = useRef(false)
   const fetchedQueryRef = useRef(null)
+  // 비동기 작업이 끝난 시점의 최신 값을 읽기 위한 ref (getTags는 갱신마다 새 함수라 effect 의존성에 넣지 않는다)
+  const queryRef = useRef(query)
+  const getTagsRef = useRef(getTags)
+  useEffect(() => {
+    queryRef.current = query
+    getTagsRef.current = getTags
+  })
 
   if (!loading && items !== prevItems) {
     setPrevItems(items)
@@ -79,9 +102,9 @@ const MentionTagMenu = forwardRef(function MentionTagMenu({ items, loading, quer
     const delay = fetchedQueryRef.current !== null && fetchedQueryRef.current !== query ? QUERY_DEBOUNCE_MS : 0
     const timer = setTimeout(() => {
       fetchedQueryRef.current = query
-      searchMentions(expandedType, query).then(
-        (result) => {
-          if (!cancelled) setList({ key: listKey, items: result, hasMore: result.hasMore ?? false, page: 0, failed: false })
+      fetchFirstUsablePage(expandedType, query, getTagsRef.current()).then(
+        ({ items: found, hasMore, page }) => {
+          if (!cancelled) setList({ key: listKey, items: found, hasMore, page, failed: false })
         },
         () => {
           if (!cancelled) setList({ key: listKey, items: [], hasMore: false, page: 0, failed: true })
@@ -130,7 +153,10 @@ const MentionTagMenu = forwardRef(function MentionTagMenu({ items, loading, quer
   async function retry() {
     setRetrying(true)
     try {
-      setShown(await searchTagSuggestions(query, getTags()))
+      const result = await searchTagSuggestions(query, getTags())
+      // 기다리는 사이 검색어가 바뀌었으면 지난 검색어의 결과로 새 후보를 덮지 않는다
+      if (queryRef.current !== query) return
+      setShown(result)
       setShownQuery(query)
     } finally {
       setRetrying(false)

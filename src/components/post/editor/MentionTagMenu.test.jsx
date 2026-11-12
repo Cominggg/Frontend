@@ -36,6 +36,11 @@ const RELEASE = {
   releaseGroupId: 'rg-the-book',
 }
 
+const FULL_TAGS = [
+  { entityType: 'ARTIST', entityId: 2 },
+  ...Array.from({ length: 9 }, (_, i) => ({ entityType: 'CONCERT', entityId: 100 + i })),
+]
+
 function results(list, meta = {}) {
   return Object.assign([...list], { failed: false, limitReached: false, ...meta })
 }
@@ -134,6 +139,20 @@ describe('MentionTagMenu', () => {
       expect(await screen.findByRole('button', { name: /YOASOBI ASIA TOUR 2026/ })).toBeInTheDocument()
     })
 
+    it('다시 시도 중 검색어가 바뀌면 지난 검색어의 결과를 버림', async () => {
+      const user = userEvent.setup()
+      let resolveRetry
+      searchTagSuggestions.mockReturnValue(new Promise((resolve) => (resolveRetry = resolve)))
+      const { update } = renderMenu({ items: results([], { failed: true }), query: 'A' })
+      await user.click(screen.getByRole('button', { name: '다시 시도' }))
+      update({ query: 'B', items: results([CONCERT]), loading: false })
+
+      await act(async () => resolveRetry(results([ARTIST])))
+
+      expect(screen.getByRole('button', { name: /YOASOBI ASIA TOUR 2026/ })).toBeInTheDocument()
+      expect(screen.queryByRole('button', { name: /^YOASOBI아티스트/ })).not.toBeInTheDocument()
+    })
+
     it('행을 클릭하면 command에 언급 정보 전달', async () => {
       const user = userEvent.setup()
       const { command } = renderMenu({ items: results([CONCERT, RELEASE]) })
@@ -225,7 +244,7 @@ describe('MentionTagMenu', () => {
 
       await user.click(screen.getByRole('button', { name: /종류별로 더 찾기/ }))
 
-      expect(searchMentions).toHaveBeenCalledWith('ARTIST', 'YOA')
+      expect(searchMentions).toHaveBeenCalledWith('ARTIST', 'YOA', 0)
       expect(await screen.findByRole('button', { name: /YOASOBI \(Ayase\)/ })).toBeInTheDocument()
     })
 
@@ -299,6 +318,33 @@ describe('MentionTagMenu', () => {
 
       expect(await screen.findByRole('button', { name: /^YOASOBI/ })).toBeInTheDocument()
       expect(screen.queryByRole('button', { name: /YOAKE/ })).not.toBeInTheDocument()
+    })
+    it('태그 한도로 고를 후보가 없으면 고를 후보가 나올 때까지 다음 페이지를 이어 부름', async () => {
+      const user = userEvent.setup()
+      const otherArtist = { ...ARTIST, id: 99, title: 'YOAKE' }
+      searchMentions
+        .mockResolvedValueOnce(Object.assign([otherArtist], { hasMore: true }))
+        .mockResolvedValueOnce(pageOf([ARTIST]))
+      renderMenu({ items: results([ARTIST]), getTags: () => FULL_TAGS })
+
+      await user.click(screen.getByRole('button', { name: /종류별로 더 찾기/ }))
+
+      expect(await screen.findByRole('button', { name: /^YOASOBI/ })).toBeInTheDocument()
+      expect(searchMentions).toHaveBeenCalledWith('ARTIST', 'YOA', 0)
+      expect(searchMentions).toHaveBeenCalledWith('ARTIST', 'YOA', 1)
+    })
+
+    it('고를 후보 없이 페이지가 끝나면 더 부르지 않고 태그 한도 안내', async () => {
+      const user = userEvent.setup()
+      searchMentions
+        .mockResolvedValueOnce(Object.assign([{ ...ARTIST, id: 98, title: 'YOAKE' }], { hasMore: true }))
+        .mockResolvedValueOnce(pageOf([{ ...ARTIST, id: 99, title: 'YOAMI' }]))
+      renderMenu({ items: results([ARTIST]), getTags: () => FULL_TAGS })
+
+      await user.click(screen.getByRole('button', { name: /종류별로 더 찾기/ }))
+
+      expect(await screen.findByText('공연·아티스트·음악은 10개까지 넣을 수 있어요')).toBeInTheDocument()
+      expect(searchMentions).toHaveBeenCalledTimes(2)
     })
   })
 })

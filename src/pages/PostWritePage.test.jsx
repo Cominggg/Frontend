@@ -130,6 +130,21 @@ describe('PostWritePage', () => {
       expect(createPost.mock.calls[0][0]).toMatchObject({ coverConcertId: 2 })
     })
 
+    it('고른 대표 공연 카드를 지웠다가 다시 넣으면 선택이 초기화되어 payload에 coverConcertId 없음', async () => {
+      const user = userEvent.setup()
+      renderPage()
+      await user.type(screen.getByPlaceholderText('제목을 입력하세요'), '내한 후기')
+      typeContent(TWO_CONCERTS_DOC)
+      await user.click(screen.getByRole('radio', { name: 'Ado WORLD TOUR 2026' }))
+
+      typeContent(ONE_CONCERT_DOC)
+      typeContent(TWO_CONCERTS_DOC)
+
+      expect(screen.getByRole('radio', { name: 'YOASOBI ASIA TOUR 2026' })).toBeChecked()
+      await user.click(screen.getByRole('button', { name: '등록' }))
+      expect(createPost.mock.calls[0][0]).not.toHaveProperty('coverConcertId')
+    })
+
     it('글자 수가 10,000자를 초과하면 등록 버튼 비활성화', () => {
       renderPage()
 
@@ -194,6 +209,50 @@ describe('PostWritePage', () => {
       expect(updatePost).toHaveBeenCalledTimes(1)
       expect(updatePost.mock.calls[0][1]).not.toHaveProperty('coverConcertId')
       expect(updatePost.mock.calls[0][1].content).toEqual(ONE_CONCERT_DOC)
+    })
+
+    it('다른 공연을 골랐다가 기존 대표 공연으로 되돌리면 payload에 coverConcertId 없음', async () => {
+      const user = userEvent.setup()
+      renderPage('/community/5/edit')
+
+      await user.click(await screen.findByRole('radio', { name: 'YOASOBI ASIA TOUR 2026' }))
+      await user.click(screen.getByRole('radio', { name: 'Ado WORLD TOUR 2026' }))
+      await user.click(screen.getByRole('button', { name: '수정 완료' }))
+
+      expect(updatePost.mock.calls[0][1]).not.toHaveProperty('coverConcertId')
+    })
+
+    it('다른 공연을 고르고 수정하면 payload에 고른 coverConcertId 포함', async () => {
+      const user = userEvent.setup()
+      renderPage('/community/5/edit')
+
+      await user.click(await screen.findByRole('radio', { name: 'YOASOBI ASIA TOUR 2026' }))
+      await user.click(screen.getByRole('button', { name: '수정 완료' }))
+
+      expect(updatePost.mock.calls[0][1]).toMatchObject({ coverConcertId: 1 })
+    })
+
+    // 최종 본문에 기존 대표 공연이 있으면 BE가 기존 대표 공연을 유지한다
+    it('기존 대표 공연 카드를 지웠다가 다시 넣으면 기존 공연이 다시 선택된 상태로 표시', async () => {
+      renderPage('/community/5/edit')
+      await screen.findByRole('radio', { name: 'Ado WORLD TOUR 2026' })
+
+      typeContent(ONE_CONCERT_DOC)
+      typeContent(TWO_CONCERTS_DOC)
+
+      expect(screen.getByRole('radio', { name: 'Ado WORLD TOUR 2026' })).toBeChecked()
+    })
+
+    it('기존 대표 공연 카드를 지웠다가 다시 넣고 수정하면 payload에 coverConcertId 없음', async () => {
+      const user = userEvent.setup()
+      renderPage('/community/5/edit')
+      await screen.findByRole('radio', { name: 'Ado WORLD TOUR 2026' })
+      typeContent(ONE_CONCERT_DOC)
+      typeContent(TWO_CONCERTS_DOC)
+
+      await user.click(screen.getByRole('button', { name: '수정 완료' }))
+
+      expect(updatePost.mock.calls[0][1]).not.toHaveProperty('coverConcertId')
     })
   })
 

@@ -18,6 +18,10 @@ function PostActionMenu({
   const [isConfirmingDelete, setIsConfirmingDelete] = useState(false)
   const wrapperRef = useRef(null)
   const triggerRef = useRef(null)
+  const deleteItemRef = useRef(null)
+  const confirmCancelRef = useRef(null)
+  // 삭제 확인 단계로 들어가거나 빠져나올 때, 사라진 버튼 대신 포커스를 옮길 자리
+  const pendingFocusRef = useRef(null)
   const panelId = useId()
 
   function close() {
@@ -46,7 +50,20 @@ function PostActionMenu({
   // 확인 단계에 들어올 때마다 지난 삭제 실패 문구를 지워, 다시 열었을 때 이전 오류가 보이지 않게 한다
   function startDeleteConfirm() {
     onDeleteConfirmStart?.()
+    pendingFocusRef.current = 'confirm'
     setIsConfirmingDelete(true)
+  }
+
+  useEffect(() => {
+    const target = pendingFocusRef.current
+    pendingFocusRef.current = null
+    if (target === 'confirm') confirmCancelRef.current?.focus()
+    if (target === 'delete') deleteItemRef.current?.focus()
+  }, [isConfirmingDelete])
+
+  function cancelDeleteConfirm() {
+    pendingFocusRef.current = 'delete'
+    setIsConfirmingDelete(false)
   }
 
   function select(action) {
@@ -81,10 +98,11 @@ function PostActionMenu({
           )}
           {isAuthor && !isConfirmingDelete && (
             <>
-              <button type="button" className={styles.item} onClick={() => select(onEdit)}>
+              {/* 삭제 요청이 진행 중이면 곧 사라질 글이라 수정으로 넘어가지 않게 막는다 */}
+              <button type="button" className={styles.item} onClick={() => select(onEdit)} disabled={isDeleting}>
                 수정
               </button>
-              <button type="button" className={styles.dangerItem} onClick={startDeleteConfirm}>
+              <button ref={deleteItemRef} type="button" className={styles.dangerItem} onClick={startDeleteConfirm}>
                 삭제
               </button>
             </>
@@ -99,9 +117,10 @@ function PostActionMenu({
               )}
               <div className={styles.confirmActions}>
                 <button
+                  ref={confirmCancelRef}
                   type="button"
                   className={styles.confirmCancel}
-                  onClick={() => setIsConfirmingDelete(false)}
+                  onClick={cancelDeleteConfirm}
                   disabled={isDeleting}
                 >
                   취소

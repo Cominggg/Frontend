@@ -65,9 +65,14 @@
   color: var(--color-destructive);
 }
 
-.item:hover,
+.item:hover:not(:disabled),
 .dangerItem:hover {
   background: var(--color-surface-hover);
+}
+
+.item:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .confirm {

@@ -219,4 +219,41 @@ describe('PostActionMenu', () => {
     expect(screen.queryByText('게시글을 삭제할까요?')).not.toBeInTheDocument()
     expect(panelButtonLabels()).toEqual(['수정', '삭제'])
   })
+
+  it('isDeleting이면 작성자 메뉴의 수정 버튼 비활성화', async () => {
+    const user = userEvent.setup()
+    renderMenu({ isAuthor: true, isDeleting: true })
+
+    await openMenu(user)
+
+    expect(within(getPanel()).getByRole('button', { name: '수정' })).toBeDisabled()
+  })
+
+  it('isDeleting이 아니면 작성자 메뉴의 수정 버튼 활성화', async () => {
+    const user = userEvent.setup()
+    renderMenu({ isAuthor: true })
+
+    await openMenu(user)
+
+    expect(within(getPanel()).getByRole('button', { name: '수정' })).toBeEnabled()
+  })
+
+  it('삭제를 눌러 확인 단계에 들어가면 취소 버튼으로 포커스 이동', async () => {
+    const user = userEvent.setup()
+    renderMenu({ isAuthor: true })
+
+    await openDeleteConfirm(user)
+
+    expect(within(getPanel()).getByRole('button', { name: '취소' })).toHaveFocus()
+  })
+
+  it('확인 단계에서 취소를 누르면 삭제 항목 버튼으로 포커스 복귀', async () => {
+    const user = userEvent.setup()
+    renderMenu({ isAuthor: true })
+    await openDeleteConfirm(user)
+
+    await user.click(within(getPanel()).getByRole('button', { name: '취소' }))
+
+    expect(within(getPanel()).getByRole('button', { name: '삭제' })).toHaveFocus()
+  })
 })
