@@ -1,8 +1,4 @@
 {
-  "enabledPlugins": {
-    "frontend-design@claude-plugins-official": false,
-    "playwright@claude-plugins-official": true
-  },
   "hooks": {
     "PreToolUse": [
       {
@@ -39,5 +35,32 @@
         ]
       }
     ]
+  },
+  "enabledPlugins": {
+    "frontend-design@claude-plugins-official": false,
+    "playwright@claude-plugins-official": true,
+    "hallmark@hallmark": true,
+    "taste-skill@taste-skill": true,
+    "impeccable@impeccable": true
+  },
+  "extraKnownMarketplaces": {
+    "hallmark": {
+      "source": {
+        "source": "github",
+        "repo": "Nutlope/hallmark"
+      }
+    },
+    "taste-skill": {
+      "source": {
+        "source": "github",
+        "repo": "Leonxlnx/taste-skill"
+      }
+    },
+    "impeccable": {
+      "source": {
+        "source": "github",
+        "repo": "pbakaus/impeccable"
+      }
+    }
   }
 }

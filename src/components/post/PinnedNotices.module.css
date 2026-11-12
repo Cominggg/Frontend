@@ -1,53 +1,52 @@
 .wrap {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.625rem;
+  border-radius: var(--radius-md);
+  /* 토큰의 hover 면은 분홍빛이라, 글자색을 표면에 옅게 섞어 중립 회색 면을 만든다 */
+  background: color-mix(in srgb, var(--color-text) 4%, var(--color-surface));
 }
 
-.card {
+.row {
   display: flex;
   align-items: center;
   gap: 0.625rem;
-  padding: 0.75rem 1rem;
-  background: color-mix(in srgb, var(--color-accent) 7%, var(--color-surface));
-  border: 1px solid color-mix(in srgb, var(--color-accent) 25%, var(--color-border));
-  border-radius: var(--radius-lg);
-  text-align: left;
-  text-decoration: none;
-  color: inherit;
-  width: 100%;
-  transition: border-color 0.15s, background-color 0.15s;
+  padding: 0.5625rem 0.875rem;
+  font-size: 0.875rem;
 }
 
-.card:hover {
-  border-color: var(--color-accent);
-  background: color-mix(in srgb, var(--color-accent) 12%, var(--color-surface));
+.row + .row {
+  border-top: 1px solid var(--color-border);
 }
 
+/* 강조색은 "공지" 글자에만 쓴다 */
 .badge {
   flex-shrink: 0;
-  padding: 0.2em 0.55em;
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   font-weight: 700;
-  letter-spacing: 0.03em;
-  color: var(--color-on-accent);
-  background: var(--color-accent);
-  border-radius: var(--radius-xs);
-  line-height: 1.4;
+  color: var(--color-accent);
 }
 
 .title {
   flex: 1;
   min-width: 0;
-  font-size: 0.9375rem;
-  font-weight: 600;
   color: var(--color-text);
+  text-decoration: none;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
+.title:hover {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.title:focus-visible,
+.toggle:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.toggle,
 .date {
   flex-shrink: 0;
   font-size: 0.8125rem;
@@ -55,13 +54,12 @@
   font-variant-numeric: tabular-nums;
 }
 
-@media (max-width: 767px) {
-  .card {
-    align-items: flex-start;
-    flex-wrap: wrap;
-  }
+.toggle {
+  padding: 0;
+  border: none;
+  background: none;
+}
 
-  .title {
-    white-space: normal;
-  }
+.toggle:hover {
+  color: var(--color-text);
 }

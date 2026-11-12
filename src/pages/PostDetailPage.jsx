@@ -3,8 +3,8 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 
 import BackButton from '@/components/ui/BackButton'
-import Button from '@/components/ui/Button'
 import EmptyState from '@/components/ui/EmptyState'
+import PostActionMenu from '@/components/post/PostActionMenu'
 import PostContentView from '@/components/post/PostContentView'
 import ReportModal from '@/components/post/ReportModal'
 import CommentSection from '@/components/post/comment/CommentSection'
@@ -60,6 +60,7 @@ function PostDetailPage() {
       navigate(ROUTES.COMMUNITY)
     },
   })
+  const deleteError = deleteMutation.isError ? '삭제하지 못했어요. 잠시 후 다시 시도해주세요.' : null
 
   usePageMeta({
     title: post ? `${post.title} - 커밍` : undefined,
@@ -72,11 +73,11 @@ function PostDetailPage() {
       <div className={styles.page}>
         <div className={styles.inner}>
           <BackButton fallback={ROUTES.COMMUNITY} />
-          <div className={styles.card}>
+          <article className={styles.article}>
             <div className={styles.skeletonMeta} />
             <div className={styles.skeletonTitle} />
             <div className={styles.skeletonBody} />
-          </div>
+          </article>
         </div>
       </div>
     )
@@ -127,7 +128,6 @@ function PostDetailPage() {
   }
 
   function handleDelete() {
-    if (!window.confirm('게시글을 삭제하시겠습니까?')) return
     deleteMutation.mutate()
   }
 
@@ -136,7 +136,7 @@ function PostDetailPage() {
       <div className={styles.inner}>
         <BackButton fallback={ROUTES.COMMUNITY} />
 
-        <div className={styles.card}>
+        <article className={styles.article}>
           <div className={styles.meta}>
             <span className={styles.badge}>
               {POST_CATEGORY_LABEL[post.category]}
@@ -150,20 +150,15 @@ function PostDetailPage() {
 
           <div className={styles.authorRow}>
             <span className={styles.author}>{post.authorNickname ?? '탈퇴 회원'}</span>
-            {post.isAuthor && (
-              <div className={styles.authorActions}>
-                <Button type="button" variant="outline" size="xs" onClick={handleEdit}>수정</Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="xs"
-                  onClick={handleDelete}
-                  disabled={deleteMutation.isPending}
-                >
-                  {deleteMutation.isPending ? '삭제 중...' : '삭제'}
-                </Button>
-              </div>
-            )}
+            <PostActionMenu
+              isAuthor={post.isAuthor}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+              onReport={handleReportClick}
+              onDeleteConfirmStart={deleteMutation.reset}
+              isDeleting={deleteMutation.isPending}
+              deleteError={deleteError}
+            />
           </div>
 
           <PostContentView content={post.content} />
@@ -181,19 +176,12 @@ function PostDetailPage() {
               </svg>
               추천 {recommendCount.toLocaleString()}
             </button>
-            <button
-              type="button"
-              className={styles.reportBtn}
-              onClick={handleReportClick}
-            >
-              신고
-            </button>
           </div>
 
           <div className={styles.commentsWrap}>
-            <CommentSection postId={postId} commentCount={post.commentCount} />
+            <CommentSection postId={postId} commentCount={post.commentCount} isPostAuthor={post.isAuthor} />
           </div>
-        </div>
+        </article>
 
       </div>
 

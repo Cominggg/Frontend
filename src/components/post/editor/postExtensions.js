@@ -1,0 +1,112 @@
+import { Extension, textblockTypeInputRule } from '@tiptap/core'
+import { Plugin } from '@tiptap/pm/state'
+import StarterKit from '@tiptap/starter-kit'
+import Blockquote from '@tiptap/extension-blockquote'
+import Heading from '@tiptap/extension-heading'
+import { ListItem, OrderedList } from '@tiptap/extension-list'
+
+import { EntityMentionCard } from './entityMentionExtensions'
+
+// 본문 스키마 (Specification spec/client/post-content.md) — 웹·앱·BE 공통 계약.
+// 에디터와 PostContentView가 같은 목록을 써서, 허용 밖 서식은 입력도 렌더링도 되지 않게 한다
+
+const isHttpUrl = (url) => /^https?:\/\//i.test(url)
+
+// 중첩 목록·인용 안 목록 없음 — listItem·blockquote 안에는 paragraph만 둔다.
+// heading·언급 카드는 이 두 노드 안에 들어갈 수 없어 자연히 최상위에만 남는다
+const ParagraphOnlyListItem = ListItem.extend({
+  content: 'paragraph+',
+  // 기본 Tab(sinkListItem)은 중첩 목록을 만들려다 스키마 오류를 던지므로 아무 동작 없이 소비한다
+  // (포커스가 에디터 밖으로 빠지지 않게 true 반환)
+  addKeyboardShortcuts() {
+    return { ...this.parent?.(), Tab: () => true }
+  },
+})
+const ParagraphOnlyBlockquote = Blockquote.extend({ content: 'paragraph+' })
+
+// 번호 목록은 start만 저장한다 (type attr 제거)
+const StartOnlyOrderedList = OrderedList.extend({
+  addAttributes() {
+    // eslint-disable-next-line no-unused-vars
+    const { type, ...rest } = this.parent?.() ?? {}
+    return rest
+  },
+})
+
+// 단축 입력은 앱과 같게 "# "→큰 소제목(h2), "## "→작은 소제목(h3).
+// Tiptap 기본 규칙은 '#' 개수를 level로 써서 "## "가 h2가 되므로 대체한다
+const PostHeading = Heading.extend({
+  addInputRules() {
+    return [
+      textblockTypeInputRule({ find: /^#\s$/, type: this.type, getAttributes: { level: 2 } }),
+      textblockTypeInputRule({ find: /^##\s$/, type: this.type, getAttributes: { level: 3 } }),
+    ]
+  },
+}).configure({ levels: [2, 3] })
+
+// 외부에서 붙여넣은 내용은 일반 텍스트로 받는다. 다른 ProseMirror 에디터에서 복사한 HTML에도
+// data-pm-slice가 붙으므로, 이 에디터가 마지막으로 복사·잘라낸 슬라이스와 내용이 같을 때만 서식을 유지한다.
+// pasteText는 일반 붙여넣기 흐름을 그대로 타서 줄바꿈은 문단으로, URL은 자동 링크가 된다
+const htmlToText = (html) => new DOMParser().parseFromString(html, 'text/html').body.textContent ?? ''
+
+const PlainTextPaste = Extension.create({
+  name: 'plainTextPaste',
+  addProseMirrorPlugins() {
+    // pasteText도 handlePaste를 다시 거치므로, 재진입한 호출은 기본 처리로 넘긴다
+    let pastingText = false
+    let lastCopied = null
+    return [
+      new Plugin({
+        props: {
+          transformCopied(slice) {
+            lastCopied = slice
+            return slice
+          },
+          handlePaste(view, event, slice) {
+            if (pastingText) return false
+            const html = event.clipboardData?.getData('text/html')
+            if (!html) return false
+            if (lastCopied && slice?.content.eq(lastCopied.content)) return false
+            // text/plain 없이 HTML만 온 경우도 서식 없이 글자만 넣는다
+            const text = event.clipboardData.getData('text/plain') || htmlToText(html)
+            if (!text) return true
+            pastingText = true
+            try {
+              return view.pasteText(text, event)
+            } finally {
+              pastingText = false
+            }
+          },
+        },
+      }),
+    ]
+  },
+})
+
+export const postContentExtensions = [
+  StarterKit.configure({
+    heading: false,
+    // 자동 링크만 — 링크 버튼·붙여넣기 링크 없음, href는 http·https만
+    link: {
+      openOnClick: false,
+      linkOnPaste: false,
+      autolink: true,
+      isAllowedUri: isHttpUrl,
+      shouldAutoLink: isHttpUrl,
+    },
+    italic: false,
+    underline: false,
+    code: false,
+    codeBlock: false,
+    horizontalRule: false,
+    listItem: false,
+    blockquote: false,
+    orderedList: false,
+  }),
+  PostHeading,
+  ParagraphOnlyListItem,
+  ParagraphOnlyBlockquote,
+  StartOnlyOrderedList,
+  EntityMentionCard,
+  PlainTextPaste,
+]

@@ -5,12 +5,32 @@ import { MENTION_TYPE_LABEL } from '@/constants/post'
 import { ROUTES } from '@/constants/routes'
 import styles from './EntityMentionCard.module.css'
 
+const VARIANT_CLASS = {
+  CONCERT: styles.concert,
+  ARTIST: styles.artist,
+  RELEASE: styles.release,
+  TRACK: styles.track,
+}
+
 function CardInner({ entityType, title, subtitle, thumbnailUrl }) {
+  // 아티스트 카드는 원형 사진과 이름만 보여준다 (본문 스키마 표시 규칙)
+  if (entityType === 'ARTIST') {
+    return (
+      <>
+        <div
+          className={styles.thumb}
+          style={thumbnailUrl ? { backgroundImage: `url("${thumbnailUrl}")` } : undefined}
+        />
+        <span className={styles.name}>{title}</span>
+      </>
+    )
+  }
+
   return (
     <>
       <div
         className={styles.thumb}
-        style={thumbnailUrl ? { backgroundImage: `url(${thumbnailUrl})` } : undefined}
+        style={thumbnailUrl ? { backgroundImage: `url("${thumbnailUrl}")` } : undefined}
       />
       <div className={styles.txt}>
         <span className={styles.type}>{MENTION_TYPE_LABEL[entityType]}</span>
@@ -28,19 +48,21 @@ function CardInner({ entityType, title, subtitle, thumbnailUrl }) {
 
 function getDetailPath(entityType, entityId, releaseGroupId) {
   if (entityType === 'CONCERT') return ROUTES.CONCERT_DETAIL(entityId)
-  if (entityType === 'TRACK') return `${ROUTES.RELEASE_DETAIL(releaseGroupId)}#track-${entityId}`
+  if (entityType === 'ARTIST') return ROUTES.ARTIST_DETAIL(entityId)
+  // 앨범 연결이 끊긴 트랙(releaseGroupId null)은 갈 곳이 없다
+  if (entityType === 'TRACK') return releaseGroupId == null ? null : `${ROUTES.RELEASE_DETAIL(releaseGroupId)}#track-${entityId}`
   return ROUTES.RELEASE_DETAIL(entityId)
 }
 
 function EntityMentionCardView({ node, editor }) {
   const { entityType, entityId, title, subtitle, thumbnailUrl, releaseGroupId } = node.attrs
-  const variantClass = entityType === 'CONCERT' ? styles.concert : entityType === 'TRACK' ? styles.track : styles.release
-  const className = `${styles.card} ${variantClass}`
+  const className = `${styles.card} ${VARIANT_CLASS[entityType] ?? styles.release}`
 
-  if (!editor.isEditable) {
+  const detailPath = editor.isEditable ? null : getDetailPath(entityType, entityId, releaseGroupId)
+  if (detailPath) {
     return (
       <NodeViewWrapper as="div">
-        <Link to={getDetailPath(entityType, entityId, releaseGroupId)} className={className}>
+        <Link to={detailPath} className={className}>
           <CardInner entityType={entityType} title={title} subtitle={subtitle} thumbnailUrl={thumbnailUrl} />
         </Link>
       </NodeViewWrapper>

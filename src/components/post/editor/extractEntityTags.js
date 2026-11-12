@@ -1,5 +1,8 @@
-// Tiptap JSON 트리를 순회해 본문에 삽입된 entityMentionCard·entityMentionChip
-// 노드들을 entityTags 형태({entityType, entityId})로 추출한다 (중복 제거)
+// 언급 엔티티의 중복 판별 키
+export const entityTagKey = (entityType, entityId) => `${entityType}:${entityId}`
+
+// Tiptap JSON 트리를 순회해 본문에 삽입된 entityMentionCard 노드들을
+// 본문 순서대로 추출한다 (중복 제거). 요청에는 보내지 않고 태그 표시·10개 초과 안내·대표 공연 후보에 쓴다
 export function extractEntityTags(contentJson) {
   const tags = []
   const seen = new Set()
@@ -7,12 +10,12 @@ export function extractEntityTags(contentJson) {
   function walk(node) {
     if (!node) return
 
-    if (node.type === 'entityMentionCard' || node.type === 'entityMentionChip') {
-      const { entityType, entityId, title } = node.attrs ?? {}
-      const key = `${entityType}:${entityId}`
+    if (node.type === 'entityMentionCard') {
+      const { entityType, entityId, title, thumbnailUrl } = node.attrs ?? {}
+      const key = entityTagKey(entityType, entityId)
       if (entityType && entityId != null && !seen.has(key)) {
         seen.add(key)
-        tags.push({ entityType, entityId, title })
+        tags.push({ entityType, entityId, title, thumbnailUrl })
       }
     }
 
@@ -35,7 +38,7 @@ export function isContentEmpty(contentJson) {
       hasContent = true
       return
     }
-    if (node.type === 'entityMentionCard' || node.type === 'entityMentionChip') {
+    if (node.type === 'entityMentionCard') {
       hasContent = true
       return
     }

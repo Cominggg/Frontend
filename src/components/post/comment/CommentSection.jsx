@@ -9,7 +9,7 @@ import styles from './CommentSection.module.css'
 
 const PAGE_SIZE = 50
 
-function CommentSection({ postId, commentCount }) {
+function CommentSection({ postId, commentCount, isPostAuthor = false }) {
   const [page, setPage] = useState(0)
   const [items, setItems] = useState([])
   const [syncedPostId, setSyncedPostId] = useState(postId)
@@ -55,6 +55,8 @@ function CommentSection({ postId, commentCount }) {
         id: res.id,
         authorNickname: user?.nickname ?? null,
         isAuthor: true,
+        // 방금 단 댓글은 현재 사용자가 게시글 작성자일 때만 "작성자" 라벨이 붙는다
+        isPostAuthor,
         content,
         likeCount: 0,
         isLiked: false,

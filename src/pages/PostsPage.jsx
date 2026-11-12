@@ -176,35 +176,42 @@ function PostsPage() {
 
         <PageHeader title="커뮤니티" />
 
-        {/* 게시글 통합 검색 — 제목/본문/멘션 태그를 함께 찾아 같은 목록에 표시 */}
-        <div className={styles.searchWrap}>
-          <span className={styles.searchIcon} aria-hidden="true">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="11" cy="11" r="8" />
-              <line x1="21" y1="21" x2="16.65" y2="16.65" />
-            </svg>
-          </span>
-          <input
-            type="text"
-            className={styles.searchInput}
-            placeholder="게시글 제목, 본문, 태그로 검색..."
-            value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
-            aria-label="게시글 검색"
-          />
-          {inputValue && (
-            <button
-              type="button"
-              className={styles.searchClear}
-              onClick={handleQueryClear}
-              aria-label="검색어 지우기"
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-                <line x1="18" y1="6" x2="6" y2="18" />
-                <line x1="6" y1="6" x2="18" y2="18" />
+        <div className={styles.searchRow}>
+          {/* 게시글 통합 검색 — 제목/본문/멘션 태그를 함께 찾아 같은 목록에 표시 */}
+          <div className={styles.searchWrap}>
+            <span className={styles.searchIcon} aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="11" cy="11" r="8" />
+                <line x1="21" y1="21" x2="16.65" y2="16.65" />
               </svg>
-            </button>
-          )}
+            </span>
+            <input
+              type="text"
+              className={styles.searchInput}
+              placeholder="게시글 제목, 본문, 태그로 검색..."
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              aria-label="게시글 검색"
+            />
+            {inputValue && (
+              <button
+                type="button"
+                className={styles.searchClear}
+                onClick={handleQueryClear}
+                aria-label="검색어 지우기"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                  <line x1="18" y1="6" x2="6" y2="18" />
+                  <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+              </button>
+            )}
+          </div>
+
+          {/* 데스크톱은 검색창 옆, 모바일은 화면 하단에 고정해 목록을 밀어내지 않는다 */}
+          <Button size="sm" className={styles.writeBtn} onClick={handleWriteClick}>
+            게시글 작성
+          </Button>
         </div>
 
         <div className={styles.layout}>
@@ -229,12 +236,6 @@ function PostsPage() {
                 ))}
               </div>
             )}
-          </div>
-
-          <div className={styles.writeBtnCell}>
-            <Button size="sm" className={styles.writeBtn} onClick={handleWriteClick}>
-              게시글 작성
-            </Button>
           </div>
 
           <div className={styles.main}>

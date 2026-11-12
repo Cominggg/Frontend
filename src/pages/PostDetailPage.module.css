@@ -4,15 +4,13 @@
 }
 
 .inner {
-  max-width: 840px;
+  max-width: 720px;
   margin: 0 auto;
 }
 
-.card {
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-xl);
-  padding: 2.25rem 2.75rem 2.5rem;
+/* 바깥 카드 없이 페이지 바탕 위 읽기 열 하나로 둔다 (언급 카드·댓글 입력이 카드 안 카드가 되지 않게) */
+.article {
+  margin-top: 1.25rem;
 }
 
 @keyframes shimmer {
@@ -82,7 +80,7 @@
 
 .title {
   margin: 0 0 1rem;
-  font-size: 1.625rem;
+  font-size: 1.75rem;
   font-weight: 700;
   color: var(--color-text);
   letter-spacing: -0.01em;
@@ -105,18 +103,12 @@
   color: var(--color-text);
 }
 
-.authorActions {
-  display: flex;
-  gap: 0.5rem;
-}
-
 .footer {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 0.625rem;
-  margin-top: 2.5rem;
-  padding-top: 2rem;
+  margin-top: 2rem;
 }
 
 .recommendBtn,
@@ -126,42 +118,23 @@
   gap: 0.5rem;
   padding: 0.625rem 1.5rem;
   border-radius: var(--radius-full);
-  border: 1.5px solid var(--color-border);
-  background: var(--color-surface);
-  color: var(--color-text-muted);
+  border: 1.5px solid var(--color-accent-border);
+  background: var(--color-accent-dim);
+  color: var(--color-accent);
+  font-weight: 700;
   font-size: 0.9375rem;
-  font-weight: 600;
   font-variant-numeric: tabular-nums;
   transition: border-color 0.15s, color 0.15s, background-color 0.15s;
 }
 
 .recommendBtn:hover {
-  border-color: var(--color-accent-border);
-  color: var(--color-accent);
+  border-color: var(--color-accent);
 }
 
 .recommendBtnActive {
   background: var(--color-accent);
   border-color: var(--color-accent);
   color: var(--color-on-accent);
-}
-
-.reportBtn {
-  display: inline-flex;
-  align-items: center;
-  padding: 0.625rem 1.25rem;
-  border-radius: var(--radius-full);
-  border: 1.5px solid var(--color-border);
-  background: var(--color-surface);
-  color: var(--color-text-muted);
-  font-size: 0.9375rem;
-  font-weight: 600;
-  transition: border-color 0.15s, color 0.15s;
-}
-
-.reportBtn:hover {
-  border-color: var(--color-destructive);
-  color: var(--color-destructive);
 }
 
 .commentsWrap {
@@ -173,10 +146,6 @@
 @media (max-width: 767px) {
   .page {
     padding: 1.5rem 1rem 3rem;
-  }
-
-  .card {
-    padding: 1.5rem 1.25rem 2rem;
   }
 
   .title {

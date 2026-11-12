@@ -148,4 +148,70 @@ describe('CommentItem', () => {
       expect(screen.queryByRole('button')).not.toBeInTheDocument()
     })
   })
+
+  describe('작성자·본인 라벨', () => {
+    it('isPostAuthor true면 작성자 라벨 표시', () => {
+      renderCommentItem(makeComment({ isPostAuthor: true }))
+
+      expect(screen.getByText('작성자', { exact: true })).toBeInTheDocument()
+    })
+
+    it('isPostAuthor false면 작성자 라벨 없음', () => {
+      renderCommentItem(makeComment({ isPostAuthor: false }))
+
+      expect(screen.queryByText('작성자', { exact: true })).not.toBeInTheDocument()
+    })
+
+    it('isAuthor true면 나 라벨 표시', () => {
+      renderCommentItem(makeComment({ isAuthor: true }))
+
+      expect(screen.getByText('나', { exact: true })).toBeInTheDocument()
+    })
+
+    it('isAuthor false면 나 라벨 없음', () => {
+      renderCommentItem(makeComment({ isAuthor: false }))
+
+      expect(screen.queryByText('나', { exact: true })).not.toBeInTheDocument()
+    })
+
+    it.each(['작성자', '나'])('isPostAuthor와 isAuthor가 모두 true면 %s 라벨 표시', (label) => {
+      renderCommentItem(makeComment({ isPostAuthor: true, isAuthor: true }))
+
+      expect(screen.getByText(label, { exact: true })).toBeInTheDocument()
+    })
+
+    it.each([
+      ['isPostAuthor', '작성자'],
+      ['isAuthor', '나'],
+    ])('답글의 %s가 true면 %s 라벨 표시', (field, label) => {
+      renderCommentItem(makeComment({ replies: [makeReply({ [field]: true })] }))
+
+      expect(screen.getByText(label, { exact: true })).toBeInTheDocument()
+    })
+
+    it('답글의 isPostAuthor·isAuthor가 모두 true면 두 라벨 모두 표시', () => {
+      renderCommentItem(makeComment({ replies: [makeReply({ isPostAuthor: true, isAuthor: true })] }))
+
+      expect(screen.getByText('작성자', { exact: true })).toBeInTheDocument()
+      expect(screen.getByText('나', { exact: true })).toBeInTheDocument()
+    })
+
+    it('답글의 isPostAuthor false면 작성자 라벨 없음', () => {
+      renderCommentItem(makeComment({ replies: [makeReply({ isPostAuthor: false })] }))
+
+      expect(screen.queryByText('작성자', { exact: true })).not.toBeInTheDocument()
+    })
+
+    it('삭제된 댓글이면 isPostAuthor true여도 작성자 라벨 없음', () => {
+      renderCommentItem(makeComment({ isDeleted: true, isPostAuthor: true, content: '삭제된 댓글입니다' }))
+
+      expect(screen.queryByText('작성자', { exact: true })).not.toBeInTheDocument()
+    })
+
+    it('삭제된 답글이면 isPostAuthor true여도 작성자 라벨 없음', () => {
+      renderCommentItem(makeComment({ replies: [makeReply({ isDeleted: true, isPostAuthor: true })] }))
+
+      expect(screen.queryByText('작성자', { exact: true })).not.toBeInTheDocument()
+    })
+  })
 })

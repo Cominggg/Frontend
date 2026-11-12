@@ -1,38 +1,34 @@
+import { forwardRef, useImperativeHandle } from 'react'
 import { EditorContent, useEditor } from '@tiptap/react'
-import StarterKit from '@tiptap/starter-kit'
-import Color from '@tiptap/extension-color'
-import { TextStyle } from '@tiptap/extension-text-style'
 import Placeholder from '@tiptap/extension-placeholder'
-import CharacterCount from '@tiptap/extension-character-count'
 
-import { EntityMentionCard, EntityMentionChip } from './entityMentionExtensions'
 import EditorBubbleMenu from './EditorBubbleMenu'
+import MentionTag from './mentionTag'
+import { countPostContentLength } from './postContentLength'
+import { postContentExtensions } from './postExtensions'
 import SlashCommand from './slashCommand'
-import { POST_CONTENT_MAX_LENGTH } from '@/constants/post'
 import styles from './PostEditor.module.css'
 
-function PostEditor({ content, onChange, onCharacterCountChange }) {
+const PostEditor = forwardRef(function PostEditor({ content, onChange, onCharacterCountChange, tagLimit = true }, ref) {
   const editor = useEditor({
     extensions: [
-      StarterKit.configure({ link: { openOnClick: false } }),
-      TextStyle,
-      Color,
-      EntityMentionCard,
-      EntityMentionChip,
+      ...postContentExtensions,
       SlashCommand,
+      MentionTag.configure({ tagLimit }),
       Placeholder.configure({
         placeholder: ({ editor: e, node }) =>
           e.isEmpty && node.type.name === 'paragraph'
-            ? "'/' 를 입력해 서식을 지정하거나 공연·아티스트·음악을 태그해보세요"
+            ? "'/' 로 서식을, '@' 로 공연·아티스트·음악을 태그해보세요"
             : '',
       }),
-      CharacterCount.configure({ limit: POST_CONTENT_MAX_LENGTH }),
     ],
     content,
-    onCreate: ({ editor: e }) => onCharacterCountChange?.(e.storage.characterCount.characters()),
+    // 글자 수는 BE 계산식으로 센다. 한도는 입력을 막지 않고 작성 화면에서 경고·제출 차단으로 다룬다
+    onCreate: ({ editor: e }) => onCharacterCountChange?.(countPostContentLength(e.getJSON())),
     onUpdate: ({ editor: e }) => {
-      onChange?.(e.getJSON())
-      onCharacterCountChange?.(e.storage.characterCount.characters())
+      const json = e.getJSON()
+      onChange?.(json)
+      onCharacterCountChange?.(countPostContentLength(json))
     },
     editorProps: {
       attributes: {
@@ -40,6 +36,18 @@ function PostEditor({ content, onChange, onCharacterCountChange }) {
       },
     },
   })
+
+  useImperativeHandle(ref, () => ({
+    // 마우스로도 '/'·'@' 메뉴를 열 수 있게 커서 자리에 트리거 글자를 넣는다.
+    // 트리거는 줄 맨 앞이나 공백 뒤에서만 열리므로, 글자 바로 뒤면 공백을 하나 붙인다
+    insertTrigger(char) {
+      if (!editor) return
+      const { $from } = editor.state.selection
+      const before = $from.parent.textBetween(0, $from.parentOffset, undefined, '￼')
+      const needsSpace = before.length > 0 && !/\s$/.test(before)
+      editor.chain().focus().insertContent(needsSpace ? ` ${char}` : char).run()
+    },
+  }), [editor])
 
   if (!editor) return null
 
@@ -49,6 +57,6 @@ function PostEditor({ content, onChange, onCharacterCountChange }) {
       <EditorContent editor={editor} />
     </>
   )
-}
+})
 
 export default PostEditor
