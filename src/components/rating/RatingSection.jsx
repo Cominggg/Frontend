@@ -12,7 +12,7 @@ const RATING_API = {
   RELEASE: { getMy: getMyReleaseRating, rate: rateRelease },
 }
 
-function RatingSection({ entityType, entityId, average, count, onDark = false, canRate = true, disabledMessage = '평가할 수 없어요' }) {
+function RatingSection({ entityType, entityId, average, count, onDark = false, embedded = false, canRate = true, disabledMessage = '평가할 수 없어요' }) {
   const user = useAuthStore((s) => s.user)
   const openLoginModal = useLoginModalStore((s) => s.open)
   const queryClient = useQueryClient()
@@ -48,7 +48,7 @@ function RatingSection({ entityType, entityId, average, count, onDark = false, c
   const emptyColor = onDark ? 'rgba(255, 255, 255, 0.3)' : undefined
 
   return (
-    <div className={`${styles.section} ${onDark ? styles.onDark : ''}`}>
+    <div className={`${styles.section} ${onDark ? styles.onDark : ''} ${embedded ? styles.embedded : ''}`}>
       <div className={styles.average}>
         <StarRating
           value={average ?? 0}

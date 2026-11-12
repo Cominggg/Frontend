@@ -232,91 +232,70 @@ function ConcertDetailPage() {
 
             <h1 className={styles.title}>{title}</h1>
 
-            {/* 공연 정보 테이블 */}
-            <dl className={styles.infoList}>
-              <div className={styles.infoRow}>
-                <dt>
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-                    <line x1="16" y1="2" x2="16" y2="6" />
-                    <line x1="8" y1="2" x2="8" y2="6" />
-                    <line x1="3" y1="10" x2="21" y2="10" />
-                  </svg>
-                  날짜
-                </dt>
-                <dd>{dateRange}</dd>
-              </div>
-              <div className={styles.infoRow}>
-                <dt>
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
-                    <circle cx="12" cy="10" r="3" />
-                  </svg>
-                  장소
-                </dt>
-                <dd>{venue}</dd>
-              </div>
-              {ticketOpenAt && (
+            {/* 공연 정보 + 별점 */}
+            <div className={styles.infoCard}>
+              <dl className={styles.infoList}>
                 <div className={styles.infoRow}>
                   <dt>
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                      <path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v2z" />
+                      <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                      <line x1="16" y1="2" x2="16" y2="6" />
+                      <line x1="8" y1="2" x2="8" y2="6" />
+                      <line x1="3" y1="10" x2="21" y2="10" />
                     </svg>
-                    티켓팅
+                    날짜
                   </dt>
-                  <dd>{formatDateTime(ticketOpenAt)}</dd>
+                  <dd>{dateRange}</dd>
                 </div>
-              )}
-              {price && (
                 <div className={styles.infoRow}>
                   <dt>
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                      <line x1="12" y1="1" x2="12" y2="23" />
-                      <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+                      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                      <circle cx="12" cy="10" r="3" />
                     </svg>
-                    가격
+                    장소
                   </dt>
-                  <dd>{typeof price === 'number' ? `${price.toLocaleString()}원` : price}</dd>
+                  <dd>{venue}</dd>
                 </div>
-              )}
-            </dl>
+                {ticketOpenAt && (
+                  <div className={styles.infoRow}>
+                    <dt>
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                        <path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v2z" />
+                      </svg>
+                      티켓팅
+                    </dt>
+                    <dd>{formatDateTime(ticketOpenAt)}</dd>
+                  </div>
+                )}
+                {price && (
+                  <div className={styles.infoRow}>
+                    <dt>
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                        <line x1="12" y1="1" x2="12" y2="23" />
+                        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+                      </svg>
+                      가격
+                    </dt>
+                    <dd>{typeof price === 'number' ? `${price.toLocaleString()}원` : price}</dd>
+                  </div>
+                )}
+              </dl>
 
-            {/* 별점 평가 (공연 종료 후에만 가능) */}
-            <RatingSection
-              entityType="CONCERT"
-              entityId={concertId}
-              average={averageRating}
-              count={ratingCount}
-              canRate={status === 'ENDED'}
-              disabledMessage="공연 종료 후 별점을 남길 수 있어요"
-            />
+              {/* 별점 평가 (공연 종료 후에만 가능) */}
+              <RatingSection
+                entityType="CONCERT"
+                entityId={concertId}
+                average={averageRating}
+                count={ratingCount}
+                canRate={status === 'ENDED'}
+                disabledMessage="공연 종료 후 별점을 남길 수 있어요"
+                embedded
+              />
+            </div>
 
-            {/* 관리자 수정 버튼 */}
-            {user?.role === 'ADMIN' && (
-              <Link to={ROUTES.ADMIN_CONCERT_EDIT(concertId)} className={styles.adminEditBtn}>
-                관리자 수정
-              </Link>
-            )}
-
-            {/* 캘린더 추가·제거 */}
-            <button
-              className={`${styles.calendarBtn} ${isInCalendar ? styles.calendarBtnActive : ''}`}
-              onClick={handleCalendar}
-              disabled={calendarMutation.isPending}
-              aria-pressed={isInCalendar}
-            >
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-                <line x1="16" y1="2" x2="16" y2="6" />
-                <line x1="8" y1="2" x2="8" y2="6" />
-                <line x1="3" y1="10" x2="21" y2="10" />
-                {isInCalendar && <polyline points="9 14 11 16 15 12" />}
-              </svg>
-              {isInCalendar ? '캘린더에서 제거' : '내 캘린더에 추가'}
-            </button>
-
-            {/* 예매처 링크 */}
-            {ticketLinks && ticketLinks.length > 0 && (
+            {/* 예매처 링크 (종료된 공연은 예매를 유도하지 않음) */}
+            {status !== 'ENDED' && ticketLinks && ticketLinks.length > 0 && (
               <div className={styles.ticketSection}>
                 <p className={styles.ticketLabel}>예매처</p>
                 <div className={styles.ticketLinks}>
@@ -341,8 +320,30 @@ function ConcertDetailPage() {
               </div>
             )}
 
-            {/* 정보 문의 */}
+            {/* 캘린더 추가·제거 */}
+            <button
+              className={`${styles.calendarBtn} ${isInCalendar ? styles.calendarBtnActive : ''}`}
+              onClick={handleCalendar}
+              disabled={calendarMutation.isPending}
+              aria-pressed={isInCalendar}
+            >
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                <line x1="16" y1="2" x2="16" y2="6" />
+                <line x1="8" y1="2" x2="8" y2="6" />
+                <line x1="3" y1="10" x2="21" y2="10" />
+                {isInCalendar && <polyline points="9 14 11 16 15 12" />}
+              </svg>
+              {isInCalendar ? '캘린더에서 제거' : '내 캘린더에 추가'}
+            </button>
+
+            {/* 정보 문의 + 관리자 수정 */}
             <div className={styles.inquiryBtns}>
+              {user?.role === 'ADMIN' && (
+                <Link to={ROUTES.ADMIN_CONCERT_EDIT(concertId)} className={styles.adminEditBtn}>
+                  관리자 수정
+                </Link>
+              )}
               <button className={styles.inquiryBtn} onClick={handleConcertInquiry}>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                   <circle cx="12" cy="12" r="10" />

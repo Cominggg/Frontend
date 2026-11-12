@@ -206,7 +206,7 @@ function ReleaseDetailPage() {
         <div className={styles.bodyGrid}>
           {/* 트랙리스트 */}
           <section className={styles.trackSection}>
-            <h2 className={styles.sectionHeading}>Tracklist</h2>
+            <h2 className={styles.sectionHeading}>수록곡</h2>
             <ol className={styles.trackList}>
               {tracks.map((track, idx) => {
                 const showDiscHeader = isMultiDisc && track.discNumber != null && (
