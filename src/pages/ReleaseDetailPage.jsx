@@ -77,7 +77,7 @@ function ReleaseDetailPage() {
   if (isLoading) return (
     <div className={styles.page}>
       {/* 데이터 도착 후 아래 본문이 밀리지 않도록(CLS) 히어로 각 요소의 높이를 실제 화면과 맞춘다.
-          key: 실제 히어로가 스켈레톤 DOM을 재사용하면 첫 div가 heroBlur로 바뀌며 이동으로 집계되므로 새로 그리게 한다 */}
+          key: 실제 히어로가 스켈레톤 DOM을 재사용하면 첫 div가 heroBg로 바뀌며 이동으로 집계되므로 새로 그리게 한다 */}
       <section key="skeleton" className={`${styles.hero} ${styles.heroSkeleton}`}>
         <div className={styles.heroInner}>
           <button className={styles.backLink} onClick={handleBack}>← 뒤로</button>
@@ -140,9 +140,10 @@ function ReleaseDetailPage() {
     <div className={styles.page}>
       {/* 히어로 섹션 */}
       <section className={styles.hero}>
+        {/* Spotify 커버는 흐림·오버레이 가공이 금지라 배경에 쓰지 않고 아티스트 색 그라데이션을 깐다 */}
         <div
-          className={styles.heroBlur}
-          style={!showCoverPlaceholder ? { backgroundImage: `url(${coverUrl})` } : undefined}
+          className={styles.heroBg}
+          style={{ '--a-from': accentFrom, '--a-to': accentTo }}
         />
         <div className={styles.heroOverlay} />
         <div className={styles.heroInner}>

@@ -83,7 +83,7 @@
 .release .thumb {
   width: 48px;
   height: 48px;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-xs);
 }
 
 /* ── 트랙: 소속 앨범 아트를 공유하는 정사각 썸네일 (1:1) ── */
@@ -95,7 +95,7 @@
 .track .thumb {
   width: 48px;
   height: 48px;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-xs);
 }
 
 /* ── 아티스트: 원형 사진과 이름만 (사진 48 + 위아래 여백 12 ≈ 72) ── */
