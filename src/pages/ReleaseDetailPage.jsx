@@ -6,7 +6,6 @@ import ArtistAliasName from '@/components/artist/ArtistAliasName'
 import RatingSection from '@/components/rating/RatingSection'
 import RelatedPostsSection from '@/components/post/RelatedPostsSection'
 import EmptyState from '@/components/ui/EmptyState'
-import SourceCredit from '@/components/ui/SourceCredit'
 import SpotifyIcon from '@/components/ui/SpotifyIcon'
 import usePageMeta from '@/hooks/usePageMeta'
 import { getRelease } from '@/services/releaseApi'
@@ -255,11 +254,6 @@ function ReleaseDetailPage() {
             <RelatedPostsSection entityType="RELEASE" entityId={releaseId} limit={5} />
           </aside>
         </div>
-        <SourceCredit
-          text="데이터 출처: MusicBrainz, Spotify"
-          linkHref="https://creativecommons.org/licenses/by-nc-sa/3.0/"
-          linkText="CC BY-NC-SA 3.0"
-        />
       </div>
     </div>
   )

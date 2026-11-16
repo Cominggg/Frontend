@@ -11,7 +11,6 @@ import InquiryModal from '@/components/ui/InquiryModal'
 import InstagramIcon from '@/components/ui/InstagramIcon'
 import Pagination from '@/components/ui/Pagination'
 import RelatedPostsSection from '@/components/post/RelatedPostsSection'
-import SourceCredit from '@/components/ui/SourceCredit'
 import SpotifyIcon from '@/components/ui/SpotifyIcon'
 import XIcon from '@/components/ui/XIcon'
 import YouTubeIcon from '@/components/ui/YouTubeIcon'
@@ -544,12 +543,6 @@ function ArtistDetailPage() {
           </button>
         </div>
 
-        {/* 출처 표기 */}
-        <SourceCredit
-          text="데이터 출처: MusicBrainz, Spotify"
-          linkHref="https://creativecommons.org/licenses/by-nc-sa/3.0/"
-          linkText="CC BY-NC-SA 3.0"
-        />
         </div>
 
       </div>
