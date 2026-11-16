@@ -16,8 +16,8 @@ import useLoginModalStore from '@/stores/loginModalStore'
 import { getArtistColor } from '@/utils/artistColor'
 import { formatDate } from '@/utils/date'
 import { getSpotifyCoverThumbnail } from '@/utils/spotify'
-import styles from './HomePage.module.css'
 import SpotifyLogo from '@/components/ui/SpotifyLogo'
+import styles from './HomePage.module.css'
 
 
 function getDday(dateStr, today) {

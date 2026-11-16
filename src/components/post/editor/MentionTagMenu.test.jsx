@@ -347,4 +347,63 @@ describe('MentionTagMenu', () => {
       expect(searchMentions).toHaveBeenCalledTimes(2)
     })
   })
+
+  describe('Spotify 로고', () => {
+    it.each([
+      ['아티스트', ARTIST],
+      ['음악', RELEASE],
+    ])('%s 후보가 있으면 로고 표시', (_, item) => {
+      renderMenu({ items: results([CONCERT, item]) })
+
+      expect(screen.getAllByRole('img', { name: 'Spotify' })).toHaveLength(2)
+    })
+
+    it('공연 후보만 있으면 로고 미표시', () => {
+      renderMenu({ items: results([CONCERT]) })
+
+      expect(screen.queryByRole('img', { name: 'Spotify' })).not.toBeInTheDocument()
+    })
+
+    it('불러오는 중이면 로고 미표시', () => {
+      renderMenu()
+
+      expect(screen.queryByRole('img', { name: 'Spotify' })).not.toBeInTheDocument()
+    })
+
+    it('결과가 비어 있으면 로고 미표시', () => {
+      renderMenu({ items: results([]) })
+
+      expect(screen.queryByRole('img', { name: 'Spotify' })).not.toBeInTheDocument()
+    })
+
+    it('failed면 로고 미표시', () => {
+      renderMenu({ items: results([], { failed: true }) })
+
+      expect(screen.queryByRole('img', { name: 'Spotify' })).not.toBeInTheDocument()
+    })
+
+    it('펼친 목록에 아티스트 후보가 있으면 로고 표시', async () => {
+      const user = userEvent.setup()
+      searchMentions.mockResolvedValue(pageOf([ARTIST]))
+      renderMenu({ items: results([CONCERT]) })
+
+      await user.click(screen.getByRole('button', { name: /종류별로 더 찾기/ }))
+      await user.click(screen.getByRole('tab', { name: '아티스트' }))
+
+      await screen.findByRole('button', { name: /^YOASOBI/ })
+      expect(screen.getAllByRole('img', { name: 'Spotify' })).toHaveLength(2)
+    })
+
+    it('펼친 목록에 공연 후보만 있으면 로고 미표시', async () => {
+      const user = userEvent.setup()
+      searchMentions.mockResolvedValue(pageOf([CONCERT]))
+      renderMenu({ items: results([ARTIST]) })
+
+      await user.click(screen.getByRole('button', { name: /종류별로 더 찾기/ }))
+      await user.click(screen.getByRole('tab', { name: '공연' }))
+
+      await screen.findByRole('button', { name: /YOASOBI ASIA TOUR 2026/ })
+      expect(screen.queryByRole('img', { name: 'Spotify' })).not.toBeInTheDocument()
+    })
+  })
 })

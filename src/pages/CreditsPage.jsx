@@ -36,7 +36,13 @@ function CreditsPage() {
         <ul className={styles.list}>
           {CREDITS.map(({ name, logo, credit, usage, href }) => (
             <li key={name} className={styles.item}>
-              <a href={href} target="_blank" rel="noopener noreferrer" className={styles.name}>
+              <a
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={styles.name}
+                aria-label={logo ? name : undefined}
+              >
                 {logo ?? name}
               </a>
               {credit && <p className={styles.credit}>{credit}</p>}

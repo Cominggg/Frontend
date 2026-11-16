@@ -16,8 +16,8 @@ import { getArtistColor } from '@/utils/artistColor'
 import { formatDate } from '@/utils/date'
 import { HOME_PAGE_META } from '@/utils/pageMeta'
 import useHorizontalScrollBar from '@/hooks/useHorizontalScrollBar'
-import styles from './MyPage.module.css'
 import SpotifyLogo from '@/components/ui/SpotifyLogo'
+import styles from './MyPage.module.css'
 
 const INQ_TYPE_LABELS = { CONCERT: '공연 정보', ARTIST: '아티스트 정보', SETLIST: '셋리스트' }
 const INQ_STATUS_LABELS = { PENDING: '접수', IN_PROGRESS: '처리중', RESOLVED: '완료', REJECTED: '반려' }
