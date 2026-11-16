@@ -18,6 +18,7 @@ import usePageMeta from '@/hooks/usePageMeta'
 import { trackEvent } from '@/utils/analytics'
 import { STATIC_PAGE_META } from '@/utils/pageMeta'
 import styles from './ReleasesPage.module.css'
+import SpotifyLogo from '@/components/ui/SpotifyLogo'
 
 const MAIN_TYPES = ['Album', 'Single']
 const TYPE_FILTERS = ['전체', ...MAIN_TYPES]
@@ -206,11 +207,16 @@ function ReleasesPage() {
             ))}
           </div>
         ) : releases.length > 0 ? (
-          <div className={styles.grid}>
-            {releases.map((release, i) => (
-              <ReleaseCard key={release.id} release={release} priority={i < PRIORITY_CARD_COUNT} />
-            ))}
-          </div>
+          <>
+            <div className={styles.grid}>
+              {releases.map((release, i) => (
+                <ReleaseCard key={release.id} release={release} priority={i < PRIORITY_CARD_COUNT} />
+              ))}
+            </div>
+            <div className={styles.spotifyCredit}>
+              <SpotifyLogo />
+            </div>
+          </>
         ) : (
           <EmptyState
             icon={

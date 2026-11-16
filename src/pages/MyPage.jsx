@@ -17,6 +17,7 @@ import { formatDate } from '@/utils/date'
 import { HOME_PAGE_META } from '@/utils/pageMeta'
 import useHorizontalScrollBar from '@/hooks/useHorizontalScrollBar'
 import styles from './MyPage.module.css'
+import SpotifyLogo from '@/components/ui/SpotifyLogo'
 
 const INQ_TYPE_LABELS = { CONCERT: '공연 정보', ARTIST: '아티스트 정보', SETLIST: '셋리스트' }
 const INQ_STATUS_LABELS = { PENDING: '접수', IN_PROGRESS: '처리중', RESOLVED: '완료', REJECTED: '반려' }
@@ -512,15 +513,20 @@ function MyPage() {
                 action={{ label: '아티스트 둘러보기', to: ROUTES.ARTISTS }}
               />
             ) : (
-              <div className={styles.artistList}>
-                {followingArtists.map((artist) => (
-                  <ArtistRow
-                    key={artist.id}
-                    artist={artist}
-                    onUnfollow={(id) => unfollowMutation.mutate(id)}
-                  />
-                ))}
-              </div>
+              <>
+                <div className={styles.artistList}>
+                  {followingArtists.map((artist) => (
+                    <ArtistRow
+                      key={artist.id}
+                      artist={artist}
+                      onUnfollow={(id) => unfollowMutation.mutate(id)}
+                    />
+                  ))}
+                </div>
+                <div className={styles.spotifyCredit}>
+                  <SpotifyLogo />
+                </div>
+              </>
             )}
           </div>
         )}

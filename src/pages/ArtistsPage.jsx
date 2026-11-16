@@ -17,6 +17,7 @@ import usePageMeta from '@/hooks/usePageMeta'
 import { trackEvent } from '@/utils/analytics'
 import { STATIC_PAGE_META } from '@/utils/pageMeta'
 import styles from './ArtistsPage.module.css'
+import SpotifyLogo from '@/components/ui/SpotifyLogo'
 
 const PAGE_SIZE = 20
 // 첫 화면에 보이는 카드 수(모바일 2열 × 2행). 이 카드들의 이미지는 LCP 후보라 먼저 받는다.
@@ -234,11 +235,16 @@ function ArtistsPage() {
             ))}
           </div>
         ) : artists.length > 0 ? (
-          <div className={styles.grid}>
-            {artists.map((artist, i) => (
-              <ArtistCard key={artist.id} artist={artist} priority={i < PRIORITY_CARD_COUNT} />
-            ))}
-          </div>
+          <>
+            <div className={styles.grid}>
+              {artists.map((artist, i) => (
+                <ArtistCard key={artist.id} artist={artist} priority={i < PRIORITY_CARD_COUNT} />
+              ))}
+            </div>
+            <div className={styles.spotifyCredit}>
+              <SpotifyLogo />
+            </div>
+          </>
         ) : (
           <EmptyState
             icon={

@@ -34,6 +34,7 @@
 }
 
 .name {
+  display: inline-flex;
   font-size: 1rem;
   font-weight: 700;
   color: var(--color-text);
@@ -43,6 +44,11 @@
 .name:hover {
   color: var(--color-accent);
   text-decoration: underline;
+}
+
+.name:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 4px;
 }
 
 .credit {

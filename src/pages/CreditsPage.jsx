@@ -1,3 +1,4 @@
+import SpotifyLogo from '@/components/ui/SpotifyLogo'
 import styles from './CreditsPage.module.css'
 
 // 앱 MY > 정보 > 데이터 출처 화면과 같은 문구를 쓴다
@@ -10,6 +11,7 @@ const CREDITS = [
   },
   {
     name: 'Spotify',
+    logo: <SpotifyLogo width={88} />,
     usage: '앨범·싱글 제목, 커버, 발매일, 수록곡, 아티스트 사진',
     href: 'https://www.spotify.com',
   },
@@ -32,10 +34,10 @@ function CreditsPage() {
         <h1 className={styles.title}>데이터 출처</h1>
         <p className={styles.lead}>커밍은 아래 서비스의 데이터를 사용합니다.</p>
         <ul className={styles.list}>
-          {CREDITS.map(({ name, credit, usage, href }) => (
+          {CREDITS.map(({ name, logo, credit, usage, href }) => (
             <li key={name} className={styles.item}>
               <a href={href} target="_blank" rel="noopener noreferrer" className={styles.name}>
-                {name}
+                {logo ?? name}
               </a>
               {credit && <p className={styles.credit}>{credit}</p>}
               <p className={styles.usage}>{usage}</p>

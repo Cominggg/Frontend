@@ -17,6 +17,7 @@ import { getArtistColor } from '@/utils/artistColor'
 import { formatDate } from '@/utils/date'
 import { getSpotifyCoverThumbnail } from '@/utils/spotify'
 import styles from './HomePage.module.css'
+import SpotifyLogo from '@/components/ui/SpotifyLogo'
 
 
 function getDday(dateStr, today) {
@@ -386,9 +387,14 @@ function HomePage() {
               ) : newReleases.length === 0 ? (
                 <EmptyState compact message="등록된 앨범·싱글이 없습니다." />
               ) : (
-                <div className={styles.albumStrip}>
-                  {newReleases.map((item) => <AlbumCard key={item.id} item={item} />)}
-                </div>
+                <>
+                  <div className={styles.albumStrip}>
+                    {newReleases.map((item) => <AlbumCard key={item.id} item={item} />)}
+                  </div>
+                  <div className={styles.spotifyCredit}>
+                    <SpotifyLogo />
+                  </div>
+                </>
               )}
             </section>
 
