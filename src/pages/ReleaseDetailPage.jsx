@@ -239,7 +239,7 @@ function ReleaseDetailPage() {
                           className={styles.trackSpotifyLink}
                           aria-label={`${track.title} Spotify에서 듣기`}
                         >
-                          <SpotifyIcon size={16} />
+                          <SpotifyIcon size={22} />
                         </a>
                       )}
                     </div>

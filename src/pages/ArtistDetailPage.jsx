@@ -431,7 +431,7 @@ function ArtistDetailPage() {
                             className={styles.releaseSpotifyLink}
                             aria-label={`${rel.title} Spotify에서 듣기`}
                           >
-                            <SpotifyIcon size={18} />
+                            <SpotifyIcon size={22} />
                           </a>
                         )}
                       </div>
@@ -455,7 +455,7 @@ function ArtistDetailPage() {
                                     className={styles.trackSpotifyLink}
                                     aria-label={`${t.title} Spotify에서 듣기`}
                                   >
-                                    <SpotifyIcon size={14} />
+                                    <SpotifyIcon size={22} />
                                   </a>
                                 )}
                               </li>
