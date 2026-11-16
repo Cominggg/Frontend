@@ -131,12 +131,11 @@ function AlbumCard({ item }) {
             onError={() => setImgFailed(true)}
           />
         )}
-        <span className={styles.albumTypeBadge}>{item.type}</span>
       </div>
       <div className={styles.albumInfo}>
         <p className={styles.albumArtist}><ArtistAliasName name={item.artistName} koreanName={item.artistKoreanName} /></p>
         <p className={styles.albumTitle}>{item.title}</p>
-        <p className={styles.albumDate}>{formatDate(item.releaseDate)}</p>
+        <p className={styles.albumDate}>{item.type} · {formatDate(item.releaseDate)}</p>
       </div>
     </Link>
   )

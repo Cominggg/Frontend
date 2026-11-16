@@ -53,32 +53,37 @@ function ReleaseCard({ release, priority = false }) {
             onError={() => setImgFailed(true)}
           />
         )}
-        <span
-          className={styles.typeBadge}
-          style={{ backgroundColor: badgeColor }}
-        >
-          {type}
-        </span>
-        {isNew && <span className={styles.newBadge}>NEW</span>}
-        {spotifyUrl && (
-          <button
-            type="button"
-            className={styles.spotifyBadge}
-            aria-label={`${title} Spotify에서 듣기`}
-            onClick={(e) => {
-              e.preventDefault()
-              e.stopPropagation()
-              window.open(spotifyUrl, '_blank', 'noopener,noreferrer')
-            }}
-          >
-            <SpotifyIcon size={18} />
-          </button>
-        )}
       </div>
 
+      {/* Spotify 커버 위에는 아무것도 얹지 않는다 (디자인 가이드) — 배지·Spotify 링크는 정보 영역에 둔다 */}
       <div className={styles.info}>
+        <div className={styles.badges}>
+          <span
+            className={styles.typeBadge}
+            style={{ backgroundColor: badgeColor }}
+          >
+            {type}
+          </span>
+          {isNew && <span className={styles.newBadge}>NEW</span>}
+        </div>
         <p className={styles.artist}><ArtistAliasName name={artistName} koreanName={artistKoreanName} /></p>
-        <h3 className={styles.title}>{title}</h3>
+        <div className={styles.titleRow}>
+          <h3 className={styles.title}>{title}</h3>
+          {spotifyUrl && (
+            <button
+              type="button"
+              className={styles.spotifyBtn}
+              aria-label={`${title} Spotify에서 듣기`}
+              onClick={(e) => {
+                e.preventDefault()
+                e.stopPropagation()
+                window.open(spotifyUrl, '_blank', 'noopener,noreferrer')
+              }}
+            >
+              <SpotifyIcon size={22} />
+            </button>
+          )}
+        </div>
         <div className={styles.meta} style={!releaseDate ? { visibility: 'hidden' } : undefined}>
           <span className={styles.metaIcon} aria-hidden="true">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
