@@ -30,6 +30,7 @@ const PostWritePage = lazy(() => import('@/pages/PostWritePage'))
 const NoticeDetailPage = lazy(() => import('@/pages/NoticeDetailPage'))
 const MyPage = lazy(() => import('@/pages/MyPage'))
 const NotFoundPage = lazy(() => import('@/pages/NotFoundPage'))
+const CreditsPage = lazy(() => import('@/pages/CreditsPage'))
 const PolicyPage = lazy(() => import('@/pages/PolicyPage'))
 const AccountDeletePage = lazy(() => import('@/pages/AccountDeletePage'))
 
@@ -88,6 +89,7 @@ function App() {
         <Route path={ROUTES.TERMS} element={<PolicyPage title="서비스 이용약관" versions={TERMS_VERSIONS} />} />
         <Route path={ROUTES.PRIVACY} element={<PolicyPage title="개인정보처리방침" versions={PRIVACY_VERSIONS} />} />
         <Route path={ROUTES.OPERATION_POLICY} element={<PolicyPage title="운영정책" versions={OPERATION_VERSIONS} />} />
+        <Route path={ROUTES.CREDITS} element={<CreditsPage />} />
         <Route path={ROUTES.ACCOUNT_DELETE} element={<AccountDeletePage />} />
         <Route path={ROUTES.ME} element={<PrivateRoute><MyPage /></PrivateRoute>} />
         <Route path={ROUTES.ME_UPCOMING} element={<PrivateRoute><MyPage /></PrivateRoute>} />
