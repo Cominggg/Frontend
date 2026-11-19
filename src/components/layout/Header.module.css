@@ -22,6 +22,7 @@
 
 /* 로고 */
 .logo {
+  display: flex;
   text-decoration: none;
   flex-shrink: 0;
 }
