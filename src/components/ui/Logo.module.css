@@ -1,31 +1,36 @@
+/*
+ * 락업 규칙(App ComingLogo와 동일). 모든 치수는 root의 font-size(em) 기준이며,
+ * 워드마크 글리프 단위(UPM 2048)로 환산했다: C 꼭대기 70, 기준선 1574, g 바닥 2006
+ * - 심볼 높이 = 1.25 × 글자(C 꼭대기~g 바닥) = 1.25 × 1936/2048em
+ * - 심볼 가운데 = C 높이 가운데 → 글자를 (1003 − 822)/2048em 내린다
+ * - 간격 = C 높이(1504/2048em)의 절반
+ */
 .root {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 4px;
-  text-decoration: none;
-}
-
-.icon {
-  flex-shrink: 0;
-  object-fit: contain;
-}
-
-.text {
-  font-family: 'Wanted Sans', var(--font-sans);
-  font-weight: 900;
-  letter-spacing: -0.02em;
+  gap: 0.3672em;
   color: var(--color-text);
   line-height: 1;
 }
 
-/* sm: 헤더용 (아이콘은 텍스트 대비 2배 크기, margin-right로 시각적 간격은 이전과 동일하게 보정) */
-.sm .icon { width: 36px; height: 36px; margin-right: -5px; }
-.sm .text { font-size: 1.125rem; }
+.symbol {
+  flex-shrink: 0;
+  height: 1.1816em;
+  width: 0.7563em;
+}
+
+.text {
+  flex-shrink: 0;
+  height: 0.9795em;
+  width: 3.6514em;
+  transform: translateY(0.0884em);
+}
+
+/* sm: 헤더 축소용 */
+.sm { font-size: 1.125rem; }
 
 /* md: 헤더 기본 */
-.md .icon { width: 38px; height: 38px; margin-right: -5.5px; }
-.md .text { font-size: 1.1875rem; }
+.md { font-size: 1.1875rem; }
 
-/* lg: 로그인 모달용 */
-.lg .icon { width: 48px; height: 48px; margin-right: -7.5px; }
-.lg .text { font-size: 1.5rem; }
+/* lg: 로그인 모달·가입 페이지용 */
+.lg { font-size: 1.5rem; }
