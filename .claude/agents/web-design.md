@@ -45,7 +45,8 @@ UI/UX 원칙에 근거한 판단, 최신 웹 디자인 트렌드 파악, 레퍼�
 - 하드코딩 색상 대신 토큰을 쓴다: `--color-bg`/`--color-surface`/`--color-text`/`--color-text-muted`/`--color-border`, 강조색 `--color-accent`(#e11d48 계열)와 파생 토큰
 - 도메인 색상: 공연 상태 `--status-*`, 예매 `--ticketing-*`, 캘린더 주말 `--calendar-*`, 관리자 `--admin-*`
 - 반경 `--radius-xs`~`--radius-full`, 그림자 `--shadow-sm/md/modal`, 레이아웃 `--max-width: 1280px`, `--header-height: 64px`
-- 본문 서체 Pretendard(`--font-sans`), 로고 워드마크만 Wanted Sans
+- 본문 서체 Pretendard(`--font-sans`). 로고(`Logo.jsx`)는 G2 심볼(벽 뒤에서 고개를 내민 얼굴, 눈은 구멍) + 워드마크 "Coming"(Wanted Sans Black 글리프 패스)을 인라인 SVG 한 색(`--color-text`)으로 그린다. 강조색·그라데이션은 쓰지 않는다. 락업 규칙: 심볼 높이 = 글자의 1.25배, 심볼 가운데 = C 높이 가운데, 간격 = C 높이의 절반
+- 파비콘은 픽셀 격자에 맞춘 무대색(#0B0B0F) 타일 `favicon.ico`(16·32·48)와 `apple-touch-icon.png`(180)만 쓴다. SVG 파비콘은 쓰지 않는다
 - **다크 모드**: `prefers-color-scheme` 기본 + `html[data-theme]` 수동 토글(`themeStore`). 새 색상 토큰은 라이트·다크 양쪽에 정의한다.
 
 ### 반응형 breakpoint
