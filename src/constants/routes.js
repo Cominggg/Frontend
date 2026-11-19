@@ -35,5 +35,6 @@ export const ROUTES = {
   TERMS: '/terms',
   PRIVACY: '/privacy',
   OPERATION_POLICY: '/operation-policy',
+  CREDITS: '/credits',
   ACCOUNT_DELETE: '/account/delete',
 }
