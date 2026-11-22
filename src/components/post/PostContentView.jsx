@@ -1,6 +1,8 @@
 import { useEffect } from 'react'
 import { EditorContent, useEditor } from '@tiptap/react'
 
+import SpotifyLogo from '@/components/ui/SpotifyLogo'
+import { hasSpotifyMention } from './editor/hasSpotifyMention'
 import { postContentExtensions } from './editor/postExtensions'
 import styles from './PostContentView.module.css'
 
@@ -22,9 +24,16 @@ function PostContentView({ content }) {
   if (!editor) return null
 
   return (
-    <div className={styles.prose}>
-      <EditorContent editor={editor} />
-    </div>
+    <>
+      <div className={styles.prose}>
+        <EditorContent editor={editor} />
+      </div>
+      {hasSpotifyMention(content) && (
+        <div className={styles.spotifyCredit}>
+          <SpotifyLogo />
+        </div>
+      )}
+    </>
   )
 }
 

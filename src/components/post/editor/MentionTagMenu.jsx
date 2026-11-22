@@ -1,6 +1,8 @@
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react'
 
 import { MENTION_TYPE_LABEL, POST_ENTITY_TAG_MAX_COUNT } from '@/constants/post'
+import SpotifyLogo from '@/components/ui/SpotifyLogo'
+import { SPOTIFY_MENTION_TYPES } from './hasSpotifyMention'
 import { MENTION_TYPES, applyTagLimit, searchMentions, searchTagSuggestions } from './mentionSearch'
 import styles from './MentionTagMenu.module.css'
 
@@ -288,6 +290,12 @@ const MentionTagMenu = forwardRef(function MentionTagMenu({ items, loading, quer
             &apos;{shownQuery}&apos; 종류별로 더 찾기
             <kbd className={styles.kbd}>Tab</kbd>
           </button>
+        </div>
+      )}
+
+      {rows.some((item) => SPOTIFY_MENTION_TYPES.includes(item.type)) && (
+        <div className={styles.attribution}>
+          <SpotifyLogo width={72} />
         </div>
       )}
     </div>

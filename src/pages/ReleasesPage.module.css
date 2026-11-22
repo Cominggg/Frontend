@@ -126,3 +126,10 @@
 
 }
 
+
+/* Spotify 출처 표기 (콘텐츠가 렌더될 때만 1회) */
+.spotifyCredit {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1.5rem;
+}

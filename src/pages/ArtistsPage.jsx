@@ -16,6 +16,7 @@ import useLoginModalStore from '@/stores/loginModalStore'
 import usePageMeta from '@/hooks/usePageMeta'
 import { trackEvent } from '@/utils/analytics'
 import { STATIC_PAGE_META } from '@/utils/pageMeta'
+import SpotifyLogo from '@/components/ui/SpotifyLogo'
 import styles from './ArtistsPage.module.css'
 
 const PAGE_SIZE = 20
@@ -234,11 +235,16 @@ function ArtistsPage() {
             ))}
           </div>
         ) : artists.length > 0 ? (
-          <div className={styles.grid}>
-            {artists.map((artist, i) => (
-              <ArtistCard key={artist.id} artist={artist} priority={i < PRIORITY_CARD_COUNT} />
-            ))}
-          </div>
+          <>
+            <div className={styles.grid}>
+              {artists.map((artist, i) => (
+                <ArtistCard key={artist.id} artist={artist} priority={i < PRIORITY_CARD_COUNT} />
+              ))}
+            </div>
+            <div className={styles.spotifyCredit}>
+              <SpotifyLogo />
+            </div>
+          </>
         ) : (
           <EmptyState
             icon={

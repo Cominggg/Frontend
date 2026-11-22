@@ -16,6 +16,7 @@ import useLoginModalStore from '@/stores/loginModalStore'
 import { getArtistColor } from '@/utils/artistColor'
 import { formatDate } from '@/utils/date'
 import { getSpotifyCoverThumbnail } from '@/utils/spotify'
+import SpotifyLogo from '@/components/ui/SpotifyLogo'
 import styles from './HomePage.module.css'
 
 
@@ -130,12 +131,11 @@ function AlbumCard({ item }) {
             onError={() => setImgFailed(true)}
           />
         )}
-        <span className={styles.albumTypeBadge}>{item.type}</span>
       </div>
       <div className={styles.albumInfo}>
         <p className={styles.albumArtist}><ArtistAliasName name={item.artistName} koreanName={item.artistKoreanName} /></p>
         <p className={styles.albumTitle}>{item.title}</p>
-        <p className={styles.albumDate}>{formatDate(item.releaseDate)}</p>
+        <p className={styles.albumDate}>{item.type} · {formatDate(item.releaseDate)}</p>
       </div>
     </Link>
   )
@@ -386,9 +386,14 @@ function HomePage() {
               ) : newReleases.length === 0 ? (
                 <EmptyState compact message="등록된 앨범·싱글이 없습니다." />
               ) : (
-                <div className={styles.albumStrip}>
-                  {newReleases.map((item) => <AlbumCard key={item.id} item={item} />)}
-                </div>
+                <>
+                  <div className={styles.albumStrip}>
+                    {newReleases.map((item) => <AlbumCard key={item.id} item={item} />)}
+                  </div>
+                  <div className={styles.spotifyCredit}>
+                    <SpotifyLogo />
+                  </div>
+                </>
               )}
             </section>
 

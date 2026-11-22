@@ -68,7 +68,13 @@ function ConcertDetailPage() {
     path: `/concerts/${concertId}`,
   })
 
-  const { data: setlistData } = useQuery({
+  const {
+    data: setlistData,
+    isPending: setlistPending,
+    isError: setlistError,
+    isFetching: setlistFetching,
+    refetch: refetchSetlist,
+  } = useQuery({
     queryKey: ['concert-setlist', concertId],
     queryFn: () => getConcertSetlist(concertId),
     enabled: concert?.status === 'ENDED',
@@ -352,7 +358,7 @@ function ConcertDetailPage() {
                 </svg>
                 공연 정보 문의
               </button>
-              {status === 'ENDED' && (
+              {status === 'ENDED' && !setlistError && (
                 <button className={styles.inquiryBtn} onClick={handleSetlistInquiry}>
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                     <path d="M9 11l3 3L22 4" />
@@ -393,7 +399,18 @@ function ConcertDetailPage() {
 
           {activeTab === 'setlist' && status === 'ENDED' && (
             <div className={styles.tabPanel}>
-              {setlist.length > 0 ? (
+              {setlistPending ? (
+                <p className={styles.setlistEmpty} role="status">셋리스트를 불러오는 중이에요...</p>
+              ) : setlistError ? (
+                <EmptyState
+                  compact
+                  message="셋리스트를 불러오지 못했어요. 잠시 후 다시 시도해주세요."
+                  action={{
+                    label: setlistFetching ? '불러오는 중...' : '다시 시도',
+                    onClick: () => { if (!setlistFetching) refetchSetlist() },
+                  }}
+                />
+              ) : setlist.length > 0 ? (
                 <>
                   <ol className={styles.setlistTrackList}>
                     {setlist.map((track) => (

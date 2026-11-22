@@ -25,6 +25,7 @@ function Footer() {
             <Link to={ROUTES.TERMS} className={styles.link}>서비스 이용약관</Link>
             <Link to={ROUTES.PRIVACY} className={styles.link}>개인정보처리방침</Link>
             <Link to={ROUTES.OPERATION_POLICY} className={styles.link}>운영정책</Link>
+            <Link to={ROUTES.CREDITS} className={styles.link}>데이터 출처</Link>
           </nav>
         </div>
       </div>

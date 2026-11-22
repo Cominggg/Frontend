@@ -4,7 +4,7 @@ import userEvent from '@testing-library/user-event'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { MemoryRouter, Route, Routes, useNavigate } from 'react-router-dom'
 import ConcertDetailPage from './ConcertDetailPage'
-import { getConcert } from '@/services/concertApi'
+import { getConcert, getConcertSetlist } from '@/services/concertApi'
 import useAuthStore from '@/stores/authStore'
 import { ROUTES } from '@/constants/routes'
 
@@ -264,5 +264,189 @@ describe('ConcertDetailPage 관리자 수정 링크', () => {
     await screen.findByRole('heading', { name: CONCERT_1.title })
 
     expect(screen.queryByRole('link', { name: '관리자 수정' })).not.toBeInTheDocument()
+  })
+})
+
+describe('ConcertDetailPage 셋리스트 탭', () => {
+  const SETLIST = {
+    tracks: [
+      { order: 1, title: '夜に駆ける' },
+      { order: 2, title: 'アイドル' },
+    ],
+    sourceUrl: 'https://www.setlist.fm/setlist/yoasobi/2026/kspo-dome-seoul-korea-1234abcd.html',
+  }
+  const SETLIST_UNAVAILABLE = Object.assign(new Error('503'), {
+    response: { status: 503, data: { code: 'SETLIST_TEMPORARILY_UNAVAILABLE' } },
+  })
+
+  async function openSetlistTab(user) {
+    await user.click(await screen.findByRole('button', { name: '셋리스트' }))
+  }
+
+  it('로딩 중이면 불러오는 중 상태 표시', async () => {
+    const user = userEvent.setup()
+    mockConcert({ status: 'ENDED' })
+    getConcertSetlist.mockReturnValue(new Promise(() => {}))
+    renderPage()
+
+    await openSetlistTab(user)
+
+    expect(screen.getByRole('status')).toHaveTextContent('셋리스트를 불러오는 중이에요...')
+  })
+
+  it('로딩 중이면 빈 셋리스트 문구 미렌더링', async () => {
+    const user = userEvent.setup()
+    mockConcert({ status: 'ENDED' })
+    getConcertSetlist.mockReturnValue(new Promise(() => {}))
+    renderPage()
+
+    await openSetlistTab(user)
+
+    expect(screen.queryByText('아직 등록된 셋리스트가 없습니다.')).not.toBeInTheDocument()
+  })
+
+  it('조회에 실패하면 에러 문구와 다시 시도 버튼 표시', async () => {
+    const user = userEvent.setup()
+    mockConcert({ status: 'ENDED' })
+    getConcertSetlist.mockRejectedValue(SETLIST_UNAVAILABLE)
+    renderPage()
+
+    await openSetlistTab(user)
+
+    expect(await screen.findByText('셋리스트를 불러오지 못했어요. 잠시 후 다시 시도해주세요.')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: '다시 시도' })).toBeInTheDocument()
+  })
+
+  it('조회에 실패하면 셋리스트 문의 버튼 미렌더링', async () => {
+    const user = userEvent.setup()
+    mockConcert({ status: 'ENDED' })
+    getConcertSetlist.mockRejectedValue(SETLIST_UNAVAILABLE)
+    renderPage()
+
+    await openSetlistTab(user)
+    await screen.findByRole('button', { name: '다시 시도' })
+
+    expect(screen.queryByRole('button', { name: '셋리스트 문의' })).not.toBeInTheDocument()
+  })
+
+  it('다시 시도를 클릭하면 셋리스트를 재요청', async () => {
+    const user = userEvent.setup()
+    mockConcert({ status: 'ENDED' })
+    getConcertSetlist.mockRejectedValue(SETLIST_UNAVAILABLE)
+    renderPage()
+    await openSetlistTab(user)
+    const retryButton = await screen.findByRole('button', { name: '다시 시도' })
+    getConcertSetlist.mockResolvedValue(SETLIST)
+
+    await user.click(retryButton)
+
+    expect(getConcertSetlist).toHaveBeenCalledTimes(2)
+  })
+
+  it('다시 시도 후 조회에 성공하면 트랙 목록 표시', async () => {
+    const user = userEvent.setup()
+    mockConcert({ status: 'ENDED' })
+    getConcertSetlist.mockRejectedValue(SETLIST_UNAVAILABLE)
+    renderPage()
+    await openSetlistTab(user)
+    const retryButton = await screen.findByRole('button', { name: '다시 시도' })
+    getConcertSetlist.mockResolvedValue(SETLIST)
+
+    await user.click(retryButton)
+
+    expect(await screen.findByText('夜に駆ける')).toBeInTheDocument()
+    expect(screen.getByText('アイドル')).toBeInTheDocument()
+  })
+
+  it('트랙이 비어 있으면 빈 셋리스트 문구 표시', async () => {
+    const user = userEvent.setup()
+    mockConcert({ status: 'ENDED' })
+    getConcertSetlist.mockResolvedValue({ tracks: [], sourceUrl: null })
+    renderPage()
+
+    await openSetlistTab(user)
+
+    expect(await screen.findByText('아직 등록된 셋리스트가 없습니다.')).toBeInTheDocument()
+  })
+
+  it('트랙이 비어 있으면 셋리스트 문의 버튼 렌더링', async () => {
+    mockConcert({ status: 'ENDED' })
+    getConcertSetlist.mockResolvedValue({ tracks: [], sourceUrl: null })
+    renderPage()
+
+    await screen.findByRole('heading', { name: CONCERT_1.title })
+
+    expect(await screen.findByRole('button', { name: '셋리스트 문의' })).toBeInTheDocument()
+  })
+
+  it('트랙이 있으면 순서대로 트랙 목록 표시', async () => {
+    const user = userEvent.setup()
+    mockConcert({ status: 'ENDED' })
+    getConcertSetlist.mockResolvedValue(SETLIST)
+    renderPage()
+
+    await openSetlistTab(user)
+
+    const tracks = await screen.findAllByRole('listitem')
+    expect(tracks).toHaveLength(2)
+    expect(tracks[0]).toHaveTextContent('夜に駆ける')
+    expect(tracks[1]).toHaveTextContent('アイドル')
+  })
+
+  it('트랙이 있으면 셋리스트 문의 버튼 렌더링', async () => {
+    const user = userEvent.setup()
+    mockConcert({ status: 'ENDED' })
+    getConcertSetlist.mockResolvedValue(SETLIST)
+    renderPage()
+
+    await openSetlistTab(user)
+    await screen.findByText('夜に駆ける')
+
+    expect(screen.getByRole('button', { name: '셋리스트 문의' })).toBeInTheDocument()
+  })
+
+  it('sourceUrl이 있으면 출처 링크가 sourceUrl로 연결', async () => {
+    const user = userEvent.setup()
+    mockConcert({ status: 'ENDED' })
+    getConcertSetlist.mockResolvedValue(SETLIST)
+    renderPage()
+
+    await openSetlistTab(user)
+
+    expect(await screen.findByRole('link', { name: 'YOASOBI setlist on setlist.fm' }))
+      .toHaveAttribute('href', SETLIST.sourceUrl)
+  })
+
+  it('sourceUrl이 null이면 출처 링크가 setlist.fm 홈으로 연결', async () => {
+    const user = userEvent.setup()
+    mockConcert({ status: 'ENDED' })
+    getConcertSetlist.mockResolvedValue({ ...SETLIST, sourceUrl: null })
+    renderPage()
+
+    await openSetlistTab(user)
+
+    expect(await screen.findByRole('link', { name: 'YOASOBI setlist on setlist.fm' }))
+      .toHaveAttribute('href', 'https://www.setlist.fm/')
+  })
+
+  it('출처 링크 rel에 nofollow 미포함', async () => {
+    const user = userEvent.setup()
+    mockConcert({ status: 'ENDED' })
+    getConcertSetlist.mockResolvedValue(SETLIST)
+    renderPage()
+
+    await openSetlistTab(user)
+    const sourceLink = await screen.findByRole('link', { name: 'YOASOBI setlist on setlist.fm' })
+
+    expect(sourceLink.getAttribute('rel')).not.toMatch(/nofollow/)
+  })
+
+  it('종료되지 않은 공연이면 셋리스트 탭 미렌더링', async () => {
+    mockConcert()
+    renderPage()
+
+    await screen.findByRole('heading', { name: CONCERT_1.title })
+
+    expect(screen.queryByRole('button', { name: '셋리스트' })).not.toBeInTheDocument()
   })
 })

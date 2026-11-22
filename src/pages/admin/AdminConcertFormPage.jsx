@@ -363,29 +363,11 @@ function AdminConcertFormPage() {
           setlistResult.success ? (
             <div className={styles.collectResult}>
               <p className={styles.collectResultTitle}>
-                {setlistResult.tracks?.length ?? 0}곡 수집 완료
+                셋리스트 매칭 완료{setlistResult.setlistFmId && ` (setlist.fm ID: ${setlistResult.setlistFmId})`}
               </p>
-              {setlistResult.attributionUrl && (
-                <a
-                  href={setlistResult.attributionUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={styles.collectResultLink}
-                >
-                  setlist.fm 보기 →
-                </a>
-              )}
-              {setlistResult.tracks && setlistResult.tracks.length > 0 && (
-                <ol className={styles.trackList}>
-                  {setlistResult.tracks.map((t) => (
-                    <li key={t.position} className={styles.trackItem}>
-                      <span className={styles.trackPos}>{t.position}</span>
-                      <span className={styles.trackName}>{t.songName}</span>
-                      {t.info && <span className={styles.trackInfo}>{t.info}</span>}
-                    </li>
-                  ))}
-                </ol>
-              )}
+              <Link to={ROUTES.CONCERT_DETAIL(id)} className={styles.collectResultLink}>
+                곡 목록은 공연 상세의 셋리스트 탭에서 확인 →
+              </Link>
             </div>
           ) : (
             <p className={styles.triggerMsg}>

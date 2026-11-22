@@ -9,7 +9,6 @@ import EmptyState from '@/components/ui/EmptyState'
 import FilterTabs from '@/components/ui/FilterTabs'
 import FilterToggle from '@/components/ui/FilterToggle'
 import Pagination from '@/components/ui/Pagination'
-import SourceCredit from '@/components/ui/SourceCredit'
 import { CONCERT_STATUS_LABEL } from '@/constants/concert'
 import { getConcerts } from '@/services/concertApi'
 import useAuthStore from '@/stores/authStore'
@@ -259,9 +258,6 @@ function ConcertsPage() {
             pageParam="page"
           />
         )}
-
-        {/* 출처 표기 */}
-        <SourceCredit text="데이터 제공: 공연예술통합전산망(KOPIS)" />
 
       </div>
     </div>
