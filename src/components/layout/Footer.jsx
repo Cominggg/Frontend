@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 
 import DiscordIcon from '@/components/ui/DiscordIcon'
 import { ROUTES } from '@/constants/routes'
+import { SUPPORT_EMAIL } from '@/constants/site'
 import styles from './Footer.module.css'
 
 function Footer() {
@@ -26,6 +27,8 @@ function Footer() {
             <Link to={ROUTES.PRIVACY} className={styles.link}>개인정보처리방침</Link>
             <Link to={ROUTES.OPERATION_POLICY} className={styles.link}>운영정책</Link>
             <Link to={ROUTES.CREDITS} className={styles.link}>데이터 출처</Link>
+            <Link to={ROUTES.ACCOUNT_DELETE} className={styles.link}>회원 탈퇴 안내</Link>
+            <a href={`mailto:${SUPPORT_EMAIL}`} className={styles.link}>문의</a>
           </nav>
         </div>
       </div>

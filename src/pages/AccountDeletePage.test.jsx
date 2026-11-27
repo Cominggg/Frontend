@@ -95,6 +95,35 @@ describe('AccountDeletePage', () => {
     expect(screen.getByRole('heading', { name: '게시글·댓글은 삭제되지 않습니다' })).toBeInTheDocument()
   })
 
+  describe('이용 정지 중이라면', () => {
+    it('이용 정지 안내 섹션 제목 표시', () => {
+      renderAccountDeletePage()
+
+      expect(screen.getByRole('heading', { level: 2, name: '이용 정지 중이라면' })).toBeInTheDocument()
+    })
+
+    it('정지 안내 후 7일 이내 이의신청 안내 표시', () => {
+      renderAccountDeletePage()
+
+      expect(screen.getByText(/정지 안내를 받은 날로부터 7일 이내에 가입한 소셜 계정의 이메일 주소로/)).toBeInTheDocument()
+    })
+
+    it('이의신청 메일 쓰기 링크는 이의신청 제목이 담긴 지원 메일 mailto 링크', () => {
+      renderAccountDeletePage()
+
+      expect(screen.getByRole('link', { name: '이의신청 메일 쓰기' })).toHaveAttribute(
+        'href',
+        `mailto:coming0626@gmail.com?subject=${encodeURIComponent('[커밍] 이용 정지 이의신청')}`,
+      )
+    })
+
+    it('정지 기간 중 직접 탈퇴 불가 안내 표시', () => {
+      renderAccountDeletePage()
+
+      expect(screen.getByText(/정지 기간에는 직접 탈퇴할 수 없으니/)).toBeInTheDocument()
+    })
+  })
+
   describe('개인정보처리방침 v1.2 시행 전', () => {
     beforeEach(() => {
       setSystemTime('2026-11-15T03:00:00Z') // 2026-11-15 12:00 KST
