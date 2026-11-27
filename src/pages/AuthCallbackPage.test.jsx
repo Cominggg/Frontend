@@ -24,6 +24,7 @@ vi.mock('@/utils/analytics', () => ({
 }))
 
 const USER = { id: 1, nickname: '테스트유저', role: 'USER' }
+const CALLBACK_FAILED_MESSAGE = '로그인 처리 중 문제가 발생했습니다. 다시 시도해 주세요.'
 
 function renderCallback(query = '', { strict = false } = {}) {
   const ui = (
@@ -184,25 +185,62 @@ describe('AuthCallbackPage', () => {
     })
   })
 
+  describe('재가입 제한', () => {
+    const REJOIN_QUERY = '?error=REJOIN_RESTRICTED&rejoinAvailableAt=2027-01-02T12:00:00'
+
+    it.each([
+      [REJOIN_QUERY, '이용 정지 중 탈퇴한 계정은 2027.01.02 12:00까지 다시 가입할 수 없습니다.'],
+      ['?error=REJOIN_RESTRICTED', '이용 정지 중 탈퇴한 계정은 일정 기간 다시 가입할 수 없습니다.'],
+    ])('%s이면 "%s" 메시지 표시', async (query, message) => {
+      renderCallback(query)
+
+      expect(await screen.findByText(message)).toBeInTheDocument()
+    })
+
+    it('error=REJOIN_RESTRICTED이면 토큰 재발급을 시도하지 않음', async () => {
+      renderCallback(REJOIN_QUERY)
+
+      await screen.findByRole('button', { name: '홈으로 이동' })
+      expect(refreshAccessToken).not.toHaveBeenCalled()
+    })
+
+    it('error=REJOIN_RESTRICTED이면 운영정책 링크와 문의 메일 링크 표시', async () => {
+      renderCallback(REJOIN_QUERY)
+
+      expect(await screen.findByRole('link', { name: '운영정책' })).toHaveAttribute('href', '/operation-policy')
+      expect(screen.getByRole('link', { name: 'coming0626@gmail.com' }).getAttribute('href')).toMatch(
+        /^mailto:coming0626@gmail\.com/,
+      )
+    })
+
+    it('다른 error 코드이면 재가입 안내를 표시하지 않음', async () => {
+      renderCallback('?error=OAUTH2_FAILED')
+
+      await screen.findByText('로그인에 실패했습니다. 다시 시도해 주세요.')
+      expect(screen.queryByRole('link', { name: '운영정책' })).not.toBeInTheDocument()
+      expect(screen.queryByRole('link', { name: 'coming0626@gmail.com' })).not.toBeInTheDocument()
+    })
+  })
+
   describe('처리 실패', () => {
-    it('토큰 재발급이 실패하면 사용자 저장 없이 홈으로 이동', async () => {
+    it('토큰 재발급이 실패하면 사용자 저장 없이 실패 메시지 표시', async () => {
       refreshAccessToken.mockRejectedValue(new Error('refresh failed'))
 
       renderCallback()
 
-      expect(await screen.findByText('홈 화면')).toBeInTheDocument()
+      expect(await screen.findByText(CALLBACK_FAILED_MESSAGE)).toBeInTheDocument()
       expect(getMe).not.toHaveBeenCalled()
       expect(useAuthStore.getState().user).toBeNull()
     })
 
-    it('사용자 정보 조회가 실패하면 홈으로 이동', async () => {
+    it('사용자 정보 조회가 실패하면 사용자 저장 없이 실패 메시지 표시', async () => {
       localStorage.setItem(LOGIN_REDIRECT_KEY, '/me')
       refreshAccessToken.mockResolvedValue('new-token')
       getMe.mockRejectedValue(new Error('me failed'))
 
       renderCallback()
 
-      expect(await screen.findByText('홈 화면')).toBeInTheDocument()
+      expect(await screen.findByText(CALLBACK_FAILED_MESSAGE)).toBeInTheDocument()
       expect(useAuthStore.getState().user).toBeNull()
     })
   })

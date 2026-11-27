@@ -9,6 +9,7 @@ import useLoginModalStore from '@/stores/loginModalStore'
 import styles from './AccountDeletePage.module.css'
 
 const MAIL_SUBJECT = encodeURIComponent('[커밍] 회원 탈퇴 요청')
+const APPEAL_MAIL_SUBJECT = encodeURIComponent('[커밍] 이용 정지 이의신청')
 
 const RETAINED_ITEMS = [
   { item: '서비스 이용 기록', period: '3개월', basis: '통신비밀보호법' },
@@ -74,6 +75,16 @@ function AccountDeletePage() {
               <p className={styles.cardHint}>메일에 가입한 소셜 로그인 종류(Google 또는 Kakao)와 닉네임을 함께 적어 주세요.</p>
             </div>
           </div>
+        </section>
+
+        <section className={styles.section} aria-labelledby="suspended">
+          <h2 id="suspended" className={styles.sectionTitle}>이용 정지 중이라면</h2>
+          <p className={styles.text}>
+            정지 안내를 받은 날로부터 7일 이내에 가입한 소셜 계정의 이메일 주소로 방법 2와 같은 주소에 이의를 신청할 수 있습니다.
+            운영자는 신청을 받은 날로부터 7일 이내에 검토 결과를 메일로 알려 드리며, 검토 중에도 정지는 유지됩니다.{' '}
+            <a className={styles.inlineLink} href={`mailto:${SUPPORT_EMAIL}?subject=${APPEAL_MAIL_SUBJECT}`}>이의신청 메일 쓰기</a>
+          </p>
+          <p className={styles.text}>정지 기간에는 직접 탈퇴할 수 없으니, 탈퇴를 원하면 방법 2로 요청해 주세요.</p>
         </section>
 
         <section className={styles.section} aria-labelledby="delete-data">

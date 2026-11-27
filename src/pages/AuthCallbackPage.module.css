@@ -5,11 +5,26 @@
   justify-content: center;
   min-height: 60vh;
   gap: 16px;
+  padding: 0 1rem;
+  text-align: center;
 }
 
 .errorMessage {
   font-size: 1rem;
   color: var(--color-text-muted);
+}
+
+.guide {
+  max-width: 28rem;
+  margin: 0;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: var(--color-text-muted);
+}
+
+.link {
+  color: var(--color-accent);
+  font-weight: 600;
 }
 
 .homeButton {
